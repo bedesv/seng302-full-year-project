@@ -105,16 +105,6 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * This regex will reject blanks, and emojis,
-     * but still allow specific characters and numbers
-     * @return regex
-     */
-    @ModelAttribute("titlePattern")
-    public String getTitlePattern(){
-        return "(" + REGEX_WITH_SPACE + "*)(" + REGEX_WITHOUT_SPACE + ")("  + REGEX_WITH_SPACE + "*)";
-    }
-
-    /**
      * This attribute will be used in th:pattern to ensure that fields are not blank
      * Then additional validation to be carried out in the service
      * @return regex that will reject blank strings.

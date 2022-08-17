@@ -88,7 +88,6 @@ public class DeadlineService {
 
     /**
      * Updates the deadline's date to a new date
-     *
      * @param deadlineId      the id of the deadline to be updated
      * @param newDeadlineDate the new date the deadline should be set to
      * @throws Exception if the new deadline date falls outside the project dates

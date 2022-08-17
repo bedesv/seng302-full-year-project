@@ -36,6 +36,7 @@ public class EditDeadlineController {
     private static final String REDIRECT_PROJECTS = "redirect:/projects";
 
     private static final String REDIRECT_PROJECT_DETAILS = "redirect:/projectDetails-";
+    private static final String EDIT_DEADLINE = "editDeadline";
 
     /**
      * The get mapping to return the page with the form to add/edit deadlines
@@ -55,7 +56,7 @@ public class EditDeadlineController {
 
         int projectId = Integer.parseInt(parentProjectId);
         Project project = projectService.getProjectById(projectId);
-        model.addAttribute("projectId", project.getId());
+
 
         Deadline deadline;
 
@@ -72,13 +73,8 @@ public class EditDeadlineController {
         } else {
             deadline = new Deadline(projectId, "Deadline name", deadlineDate);
         }
-        model.addAttribute("deadline", deadline);
-        model.addAttribute("deadlineName", deadline.getDeadlineName());
-        model.addAttribute("deadlineDate", Project.dateToString(deadline.getDeadlineDate(), TIME_FORMAT));
-        model.addAttribute("minDeadlineDate", Project.dateToString(project.getStartDate(), TIME_FORMAT));
-        model.addAttribute("maxDeadlineDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
-        model.addAttribute("maxDeadlineDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
-        return "editDeadline";
+        updateModel(model, project ,deadline);
+        return EDIT_DEADLINE;
     }
 
     /**
@@ -120,14 +116,19 @@ public class EditDeadlineController {
         if (deadlineId == -1) {
             try {
                 deadlineService.createNewDeadline(projectId, deadlineName, deadlineDate);
-            } catch (UnsupportedOperationException e) {
-                return("redirect:/editDeadline-{deadlineId}-{parentProjectId}");
+            } catch (IllegalArgumentException e) {
+                Deadline deadline = new Deadline(projectId, "Deadline name", deadlineDate);
+                updateModel(model, projectService.getProjectById(projectId), deadline);
+                model.addAttribute("titleError", "Deadline name cannot contain special characters");
+                return EDIT_DEADLINE;
             }
         } else {
             try {
                 deadlineService.updateDeadline(projectId, deadlineId, deadlineName, deadlineDate);
-            } catch (UnsupportedOperationException e) {
-                return("redirect:/editDeadline-{deadlineId}-{parentProjectId}");
+            } catch (IllegalArgumentException e) {
+                updateModel(model, projectService.getProjectById(projectId), deadlineService.getDeadlineById(deadlineId));
+                model.addAttribute("titleError", "Deadline name cannot contain special characters");
+                return EDIT_DEADLINE;
             }
         }
         return REDIRECT_PROJECT_DETAILS + projectIdString;
@@ -144,6 +145,22 @@ public class EditDeadlineController {
 
         deadlineService.deleteDeadlineById(Integer.parseInt(deadlineId));
         return REDIRECT_PROJECT_DETAILS + parentProjectId;
+    }
+
+    /**
+     * Abstracted these additions instead of being repeated three times
+     * @param model
+     * @param project
+     * @param deadline
+     */
+    private void updateModel(Model model, Project project, Deadline deadline){
+        model.addAttribute("projectId", project.getId());
+        model.addAttribute("deadline", deadline);
+        model.addAttribute("deadlineName", deadline.getDeadlineName());
+        model.addAttribute("deadlineDate", Project.dateToString(deadline.getDeadlineDate(), TIME_FORMAT));
+        model.addAttribute("minDeadlineDate", Project.dateToString(project.getStartDate(), TIME_FORMAT));
+        model.addAttribute("maxDeadlineDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
+        model.addAttribute("maxDeadlineDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
     }
 
 
