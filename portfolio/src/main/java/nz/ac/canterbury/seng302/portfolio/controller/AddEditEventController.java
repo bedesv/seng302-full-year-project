@@ -49,11 +49,6 @@ public class AddEditEventController {
             return REDIRECT_PROJECT_DETAILS + parentProjectId;
         }
 
-        // Add user details to model for displaying in top banner
-        int userId = userAccountClientService.getUserId(principal);
-        User user = userAccountClientService.getUserAccountById(userId);
-        model.addAttribute("user", user);
-
         // Add parent project ID
         int projectId = Integer.parseInt(parentProjectId);
         Project project = projectService.getProjectById(projectId);
@@ -85,22 +80,16 @@ public class AddEditEventController {
 
     @PostMapping("/editEvent-{eventId}-{parentProjectId}")
     public String addEditEvent(
-            @AuthenticationPrincipal AuthState principle,
+            @AuthenticationPrincipal AuthState principal,
             @PathVariable("parentProjectId") String projectIdString,
             @PathVariable("eventId") String eventIdString,
             @RequestParam(value="eventName") String eventName,
             @RequestParam(value="eventStartDate") String eventStart,
-            @RequestParam(value="eventEndDate") String eventEnd,
-            Model model) throws ParseException {
+            @RequestParam(value="eventEndDate") String eventEnd) throws ParseException {
         //Check if it is a teacher making the request
-        if (!userAccountClientService.isTeacher(principle)) {
+        if (!userAccountClientService.isTeacher(principal)) {
             return REDIRECT_PROJECT_DETAILS + projectIdString;
         }
-
-        // Add user details to model for displaying in top banner
-        int userId = userAccountClientService.getUserId(principle);
-        User user = userAccountClientService.getUserAccountById(userId);
-        model.addAttribute("user", user);
 
         // Ensure request parameters represent a valid sprint.
         // Check ids can be parsed

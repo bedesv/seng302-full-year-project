@@ -3,12 +3,10 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Milestone;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.MilestoneService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -55,14 +53,6 @@ public class EditMilestoneController {
         if (!userAccountClientService.isTeacher(principal)) {
             return REDIRECT_PROJECT_DETAILS + parentProjectId;
         }
-
-        int userId = Integer.parseInt(principal.getClaimsList().stream()
-                .filter(claim -> claim.getType().equals("nameid"))
-                .findFirst()
-                .map(ClaimDTO::getValue)
-                .orElse("-100"));
-        User user = userAccountClientService.getUserAccountById(userId);
-        model.addAttribute("user", user);
 
         int projectId;
         int milestoneId;

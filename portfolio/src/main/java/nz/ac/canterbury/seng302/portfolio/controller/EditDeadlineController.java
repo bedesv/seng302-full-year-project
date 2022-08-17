@@ -2,12 +2,10 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -15,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -49,18 +48,10 @@ public class EditDeadlineController {
     public String deadLineForm(@AuthenticationPrincipal AuthState principal,
                             @PathVariable("parentProjectId") String parentProjectId,
                             @PathVariable("deadlineId") String deadlineId,
-                            Model model) throws Exception {
+                            Model model) {
         if (!userAccountClientService.isTeacher(principal)) {
             return REDIRECT_PROJECT_DETAILS + parentProjectId;
         }
-        int userId = Integer.parseInt(principal.getClaimsList().stream()
-                .filter(claim -> claim.getType().equals("nameid"))
-                .findFirst()
-                .map(ClaimDTO::getValue)
-                .orElse("-100"));
-        User user = userAccountClientService.getUserAccountById(userId);
-        model.addAttribute("user", user);
-
 
         int projectId = Integer.parseInt(parentProjectId);
         Project project = projectService.getProjectById(projectId);
@@ -106,7 +97,7 @@ public class EditDeadlineController {
             @PathVariable("deadlineId") String deadlineIdString,
             @RequestParam(value="deadlineName") String deadlineName,
             @RequestParam(value="deadlineDate") String deadlineDateString,
-            Model model) throws Exception {
+            Model model) throws ParseException {
 
         if (!userAccountClientService.isTeacher(principle)) {
             return REDIRECT_PROJECT_DETAILS + projectIdString;
@@ -135,7 +126,7 @@ public class EditDeadlineController {
         } else {
             try {
                 deadlineService.updateDeadline(projectId, deadlineId, deadlineName, deadlineDate);
-            } catch(UnsupportedOperationException e) {
+            } catch (UnsupportedOperationException e) {
                 return("redirect:/editDeadline-{deadlineId}-{parentProjectId}");
             }
         }

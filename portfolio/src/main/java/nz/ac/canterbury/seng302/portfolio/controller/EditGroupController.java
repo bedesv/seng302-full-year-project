@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Group;
-import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -48,10 +47,6 @@ public class EditGroupController {
             return GROUPS_REDIRECT;
         }
 
-        // Add user details to model for displaying in top banner
-        User user = userAccountClientService.getUserAccountById(userId);
-        model.addAttribute("user", user);
-
         Group group;
         //Check if it is existing or new group
         if (Integer.parseInt(groupId) != -1) {
@@ -92,8 +87,6 @@ public class EditGroupController {
             return GROUPS_REDIRECT;
         }
 
-        User user = userAccountClientService.getUserAccountById(userId);
-
         int groupId;
 
         try {
@@ -127,9 +120,6 @@ public class EditGroupController {
                     model.addAttribute("longNameErrorMessage", error.getErrorText());
                 }
             }
-
-            // Add user details to model for displaying in top banner
-            model.addAttribute("user", user);
 
             //Add event details to model so the user doesn't have to enter them again
             model.addAttribute("groupId", groupId);

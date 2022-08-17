@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Group;
 import nz.ac.canterbury.seng302.portfolio.model.GroupRepositorySettings;
-import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.GitlabConnectionService;
 import nz.ac.canterbury.seng302.portfolio.service.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.GroupRepositorySettingsService;
@@ -51,7 +50,6 @@ public class GroupSettingsController {
     @GetMapping("/groupSettings-{id}")
     public String groups(@AuthenticationPrincipal AuthState principal, Model model, @PathVariable String id){
         int userId = userAccountClientService.getUserId(principal);
-        User user = userAccountClientService.getUserAccountById(userId);
         int groupId = Integer.parseInt(id);
         GroupDetailsResponse response = groupsClientService.getGroupDetailsById(groupId);
         if (response.getGroupId() == 0) {
@@ -60,7 +58,6 @@ public class GroupSettingsController {
         Group group = new Group(response);
         model.addAttribute("group", group);
         model.addAttribute("userInGroup", groupsClientService.userInGroup(group.getGroupId(), userId));
-        model.addAttribute("user", user);
         return SETTINGS_PAGE;
     }
 
@@ -115,11 +112,10 @@ public class GroupSettingsController {
         List<Commit> commits = null;
         try {
             commits = gitlabConnectionService.getAllCommits(groupId);
-        } catch (GitLabApiException ignored) {
-            // Ignored because the commits variable is already null.
-        } catch (NoSuchFieldException ignored) {
-            // Ignored because this only occurs if the group doesn't have any repository settings, but
-            // we've just added them, so it must have settings.
+        } catch (GitLabApiException | NoSuchFieldException ignored) {
+            // Ignoring GitLabApiException because the commits variable is already null.
+            // Ignoring NoSuchFieldException because this only occurs if the group doesn't have any repository settings,
+            // but we've just added them, so it must have settings.
         }
         model.addAttribute("firstLoad", false);
         model.addAttribute("changesSaved", true);

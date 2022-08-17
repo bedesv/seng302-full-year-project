@@ -46,7 +46,6 @@ public class CategoriesController {
             Model model) {
 
         User user = userService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
         model.addAttribute("pageUser", user);
         model.addAttribute("owner", true);
         int userId = user.getId();
@@ -93,7 +92,6 @@ public class CategoriesController {
             Model model
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
         User pageUser = userService.getUserAccountById(userId);
         model.addAttribute("pageUser", pageUser);
 

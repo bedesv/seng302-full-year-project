@@ -2,8 +2,11 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -158,36 +161,20 @@ class ProjectServiceTest {
         assertNotEquals(0, projects.get(0).getId());
     }
 
-    @Test
-    void givenValidTitle_testTitleValid(){
-        String title = "Normal Title";
-        assertTrue(projectService.titleValid(title));
-    }
-
-    @Test
-    void givenValidAlphaNumericTitle_testTitleValid(){
-        String title = "SENG302";
-        assertTrue(projectService.titleValid(title));
-    }
-
-    @Test
-    void givenValidExceptionalTitle_testTitleValid(){
-        String title = "Māori, a-zA-Z0123456789àáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆŠŽð,. '";
-        assertTrue(projectService.titleValid(title));
-    }
-
-    @Test
-    void givenValidDifferingLanguageTitle_testTitleValid(){
-        String title = "私のプロジェクト";
-        assertTrue(projectService.titleValid(title));
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "Normal Title",
+            "SENG302",
+            "Māori, a-zA-Z0123456789àáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆŠŽð,. '",
+            "私のプロジェクト"})
+    void givenValidTitle_testTitleValid(String title) {
+        assertTrue(ValidationUtil.titleValid(title));
     }
 
     @Test
     void givenInvalid_testTitleValid(){
         String title = "😎💖❤🎂🎉✔🎁";
-        assertFalse(projectService.titleValid(title));
+        assertFalse(ValidationUtil.titleValid(title));
     }
-
-
 
 }

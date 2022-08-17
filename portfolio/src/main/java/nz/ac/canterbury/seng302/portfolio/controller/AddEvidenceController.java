@@ -55,8 +55,6 @@ public class AddEvidenceController {
             @AuthenticationPrincipal AuthState principal,
             Model model
     ) {
-        User user = userService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
 
         int userId = userService.getUserId(principal);
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
@@ -112,12 +110,10 @@ public class AddEvidenceController {
             @RequestParam(name="evidenceSkills") String skills,
             Model model
     ) {
-
         User user = userService.getUserAccountByPrincipal(principal);
         int projectId = portfolioUserService.getUserById(user.getId()).getCurrentProject();
         Project project = projectService.getProjectById(projectId);
 
-        model.addAttribute("user", user);
         model.addAttribute("minEvidenceDate", Project.dateToString(project.getStartDate(), TIMEFORMAT));
         model.addAttribute("maxEvidenceDate", Project.dateToString(project.getEndDate(), TIMEFORMAT));
 

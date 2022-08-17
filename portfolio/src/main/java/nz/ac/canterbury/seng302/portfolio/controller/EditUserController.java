@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 
-import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +20,10 @@ public class EditUserController {
 
     /**
      * Get mapping to open editUser page
-     * @param principal Authentication principal storing current user information
-     * @param model ThymeLeaf model
      * @return the editUser page
      */
     @GetMapping("/editUser")
-    public String editUser(
-            @AuthenticationPrincipal AuthState principal,
-            Model model
-    ) {
-
-        User user = userAccountClientService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
+    public String editUser() {
         return "editUser";
     }
 
@@ -79,10 +70,6 @@ public class EditUserController {
             model.addAttribute("errorMessage", e);
             return "editUser";
         }
-
-        //Get the new version of user
-        User user = userAccountClientService.getUserAccountById(id);
-        model.addAttribute("user", user);
 
         //if edit user was successful
         if (editUserResponse.getIsSuccess()){

@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.DeadlineRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,8 @@ public class DeadlineService {
     @Autowired
     private ProjectEditsService projectEditsService;
 
+    private static final String DEADLINE_DATE_ERROR = "Deadline date must be within the project dates";
+
 
     /**
      * Gets a list of all deadlines
@@ -39,12 +42,12 @@ public class DeadlineService {
      * @return the deadline of the project which has the provided id
      * @throws Exception if the deadline is not found
      */
-    public Deadline getDeadlineById(Integer deadlineId) throws Exception {
+    public Deadline getDeadlineById(Integer deadlineId) throws IllegalArgumentException {
         Optional<Deadline> deadline = deadlineRepository.findById(deadlineId);
         if (deadline.isPresent()) {
             return deadline.get();
         } else {
-            throw new Exception("Deadline not found");
+            throw new IllegalArgumentException("Deadline not found");
         }
     }
 
@@ -75,8 +78,12 @@ public class DeadlineService {
      * Saves the provided deadline into the repository
      */
     public Deadline saveDeadline(Deadline deadline) {
-        projectEditsService.refreshProject(deadline.getDeadlineParentProjectId());
-        return deadlineRepository.save(deadline);
+        if (!ValidationUtil.titleValid(deadline.getDeadlineName())){
+            throw new IllegalArgumentException("Deadline name must not contain special characters");
+        } else {
+            projectEditsService.refreshProject(deadline.getDeadlineParentProjectId());
+            return deadlineRepository.save(deadline);
+        }
     }
 
     /**
@@ -86,13 +93,12 @@ public class DeadlineService {
      * @param newDeadlineDate the new date the deadline should be set to
      * @throws Exception if the new deadline date falls outside the project dates
      */
-    public void updateDeadlineDate(int deadlineId, Date newDeadlineDate) throws Exception {
+    public void updateDeadlineDate(int deadlineId, Date newDeadlineDate) throws UnsupportedOperationException {
         Deadline newDeadline = getDeadlineById(deadlineId);
         Date projectStartDate = projectService.getProjectById(newDeadline.getDeadlineParentProjectId()).getStartDate();
         Date projectEndDate = projectService.getProjectById(newDeadline.getDeadlineParentProjectId()).getEndDate();
-
         if (newDeadlineDate.compareTo(projectEndDate) > 0 || newDeadlineDate.compareTo(projectStartDate) < 0) {
-            throw new UnsupportedOperationException("Deadline date must be within the project dates");
+            throw new UnsupportedOperationException(DEADLINE_DATE_ERROR);
         } else {
             newDeadline.setDeadlineDate(newDeadlineDate);
             saveDeadline(newDeadline);
@@ -105,15 +111,15 @@ public class DeadlineService {
      * @param deadlineId The deadline ID
      * @param deadlineName The new deadline name
      * @param deadlineDate The new deadline date
-     * @throws Exception Throws UnsupportedOperationException is the new date doesn't fall within the parent project dates
+     * @throws IllegalArgumentException Throws UnsupportedOperationException is the new date doesn't fall within the parent project dates
      */
-    public void updateDeadline(int parentProjectId, int deadlineId, String deadlineName, Date deadlineDate) throws Exception {
+    public void updateDeadline(int parentProjectId, int deadlineId, String deadlineName, Date deadlineDate) throws IllegalArgumentException {
         Deadline deadline = getDeadlineById(deadlineId);
         Project parentProject = projectService.getProjectById(parentProjectId);
         Date projectStartDate = parentProject.getStartDate();
         Date projectEndDate = parentProject.getEndDate();
         if (deadlineDate.compareTo(projectEndDate) > 0 || deadlineDate.compareTo(projectStartDate) < 0) {
-            throw new UnsupportedOperationException("Deadline date must be within the project dates");
+            throw new IllegalArgumentException(DEADLINE_DATE_ERROR);
         }
         deadline.setDeadlineDate(deadlineDate);
         deadline.setDeadlineName(deadlineName);
@@ -123,18 +129,18 @@ public class DeadlineService {
     /**
      * Creates a new deadline with the given parameters
      * @param parentProjectId The parent project of the deadline
-     * @param deadLineName The new deadline name
+     * @param deadlineName The new deadline name
      * @param deadlineDate The new deadline date
-     * @throws Exception Throws UnsupportedOperationException is the new date doesn't fall within the parent project dates
+     * @throws IllegalArgumentException Throws UnsupportedOperationException is the new date doesn't fall within the parent project dates
      */
-    public void createNewDeadline(int parentProjectId, String deadLineName, Date deadlineDate) throws Exception {
+    public void createNewDeadline(int parentProjectId, String deadlineName, Date deadlineDate) throws IllegalArgumentException {
         Project parentProject = projectService.getProjectById(parentProjectId);
         Date projectStartDate = parentProject.getStartDate();
         Date projectEndDate = parentProject.getEndDate();
         if (deadlineDate.compareTo(projectEndDate) > 0 || deadlineDate.compareTo(projectStartDate) < 0) {
-            throw new UnsupportedOperationException("Deadline date must be within the project dates");
+            throw new IllegalArgumentException(DEADLINE_DATE_ERROR);
         } else {
-            saveDeadline(new Deadline(parentProjectId, deadLineName, deadlineDate));
+            saveDeadline(new Deadline(parentProjectId, deadlineName, deadlineDate));
         }
     }
 

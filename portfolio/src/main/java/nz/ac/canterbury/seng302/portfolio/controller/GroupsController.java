@@ -54,8 +54,6 @@ public class GroupsController {
      */
     @GetMapping("/groups")
     public String groups(@AuthenticationPrincipal AuthState principal, Model model){
-        int id = userAccountClientService.getUserId(principal);
-        User user = userAccountClientService.getUserAccountById(id);
         boolean userIsTeacher = userAccountClientService.isTeacher(principal);
         boolean userIsAdmin = userAccountClientService.isAdmin(principal);
 
@@ -71,7 +69,6 @@ public class GroupsController {
 
         model.addAttribute(GROUPS_STRING, groups);
         model.addAttribute("allGroupIds", allGroupIds);
-        model.addAttribute("user", user);
         model.addAttribute(USER_IS_TEACHER, userIsTeacher);
         model.addAttribute(USER_IS_ADMIN, userIsAdmin);
         model.addAttribute(GROUPLESS_GROUP_ID_STRING, GROUPLESS_GROUP_ID);
@@ -181,9 +178,6 @@ public class GroupsController {
                                  @PathVariable("groupId") Integer groupId,
                                  @RequestParam(value="members") List<Integer> members,
                                  Model model) {
-
-        int id = userAccountClientService.getUserId(principal);
-        User user = userAccountClientService.getUserAccountById(id);
         boolean userIsTeacher = userAccountClientService.isTeacher(principal);
         boolean userIsAdmin = userAccountClientService.isAdmin(principal);
 
@@ -240,7 +234,6 @@ public class GroupsController {
         }
 
         model.addAttribute(GROUP_STRING, group);
-        model.addAttribute("user", user);
         model.addAttribute(USER_IS_TEACHER, userIsTeacher);
         model.addAttribute(USER_IS_ADMIN, userIsAdmin);
         model.addAttribute(GROUPLESS_GROUP_ID_STRING, GROUPLESS_GROUP_ID);
@@ -263,7 +256,6 @@ public class GroupsController {
                                 Model model) {
 
         int userId = userAccountClientService.getUserId(principal);
-        User user = userAccountClientService.getUserAccountById(userId);
         boolean userIsTeacher = userAccountClientService.isTeacher(principal);
         boolean userIsAdmin = userAccountClientService.isAdmin(principal);
 
@@ -277,7 +269,6 @@ public class GroupsController {
             group = new Group(groupsClientService.getGroupDetailsById(groupId));
         }
         model.addAttribute(GROUP_STRING, group);
-        model.addAttribute("user", user);
         model.addAttribute(USER_IS_TEACHER, userIsTeacher);
         model.addAttribute(USER_IS_ADMIN, userIsAdmin);
         model.addAttribute(USER_IS_MEMBER, userInGroup(userId, groupId));
@@ -301,9 +292,6 @@ public class GroupsController {
                                  @PathVariable("groupId") Integer groupId,
                                  @RequestParam(value="members") List<Integer> members,
                                  Model model) {
-
-        int id = userAccountClientService.getUserId(principal);
-        User user = userAccountClientService.getUserAccountById(id);
         boolean userIsTeacher = userAccountClientService.isTeacher(principal);
         boolean userIsAdmin = userAccountClientService.isAdmin(principal);
 
@@ -344,7 +332,6 @@ public class GroupsController {
         }
 
         model.addAttribute(GROUP_STRING, group);
-        model.addAttribute("user", user);
         model.addAttribute(USER_IS_TEACHER, userIsTeacher);
         model.addAttribute(USER_IS_ADMIN, userIsAdmin);
         model.addAttribute(GROUPLESS_GROUP_ID_STRING, GROUPLESS_GROUP_ID);

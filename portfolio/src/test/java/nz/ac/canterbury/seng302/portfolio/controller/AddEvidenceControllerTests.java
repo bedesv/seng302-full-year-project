@@ -93,6 +93,7 @@ class AddEvidenceControllerTests {
         Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
         mockMvc.perform(get("/addEvidence"))
                 .andExpect(status().isOk())
@@ -109,6 +110,7 @@ class AddEvidenceControllerTests {
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
         mockMvc.perform(post("/addEvidence")
                         .param("evidenceTitle", "test title")
@@ -129,6 +131,7 @@ class AddEvidenceControllerTests {
         Mockito.doThrow(IllegalArgumentException.class).when(evidenceService).saveEvidence(any());
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
         Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
 
         mockMvc.perform(post("/addEvidence")
@@ -148,6 +151,7 @@ class AddEvidenceControllerTests {
         Mockito.when(portfolioUserService.getUserById(any(Integer.class))).thenReturn(new PortfolioUser(1, "name", true));
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
         Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
 
         mockMvc.perform(post("/addEvidence")

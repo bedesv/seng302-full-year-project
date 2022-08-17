@@ -3,11 +3,9 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.PlannerDailyEvent;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
-import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.util.PlannerUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -67,15 +65,6 @@ public class PlannerController {
             return PROJECTS_REDIRECT;
         }
 
-        int userId = Integer.parseInt(principal.getClaimsList().stream()
-                .filter(claim -> claim.getType().equals("nameid"))
-                .findFirst()
-                .map(ClaimDTO::getValue)
-                .orElse("-100"));
-
-
-        User user = userService.getUserAccountById(userId);
-
         Map<String, PlannerDailyEvent> eventMap = PlannerUtil.getEventsForCalender(eventService.getByEventParentProjectId(projectId));
         Map<String, PlannerDailyEvent> deadlineMap = PlannerUtil.getDeadlinesForCalender(deadlineService.getByDeadlineParentProjectId(projectId));
         Map<String, PlannerDailyEvent> milestoneMap = PlannerUtil.getMilestonesForCalender(milestoneService.getByMilestoneParentProjectId(projectId));
@@ -83,7 +72,6 @@ public class PlannerController {
         model.addAttribute("milestones", milestoneMap);
         model.addAttribute("deadlines", deadlineMap);
         model.addAttribute("events", eventMap);
-        model.addAttribute("user", user);
         model.addAttribute("project", project);
         model.addAttribute("sprints", sprintService.getByParentProjectId(project.getId()));
 
@@ -97,13 +85,11 @@ public class PlannerController {
 
     /**
      * The default get mapping for displaying the planner page. Will display the first project on the list of projects,
-     * @param principal Authentication principal storing current user information
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return The planner page
      */
     @GetMapping("/planner")
-    public String planner(@AuthenticationPrincipal AuthState principal,
-                          Model model) {
+    public String planner(Model model) {
 
         List<Project> projects = projectService.getAllProjects();
         Project project;
@@ -116,9 +102,6 @@ public class PlannerController {
             project = new Project("Default Project", "Random Description", startDate.getTime(), endDate.getTime());
         }
 
-        User user = userService.getUserAccountByPrincipal(principal);
-
-        model.addAttribute("user", user);
         model.addAttribute("project", project);
         model.addAttribute("sprints", sprintService.getByParentProjectId(project.getId()));
 

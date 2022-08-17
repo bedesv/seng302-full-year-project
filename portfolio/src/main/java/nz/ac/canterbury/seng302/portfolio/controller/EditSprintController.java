@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
-import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
@@ -52,8 +51,6 @@ public class EditSprintController {
         if (!userAccountClientService.isTeacher(principal)) {
             return REDIRECT_PROJECT_DETAILS + projectIdString;
         }
-        User user = userAccountClientService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
 
         int projectId;
         int sprintId;
@@ -124,8 +121,6 @@ public class EditSprintController {
         if (!userAccountClientService.isTeacher(principal)) {
             return REDIRECT_PROJECT_DETAILS + projectIdString;
         }
-        User user = userAccountClientService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
 
         int projectId;
         int sprintId;

@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.DateRestrictions;
-import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectDateService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import org.springframework.stereotype.Controller;
@@ -68,10 +67,6 @@ public class EditProjectController {
         if (!userAccountClientService.isTeacher(principal)) {
             return REDIRECT_PROJECT_DETAILS + projectId;
         }
-
-        // Add user details to model
-        User user = userAccountClientService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
 
         int id = Integer.parseInt(projectId);
         Project project;
