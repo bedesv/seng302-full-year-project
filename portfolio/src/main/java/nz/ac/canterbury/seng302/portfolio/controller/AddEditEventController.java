@@ -32,7 +32,7 @@ public class AddEditEventController {
     private static final String TIME_FORMAT = "yyyy-MM-dd'T'HH:mm";
     private static final String REDIRECT_PROJECTS = "redirect:/projects";
     private static final String REDIRECT_PROJECT_DETAILS = "redirect:/projectDetails-";
-    private static final String REDIRECT_EVENT_FORM = "redirect:/addEditEvent";
+    private static final String ADD_EDIT_EVENT = "addEditEvent";
 
 
     /**
@@ -52,7 +52,6 @@ public class AddEditEventController {
         // Add parent project ID
         int projectId = Integer.parseInt(parentProjectId);
         Project project = projectService.getProjectById(projectId);
-        model.addAttribute("projectId", project.getId());
 
         Event event;
         //Check if it is existing or new event
@@ -66,16 +65,8 @@ public class AddEditEventController {
             event.setEventStartDate(project.getStartDate());
             event.setEventEndDate(project.getEndDate());
         }
-
-        //Add event details to model
-        model.addAttribute("eventName", event.getEventName());
-        model.addAttribute("eventStartDate", Project.dateToString(event.getEventStartDate(), TIME_FORMAT));
-        model.addAttribute("eventEndDate", Project.dateToString(event.getEventEndDate(), TIME_FORMAT));
-
-        // Add event date boundaries for event to the model
-        model.addAttribute("minEventStartDate", Project.dateToString(project.getStartDate(), TIME_FORMAT));
-        model.addAttribute("maxEventEndDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
-        return "addEditEvent";
+        updateModel(model, project, event);
+        return ADD_EDIT_EVENT;
     }
 
     @PostMapping("/editEvent-{eventId}-{parentProjectId}")
@@ -85,7 +76,8 @@ public class AddEditEventController {
             @PathVariable("eventId") String eventIdString,
             @RequestParam(value="eventName") String eventName,
             @RequestParam(value="eventStartDate") String eventStart,
-            @RequestParam(value="eventEndDate") String eventEnd) throws ParseException {
+            @RequestParam(value="eventEndDate") String eventEnd,
+            Model model) throws ParseException {
         //Check if it is a teacher making the request
         if (!userAccountClientService.isTeacher(principal)) {
             return REDIRECT_PROJECT_DETAILS + projectIdString;
@@ -116,8 +108,10 @@ public class AddEditEventController {
             try {
                 Event newEvent = new Event(projectId, eventName, eventStartDate, eventEndDate);
                 eventService.saveEvent(newEvent);
-            } catch (Exception ignored) {
-                return REDIRECT_EVENT_FORM + "-" + eventId + "-" + projectId;
+            } catch (IllegalArgumentException ignored) {
+                updateModel(model, projectService.getProjectById(projectId), new Event(projectId, "Event Name", eventStartDate, eventEndDate));
+                model.addAttribute("titleError", "Event name cannot contain special characters");
+                return ADD_EDIT_EVENT;
             }
         } else {
             //Edit existing event
@@ -126,8 +120,10 @@ public class AddEditEventController {
                 existingEvent.setEventName(eventName);
                 eventService.updateEventDates(eventId, eventStartDate, eventEndDate);
                 eventService.saveEvent(existingEvent);
-            } catch (Exception ignored) {
-                return REDIRECT_EVENT_FORM + "-" + eventId + "-" + projectId;
+            } catch (IllegalArgumentException ignored) {
+                updateModel(model, projectService.getProjectById(projectId), eventService.getEventById(eventId));
+                model.addAttribute("titleError", "Event name cannot contain special characters");
+                return ADD_EDIT_EVENT;
             }
         }
         return REDIRECT_PROJECT_DETAILS + projectIdString;
@@ -150,5 +146,22 @@ public class AddEditEventController {
 
         eventService.deleteEventById(Integer.parseInt(eventId));
         return REDIRECT_PROJECT_DETAILS + parentProjectId;
+    }
+
+    /**
+     * Abstracted these additions instead of being repeated three times
+     * @param model
+     * @param project
+     * @param event
+     */
+    private void updateModel(Model model, Project project, Event event){
+        model.addAttribute("projectId", project.getId());
+        //Add event details to model
+        model.addAttribute("eventName", event.getEventName());
+        model.addAttribute("eventStartDate", Project.dateToString(event.getEventStartDate(), TIME_FORMAT));
+        model.addAttribute("eventEndDate", Project.dateToString(event.getEventEndDate(), TIME_FORMAT));
+        // Add event date boundaries for event to the model
+        model.addAttribute("minEventStartDate", Project.dateToString(project.getStartDate(), TIME_FORMAT));
+        model.addAttribute("maxEventEndDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
     }
 }

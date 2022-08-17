@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.EventRepository;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,8 +57,12 @@ public class EventService {
      * Save the event to the repository
      */
     public void saveEvent(Event event) {
-        projectEditsService.refreshProject(event.getEventParentProjectId());
-        eventRepository.save(event);
+        if (!ValidationUtil.titleValid(event.getEventName())){
+            throw new IllegalArgumentException("Event name must not contain special characters");
+        } else {
+            projectEditsService.refreshProject(event.getEventParentProjectId());
+            eventRepository.save(event);
+        }
     }
 
     /**

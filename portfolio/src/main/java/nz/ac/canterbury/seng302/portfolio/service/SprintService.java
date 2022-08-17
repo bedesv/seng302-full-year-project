@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -82,8 +83,14 @@ public class SprintService {
      * Saves a sprint to the repository
      */
     public void saveSprint(Sprint sprint) {
-        projectEditsService.refreshProject(sprint.getParentProjectId());
-        repository.save(sprint);
+        if (!ValidationUtil.titleValid(sprint.getName())){
+            throw new IllegalArgumentException("Sprint name must not contain special characters");
+        } else if (!ValidationUtil.titleValid(sprint.getDescription())){
+            throw new IllegalArgumentException("Sprint description must not contain special characters");
+        } else {
+            projectEditsService.refreshProject(sprint.getParentProjectId());
+            repository.save(sprint);
+        }
     }
 
     /**
