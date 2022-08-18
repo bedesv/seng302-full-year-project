@@ -30,7 +30,7 @@ public class EditUserController {
      */
     @GetMapping("/editUser")
     public String editUser() {
-        return "EDIT_USER";
+        return EDIT_USER;
     }
 
 
