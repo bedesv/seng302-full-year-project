@@ -35,7 +35,7 @@
 
                         <label>Full Name *</label><br>
 
-                        <input type="text" th:name="firstName" minlength="1" maxlength="64" required th:value="${editedFirstName} ?:${user.firstName}" class="required" th:pattern="${isNotBlankPattern}"/><label class="helper" >First name required</label><br>
+                        <input type="text" th:name="firstName" minlength="1" maxlength="64" required th:value="${editedFirstName} ?:${user.firstName}" class="required" title="Must not be blank" th:pattern="${isNotBlankPattern}"/><label class="helper" >First name required</label><br>
                         <p th:text="${firstNameError}" class="form-error-message"></p>
                         <th:block th:each="validationError: ${validationErrors}" th:if="${validationError.FieldName == 'firstName'}">
                             <p th:text="${validationError.ErrorText}" class="form-error-message"></p>
@@ -49,7 +49,7 @@
                         </th:block>
 
 
-                        <input type="text" th:name="lastName" minlength="1" maxlength="64" required th:value="${editedLastName} ?:${user.lastName}" class="required" th:pattern="${isNotBlankPattern}"/><label class="helper" >Last name required</label><br>
+                        <input type="text" th:name="lastName" minlength="1" maxlength="64" required th:value="${editedLastName} ?:${user.lastName}" class="required" title="Must not be blank" th:pattern="${isNotBlankPattern}"/><label class="helper" >Last name required</label><br>
                         <p th:text="${lastNameError}" class="form-error-message"></p>
                         <th:block th:each="validationError: ${validationErrors}" th:if="${validationError.FieldName == 'lastName'}">
                             <p th:text="${validationError.ErrorText}" class="form-error-message"></p>
