@@ -166,7 +166,7 @@ class ProjectServiceTest {
             "Normal Title",
             "SENG302",
             "Māori, a-zA-Z0123456789àáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆŠŽð,. '",
-            "私のプロジェクト"})
+            "私のプロジェクト",})
     void givenValidTitle_testTitleValid(String title) {
         assertTrue(ValidationUtil.titleValid(title));
     }
@@ -174,6 +174,18 @@ class ProjectServiceTest {
     @Test
     void givenInvalid_testTitleValid(){
         String title = "😎💖❤🎂🎉✔🎁";
+        assertFalse(ValidationUtil.titleValid(title));
+    }
+
+    @Test
+    void givenValidEmail_testTitleValid(){
+        String title = "amy.s@gmail.com";
+        assertTrue(ValidationUtil.titleValid(title));
+    }
+
+    @Test
+    void givenInvalidEmail_testTitleValid(){
+        String title = "amy.s@gmail.com❤❤❤";
         assertFalse(ValidationUtil.titleValid(title));
     }
 

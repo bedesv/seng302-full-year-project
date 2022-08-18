@@ -64,12 +64,14 @@ public class EditUserController {
 
 
         //Check for emojis early, prevents grpc error
-        List<Boolean> validationResponses = userAccountClientService.validateAttributes(model, "", firstName, middleName, lastName, nickname, pronouns, bio);
+        System.out.println("Normal: " + email);
+        System.out.println("Strip: " + ValidationUtil.stripTitle(email));
+        System.out.println("Valid: " + ValidationUtil.titleValid(email));
+        List<Boolean> validationResponses = userAccountClientService.validateAttributes(model, "", firstName, middleName, lastName, nickname, pronouns, bio, email);
         if (validationResponses.contains(false)){
-            updateModel(model, ValidationUtil.stripTitle(firstName), ValidationUtil.stripTitle(middleName), ValidationUtil.stripTitle(lastName), ValidationUtil.stripTitle(nickname), ValidationUtil.stripTitle(bio), email, ValidationUtil.stripTitle(pronouns));
+            updateModel(model, ValidationUtil.stripTitle(firstName), ValidationUtil.stripTitle(middleName), ValidationUtil.stripTitle(lastName), ValidationUtil.stripTitle(nickname), ValidationUtil.stripTitle(bio),  ValidationUtil.stripTitle(email), ValidationUtil.stripTitle(pronouns));
             return EDIT_USER;
         }
-
 
         EditUserResponse editUserResponse;
 
@@ -80,7 +82,7 @@ public class EditUserController {
             model.addAttribute("Response", editUserResponse.getMessage());
         } catch (Exception e){
             model.addAttribute("errorMessage", e);
-            return "EDIT_USER";
+            return EDIT_USER;
         }
 
         //if edit user was successful
@@ -90,7 +92,7 @@ public class EditUserController {
             //if edit user was unsuccessful
             updateModel(model, firstName, middleName, lastName, nickname, bio, email, pronouns);
             model.addAttribute("validationErrors", editUserResponse.getValidationErrorsList());
-            return "EDIT_USER";
+            return EDIT_USER;
         }
     }
 

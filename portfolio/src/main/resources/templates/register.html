@@ -34,7 +34,8 @@
                     <p th:text="${validationError.ErrorText}" class="form-error-message"></p>
                 </th:block>
                 <!--EMAIL-->
-                <input type="email" th:name="email" th:value="${email} ?: ''" minlength="1" maxlength="255" required placeholder="Email (*)" class="required" /><label class="helper" >*Email, must include '@'</label><br>
+                <input type="text" th:name="email" th:value="${email} ?: ''" pattern="^[A-Za-z0-9+_.-]+@(.+)$" minlength="1" maxlength="255" required placeholder="Email (*)" class="required" /><label class="helper" >*Email, must include '@'</label><br>
+                <p th:text="${emailError}" class="form-error-message"></p>
                 <th:block th:each="validationError: ${validationErrors}" th:if="${validationError.FieldName == 'email'}">
                     <p th:text="${validationError.ErrorText}" class="form-error-message"></p>
                 </th:block>
