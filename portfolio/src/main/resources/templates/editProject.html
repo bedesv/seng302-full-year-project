@@ -31,11 +31,12 @@
         <div id="nameOfEdited" style="display: none;" th:text="${project.getName}"></div>
         <div id="project-form__wrapper">
             <header class="project-form__header flex-column">
-                <div th:if="${projectId == '-1'}">
+                <div th:if="${projectId == -1}">
                     <h1 id="project__name"> Create New Project</h1>
                 </div>
-                <div th:if="${projectId != '-1'}">
+                <div th:if="${projectId != -1}">
                     <h1 id="project__name" th:text="'Editing: ' + ${project.getName}"></h1>
+                    <h1 id="project__name" th:text="${projectId}"></h1>
                 </div>
             </header>
 

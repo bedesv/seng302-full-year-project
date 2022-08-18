@@ -26,4 +26,13 @@ public class ValidationUtil {
         String result = matcher.replaceAll("");
         return result.length() == title.length();
     }
+
+    public static String stripTitle(String title){
+        String regex = "[^\\p{L}\\p{N}\\p{P}\\p{Z}]";
+        Pattern pattern = Pattern.compile(
+                regex,
+                Pattern.UNICODE_CHARACTER_CLASS);
+        Matcher matcher = pattern.matcher(title);
+        return matcher.replaceAll("");
+    }
 }

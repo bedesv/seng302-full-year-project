@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.DateRestrictions;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectDateService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -71,18 +72,9 @@ public class EditProjectController {
 
         int id = Integer.parseInt(projectId);
         Project project;
-
-        // If editing existing project
-        if (id != -1) {
-            // Try to find existing project
-            try {
-                project = projectService.getProjectById(id);
-            } catch (Exception ignored) {
-                project = defaultProject;
-            }
-
-        // Otherwise, we are adding new project, so setup default values
-        } else {
+        model.addAttribute("projectId", id);
+        // If creatin new project
+        if (id == -1) {
             project = new Project();
             // Set project name with current year
             Calendar cal = getCalendarDay();
@@ -94,6 +86,14 @@ public class EditProjectController {
             // Set project end date as 8 months after start
             cal.add(Calendar.MONTH, 8);
             project.setEndDate(java.util.Date.from(cal.toInstant()));
+        // Otherwise, we are adding new project, so setup default values
+        } else {
+            // Try to find existing project
+            try {
+                project = projectService.getProjectById(id);
+            } catch (Exception ignored) {
+                project = defaultProject;
+            }
         }
         updateModel(model, project);
         return EDIT_PROJECT;
@@ -131,11 +131,10 @@ public class EditProjectController {
         } catch (NumberFormatException e) {
             return PROJECT_REDIRECT;
         }
-
+        model.addAttribute("projectId", id);
         // Check the project name isn't null, empty, too long or consists of whitespace
         // Also check that the project description and date fields are valid.
-        if (projectName.length() > 255 || projectName.isBlank() ||
-                projectDescription.length() > 255 || projectEndDate == null || projectStartDate == null) {
+        if (projectName.length() > 255 || projectName.isBlank() || projectDescription.length() > 255 || projectEndDate == null || projectStartDate == null) {
             return EDIT_PROJECT_REDIRECT + projectId;
             // Check project name is
         }
@@ -170,23 +169,25 @@ public class EditProjectController {
 
         // If editing existing project
         Project savedProject;
-        if (id > 0) {
-            try {
-                savedProject = projectService.updateProject(id, projectName, projectDescription, projectStartDate, projectEndDate);
-            } catch(IllegalArgumentException e) {
-                addError(model, e);
-                Project project = projectService.getProjectById(id);
-                updateModel(model, project);
-                return EDIT_PROJECT;
-            }
-        } else {
-            // Otherwise, create a new project with given values
+        if (id == -1) {
             try {
                 Project newProject = new Project(projectName, projectDescription, projectStartDate, projectEndDate);
                 savedProject = projectService.saveProject(newProject);
             } catch (IllegalArgumentException e) {
                 addError(model, e);
-                updateModel(model, new Project("Project Name", projectDescription, projectStartDate, projectEndDate));
+                updateModel(model, new Project(ValidationUtil.stripTitle(projectName), ValidationUtil.stripTitle(projectDescription), projectStartDate, projectEndDate));
+                return EDIT_PROJECT;
+            }
+        } else {
+            // Otherwise, create a new project with given values
+            try {
+                savedProject = projectService.updateProject(id, projectName, projectDescription, projectStartDate, projectEndDate);
+            } catch(IllegalArgumentException e) {
+                addError(model, e);
+                Project project = projectService.getProjectById(id);
+                project.setName(ValidationUtil.stripTitle(projectName));
+                project.setName(ValidationUtil.stripTitle(projectDescription));
+                updateModel(model, project);
                 return EDIT_PROJECT;
             }
         }
@@ -249,7 +250,6 @@ public class EditProjectController {
 
         /* Add project details to the model */
         model.addAttribute("project", project);
-        model.addAttribute("projectId", project.getId());
         model.addAttribute("projectStartDateString", Project.dateToString(project.getStartDate(), DATE_FORMAT_STRING));
         model.addAttribute("projectEndDateString", Project.dateToString(project.getEndDate(), DATE_FORMAT_STRING));
         /*Add date restrictions*/
