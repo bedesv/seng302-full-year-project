@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.service.EventService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -109,7 +110,7 @@ public class AddEditEventController {
                 Event newEvent = new Event(projectId, eventName, eventStartDate, eventEndDate);
                 eventService.saveEvent(newEvent);
             } catch (IllegalArgumentException ignored) {
-                updateModel(model, projectService.getProjectById(projectId), new Event(projectId, "Event Name", eventStartDate, eventEndDate));
+                updateModel(model, projectService.getProjectById(projectId), new Event(projectId, ValidationUtil.stripTitle(eventName), eventStartDate, eventEndDate));
                 model.addAttribute("titleError", "Event name cannot contain special characters");
                 return ADD_EDIT_EVENT;
             }
@@ -121,7 +122,11 @@ public class AddEditEventController {
                 eventService.updateEventDates(eventId, eventStartDate, eventEndDate);
                 eventService.saveEvent(existingEvent);
             } catch (IllegalArgumentException ignored) {
-                updateModel(model, projectService.getProjectById(projectId), eventService.getEventById(eventId));
+                Event event = eventService.getEventById(eventId);
+                event.setEventName(ValidationUtil.stripTitle(eventName));
+                event.setEventStartDate(startDate);
+                event.setEventEndDate(endDate);
+                updateModel(model, projectService.getProjectById(projectId), event);
                 model.addAttribute("titleError", "Event name cannot contain special characters");
                 return ADD_EDIT_EVENT;
             }
@@ -150,9 +155,9 @@ public class AddEditEventController {
 
     /**
      * Abstracted these additions instead of being repeated three times
-     * @param model
-     * @param project
-     * @param event
+     * @param model global model
+     * @param project parent project id
+     * @param event being updated
      */
     private void updateModel(Model model, Project project, Event event){
         model.addAttribute("projectId", project.getId());

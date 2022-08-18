@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.MilestoneService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -123,16 +124,19 @@ public class EditMilestoneController {
             try {
                 milestoneService.createNewMilestone(projectId, milestoneName, milestoneDate);
             } catch (IllegalArgumentException e) {
-                updateModel(model, projectService.getProjectById(projectId), new Milestone(projectId, "Milestone Name", milestoneDate));
+                updateModel(model, projectService.getProjectById(projectId), new Milestone(projectId, ValidationUtil.stripTitle(milestoneName), milestoneDate));
                 model.addAttribute("titleError", "Milestone name cannot contain special characters");
                 return EDIT_MILESTONE;
             }
         } else {
             try {
                 milestoneService.updateMilestone(projectId, milestoneId, milestoneName, milestoneDate);
-                updateModel(model, projectService.getProjectById(projectId), milestoneService.getMilestoneById(milestoneId));
-                model.addAttribute("titleError", "Milestone name cannot contain special characters");
             } catch (IllegalArgumentException e) {
+                Milestone milestone = milestoneService.getMilestoneById(milestoneId);
+                milestone.setMilestoneName(ValidationUtil.stripTitle(milestoneName));
+                milestone.setMilestoneDate(milestoneDate);
+                updateModel(model, projectService.getProjectById(projectId), milestone);
+                model.addAttribute("titleError", "Milestone name cannot contain special characters");
                 return EDIT_MILESTONE;
             }
         }
