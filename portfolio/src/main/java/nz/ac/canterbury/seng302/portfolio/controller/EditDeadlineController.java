@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -117,7 +118,7 @@ public class EditDeadlineController {
             try {
                 deadlineService.createNewDeadline(projectId, deadlineName, deadlineDate);
             } catch (IllegalArgumentException e) {
-                Deadline deadline = new Deadline(projectId, "Deadline name", deadlineDate);
+                Deadline deadline = new Deadline(projectId, ValidationUtil.stripTitle(deadlineName), deadlineDate);
                 updateModel(model, projectService.getProjectById(projectId), deadline);
                 model.addAttribute("titleError", "Deadline name cannot contain special characters");
                 return EDIT_DEADLINE;
@@ -126,7 +127,10 @@ public class EditDeadlineController {
             try {
                 deadlineService.updateDeadline(projectId, deadlineId, deadlineName, deadlineDate);
             } catch (IllegalArgumentException e) {
-                updateModel(model, projectService.getProjectById(projectId), deadlineService.getDeadlineById(deadlineId));
+                Deadline deadline = deadlineService.getDeadlineById(deadlineId);
+                deadline.setDeadlineName(ValidationUtil.stripTitle(deadlineName));
+                deadline.setDeadlineDate(deadlineDate);
+                updateModel(model, projectService.getProjectById(projectId), deadline);
                 model.addAttribute("titleError", "Deadline name cannot contain special characters");
                 return EDIT_DEADLINE;
             }

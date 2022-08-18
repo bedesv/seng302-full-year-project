@@ -171,14 +171,19 @@ public class EditSprintController {
                 sprintService.getSprintById(sprintId);
                 sprintService.editSprint(projectId, sprintId, sprintName, sprintDescription, sprintStartDate, sprintEndDate);
             } catch (NoSuchElementException | IllegalArgumentException e) {
-                updateModel(model, project, sprintService.getSprintById(sprintId));
+                Sprint sprint = sprintService.getSprintById(sprintId);
+                sprint.setName(ValidationUtil.stripTitle(sprintName));
+                sprint.setDescription(ValidationUtil.stripTitle(sprintDescription));
+                sprint.setStartDate(sprintStartDate);
+                sprint.setEndDate(sprintEndDate);
+                updateModel(model, project, sprint);
                 return EDIT_SPRINT;
             }
         } else {
             try {
                 sprintService.createNewSprint(projectId, sprintName, sprintDescription, sprintStartDate, sprintEndDate);
             } catch (IllegalArgumentException e) {
-                updateModel(model, project, new Sprint(projectId, sprintName, sprintDescription, sprintStartDate, sprintEndDate));
+                updateModel(model, project, new Sprint(projectId, ValidationUtil.stripTitle(sprintName), ValidationUtil.stripTitle(sprintDescription), sprintStartDate, sprintEndDate));
                 return EDIT_SPRINT;
             }
 

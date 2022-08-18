@@ -4,6 +4,7 @@ import io.grpc.StatusRuntimeException;
 import nz.ac.canterbury.seng302.portfolio.authentication.CookieUtil;
 import nz.ac.canterbury.seng302.portfolio.service.AuthenticateClientService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterResponse;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
@@ -72,19 +73,11 @@ public class RegisterController {
         UserRegisterResponse userRegisterResponse;
 
         //Check for emojis early, prevents grpc error
-        List<Boolean> validationResponses = new ArrayList<>();
-        validationResponses.add(userAccountClientService.validAttribute(model, "username", username));
-        validationResponses.add(userAccountClientService.validAttribute(model, "firstName", firstName));
-        validationResponses.add(userAccountClientService.validAttribute(model, "middleName", middleName));
-        validationResponses.add(userAccountClientService.validAttribute(model, "lastName", lastName));
-        validationResponses.add(userAccountClientService.validAttribute(model, "nickname", nickname));
-        validationResponses.add(userAccountClientService.validAttribute(model, "pronouns", pronouns));
-        validationResponses.add(userAccountClientService.validAttribute(model, "bio", bio));
+        List<Boolean> validationResponses = userAccountClientService.validateAttributes(model, username, firstName, middleName, lastName, nickname, pronouns, bio);
         if (validationResponses.contains(false)){
-            updateModel(model, username, firstName, middleName, lastName, nickname, bio, email, pronouns);
+            updateModel(model, ValidationUtil.stripTitle(username), ValidationUtil.stripTitle(firstName), ValidationUtil.stripTitle(middleName), ValidationUtil.stripTitle(lastName), ValidationUtil.stripTitle(nickname), ValidationUtil.stripTitle(bio), email, ValidationUtil.stripTitle(pronouns));
             return REGISTER;
         }
-
 
         try {
             //Call the grpc with users validated params

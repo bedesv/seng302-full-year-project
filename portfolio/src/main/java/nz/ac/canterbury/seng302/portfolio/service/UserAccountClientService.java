@@ -249,4 +249,17 @@ public class UserAccountClientService {
             return true;
         }
     }
+
+    public List<Boolean> validateAttributes(Model model, String username, String firstName, String middleName, String lastName, String nickname, String pronouns, String bio){
+        //Check for emojis early, prevents grpc error
+        List<Boolean> validationResponses = new ArrayList<>();
+        validationResponses.add(validAttribute(model, "username", username));
+        validationResponses.add(validAttribute(model, "firstName", firstName));
+        validationResponses.add(validAttribute(model, "middleName", middleName));
+        validationResponses.add(validAttribute(model, "lastName", lastName));
+        validationResponses.add(validAttribute(model, "nickname", nickname));
+        validationResponses.add(validAttribute(model, "pronouns", pronouns));
+        validationResponses.add(validAttribute(model, "bio", bio));
+        return validationResponses;
+    }
 }

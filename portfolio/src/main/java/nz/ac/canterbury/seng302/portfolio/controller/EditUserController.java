@@ -2,12 +2,16 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The controller for handling get and post request on the edit user page to edit a user
@@ -18,13 +22,15 @@ public class EditUserController {
     @Autowired
     private UserAccountClientService userAccountClientService;
 
+    private static final String EDIT_USER = "editUser";
+
     /**
      * Get mapping to open editUser page
      * @return the editUser page
      */
     @GetMapping("/editUser")
     public String editUser() {
-        return "editUser";
+        return "EDIT_USER";
     }
 
 
@@ -56,7 +62,14 @@ public class EditUserController {
         //get userId using the Authentication Principle
         int id = userAccountClientService.getUserId(principal);
 
-        //should add validation to ensure that other a user can only edit themselves (or possibly include admin privileges
+
+        //Check for emojis early, prevents grpc error
+        List<Boolean> validationResponses = userAccountClientService.validateAttributes(model, "", firstName, middleName, lastName, nickname, pronouns, bio);
+        if (validationResponses.contains(false)){
+            updateModel(model, ValidationUtil.stripTitle(firstName), ValidationUtil.stripTitle(middleName), ValidationUtil.stripTitle(lastName), ValidationUtil.stripTitle(nickname), ValidationUtil.stripTitle(bio), email, ValidationUtil.stripTitle(pronouns));
+            return EDIT_USER;
+        }
+
 
         EditUserResponse editUserResponse;
 
@@ -65,10 +78,9 @@ public class EditUserController {
             editUserResponse = userAccountClientService.editUser(id, firstName,
                     middleName, lastName, nickname, bio, pronouns, email);
             model.addAttribute("Response", editUserResponse.getMessage());
-
         } catch (Exception e){
             model.addAttribute("errorMessage", e);
-            return "editUser";
+            return "EDIT_USER";
         }
 
         //if edit user was successful
@@ -76,15 +88,20 @@ public class EditUserController {
             return "redirect:/profile";
         } else {
             //if edit user was unsuccessful
-            model.addAttribute("editedEmail", email);
-            model.addAttribute("editedFirstName", firstName);
-            model.addAttribute("editedMiddleName", middleName);
-            model.addAttribute("editedLastName", lastName);
-            model.addAttribute("editedNickname", nickname);
-            model.addAttribute("editedPronouns", pronouns);
-            model.addAttribute("editedBio", bio);
+            updateModel(model, firstName, middleName, lastName, nickname, bio, email, pronouns);
             model.addAttribute("validationErrors", editUserResponse.getValidationErrorsList());
-            return "/editUser";
+            return "EDIT_USER";
         }
+    }
+
+    private void updateModel(Model model, String firstName, String middleName, String lastName, String nickname, String bio, String email, String pronouns){
+        // Add attributes back into the page so the user doesn't have to enter them again
+        model.addAttribute("editedFirstName", firstName);
+        model.addAttribute("editedMiddleName", middleName);
+        model.addAttribute("editedLastName", lastName);
+        model.addAttribute("editedNickname", nickname);
+        model.addAttribute("editedBio", bio);
+        model.addAttribute("editedEmail", email);
+        model.addAttribute("editedPronouns", pronouns);
     }
 }
