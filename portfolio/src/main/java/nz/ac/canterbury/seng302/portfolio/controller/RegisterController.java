@@ -81,6 +81,7 @@ public class RegisterController {
         validationResponses.add(userAccountClientService.validAttribute(model, "pronouns", pronouns));
         validationResponses.add(userAccountClientService.validAttribute(model, "bio", bio));
         if (validationResponses.contains(false)){
+            updateModel(model, username, firstName, middleName, lastName, nickname, bio, email, pronouns);
             return REGISTER;
         }
 
@@ -120,20 +121,10 @@ public class RegisterController {
                 return LOGIN;
             }
         } else {
-            // Add attributes back into the page so the user doesn't have to enter them again
-            model.addAttribute("username", username);
-            model.addAttribute("firstName", firstName);
-            model.addAttribute("middleName", middleName);
-            model.addAttribute("lastName", lastName);
-            model.addAttribute("nickname", nickname);
-            model.addAttribute("bio", bio);
-            model.addAttribute("email", email);
-            model.addAttribute("pronouns", pronouns);
-
             // Add errors to the page to tell the user what they need to fix
             List<ValidationError> validationErrors = userRegisterResponse.getValidationErrorsList();
             model.addAttribute("validationErrors", validationErrors);
-
+            updateModel(model, username, firstName, middleName, lastName, nickname, bio, email, pronouns);
             return REGISTER;
         }
 
@@ -147,6 +138,18 @@ public class RegisterController {
     @GetMapping("/register")
     public String register() {
         return REGISTER;
+    }
+
+    private void updateModel(Model model, String username, String firstName, String middleName, String lastName, String nickname, String bio, String email, String pronouns){
+        // Add attributes back into the page so the user doesn't have to enter them again
+        model.addAttribute("username", username);
+        model.addAttribute("firstName", firstName);
+        model.addAttribute("middleName", middleName);
+        model.addAttribute("lastName", lastName);
+        model.addAttribute("nickname", nickname);
+        model.addAttribute("bio", bio);
+        model.addAttribute("email", email);
+        model.addAttribute("pronouns", pronouns);
     }
 
 }

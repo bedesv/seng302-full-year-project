@@ -28,20 +28,26 @@
     <!-- Page content -->
     <div id="page-content" class="constrict">
         <div id="projectId" style="display: none;" th:text="${projectId}"></div>
-        <div id="nameOfEdited" style="display: none;" th:text="${projectName}"></div>
+        <div id="nameOfEdited" style="display: none;" th:text="${project.getName}"></div>
         <div id="project-form__wrapper">
-            <!-- Name, Date -->
             <header class="project-form__header flex-column">
-                <h1 id="project__name" th:text="${projectName}"></h1>
+                <div th:if="${projectId == '-1'}">
+                    <h1 id="project__name"> Create New Project</h1>
+                </div>
+                <div th:if="${projectId != '-1'}">
+                    <h1 id="project__name" th:text="'Editing: ' + ${project.getName}"></h1>
+                </div>
             </header>
 
             <!-- Add/Edit Project Form -->
             <form id="project-form__form" class="flex-column" th:action="@{editProject-{id}(id=${projectId})}" th:method="post">
                 <label for="project-form__name-field">Project Name *</label>
-                <input type="text" id="project-form__name-field" class="edit-input" name="projectName" minlength="1" maxlength="64" th:placeholder="${projectName}" th:value="${projectName}" title="Cannot be blank and must not contain special characters" required th:pattern="${titlePattern}">
+                <input type="text" id="project-form__name-field" class="edit-input" name="projectName" minlength="1" maxlength="64" th:placeholder="${project.getName}" th:value="${project.getName}" title="Cannot be blank and must not contain special characters" required th:pattern="${isNotBlankPattern}">
+                <p th:text="${titleError}" class="form-error-message"></p>
 
                 <label for="project-form__description-field">Project Description</label>
-                <textarea id="project-form__description-field" class="edit-input" name="projectDescription" maxlength="255" th:placeholder="${projectDescription}" th:text="${projectDescription}"></textarea>
+                <textarea id="project-form__description-field" class="edit-input" name="projectDescription" maxlength="255" th:placeholder="${project.getDescription}" th:text="${project.getDescription}"></textarea>
+                <p th:text="${descriptionError}" class="form-error-message"></p>
 
                 <label for="project-form__start-date-field">Project Start Date *
                     <span th:if="${dateRestrictions.hasRestrictions}" data-toggle="tooltip"
