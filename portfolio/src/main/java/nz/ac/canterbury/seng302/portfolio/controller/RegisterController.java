@@ -81,8 +81,6 @@ public class RegisterController {
         validationResponses.add(userAccountClientService.validAttribute(model, "pronouns", pronouns));
         validationResponses.add(userAccountClientService.validAttribute(model, "bio", bio));
         if (validationResponses.contains(false)){
-            System.out.println("CHECK");
-            model.addAttribute("usernameError", "Username cannot contain special chars");
             return REGISTER;
         }
 

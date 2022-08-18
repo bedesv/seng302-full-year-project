@@ -241,7 +241,7 @@ public class UserAccountClientService {
      * @param value attribute value
      * @return true if valid, else false
      */
-    public Boolean validAttribute(Model model, String attribute, String value) {
+    public boolean validAttribute(Model model, String attribute, String value) {
         if (!ValidationUtil.titleValid(value)){
             model.addAttribute(attribute + "Error", attribute +  " cannot contain special characters");
             return false;

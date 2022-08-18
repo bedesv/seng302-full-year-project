@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
@@ -107,6 +106,7 @@ public class LoginController {
             @RequestParam(name="password") String password,
             Model model
     ) {
+        //Check for emojis early, prevents grpc error
         if (!userAccountClientService.validAttribute(model, "username", username)){
             return LOGIN;
         }
