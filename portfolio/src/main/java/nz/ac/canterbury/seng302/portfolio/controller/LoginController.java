@@ -33,7 +33,7 @@ public class LoginController {
     private AuthenticateClientService authenticateClientService;
 
     @Autowired
-    private UserAccountClientService userService;
+    private UserAccountClientService userAccountClientService;
 
     private static final String COOKIE_NAME = "lens-session-token";
 
@@ -48,7 +48,7 @@ public class LoginController {
         if (principal == null) {
             return LOGIN;
         }
-        User user = userService.getUserAccountByPrincipal(principal);
+        User user = userAccountClientService.getUserAccountByPrincipal(principal);
         if (Objects.equals(user.getUsername(), "")) {
             return LOGIN;
         } else {
@@ -107,6 +107,10 @@ public class LoginController {
             @RequestParam(name="password") String password,
             Model model
     ) {
+        if (!userAccountClientService.validAttribute(model, "username", username)){
+            return LOGIN;
+        }
+
         AuthenticateResponse loginReply;
         try {
             loginReply = authenticateClientService.authenticate(username.toLowerCase(Locale.ROOT), password);

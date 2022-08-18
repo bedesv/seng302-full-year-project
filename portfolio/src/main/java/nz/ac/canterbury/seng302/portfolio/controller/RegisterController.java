@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -69,6 +70,22 @@ public class RegisterController {
                            @RequestParam(name="bio") String bio,
                            Model model) {
         UserRegisterResponse userRegisterResponse;
+
+        //Check for emojis early, prevents grpc error
+        List<Boolean> validationResponses = new ArrayList<>();
+        validationResponses.add(userAccountClientService.validAttribute(model, "username", username));
+        validationResponses.add(userAccountClientService.validAttribute(model, "firstName", firstName));
+        validationResponses.add(userAccountClientService.validAttribute(model, "middleName", middleName));
+        validationResponses.add(userAccountClientService.validAttribute(model, "lastName", lastName));
+        validationResponses.add(userAccountClientService.validAttribute(model, "nickname", nickname));
+        validationResponses.add(userAccountClientService.validAttribute(model, "pronouns", pronouns));
+        validationResponses.add(userAccountClientService.validAttribute(model, "bio", bio));
+        if (validationResponses.contains(false)){
+            System.out.println("CHECK");
+            model.addAttribute("usernameError", "Username cannot contain special chars");
+            return REGISTER;
+        }
+
 
         try {
             //Call the grpc with users validated params

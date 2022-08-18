@@ -5,10 +5,12 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.model.UserListResponse;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -164,6 +166,7 @@ public class UserAccountClientService {
     public UserRegisterResponse register(final String username, final String password, final String firstName,
                                          final String middleName, final String lastName, final String nickname,
                                          final String bio, final String personalPronouns, final String email)  {
+
         UserRegisterRequest userRegisterRequest = UserRegisterRequest.newBuilder()
                 .setUsername(username)
                 .setPassword(password)
@@ -230,4 +233,20 @@ public class UserAccountClientService {
         return roles.contains(UserRole.COURSE_ADMINISTRATOR);
     }
 
+    /**
+     * Checks if the given attrbute valid
+     * Add attribute to model if isn't valid
+     * @param model global model
+     * @param attribute title of attribute being checked
+     * @param value attribute value
+     * @return true if valid, else false
+     */
+    public Boolean validAttribute(Model model, String attribute, String value) {
+        if (!ValidationUtil.titleValid(value)){
+            model.addAttribute(attribute + "Error", attribute +  " cannot contain special characters");
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

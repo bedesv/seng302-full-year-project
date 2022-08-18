@@ -11,10 +11,11 @@
     <div class="wrapper">
         <div class="title"><span>Login</span></div>
         <p th:text="${loginMessage}" />
+        <p th:text="${usernameError}" class="form-error-message"></p>
         <form th:action="${'login'}" method="post">
             <div class="row">
                 <label>
-                    <input type="text" required placeholder="Username" th:name="username">
+                    <input type="text" required th:pattern="${isNotBlankPattern}" placeholder="Username" th:name="username">
                 </label>
             </div>
             <div class="row">
