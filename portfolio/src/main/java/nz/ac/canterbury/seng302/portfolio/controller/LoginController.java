@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.authentication.CookieUtil;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.AuthenticateClientService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,7 +108,7 @@ public class LoginController {
             Model model
     ) {
         //Check for emojis early, prevents grpc error
-        if (!userAccountClientService.validAttribute(model, "username", username)){
+        if (!ValidationUtil.validAttribute(model, "username", username)){
             return LOGIN;
         }
 

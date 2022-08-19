@@ -234,33 +234,31 @@ public class UserAccountClientService {
     }
 
     /**
-     * Checks if the given attrbute valid
-     * Add attribute to model if isn't valid
+     * Validate all attributes for a user
+     * Used by edit and register
+     * Update te global modle to inclue the error messages
      * @param model global model
-     * @param attribute title of attribute being checked
-     * @param value attribute value
-     * @return true if valid, else false
+     * @param username of user
+     * @param firstName of user
+     * @param middleName of user
+     * @param lastName of user
+     * @param nickname of user
+     * @param pronouns of user
+     * @param bio of user
+     * @param email of user
+     * @return a list of booleans, if contains false, invalid input present
      */
-    public boolean validAttribute(Model model, String attribute, String value) {
-        if (!ValidationUtil.titleValid(value)){
-            model.addAttribute(attribute + "Error", attribute +  " cannot contain special characters");
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     public List<Boolean> validateAttributes(Model model, String username, String firstName, String middleName, String lastName, String nickname, String pronouns, String bio, String email){
         //Check for emojis early, prevents grpc error
         List<Boolean> validationResponses = new ArrayList<>();
-        validationResponses.add(validAttribute(model, "username", username));
-        validationResponses.add(validAttribute(model, "firstName", firstName));
-        validationResponses.add(validAttribute(model, "middleName", middleName));
-        validationResponses.add(validAttribute(model, "lastName", lastName));
-        validationResponses.add(validAttribute(model, "nickname", nickname));
-        validationResponses.add(validAttribute(model, "pronouns", pronouns));
-        validationResponses.add(validAttribute(model, "bio", bio));
-        validationResponses.add(validAttribute(model, "email", email));
+        validationResponses.add(ValidationUtil.validAttribute(model, "username", username));
+        validationResponses.add(ValidationUtil.validAttribute(model, "firstName", firstName));
+        validationResponses.add(ValidationUtil.validAttribute(model, "middleName", middleName));
+        validationResponses.add(ValidationUtil.validAttribute(model, "lastName", lastName));
+        validationResponses.add(ValidationUtil.validAttribute(model, "nickname", nickname));
+        validationResponses.add(ValidationUtil.validAttribute(model, "pronouns", pronouns));
+        validationResponses.add(ValidationUtil.validAttribute(model, "bio", bio));
+        validationResponses.add(ValidationUtil.validAttribute(model, "email", email));
         return validationResponses;
     }
 }
