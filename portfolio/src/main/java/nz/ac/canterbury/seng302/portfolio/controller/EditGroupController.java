@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.Group;
 import nz.ac.canterbury.seng302.portfolio.service.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.CreateGroupResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.ModifyGroupDetailsResponse;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -28,6 +30,7 @@ public class EditGroupController {
     private GroupsController groupsController;
 
     private static final String GROUPS_REDIRECT = "redirect:/groups";
+    private static final String ADD_EDIT_GROUP = "addEditGroup";
 
     /**
      * The get mapping to return the page to add/edit a group
@@ -62,7 +65,7 @@ public class EditGroupController {
         model.addAttribute("groupId", Integer.parseInt(groupId));
         model.addAttribute("groupShortName", group.getShortName());
         model.addAttribute("groupLongName", group.getLongName());
-        return "addEditGroup";
+        return ADD_EDIT_GROUP;
     }
 
     /**
@@ -95,6 +98,14 @@ public class EditGroupController {
             return GROUPS_REDIRECT;
         }
 
+        List<Boolean> validFields = new ArrayList<>();
+        validFields.add(ValidationUtil.validAttribute(model, "shortName", groupShortName));
+        validFields.add(ValidationUtil.validAttribute(model, "longName", groupShortName));
+        if (validFields.contains(false)){
+            updateModel(model, groupId, ValidationUtil.stripTitle(groupShortName), ValidationUtil.stripTitle(groupLongName));
+            return ADD_EDIT_GROUP;
+        }
+
         List<ValidationError> validationErrorList;
         boolean responseSuccess;
 
@@ -121,11 +132,8 @@ public class EditGroupController {
                 }
             }
 
-            //Add event details to model so the user doesn't have to enter them again
-            model.addAttribute("groupId", groupId);
-            model.addAttribute("groupShortName", groupShortName);
-            model.addAttribute("groupLongName", groupLongName);
-            return "addEditGroup";
+            updateModel(model, groupId, groupShortName, groupLongName);
+            return ADD_EDIT_GROUP;
         } else {
             return GROUPS_REDIRECT;
         }
@@ -149,5 +157,19 @@ public class EditGroupController {
             }
         }
         return GROUPS_REDIRECT;
+    }
+
+    /**
+     * Update model
+     * @param model global model
+     * @param groupId of group
+     * @param groupShortName of group
+     * @param groupLongName of group
+     */
+    private void updateModel(Model model, int groupId, String groupShortName, String groupLongName){
+        //Add event details to model so the user doesn't have to enter them again
+        model.addAttribute("groupId", groupId);
+        model.addAttribute("groupShortName", groupShortName);
+        model.addAttribute("groupLongName", groupLongName);
     }
 }
