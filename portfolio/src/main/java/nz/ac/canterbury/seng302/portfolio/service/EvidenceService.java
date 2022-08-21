@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,9 +66,15 @@ public class EvidenceService {
         if (!titleMatcher.find() || evidence.getTitle().length() < 2 || evidence.getTitle().length() > 64) {
             throw new IllegalArgumentException("Title not valid");
         }
+        if (!ValidationUtil.titleValid(evidence.getTitle())){
+            throw new IllegalArgumentException("Title cannot contain special characters");
+        }
         Matcher descriptionMatcher = fieldPattern.matcher(evidence.getDescription());
         if (!descriptionMatcher.find() || evidence.getDescription().length() < 50 || evidence.getDescription().length() > 1024) {
             throw new IllegalArgumentException("Description not valid");
+        }
+        if (!ValidationUtil.titleValid(evidence.getDescription())){
+            throw new IllegalArgumentException("Description cannot contain special characters");
         }
         if (project.getStartDate().after(evidence.getDate()) || project.getEndDate().before(evidence.getDate())) {
             throw new IllegalArgumentException("Date not valid");
@@ -76,10 +83,26 @@ public class EvidenceService {
             if (skill.length() > 50) {
                 throw new IllegalArgumentException("Skills not valid");
             }
+            if (!ValidationUtil.titleValid(skill)){
+                throw new IllegalArgumentException("Skills cannot contain special characters");
+            }
         }
         List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(evidence.getOwnerId(), evidence.getProjectId());
         evidence.conformSkills(getSkillsFromEvidence(evidenceList));
         repository.save(evidence);
+    }
+
+    /**
+     * Method to remove special characters from skills
+     * @param skills may include special chars
+     * @return skills without special chars
+     */
+    public List<String> stripSkills(Collection<String> skills) {
+        List<String> stripped = new ArrayList<>();
+        for (String skill : skills) {
+            stripped.add(ValidationUtil.stripTitle(skill));
+        }
+        return stripped;
     }
 
     /**

@@ -75,9 +75,13 @@ public class Evidence {
         return title;
     }
 
+    public void setTitle(String title) { this.title = title; }
+
     public String getDescription() {
         return description;
     }
+
+    public void setDescription(String description) { this.description = description; }
 
     public Date getDate() {
         return date;
@@ -96,6 +100,8 @@ public class Evidence {
     }
 
     public List<String> getSkills() {return skills;}
+
+    public void setSkills(List<String> skills) { this.skills = skills; }
 
     public void addSkill (String skill) {this.skills.add(skill);}
 

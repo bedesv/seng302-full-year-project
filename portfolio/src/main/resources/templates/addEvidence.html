@@ -33,12 +33,12 @@
         <form id="evidence-form__form" class="flex-column" th:action="@{addEvidence}" th:method="post">
             <!-- Evidence Name !-->
             <label>Title *</label>
-            <input minlength="2" maxlength="64" type="text" id="evidence-form__title-field" class="edit-input" onkeyup="checkEmpty()" name="evidenceTitle" placeholder="Evidence Title" th:value="${evidenceTitle}" th:pattern="${titlePattern}" title="Evidence Name must not be blank and cannot contain special characters" required>
+            <input minlength="2" maxlength="64" type="text" id="evidence-form__title-field" class="edit-input" onkeyup="checkEmpty()" name="evidenceTitle" placeholder="Evidence Title" th:value="${evidenceTitle}" th:pattern="${isNotBlankPattern}" title="Evidence Name must not be blank and cannot contain special characters" required>
             <p class="form-error-message" th:text="${titleError}" />
             <!-- Evidence Description !-->
             <label>Description *</label>
             <span id="evidence-form__helper">Minimum 50 characters</span>
-            <textarea minlength="50" maxlength="1024" type="text" id="evidence-form__description-field" class="edit-input" onkeyup="checkEmpty()" name="evidenceDescription" placeholder="Evidence Description" th:value="${evidenceDescription}" required></textarea>
+            <textarea minlength="50" maxlength="1024" type="text" id="evidence-form__description-field" class="edit-input" onkeyup="checkEmpty()" name="evidenceDescription" placeholder="Evidence Description" th:text="${evidenceDescription}" required></textarea>
             <p class="form-error-message" th:text="${descriptionError}" />
             <!-- Evidence Date !-->
             <label>Date *

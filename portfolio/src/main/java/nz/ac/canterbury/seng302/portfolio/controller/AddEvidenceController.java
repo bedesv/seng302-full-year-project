@@ -8,6 +8,7 @@ import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.PortfolioUserService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -142,15 +143,24 @@ public class AddEvidenceController {
         } catch (IllegalArgumentException exception) {
             if (Objects.equals(exception.getMessage(), "Title not valid")) {
                 model.addAttribute("titleError", "Title cannot be all special characters");
+            } else if (Objects.equals(exception.getMessage(), "Title cannot contain special characters")) {
+                model.addAttribute("titleError", "Title cannot contain special characters");
             } else if (Objects.equals(exception.getMessage(), "Description not valid")) {
                 model.addAttribute("descriptionError", "Description cannot be all special characters");
+            } else if (Objects.equals(exception.getMessage(), "Description cannot contain special characters")) {
+                model.addAttribute("descriptionError", "Description cannot contain special characters");
             } else if (Objects.equals(exception.getMessage(), "Date not valid")) {
                 model.addAttribute("dateError", "Date must be within the project dates");
             } else if (Objects.equals(exception.getMessage(), "Skills not valid")) {
                 model.addAttribute("skillsError", "Skills cannot be more than 50 characters long");
+            } else if (Objects.equals(exception.getMessage(), "Skills cannot contain special characters")) {
+                model.addAttribute("skillsError", "Skills cannot contain special characters");
             } else {
                 model.addAttribute("generalError", exception.getMessage());
             }
+            evidence.setTitle(ValidationUtil.stripTitle(title));
+            evidence.setDescription(ValidationUtil.stripTitle(description));
+            evidence.setSkills(evidenceService.stripSkills(evidence.getSkills()));
             addEvidenceToModel(model, projectId, userId, evidence);
             return ADD_EVIDENCE; // Fail silently as client has responsibility for error checking
         }
