@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.portfolio.service.GitlabConnectionService;
 import nz.ac.canterbury.seng302.portfolio.service.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.GroupRepositorySettingsService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.GroupDetailsResponse;
 import org.gitlab4j.api.GitLabApiException;
@@ -105,7 +106,7 @@ public class GroupSettingsController {
                                         @PathVariable String id) {
         // Update the group repository information
         int groupId = Integer.parseInt(id);
-        groupRepositorySettingsService.updateRepositoryInformation(groupId, repositoryName, gitlabAccessToken, gitlabProjectId, gitlabServerUrl);
+        groupRepositorySettingsService.updateRepositoryInformation(groupId, ValidationUtil.stripTitle(repositoryName), gitlabAccessToken, gitlabProjectId, ValidationUtil.stripTitle(gitlabServerUrl));
 
         // Return the updated repository information
         GroupRepositorySettings groupRepositorySettings = groupRepositorySettingsService.getGroupRepositorySettingsByGroupId(groupId);
