@@ -2,11 +2,8 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
-import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -159,34 +156,6 @@ class ProjectServiceTest {
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
         assertNotEquals(0, projects.get(0).getId());
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "Normal Title",
-            "SENG302",
-            "Māori, a-zA-Z0123456789àáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆŠŽð,. '",
-            "私のプロジェクト",})
-    void givenValidTitle_testTitleValid(String title) {
-        assertTrue(ValidationUtil.titleValid(title));
-    }
-
-    @Test
-    void givenInvalid_testTitleValid(){
-        String title = "😎💖❤🎂🎉✔🎁";
-        assertFalse(ValidationUtil.titleValid(title));
-    }
-
-    @Test
-    void givenValidEmail_testTitleValid(){
-        String title = "amy.s@gmail.com";
-        assertTrue(ValidationUtil.titleValid(title));
-    }
-
-    @Test
-    void givenInvalidEmail_testTitleValid(){
-        String title = "amy.s@gmail.com❤❤❤";
-        assertFalse(ValidationUtil.titleValid(title));
     }
 
 }
