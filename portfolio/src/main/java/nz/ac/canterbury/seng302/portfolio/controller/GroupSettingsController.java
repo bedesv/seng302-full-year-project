@@ -106,7 +106,7 @@ public class GroupSettingsController {
                                         @PathVariable String id) {
         // Update the group repository information
         int groupId = Integer.parseInt(id);
-        groupRepositorySettingsService.updateRepositoryInformation(groupId, ValidationUtil.stripTitle(repositoryName), gitlabAccessToken, gitlabProjectId, ValidationUtil.stripTitle(gitlabServerUrl));
+        groupRepositorySettingsService.updateRepositoryInformation(groupId, ValidationUtil.stripTitle(repositoryName), ValidationUtil.stripTitle(gitlabAccessToken), gitlabProjectId, ValidationUtil.stripTitle(gitlabServerUrl));
 
         // Return the updated repository information
         GroupRepositorySettings groupRepositorySettings = groupRepositorySettingsService.getGroupRepositorySettingsByGroupId(groupId);
