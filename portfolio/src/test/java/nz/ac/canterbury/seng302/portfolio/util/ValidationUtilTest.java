@@ -1,15 +1,21 @@
 package nz.ac.canterbury.seng302.portfolio.util;
 
+import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.ui.Model;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
-public class ValidationUtilTest {
+class ValidationUtilTest {
+
+    Model model;
+    String attribute = "username";
+    String validString = "Māori, 私のプロジェクト";
+    String invalidString = "Hello❤🧡💛💚💙💞💢✝☦⛎";
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -28,5 +34,25 @@ public class ValidationUtilTest {
             "amy.s@gmail.com❤❤❤",
             "https://eng-git.canterbury.ac.nz/seng302-2022/team-400/-/branches😎💖❤🎂🎉✔🎁"})
     void givenInvalid_testTitleValid(String title){assertFalse(ValidationUtil.titleValid(title));}
+
+    @Test
+    void givenValidAttribute_testValidAttribute(){
+        assertTrue(ValidationUtil.validAttribute(model, attribute, validString));
+    }
+
+    @Test
+    void givenInvalidAttribute_testValidAttribute(){
+        assertFalse(ValidationUtil.validAttribute(model, attribute, invalidString));
+    }
+
+    @Test
+    void givenValidAttribute_testStripTitle(){
+        assertEquals(validString, ValidationUtil.stripTitle(validString));
+    }
+
+    @Test
+    void givenInvalidAttribute_testStripTitle(){
+        assertEquals("Hello", ValidationUtil.stripTitle(invalidString));
+    }
 
 }
