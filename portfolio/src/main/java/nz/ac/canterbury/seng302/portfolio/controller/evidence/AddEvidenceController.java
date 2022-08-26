@@ -138,6 +138,8 @@ public class AddEvidenceController {
         evidence.setDate(date);
         evidence.setCategories(categories);
 
+        List<Integer> userList = userService.getUserIdListFromString(users);
+
         try {
             evidenceService.saveEvidence(evidence);
         } catch (IllegalArgumentException exception) {
@@ -154,6 +156,11 @@ public class AddEvidenceController {
             }
             addEvidenceToModel(model, projectId, userId, evidence);
             return ADD_EVIDENCE; // Fail silently as client has responsibility for error checking
+        }
+        try {
+            evidenceService.copyEvidenceToNewUser(Integer.parseInt(evidenceId), userList);
+        } catch (IllegalArgumentException exception) {
+            return ADD_EVIDENCE;
         }
         return PORTFOLIO_REDIRECT;
     }
