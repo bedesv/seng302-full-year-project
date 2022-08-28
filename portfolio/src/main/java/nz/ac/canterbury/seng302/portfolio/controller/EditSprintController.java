@@ -162,7 +162,7 @@ public class EditSprintController {
         }
 
         if (validation) {
-            updateModel(model, project, new Sprint(projectId, sprintName, sprintDescription, sprintStartDate, sprintEndDate));
+            updateModel(model, project, new Sprint(projectId, ValidationUtil.stripTitle(sprintName), ValidationUtil.stripTitle(sprintDescription), sprintStartDate, sprintEndDate));
             return EDIT_SPRINT;
         }
 
