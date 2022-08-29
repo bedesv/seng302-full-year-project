@@ -14,6 +14,7 @@ class ValidationUtilTest {
 
     Model model;
     String attribute = "username";
+    String title = "Username";
     String validString = "Māori, 私のプロジェクト";
     String invalidString = "Hello❤🧡💛💚💙💞💢✝☦⛎";
 
@@ -37,12 +38,12 @@ class ValidationUtilTest {
 
     @Test
     void givenValidAttribute_testValidAttribute(){
-        assertTrue(ValidationUtil.validAttribute(model, attribute, validString));
+        assertTrue(ValidationUtil.validAttribute(model, attribute, title, validString));
     }
 
     @Test
     void givenInvalidAttribute_testValidAttribute(){
-        assertFalse(ValidationUtil.validAttribute(model, attribute, invalidString));
+        assertFalse(ValidationUtil.validAttribute(model, attribute, title, invalidString));
     }
 
     @Test
