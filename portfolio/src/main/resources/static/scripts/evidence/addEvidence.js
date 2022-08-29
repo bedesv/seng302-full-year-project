@@ -9,7 +9,7 @@ function checkEmpty() {
 
 let skillList = []
 let userList = []
-
+let currentSkillTag = null // The skill tag currently being edited
 
 
 // Adds a skill to the list of skills. Makes sure it is not already present,
@@ -58,11 +58,44 @@ function removeUser(user) {
 
 // Change a skill tag to be editable.
 function editSkill(tag) {
-    const skillObject = document.getElementById("skill-tag-" + tag)
-    const parent = skillObject.parentNode
-    parent.removeChild(skillObject);
-    parent.prepend(createElementFromHTML(`<p>yay it works!</p>`))
-    console.log(skillObject)
+    const oldSkillObject = document.getElementById("skill-tag-" + tag)
+    const parent = oldSkillObject.parentNode
+    parent.removeChild(oldSkillObject);
+    const editableSkillObject = createElementFromHTML(`<input id="editable-skill-tag" value="${tag}"/>`)
+    parent.prepend(editableSkillObject);
+    const skillObject = document.getElementById("editable-skill-tag")
+    skillObject.focus();
+    skillObject.value = skillObject.value.replaceAll(' ', '_');
+    skillObject.selectionStart = skillObject.value.length;
+    skillObject.selectionEnd = skillObject.value.length;
+
+    skillObject.addEventListener("input", (event) => {
+        let location = event.target.selectionStart;
+        let value = event.target.value;
+        let size = value.length;
+        value = value.replaceAll(' ', '_');
+        value = value.replace(/_+/g, '_');
+        value = value.slice(0, 50);
+        skillObject.value = value;
+        location -= size;
+        location += value.length;
+        event.target.selectionStart = location;
+        event.target.selectionEnd = location;
+    })
+
+    skillObject.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") { // ENTER adds a tag
+            event.preventDefault(); // do not submit the form (the default action inside forms), instead just add a tag
+            submitSkillEdit();
+        }
+    })
+}
+
+function submitSkillEdit() {
+    const editedSkill = document.getElementById("editable-skill-tag");
+    if (editedSkill) {
+        console.log(editedSkill);
+    }
 }
 
 // Remove a skill tag when the 'x' button is clicked
@@ -194,7 +227,6 @@ function updateUserTagsInDOM(tags) {
         parent.removeChild(parent.firstChild);
     }
     let userInput = parent.firstChild
-    console.log(userInput);
     for (let tag of tags) {
         for (user of ALL_USERS) {
             if (tag === user.id) {
@@ -260,7 +292,6 @@ function autocompleteSkills(event) {
 
 // Perform autocompleting on users. This is a complex endeavour!
 function autocompleteUsers(event) {
-    console.log(ALL_USERS);
     let val = event.target.value;
     /*close any already open lists of autocompleted values*/
     destroyAutocomplete();
@@ -349,6 +380,9 @@ document.addEventListener("click", function (event) {
             autocompleteItem.parentNode.removeChild(autocompleteItem);
         }
     }
+    if (event.target.id !== "editable-skill-tag") {
+        submitSkillEdit();
+    }
 });
 
 // HTML sanitization courtesy of  https://portswigger.net/web-security/cross-site-scripting/preventing
@@ -368,7 +402,10 @@ let usersDiv = document.getElementById("user-input-container")
  * allows clicking skills container to select the input and puts outline on div
  */
 skillsDiv.addEventListener('click', (event) => {
-    skillsInput.focus();
+    // If we click in a skill tag, we are editing that skill tag and so should not focus on the user input.
+    if (!event.target.id.includes("skill-tag")) {
+        skillsInput.focus();
+    }
 });
 skillsInput.addEventListener('focus', (event) => {
     skillsDiv.style.outline = 'black solid 2px';
