@@ -56,6 +56,15 @@ function removeUser(user) {
     userList.splice(userList.indexOf(user), 1);
 }
 
+// Change a skill tag to be editable.
+function editSkill(tag) {
+    const skillObject = document.getElementById("skill-tag-" + tag)
+    const parent = skillObject.parentNode
+    parent.removeChild(skillObject);
+    parent.prepend(createElementFromHTML(`<p>yay it works!</p>`))
+    console.log(skillObject)
+}
+
 // Remove a skill tag when the 'x' button is clicked
 function clickSkillXButton(tag) {
     removeSkill(tag);
@@ -162,7 +171,7 @@ function updateSkillTagsInDOM(tags) {
         let element = createElementFromHTML(`<div class="skill-tag-con">
                                                           <div class="skill-tag">
                                                             <div class="skill-tag-inside">
-                                                              <p>${sanitizeHTML(tag)}</p>
+                                                              <p id="skill-tag-${sanitizeHTML(tag)}" onclick="editSkill('${sanitizeHTML(tag)}')">${sanitizeHTML(tag)}</p>
                                                               <i class="bi bi-x" onclick="clickSkillXButton('${sanitizeHTML(tag)}')"></i>
                                                             </div>
                                                           </div>
