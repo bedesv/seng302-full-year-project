@@ -158,56 +158,38 @@ public class EditProjectController {
         }
 
         DateRestrictions dateRestrictions = projectDateService.getDateRestrictions(Integer.parseInt(projectId));
-        if (dateRestrictions.hasRestrictions()) {
-            if (projectStartCal.before(dateRestrictions.getStartDate())) {
-                return EDIT_PROJECT_REDIRECT + projectId;
-            }
-            if (!projectEndCal.after(dateRestrictions.getEndDate())) {
-                return EDIT_PROJECT_REDIRECT + projectId;
-            }
+        if (dateRestrictions.hasRestrictions()&&(projectStartCal.before(dateRestrictions.getStartDate())||!projectEndCal.after(dateRestrictions.getEndDate()))) {
+            return EDIT_PROJECT_REDIRECT + projectId;
         }
 
-        // If editing existing project
+        // If creating a new project
         Project savedProject;
         if (id == -1) {
             try {
                 Project newProject = new Project(projectName, projectDescription, projectStartDate, projectEndDate);
                 savedProject = projectService.saveProject(newProject);
             } catch (IllegalArgumentException e) {
-                addError(model, e);
+                updateProjectModel(model, "title", "Project name", projectName);
+                updateProjectModel(model, "description", "Project description", projectDescription);
                 updateModel(model, new Project(ValidationUtil.stripTitle(projectName), ValidationUtil.stripTitle(projectDescription), projectStartDate, projectEndDate));
                 return EDIT_PROJECT;
             }
         } else {
-            // Otherwise, create a new project with given values
+            // Otherwise, update project with given values
             try {
                 savedProject = projectService.updateProject(id, projectName, projectDescription, projectStartDate, projectEndDate);
             } catch(IllegalArgumentException e) {
-                addError(model, e);
+                updateProjectModel(model, "title", "Project name", projectName);
+                updateProjectModel(model, "description", "Project description", projectDescription);
                 Project project = projectService.getProjectById(id);
                 project.setName(ValidationUtil.stripTitle(projectName));
-                project.setName(ValidationUtil.stripTitle(projectDescription));
+                project.setDescription(ValidationUtil.stripTitle(projectDescription));
                 updateModel(model, project);
                 return EDIT_PROJECT;
             }
         }
 
         return REDIRECT_PROJECT_DETAILS + savedProject.getId();
-    }
-
-    /**
-     * After caught error, add to model
-     * @param model global model
-     * @param e exception thrown
-     */
-    private void addError(Model model, IllegalArgumentException e) {
-        if (e.getMessage().equals("projectName")){
-            model.addAttribute("titleError", "Project name cannot contain special characters");
-        } else if (e.getMessage().equals("projectDescription")) {
-            model.addAttribute("descriptionError", "Project description cannot contain special characters");
-        } else {
-            //UNKNOWN ERROR
-        }
     }
 
     /**
@@ -256,6 +238,19 @@ public class EditProjectController {
         model.addAttribute("minProjectStartDate", Project.dateToString(minStartDate, DATE_FORMAT_STRING));
         model.addAttribute("maxProjectEndDate", Project.dateToString(maxEndDate, DATE_FORMAT_STRING));
         model.addAttribute("dateRestrictions", dateRestrictions);
+    }
+
+    /**
+     * Method to udpdate model if error
+     * @param model global model
+     * @param attribute being validated
+     * @param title for error message
+     * @param value attribute value
+     */
+    private void updateProjectModel(Model model, String attribute, String title, String value){
+        if (!ValidationUtil.titleValid(value)){
+            model.addAttribute(attribute + "Error", title + " cannot contain special characters");
+        }
     }
 
 }

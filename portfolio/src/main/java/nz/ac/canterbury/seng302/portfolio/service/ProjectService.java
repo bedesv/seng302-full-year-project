@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.sql.Date;
 import java.util.*;
@@ -39,10 +40,8 @@ public class ProjectService {
     }
 
     public Project saveProject(Project project) {
-        if (!ValidationUtil.titleValid(project.getName())) {
-            throw new IllegalArgumentException("projectName");
-        } else if (!ValidationUtil.titleValid(project.getDescription())) {
-            throw new IllegalArgumentException("projectDescription");
+        if (!ValidationUtil.titleValid(project.getName())||!ValidationUtil.titleValid(project.getDescription())) {
+            throw new IllegalArgumentException("Validation Error");
         } else {
             projectEditsService.refreshProject(project.getId());
             return repository.save(project);
