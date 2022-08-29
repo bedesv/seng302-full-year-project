@@ -39,16 +39,16 @@ public class ValidationUtil {
     }
 
     /**
-     * Checks if the given attrbute valid
+     * Checks if the given attribute valid
      * Add attribute to model if isn't valid
      * @param model global model
      * @param attribute title of attribute being checked
      * @param value attribute value
      * @return true if valid, else false
      */
-    public static boolean validAttribute(Model model, String attribute, String value) {
+    public static boolean validAttribute(Model model, String attribute, String title, String value) {
         if (!ValidationUtil.titleValid(value)){
-            model.addAttribute(attribute + "Error", attribute +  " cannot contain special characters");
+            model.addAttribute(attribute + "Error", title +  " cannot contain special characters");
             return false;
         } else {
             return true;

@@ -251,14 +251,14 @@ public class UserAccountClientService {
     public List<Boolean> validateAttributes(Model model, String username, String firstName, String middleName, String lastName, String nickname, String pronouns, String bio, String email){
         //Check for emojis early, prevents grpc error
         List<Boolean> validationResponses = new ArrayList<>();
-        validationResponses.add(ValidationUtil.validAttribute(model, "username", username));
-        validationResponses.add(ValidationUtil.validAttribute(model, "firstName", firstName));
-        validationResponses.add(ValidationUtil.validAttribute(model, "middleName", middleName));
-        validationResponses.add(ValidationUtil.validAttribute(model, "lastName", lastName));
-        validationResponses.add(ValidationUtil.validAttribute(model, "nickname", nickname));
-        validationResponses.add(ValidationUtil.validAttribute(model, "pronouns", pronouns));
-        validationResponses.add(ValidationUtil.validAttribute(model, "bio", bio));
-        validationResponses.add(ValidationUtil.validAttribute(model, "email", email));
+        validationResponses.add(ValidationUtil.validAttribute(model, "username", "Username", username));
+        validationResponses.add(ValidationUtil.validAttribute(model, "firstName", "First name", firstName));
+        validationResponses.add(ValidationUtil.validAttribute(model, "middleName", "Middle name", middleName));
+        validationResponses.add(ValidationUtil.validAttribute(model, "lastName", "Last name", lastName));
+        validationResponses.add(ValidationUtil.validAttribute(model, "nickname", "Nickname", nickname));
+        validationResponses.add(ValidationUtil.validAttribute(model, "pronouns", "Pronouns", pronouns));
+        validationResponses.add(ValidationUtil.validAttribute(model, "bio", "Bio", bio));
+        validationResponses.add(ValidationUtil.validAttribute(model, "email", "Email", email));
         return validationResponses;
     }
 }

@@ -108,7 +108,7 @@ public class LoginController {
             Model model
     ) {
         //Check for emojis early, prevents grpc error
-        if (!ValidationUtil.validAttribute(model, "username", username)){
+        if (!ValidationUtil.validAttribute(model, "username", "Username" , username)){
             return LOGIN;
         }
 

@@ -99,8 +99,8 @@ public class EditGroupController {
         }
 
         List<Boolean> validFields = new ArrayList<>();
-        validFields.add(ValidationUtil.validAttribute(model, "shortName", groupShortName));
-        validFields.add(ValidationUtil.validAttribute(model, "longName", groupShortName));
+        validFields.add(ValidationUtil.validAttribute(model, "shortName", "Short name" ,groupShortName));
+        validFields.add(ValidationUtil.validAttribute(model, "longName", "Long name", groupShortName));
         if (validFields.contains(false)){
             updateModel(model, groupId, ValidationUtil.stripTitle(groupShortName), ValidationUtil.stripTitle(groupLongName));
             return ADD_EDIT_GROUP;
