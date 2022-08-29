@@ -158,7 +158,7 @@ public class AddEvidenceController {
             return ADD_EVIDENCE; // Fail silently as client has responsibility for error checking
         }
         try {
-            evidenceService.copyEvidenceToNewUser(Integer.parseInt(evidenceId), userList);
+            evidenceService.copyEvidenceToNewUser(evidence.getId(), userList);
         } catch (IllegalArgumentException exception) {
             return ADD_EVIDENCE;
         }

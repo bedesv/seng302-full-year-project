@@ -119,7 +119,12 @@ public class EvidenceService {
     public void copyEvidenceToNewUser(Integer evidenceId, List<Integer> userIdList) {
         try {
             Evidence evidence = getEvidenceById(evidenceId);
-            String skillList = String.join(" ", evidence.getSkills());
+            String skillList;
+            if (!evidence.getSkills().isEmpty()) {
+                skillList = String.join(" ", evidence.getSkills());
+            } else {
+                skillList = null;
+            }
             Set<Categories> categoriesSet = new HashSet<>(evidence.getCategories());
             for (Integer id: userIdList) {
                 evidence.addUser(id);
@@ -145,7 +150,7 @@ public class EvidenceService {
         } catch (NoSuchElementException e) {
             String message = "Evidence " + evidenceId + " not found";
             PORTFOLIO_LOGGER.error(message);
-            throw new NoSuchElementException("Evidence does not exist");
+            throw new NoSuchElementException(e.getMessage());
         }
     }
 
