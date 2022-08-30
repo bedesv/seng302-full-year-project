@@ -7,10 +7,10 @@ function checkEmpty() {
         || document.getElementById("evidence-form__description-field").value.length > 1024;
 }
 
-let skillList = []
-let userList = []
-let currentSkillTag = null // The skill tag currently being edited
-
+let skillList = [];
+let changedSkills = {};
+let editedSkillTag = null;
+let userList = [];
 
 // Adds a skill to the list of skills. Makes sure it is not already present,
 // and if the user has already entered that skill on another piece of evidence, make sure the capitalization is correct.
@@ -56,12 +56,26 @@ function removeUser(user) {
     userList.splice(userList.indexOf(user), 1);
 }
 
+function saveSkillEdit(oldSkill, newSkill) {
+    skillList[skillList.indexOf(oldSkill)] = newSkill;
+    if (ALL_SKILLS.includes(oldSkill)) {
+        changedSkills[oldSkill] = newSkill
+    } else {
+        for (const skill in changedSkills) {
+            if (changedSkills[skill] === oldSkill) {
+                changedSkills[skill] = newSkill;
+            }
+        }
+    }
+}
+
 // Change a skill tag to be editable.
 function editSkill(tag) {
     const oldSkillObject = document.getElementById("skill-tag-" + tag)
+    editedSkillTag = "skill-tag-" + tag;
     const parent = oldSkillObject.parentNode
     parent.removeChild(oldSkillObject);
-    const editableSkillObject = createElementFromHTML(`<input id="editable-skill-tag" value="${tag}"/>`)
+    const editableSkillObject = createElementFromHTML(`<input id="editable-skill-tag" value="${tag}" data-old-value="${tag}"/>`)
     parent.prepend(editableSkillObject);
     const skillObject = document.getElementById("editable-skill-tag")
     skillObject.focus();
@@ -87,6 +101,9 @@ function editSkill(tag) {
         if (event.key === "Enter") { // ENTER adds a tag
             event.preventDefault(); // do not submit the form (the default action inside forms), instead just add a tag
             submitSkillEdit();
+        } else if (event.key === "Escape") {
+            editedSkillTag = null
+            updateSkillTagsInDOM(skillList);
         }
     })
 }
@@ -94,7 +111,34 @@ function editSkill(tag) {
 function submitSkillEdit() {
     const editedSkill = document.getElementById("editable-skill-tag");
     if (editedSkill) {
-        console.log(editedSkill);
+        const newSkill = editedSkill.value;
+        const oldSkill = editedSkill.getAttribute('data-old-value');
+
+        let isAlreadySkill = false;
+        for (const testSkill of skillList) {
+            if (testSkill.toLowerCase() === newSkill.toLowerCase().replaceAll("_", " ")) {
+                isAlreadySkill = true;
+            }
+        }
+        for (const testSkill of ALL_SKILLS) {
+            if (testSkill.toLowerCase() === newSkill.toLowerCase().replaceAll("_", " ")) {
+                isAlreadySkill = true;
+            }
+        }
+
+        if (newSkill === "" || newSkill === "_") {
+            console.log("bad bad error thingy: empty skill");
+            // error and trap user
+        } else if (!isAlreadySkill || oldSkill.toLowerCase() === newSkill.toLowerCase()) {
+            saveSkillEdit(oldSkill, newSkill);
+            console.log("save");
+            editedSkillTag = null;
+            updateSkillTagsInDOM(skillList);
+        } else {
+            console.log("bad bad error thingy: duplicate skill!");
+            // error and trap user
+        }
+
     }
 }
 
@@ -186,14 +230,28 @@ document.getElementById("users-input").addEventListener("keydown", (event) => {
     updateFocus(event);
 })
 
-// Updates the tags shown before the skills input list to reflect the list of tags given.
-function updateSkillTagsInDOM(tags) {
+function updateHiddenFields() {
     let skills = "";
-    for (const skill of tags) {
+    for (const skill of skillList) {
         skills += skill.replaceAll(" ", "_");
         skills += " ";
     }
     document.getElementById("evidence-form__hidden-skills-field").value = skills;
+
+    let skillChanges = "";
+    for (const oldSkill in changedSkills) {
+        skillChanges += oldSkill
+        skillChanges += " "
+        skillChanges += changedSkills[oldSkill]
+        skillChanges += " ";
+    }
+    console.log(skillChanges)
+    document.getElementById("evidence-form__hidden--change-skills-field").value = skillChanges;
+}
+
+// Updates the tags shown before the skills input list to reflect the list of tags given.
+function updateSkillTagsInDOM(tags) {
+    updateHiddenFields();
 
     let parent = document.getElementById("skill-container");
     while (parent.childNodes.length > 2) {
@@ -380,8 +438,9 @@ document.addEventListener("click", function (event) {
             autocompleteItem.parentNode.removeChild(autocompleteItem);
         }
     }
-    if (event.target.id !== "editable-skill-tag") {
+    if (event.target.id !== "editable-skill-tag" && event.target.id !== editedSkillTag) {
         submitSkillEdit();
+
     }
 });
 
