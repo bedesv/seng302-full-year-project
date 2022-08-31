@@ -114,8 +114,10 @@ class GroupChartDataServiceTest {
         assertEquals(0, result.get(testUser2.getFullName()));
     }
 
-    //Over time tests//
 
+    //////////////////////////OverTime Tests///////////////////////////
+
+    //Day//
     @Test
     void whenNoUsersInGroup_testGetGroupEvidenceDataOverTimeDay() {
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, new ArrayList<>());
@@ -128,12 +130,10 @@ class GroupChartDataServiceTest {
     @Test
     void whenUserInGroupWithEvidenceOutOfBounds_testGetGroupEvidenceOverTimeDay() {
         List<User> testUserList = new ArrayList<>();
-        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, new ArrayList<>());
         Date startDate = Date.valueOf("2022-05-01");
         Date endDate = Date.valueOf("2022-06-01");
-        testUser1.setFirstName("Tester");
-        testUser1.setLastName("One");
         testUserList.add(testUser1);
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
         Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-04-30"));
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
@@ -145,36 +145,215 @@ class GroupChartDataServiceTest {
     }
 
     @Test
-    void whenUserInGroupWithEvidenceOnLowerBound_testGetGroupEvidenceOverTimeDay() {}
+    void whenUserInGroupWithEvidenceOnLowerBound_testGetGroupEvidenceOverTimeDay() {
+        List<User> testUserList = new ArrayList<>();
+        Date startDate = Date.valueOf("2022-05-01");
+        Date endDate = Date.valueOf("2022-06-01");
+        testUserList.add(testUser1);
+        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-01"));
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
+
+        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
+        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
+        groupChartDataService.setEvidenceService(mockedEvidenceService);
+
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "day");
+        assertEquals(1, result.get("2022-05-01"));
+    }
 
     @Test
-    void whenUserInGroupWithEvidenceOnUpperBound_testGetGroupEvidenceOverTimeDay() {}
+    void whenUserInGroupWithEvidenceOnUpperBound_testGetGroupEvidenceOverTimeDay() {
+        List<User> testUserList = new ArrayList<>();
+        Date startDate = Date.valueOf("2022-05-01");
+        Date endDate = Date.valueOf("2022-06-01");
+        testUserList.add(testUser1);
+        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-06-01"));
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
+
+        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
+        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
+        groupChartDataService.setEvidenceService(mockedEvidenceService);
+
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "day");
+        assertEquals(1, result.get("2022-06-01"));
+    }
 
     @Test
-    void whenUserInGroupWithEvidenceInsideBoundary_testGetGroupEvidenceOverTimeDay() {}
+    void whenUserInGroupWithEvidenceInsideBoundary_testGetGroupEvidenceOverTimeDay() {
+        List<User> testUserList = new ArrayList<>();
+        Date startDate = Date.valueOf("2022-05-01");
+        Date endDate = Date.valueOf("2022-06-01");
+        testUserList.add(testUser1);
+        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-10"));
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
+
+        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
+        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
+        groupChartDataService.setEvidenceService(mockedEvidenceService);
+
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "day");
+        assertEquals(1, result.get("2022-05-10"));
+    }
 
     @Test
-    void whenTwoUsersInGroupWithEvidenceInsideBoundary_testGetGroupEvidenceOverTimeDay() {}
+    void whenTwoUsersInGroupWithEvidenceInsideBoundary_testGetGroupEvidenceOverTimeDay() {
+        List<User> testUserList = new ArrayList<>();
+        Date startDate = Date.valueOf("2022-05-01");
+        Date endDate = Date.valueOf("2022-06-01");
+        testUserList.add(testUser1);
+        testUserList.add(testUser2);
+        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-10"));
+        Evidence testEvidence2 = new Evidence(testUser2.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-10"));
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
+
+        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
+        Mockito.doReturn(List.of(testEvidence1), List.of(testEvidence2)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
+        groupChartDataService.setEvidenceService(mockedEvidenceService);
+
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "day");
+        assertEquals(2, result.get("2022-05-10"));
+    }
+
+    //Week//
+    @Test
+    void whenUserInGroupWithEvidenceOutOfBounds_testGetGroupEvidenceOverTimeWeek() {
+        List<User> testUserList = new ArrayList<>();
+        Date startDate = Date.valueOf("2022-05-01");
+        Date endDate = Date.valueOf("2022-06-01");
+        testUserList.add(testUser1);
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
+        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-04-30"));
+
+        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
+        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
+
+        groupChartDataService.setEvidenceService(mockedEvidenceService);
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "week");
+        assertEquals(0, result.size());
+    }
 
     @Test
-    void whenUserInGroupWithEvidenceOnLowerBound_testGetGroupEvidenceOverTimeWeek() {}
+    void whenUserInGroupWithEvidenceOnLowerBound_testGetGroupEvidenceOverTimeWeek() {
+        List<User> testUserList = new ArrayList<>();
+        Date startDate = Date.valueOf("2022-05-01");
+        Date endDate = Date.valueOf("2022-06-01");
+        testUserList.add(testUser1);
+        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-01"));
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
+
+        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
+        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
+        groupChartDataService.setEvidenceService(mockedEvidenceService);
+
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "week");
+        assertEquals(1, result.get("2022-05-01")); //Gets the Sunday value
+    }
 
     @Test
-    void whenUserInGroupWithEvidenceOnUpperBound_testGetGroupEvidenceOverTimeWeek() {}
+    void whenUserInGroupWithEvidenceOnUpperBound_testGetGroupEvidenceOverTimeWeek() {
+        List<User> testUserList = new ArrayList<>();
+        Date startDate = Date.valueOf("2022-05-01");
+        Date endDate = Date.valueOf("2022-06-01");
+        testUserList.add(testUser1);
+        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-06-01"));
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
+
+        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
+        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
+        groupChartDataService.setEvidenceService(mockedEvidenceService);
+
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "week");
+        assertEquals(1, result.get("2022-06-05")); //Gets the Sunday value
+    }
 
     @Test
-    void whenUserInGroupWithEvidenceInsideBoundary_testGetGroupEvidenceOverTimeWeek() {}
+    void whenUserInGroupWithEvidenceInsideBoundary_testGetGroupEvidenceOverTimeWeek() {
+        List<User> testUserList = new ArrayList<>();
+        Date startDate = Date.valueOf("2022-05-01");
+        Date endDate = Date.valueOf("2022-06-01");
+        testUserList.add(testUser1);
+        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-10"));
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
+
+        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
+        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
+        groupChartDataService.setEvidenceService(mockedEvidenceService);
+
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "week");
+        assertEquals(1, result.get("2022-05-15")); //Gets the Sunday value
+    }
+
+    //Month//
+    @Test
+    void whenUserInGroupWithEvidenceOutOfBounds_testGetGroupEvidenceOverTimeMonth() {
+        List<User> testUserList = new ArrayList<>();
+        Date startDate = Date.valueOf("2022-05-01");
+        Date endDate = Date.valueOf("2022-06-01");
+        testUserList.add(testUser1);
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
+        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-04-30"));
+
+        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
+        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
+
+        groupChartDataService.setEvidenceService(mockedEvidenceService);
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "month");
+        assertEquals(0, result.size());
+    }
 
     @Test
-    void whenUserInGroupWithEvidenceOnLowerBound_testGetGroupEvidenceOverTimeMonth() {}
+    void whenUserInGroupWithEvidenceOnLowerBound_testGetGroupEvidenceOverTimeMonth() {
+        List<User> testUserList = new ArrayList<>();
+        Date startDate = Date.valueOf("2022-05-01");
+        Date endDate = Date.valueOf("2022-06-01");
+        testUserList.add(testUser1);
+        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-01"));
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
+
+        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
+        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
+        groupChartDataService.setEvidenceService(mockedEvidenceService);
+
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "month");
+        assertEquals(1, result.get("2022-05"));
+    }
 
     @Test
-    void whenUserInGroupWithEvidenceOnUpperBound_testGetGroupEvidenceOverTimeMonth() {}
+    void whenUserInGroupWithEvidenceOnUpperBound_testGetGroupEvidenceOverTimeMonth() {
+        List<User> testUserList = new ArrayList<>();
+        Date startDate = Date.valueOf("2022-05-01");
+        Date endDate = Date.valueOf("2022-06-01");
+        testUserList.add(testUser1);
+        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-06-01"));
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
+
+        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
+        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
+        groupChartDataService.setEvidenceService(mockedEvidenceService);
+
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "month");
+        assertEquals(1, result.get("2022-06"));
+    }
 
     @Test
-    void whenUserInGroupWithEvidenceInsideBoundary_testGetGroupEvidenceOverTimeMonth() {}
+    void whenUserInGroupWithEvidenceInsideBoundary_testGetGroupEvidenceOverTimeMonth() {
+        List<User> testUserList = new ArrayList<>();
+        Date startDate = Date.valueOf("2022-05-01");
+        Date endDate = Date.valueOf("2022-06-01");
+        testUserList.add(testUser1);
+        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-10"));
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
-    //Category Tests//
+        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
+        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
+        groupChartDataService.setEvidenceService(mockedEvidenceService);
+
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "month");
+        assertEquals(1, result.get("2022-05"));
+    }
+
+
+    //////////////////////////Category Tests///////////////////////////
     @Test
     void whenNoUsersInGroup_testGetGroupCategoryData() {
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, new ArrayList<>());
