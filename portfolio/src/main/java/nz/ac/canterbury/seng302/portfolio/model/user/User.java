@@ -52,6 +52,12 @@ public class User {
         id = source.getId();
     }
 
+    /** Should only be called while testing **/
+    public void setFirstName(String firstName) {this.firstName = firstName; }
+
+    /** Should only be called while testing **/
+    public void setLastName(String lastName) {this.lastName = lastName; }
+
     public String getUsername() {
         return username;
     }
@@ -81,6 +87,7 @@ public class User {
             return firstName + " " + lastName;
         }
     }
+
 
     public String getNickname() {
         return nickname;
