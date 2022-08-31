@@ -31,7 +31,7 @@
             <div class="evidence__details--expanded flex-column" >
                 <h4 class="evidence__description" th:text="${evidence.getDescription} "></h4>
                 <div class="user-tag-con">
-                    <div class="user-tag" th:each="user: ${evidence.getLinkedUsers}">
+                    <div class="user-tag" th:each="user: ${evidence.getLinkedUsers()}">
                         <div class="user-tag-inside">
                             <img class="user-tag-image" th:src="${user.getProfileImagePath()}" alt="Profile Photo">
                             <div class="user-tag-text" >

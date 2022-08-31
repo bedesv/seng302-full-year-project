@@ -110,7 +110,6 @@ public class EvidenceService {
         }
         List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(evidence.getOwnerId(), evidence.getProjectId());
         evidence.conformSkills(getSkillsFromEvidence(evidenceList));
-        evidence.addLinkedUsers(userService.getUserAccountById(evidence.getOwnerId()));
         repository.save(evidence);
         String message = "Evidence " + evidence.getId() + " saved successfully";
         PORTFOLIO_LOGGER.info(message);
@@ -135,7 +134,7 @@ public class EvidenceService {
             }
             Set<Categories> categoriesSet = new HashSet<>(evidence.getCategories());
             for (Integer id: userIdList) {
-                evidence.addLinkedUsers(userService.getUserAccountById(id));
+                evidence.addLinkedUsers(id);
             }
 
             for (Integer userId: userIdList) {
@@ -145,8 +144,8 @@ public class EvidenceService {
                 for (WebLink webLink : evidence.getWebLinks()) {
                     copiedEvidence.addWebLink(webLink);
                 }
-                for (User user: evidence.getLinkedUsers()) {
-                    copiedEvidence.addLinkedUsers(user);
+                for (Integer linkedUserId: evidence.getLinkedUsers()) {
+                    copiedEvidence.addLinkedUsers(linkedUserId);
                 }
                 // This is to make sure that there are no duplicate skills in the other user's portfolio
                 List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(copiedEvidence.getOwnerId(), copiedEvidence.getProjectId());

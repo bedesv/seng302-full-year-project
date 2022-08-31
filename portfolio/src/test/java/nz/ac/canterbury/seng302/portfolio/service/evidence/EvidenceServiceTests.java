@@ -2,11 +2,15 @@ package nz.ac.canterbury.seng302.portfolio.service.evidence;
 
 import nz.ac.canterbury.seng302.portfolio.model.evidence.*;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
+import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
+import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,6 +34,9 @@ class EvidenceServiceTests {
 
     @Autowired
     ProjectService projectService;
+
+    @Autowired
+    UserAccountClientService userService;
 
     @Autowired
     EvidenceRepository evidenceRepository;
@@ -944,11 +951,22 @@ class EvidenceServiceTests {
         int testUserId1 = 1;
         int testUserId2 = 2;
         int testUserId3 = 3;
-        Set<Integer> userIdSet = new HashSet<>();
-        userIdSet.add(testUserId0);
-        userIdSet.add(testUserId1);
-        userIdSet.add(testUserId2);
-        userIdSet.add(testUserId3);
+
+        User user0 = new User(UserResponse.newBuilder().setId(testUserId0).build());
+        User user1 = new User(UserResponse.newBuilder().setId(testUserId1).build());
+        User user2 = new User(UserResponse.newBuilder().setId(testUserId2).build());
+        User user3 = new User(UserResponse.newBuilder().setId(testUserId3).build());
+        Set<User> userIdSet = new HashSet<>();
+
+        UserAccountClientService mockUserService = Mockito.spy(userService);
+        Mockito.doReturn(user0).when(mockUserService).getUserAccountById(testUserId0);
+        Mockito.doReturn(user1).when(mockUserService).getUserAccountById(testUserId1);
+        Mockito.doReturn(user2).when(mockUserService).getUserAccountById(testUserId2);
+        Mockito.doReturn(user3).when(mockUserService).getUserAccountById(testUserId3);
+        userIdSet.add(user0);
+        userIdSet.add(user1);
+        userIdSet.add(user2);
+        userIdSet.add(user3);
 
         Evidence evidence = new Evidence(testUserId0, projects.get(1).getId(), "Evidence One", TEST_DESCRIPTION, Date.valueOf("2022-05-12"), "skill1 skill_2 {skill}  a     b  ");
         evidenceService.saveEvidence(evidence);
@@ -957,10 +975,10 @@ class EvidenceServiceTests {
         List<Evidence> evidenceList = (List<Evidence>) evidenceRepository.findAll();
         assertEquals(4, evidenceList.size());
         assertThat(evidenceList.get(0).getId()).isNotIn(evidenceList.get(1).getId(), evidenceList.get(2).getId(), evidenceList.get(3).getId());
-//        assertEquals(userIdSet, evidenceRepository.findById(evidence.getId()).getLinkedUsers());
-//        assertEquals(userIdSet, evidenceList.get(1).getLinkedUsers());
-//        assertEquals(userIdSet, evidenceList.get(2).getLinkedUsers());
-//        assertEquals(userIdSet, evidenceList.get(3).getLinkedUsers());
+        assertEquals(userIdSet, evidenceRepository.findById(evidence.getId()).getLinkedUsers());
+        assertEquals(userIdSet, evidenceList.get(1).getLinkedUsers());
+        assertEquals(userIdSet, evidenceList.get(2).getLinkedUsers());
+        assertEquals(userIdSet, evidenceList.get(3).getLinkedUsers());
     }
 
     @Test

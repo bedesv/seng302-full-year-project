@@ -57,6 +57,7 @@ public class PortfolioController {
         int userId = user.getId();
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
         List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
+        System.out.println(evidenceList.get(0).getLinkedUsers());
 
         model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("skillsList", evidenceService.getSkillsFromEvidence(evidenceList));
