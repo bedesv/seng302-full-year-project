@@ -4,11 +4,14 @@ import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
+import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
+import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
@@ -23,7 +26,11 @@ public class EvidenceService {
     private EvidenceRepository repository;
 
     @Autowired
+    private UserAccountClientService userService;
+
+    @Autowired
     private ProjectService projectService;
+
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
 
     /**
@@ -103,6 +110,7 @@ public class EvidenceService {
         }
         List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(evidence.getOwnerId(), evidence.getProjectId());
         evidence.conformSkills(getSkillsFromEvidence(evidenceList));
+        evidence.addLinkedUsers(userService.getUserAccountById(evidence.getOwnerId()));
         repository.save(evidence);
         String message = "Evidence " + evidence.getId() + " saved successfully";
         PORTFOLIO_LOGGER.info(message);
@@ -127,7 +135,7 @@ public class EvidenceService {
             }
             Set<Categories> categoriesSet = new HashSet<>(evidence.getCategories());
             for (Integer id: userIdList) {
-                evidence.addUser(id);
+                evidence.addLinkedUsers(userService.getUserAccountById(id));
             }
 
             for (Integer userId: userIdList) {
@@ -137,8 +145,8 @@ public class EvidenceService {
                 for (WebLink webLink : evidence.getWebLinks()) {
                     copiedEvidence.addWebLink(webLink);
                 }
-                for (Integer user: evidence.getUsers()) {
-                    copiedEvidence.addUser(user);
+                for (User user: evidence.getLinkedUsers()) {
+                    copiedEvidence.addLinkedUsers(user);
                 }
                 // This is to make sure that there are no duplicate skills in the other user's portfolio
                 List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(copiedEvidence.getOwnerId(), copiedEvidence.getProjectId());
@@ -237,7 +245,7 @@ public class EvidenceService {
     }
 
     /**
-     * Retrieve all evidence for a project where skills is null
+     * Retrieve all evidence for a project where skills are null
      * @param projectId of evidence
      * @return list of evidences with no skill
      */

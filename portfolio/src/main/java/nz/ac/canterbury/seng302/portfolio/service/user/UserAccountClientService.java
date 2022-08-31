@@ -193,6 +193,7 @@ public class UserAccountClientService {
         return new User(response);
     }
 
+
     /**
      * Uses the AuthState of the logged in user to get their user object
      * @param principal Authentication principal storing current user information

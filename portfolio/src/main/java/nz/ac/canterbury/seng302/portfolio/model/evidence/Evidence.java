@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.model.evidence;
 
+import nz.ac.canterbury.seng302.portfolio.model.user.User;
+
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -34,7 +36,7 @@ public class Evidence {
     @ElementCollection
     private List<String> skills; //skills related to this piece of evidence
     @Transient
-    private Set<Integer> users = new HashSet<>(Set.of(ownerId));
+    private Set<User> linkedUsers = new HashSet<>();
 
 
     public Evidence() {
@@ -102,12 +104,12 @@ public class Evidence {
 
     public void addSkill (String skill) {this.skills.add(skill);}
 
-    public Set<Integer> getUsers() {
-        return users;
+    public Set<User> getLinkedUsers() {
+        return linkedUsers;
     }
 
-    public void addUser(Integer userId) {
-        this.users.add(userId);
+    public void addLinkedUsers(User user) {
+        this.linkedUsers.add(user);
     }
 
     /**
@@ -170,4 +172,5 @@ public class Evidence {
     public void setCategories(Set<Categories> categories) {
         this.categories = categories;
     }
+
 }

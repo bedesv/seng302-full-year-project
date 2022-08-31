@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 
+<script th:inline="javascript">
+
+</script>
 <!-- List of Evidence -->
 <div id="evidence__form-wrapper flex-column">
     <div class="evidence__collapsed" th:each="evidence: ${evidenceList}">
@@ -27,6 +30,17 @@
         <div class="evidence__details collapse" th:id="evidence_ + ${evidence.getId}">
             <div class="evidence__details--expanded flex-column" >
                 <h4 class="evidence__description" th:text="${evidence.getDescription} "></h4>
+                <div class="user-tag-con">
+                    <div class="user-tag" th:each="user: ${evidence.getLinkedUsers}">
+                        <div class="user-tag-inside">
+                            <img class="user-tag-image" th:src="${user.getProfileImagePath()}" alt="Profile Photo">
+                            <div class="user-tag-text" >
+                                <p class="user-tag-fullName" th:text="${user.getFullName()}"></p>
+                                <p class="user-tag-nickname" th:text="${user.getUsername()}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="evidence__skills">
                     <a th:each="category: ${evidence.getCategories}" class="category__link" th:text="${category}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-categories?category=' + ${category}"></a>
                     <a th:each="skill: ${evidence.getSkills}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-skill?skill=' + ${skill}"></a>
