@@ -1,5 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.controller.evidence;
-;
+
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
@@ -85,7 +85,7 @@ public class PortfolioController {
         User pageUser = userService.getUserAccountById(userId);
         model.addAttribute("pageUser", pageUser);
 
-        int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
+        int projectId = portfolioUserService.getUserById(user.getId()).getCurrentProject();
         List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
 
         model.addAttribute("evidenceList", evidenceList);
