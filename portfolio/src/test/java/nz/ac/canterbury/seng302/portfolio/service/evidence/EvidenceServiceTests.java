@@ -65,7 +65,7 @@ class EvidenceServiceTests {
     void whenDateOutOfRangeAtStart_testEvidenceRejected() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-8"));
         assertThrows(IllegalArgumentException.class, () -> evidenceService.saveEvidence(evidence), "Date not valid");
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
         assertEquals(0, evidenceList.size());
     }
 
@@ -74,7 +74,7 @@ class EvidenceServiceTests {
     void whenDateInRangeAtStart_testEvidenceSaved() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
         evidenceService.saveEvidence(evidence);
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
         assertEquals(1, evidenceList.size());
         assertEquals(evidence.getDescription(), evidenceList.get(0).getDescription());
     }
@@ -84,7 +84,7 @@ class EvidenceServiceTests {
     void whenDateOutOfRangeAtEnd_testEvidenceRejected() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-17"));
         assertThrows(IllegalArgumentException.class, () -> evidenceService.saveEvidence(evidence), "Date not valid");
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
         assertEquals(0, evidenceList.size());
     }
 
@@ -93,7 +93,7 @@ class EvidenceServiceTests {
     void whenDateInRangeAtEnd_testEvidenceSaved() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-16"));
         evidenceService.saveEvidence(evidence);
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
         assertEquals(1, evidenceList.size());
         assertEquals(evidence.getOwnerId(), evidenceList.get(0).getOwnerId());
     }
@@ -103,7 +103,7 @@ class EvidenceServiceTests {
     void whenProjectDoesNotExist_testEvidenceRejected() {
         Evidence evidence = new Evidence(0, -1, "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-17"));
         assertThrows(IllegalArgumentException.class, () -> evidenceService.saveEvidence(evidence), "Project does not exist");
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
         assertEquals(0, evidenceList.size());
     }
 
@@ -112,7 +112,7 @@ class EvidenceServiceTests {
     void whenTitleOnlySpecialCharacters_testEvidenceRejected() {
         Evidence evidence = new Evidence(1, projects.get(1).getId(), "!!&683 7;'.} {-++++", TEST_DESCRIPTION, Date.valueOf("2022-05-14"));
         assertThrows(IllegalArgumentException.class, () -> evidenceService.saveEvidence(evidence), "Title not valid");
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(1, projects.get(1).getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(1, projects.get(1).getId());
         assertEquals(0, evidenceList.size());
     }
 
@@ -121,7 +121,7 @@ class EvidenceServiceTests {
     void whenDescriptionOneLetterLong_testEvidenceRejected() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test Title", "T", Date.valueOf("2022-05-14"));
         assertThrows(IllegalArgumentException.class, () -> evidenceService.saveEvidence(evidence), "Description not valid");
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
         assertEquals(0, evidenceList.size());
     }
 
@@ -130,7 +130,7 @@ class EvidenceServiceTests {
     void whenEvidenceAdded_testEvidenceExists() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-16"));
         evidenceService.saveEvidence(evidence);
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
         Evidence receivedEvidence = evidenceService.getEvidenceById(evidenceList.get(0).getId());
         assertEquals(evidence.getDescription(), receivedEvidence.getDescription());
     }
@@ -151,7 +151,7 @@ class EvidenceServiceTests {
         evidenceService.saveEvidence(evidence2);
         Evidence evidence3 = new Evidence(0, projects.get(1).getId(), "Two", TEST_DESCRIPTION, Date.valueOf("2022-05-15"));
         evidenceService.saveEvidence(evidence3);
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
         assertEquals(3, evidenceList.size());
         assertEquals("One", evidenceList.get(0).getTitle());
         assertEquals("Two", evidenceList.get(1).getTitle());
@@ -202,7 +202,7 @@ class EvidenceServiceTests {
     void givenOneEvidenceExists_testDeleteById() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-14"));
         evidenceService.saveEvidence(evidence);
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
         assertEquals(1, evidenceList.size());
         evidenceService.deleteById(evidence.getId());
         evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
@@ -220,8 +220,8 @@ class EvidenceServiceTests {
     void givenEvidenceExistWithSkills_testRemovesSkillsFromUser() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-14"), "a b c");
         evidenceService.saveEvidence(evidence);
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
-        List<String> skills = (List<String>) evidenceService.getSkillsFromEvidence(evidenceList);
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
+        List<String> skills = (List<String>) evidenceService.getSkillsFromPortfolioEvidence(evidenceList);
         List<String> expectedSkills = new ArrayList<>();
         expectedSkills.add("a");
         expectedSkills.add("b");
@@ -229,7 +229,7 @@ class EvidenceServiceTests {
         assertEquals(expectedSkills, skills);
         evidenceService.deleteById(evidence.getId());
         evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
-        skills = (List<String>) evidenceService.getSkillsFromEvidence(evidenceList);
+        skills = (List<String>) evidenceService.getSkillsFromPortfolioEvidence(evidenceList);
         expectedSkills.clear();
         assertEquals(expectedSkills, skills);
     }
@@ -241,8 +241,8 @@ class EvidenceServiceTests {
         Evidence evidence2 = new Evidence(0, projects.get(1).getId(), "Test2", TEST_DESCRIPTION, Date.valueOf("2022-05-14"), "b c");
         evidenceService.saveEvidence(evidence1);
         evidenceService.saveEvidence(evidence2);
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
-        List<String> skills = (List<String>) evidenceService.getSkillsFromEvidence(evidenceList);
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
+        List<String> skills = (List<String>) evidenceService.getSkillsFromPortfolioEvidence(evidenceList);
         List<String> expectedSkills = new ArrayList<>();
         expectedSkills.add("a");
         expectedSkills.add("b");
@@ -250,7 +250,7 @@ class EvidenceServiceTests {
         assertEquals(expectedSkills, skills);
         evidenceService.deleteById(evidence2.getId());
         evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
-        skills = (List<String>) evidenceService.getSkillsFromEvidence(evidenceList);
+        skills = (List<String>) evidenceService.getSkillsFromPortfolioEvidence(evidenceList);
         expectedSkills.remove("c");
         assertEquals(expectedSkills, skills);
     }
@@ -261,7 +261,7 @@ class EvidenceServiceTests {
     void whenSkillsAdded_testSkillsSplitProperly() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-14"), "   skill1 skill_2 {skill}  a     b  ");
         evidenceService.saveEvidence(evidence);
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
         assertEquals(1, evidenceList.size());
         List<String> skills = evidenceList.get(0).getSkills();
         List<String> expectedSkills = new ArrayList<>();
@@ -279,7 +279,7 @@ class EvidenceServiceTests {
     void whenSkillsAdded_testDuplicatesRemoved() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-14"), "a b c b a");
         evidenceService.saveEvidence(evidence);
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
         assertEquals(1, evidenceList.size());
         List<String> skills = evidenceList.get(0).getSkills();
         List<String> expectedSkills = new ArrayList<>();
@@ -295,7 +295,7 @@ class EvidenceServiceTests {
     void when51CharSkillAdded_testErrorThrown() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-14"), "a".repeat(51));
         assertThrows(IllegalArgumentException.class, () -> evidenceService.saveEvidence(evidence), "Skills not valid");
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(1, projects.get(1).getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(1, projects.get(1).getId());
         assertEquals(0, evidenceList.size());
     }
 
@@ -305,7 +305,7 @@ class EvidenceServiceTests {
     void when50CharSkillAdded_testErrorNotThrown() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-14"), "a".repeat(50));
         evidenceService.saveEvidence(evidence);
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
         assertEquals(1, evidenceList.size());
     }
 
@@ -317,7 +317,7 @@ class EvidenceServiceTests {
         evidenceService.saveEvidence(evidence1);
         Evidence evidence2 = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-13"), "TesT testing");
         evidenceService.saveEvidence(evidence2);
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(0, projects.get(1).getId());
         assertEquals(2, evidenceList.size());
         List<String> skills1 = evidenceList.get(0).getSkills();
         List<String> expectedSkills1 = new ArrayList<>();
@@ -1009,9 +1009,9 @@ class EvidenceServiceTests {
         evidenceService.copyEvidenceToNewUser(evidence1.getId(), List.of(testUser1));
 
         List<Evidence> evidenceList = (List<Evidence>) evidenceRepository.findAll();
-        List<Evidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(testUser1, projects.get(1).getId());
+        List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(testUser1, projects.get(1).getId());
         assertEquals(3, evidenceList.size());
-        assertEquals(1, evidenceService.getSkillsFromEvidence(allUsersEvidenceList).size());
+        assertEquals(1, evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList).size());
     }
 
 }
