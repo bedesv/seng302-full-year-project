@@ -6,14 +6,14 @@ import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
-import nz.ac.canterbury.seng302.shared.identityprovider.GroupsServiceGrpc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
 
 @Service
 public class GroupChartDataService {
@@ -56,10 +56,130 @@ public class GroupChartDataService {
     }
 
     /**
-     * Only for mocking purposes
-     * Updates the current EvidenceService with a new one
-     * @param newEvidenceService the new (mocked) EvidenceService
+     * Iterates through the groups members then the members' pieces of evidence
+     * to count up the number of evidence per group members
+     * @param group the group object that the data is wanted for
+     * @return A map of group members (ID, First name and Last name) and the number of evidence
      */
+    public Map<String, Integer> getGroupEvidenceDataCompareMembers(Group group) {
+        int parentProjectId = group.getParentProject();
+        Map<String, Integer> evidenceCountsByMember = new HashMap<>();
+
+        // Iterate through every user in the group
+        for (User user : group.getMembers()) {
+            evidenceCountsByMember.put(user.getId() + " " + user.getFullName(), evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId).size());
+        }
+        return evidenceCountsByMember;
+    }
+
+    /**
+     * Returns a map of the number of evidence total of all group members over time
+     * @param group the group object that the data is wanted for
+     * @return A map of dates either (day, week (sunday), month) and the number of evidence produced within those dates
+     */
+    public Map<String, Integer> getGroupEvidenceDataOverTime(Group group, Date startDate, Date endDate, String timeRange) {
+        int parentProjectId = group.getParentProject();
+        Map<String, Integer> evidenceCountOverTime = new HashMap<>();
+
+        if (Objects.equals(timeRange, "day")) {
+            getEvidenceOverTimeDay(evidenceCountOverTime, startDate, endDate, group, parentProjectId);
+        } else if (Objects.equals(timeRange, "week")) {
+            getEvidenceOverTimeWeek(evidenceCountOverTime, startDate, endDate, group, parentProjectId);
+        } else if (Objects.equals(timeRange, "month")) {
+            getEvidenceOverTimeMonth(evidenceCountOverTime, startDate, endDate, group, parentProjectId);
+        }
+        return evidenceCountOverTime;
+    }
+
+    /**
+     * Helper function for getGroupEvidenceOverTime which creates a map of the total evidence produced by all group members
+     * over time for each day within the start and end dates
+     * @param evidenceCountOverTime the Map of all date strings in form ("yyyy-mm-dd") and the integer value of evidence
+     * @param startDate The start date
+     * @param endDate The end date
+     * @param group the group object that the data is wanted for
+     * @param parentProjectId The parent project of the group so the correct evidence is used
+     */
+    public void getEvidenceOverTimeDay(Map<String, Integer> evidenceCountOverTime, Date startDate, Date endDate, Group group, int parentProjectId) {
+        LocalDate start = Instant.ofEpochMilli(startDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate finish = Instant.ofEpochMilli(endDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+
+        //Populate the map with all days within the bounds with key value 0
+        for(LocalDate date = start; date.isBefore(finish.plusDays(1)); date = date.plusDays(1)) {
+            evidenceCountOverTime.put(date.toString(), 0);
+        }
+        for (User user : group.getMembers()) {
+            // Iterate through all of that user's evidence for the groups project
+            for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
+                LocalDate evidenceDate = Instant.ofEpochMilli(e.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+                if (evidenceDate.isAfter(start.minusDays(1)) && evidenceDate.isBefore(finish.plusDays(1))) {
+                    evidenceCountOverTime.merge(evidenceDate.toString(), 1, Integer::sum);
+                }
+            }
+        }
+    }
+
+    /**
+     * Helper function for getGroupEvidenceOverTime which creates a map of the total evidence produced by all group members
+     * over time for each week (Sunday date) within the start and end dates
+     * @param evidenceCountOverTime the Map of all date strings in form ("yyyy-mm-dd") and the integer value of evidence
+     * @param startDate The start date
+     * @param endDate The end date
+     * @param group the group object that the data is wanted for
+     * @param parentProjectId The parent project of the group so the correct evidence is used
+     */
+    public void getEvidenceOverTimeWeek(Map<String, Integer> evidenceCountOverTime, Date startDate, Date endDate, Group group, int parentProjectId) {
+        LocalDate start = Instant.ofEpochMilli(startDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate finish = Instant.ofEpochMilli(endDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+
+        //Populate the map with all days within the bounds with key value 0
+        for(LocalDate date = start.with(DayOfWeek.SUNDAY); date.isBefore(finish.with(DayOfWeek.SUNDAY).plusDays(1)); date = date.plusDays(7)) {
+            evidenceCountOverTime.put(date.toString(), 0);
+        }
+        for (User user : group.getMembers()) {
+            // Iterate through all of that user's evidence for the groups project
+            for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
+                LocalDate evidenceDate = Instant.ofEpochMilli(e.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+                if (evidenceDate.isAfter(start.minusDays(1)) && evidenceDate.isBefore(finish.plusDays(1))) {
+                    evidenceCountOverTime.merge(evidenceDate.with(DayOfWeek.SUNDAY).toString(), 1, Integer::sum);
+                }
+            }
+        }
+    }
+
+    /**
+     * Helper function for getGroupEvidenceOverTime which creates a map of the total evidence produced by all group members
+     * over time for each month within the start and end dates
+     * @param evidenceCountOverTime the Map of all date strings in form ("yyyy-mm") and the integer value of evidence
+     * @param startDate The start date
+     * @param endDate The end date
+     * @param group the group object that the data is wanted for
+     * @param parentProjectId The parent project of the group so the correct evidence is used
+     */
+    public void getEvidenceOverTimeMonth(Map<String, Integer> evidenceCountOverTime, Date startDate, Date endDate, Group group, int parentProjectId) {
+        LocalDate start = Instant.ofEpochMilli(startDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate finish = Instant.ofEpochMilli(endDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+
+        //Populate the map with all days within the bounds with key value 0
+        for(LocalDate date = start; date.isBefore(finish.plusDays(1)); date = date.plusMonths(1)) {
+            evidenceCountOverTime.put(date.toString().substring(0, 7), 0);
+        }
+        for (User user : group.getMembers()) {
+            // Iterate through all of that user's evidence for the groups project
+            for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
+                LocalDate evidenceDate = Instant.ofEpochMilli(e.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+                if (evidenceDate.isAfter(start.minusDays(1)) && evidenceDate.isBefore(finish.plusDays(1))) {
+                    evidenceCountOverTime.merge(evidenceDate.toString().substring(0, 7), 1, Integer::sum);
+                }
+            }
+        }
+    }
+
+        /**
+         * Only for mocking purposes
+         * Updates the current EvidenceService with a new one
+         * @param newEvidenceService the new (mocked) EvidenceService
+         */
     @VisibleForTesting
     protected void setEvidenceService(EvidenceService newEvidenceService) {
         evidenceService = newEvidenceService;

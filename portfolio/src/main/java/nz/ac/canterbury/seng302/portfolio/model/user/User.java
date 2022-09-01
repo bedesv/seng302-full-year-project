@@ -88,6 +88,10 @@ public class User {
         }
     }
 
+    public String getFirstAndLast() {
+        return this.firstName + " " + this.lastName;
+    }
+
 
     public String getNickname() {
         return nickname;
