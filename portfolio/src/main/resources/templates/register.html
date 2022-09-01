@@ -28,6 +28,7 @@
                 <label>Account Details *</label><br>
 
                 <!--USERNAME-->
+                <p>hi</p>
                 <input type="text" th:name="username" th:value="${username} ?: ''" minlength="1" maxlength="64" required placeholder="Username (*)" class="required" title="Must not be blank" th:pattern="${isNotBlankPattern}"/><label class="helper" >*Username, must be unique</label><br>
                 <p th:text="${usernameError}" class="form-error-message"></p>
                 <th:block th:each="validationError: ${validationErrors}" th:if="${validationError.FieldName == 'username'}">

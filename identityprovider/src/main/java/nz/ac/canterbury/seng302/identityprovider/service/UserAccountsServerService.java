@@ -620,7 +620,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
         } else if (username.isBlank()) {
             ValidationError validationError = ValidationError.newBuilder().setErrorText("Username must not contain only whitespace").setFieldName(USERNAME_FIELD).build();
             validationErrors.add(validationError);
-        } else if (isBadUserName(username)) {
+        } else if (!titleValid(username)) {
             ValidationError validationError = ValidationError.newBuilder().setErrorText("Username must not contain special characters").setFieldName(USERNAME_FIELD).build();
             validationErrors.add(validationError);
         }
@@ -632,27 +632,6 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
         return validationErrors;
     }
 
-    /**
-     * Checks if a name is valid. Checks against a list of reasonable characters that could appear in names.
-     * @param name The name to check
-     * @return True if the name is valid
-     */
-    public boolean isBadName(String name) {
-        Pattern namePattern = Pattern.compile("[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆŠŽ∂ð ,.'\\-]+");
-        Matcher nameMatcher = namePattern.matcher(name);
-        return !nameMatcher.matches();
-    }
-
-    /**
-     * Checks if a name is valid. Checks against a list of reasonable characters that could appear in names.
-     * @param name The name to check
-     * @return True if the name is valid
-     */
-    public boolean isBadUserName(String name) {
-        Pattern namePattern = Pattern.compile("[a-zA-Z1-9àáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆŠŽ∂ð ,.'\\-]+");
-        Matcher nameMatcher = namePattern.matcher(name);
-        return !nameMatcher.matches();
-    }
 
     /**
      * Checks that the first name is within the length requirements
@@ -669,7 +648,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
             ValidationError validationError = ValidationError.newBuilder().setErrorText("First name must not contain only whitespace").setFieldName(FIRST_NAME_FIELD).build();
             validationErrors.add(validationError);
         }
-        else if (isBadName(firstName)) {
+        else if (!titleValid(firstName)) {
             ValidationError validationError = ValidationError.newBuilder().setErrorText("First name must not contain special characters").setFieldName(FIRST_NAME_FIELD).build();
             validationErrors.add(validationError);
         }
@@ -688,8 +667,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
      */
     private List<ValidationError> checkMiddleName(String middleName) {
         List<ValidationError> validationErrors = new ArrayList<>();
-
-        if (!Objects.equals(middleName, "") && isBadName(middleName)) {
+        if (!titleValid(middleName)){
             ValidationError validationError = ValidationError.newBuilder().setErrorText("Middle name must not contain special characters").setFieldName(MIDDLE_NAME_FIELD).build();
             validationErrors.add(validationError);
         }
@@ -714,7 +692,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
         } else if (lastName.isBlank()) {
             ValidationError validationError = ValidationError.newBuilder().setErrorText("Last name must not contain only whitespace").setFieldName(LAST_NAME_FIELD).build();
             validationErrors.add(validationError);
-        } else if (isBadName(lastName)) {
+        } else if (!titleValid(lastName)) {
             ValidationError validationError = ValidationError.newBuilder().setErrorText("Last name must not contain special characters").setFieldName(LAST_NAME_FIELD).build();
             validationErrors.add(validationError);
         }
@@ -1055,6 +1033,24 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
             }
         }
         return false;
+    }
+
+    /**
+     * Checks for a valid title,
+     * can be used in all children (e.g., deadline, milestone, events, evidence, groups)
+     * Allows all Characters from and Language (L), Numbers(N), Punctuation (P), Whitespace (Z)
+     * (title).isBlank(); will need to be tested elsewhere
+     * @param title being validated
+     * @return true if valid, false if not
+     */
+    public static boolean titleValid(String title) {
+        String regex = "[^\\p{L}\\p{N}\\p{P}\\p{Z}]";
+        Pattern pattern = Pattern.compile(
+                regex,
+                Pattern.UNICODE_CHARACTER_CLASS);
+        Matcher matcher = pattern.matcher(title);
+        String result = matcher.replaceAll("");
+        return result.length() == title.length();
     }
 
 }
