@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.controller.evidence;
 
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
+import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
@@ -216,8 +217,8 @@ public class AddEvidenceController {
      * @param evidence The evidence that is being viewed.
      */
     private void addEvidenceToModel(Model model, int projectId, int userId, Evidence evidence) {
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
-        model.addAttribute("skillsList", evidenceService.getSkillsFromEvidence(evidenceList));
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
+        model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(evidenceList));
         model.addAttribute("evidenceTitle", evidence.getTitle());
         model.addAttribute("evidenceDescription", evidence.getDescription());
         model.addAttribute("evidenceDate", Project.dateToString(evidence.getDate(), TIMEFORMAT));

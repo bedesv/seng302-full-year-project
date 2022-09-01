@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.service.evidence;
 
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
+import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
@@ -11,7 +12,6 @@ import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
@@ -40,13 +40,21 @@ public class EvidenceService {
      * @param projectId The project for this portfolio
      * @return A list of all evidence relating to this portfolio. It is ordered chronologically.
      */
-    public List<Evidence> getEvidenceForPortfolio(int userId, int projectId) {
-        List<Evidence> evidence = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(userId, projectId);
-        evidence.sort(Comparator.comparing(Evidence::getDate));
-        Collections.reverse(evidence);
+    public List<PortfolioEvidence> getEvidenceForPortfolio(int userId, int projectId) {
+        List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(userId, projectId);
+        evidenceList.sort(Comparator.comparing(Evidence::getDate));
+        Collections.reverse(evidenceList);
+        List<PortfolioEvidence> portfolioEvidenceList =  new ArrayList<>();
+        for (Evidence evidence: evidenceList) {
+            List<User> userList = new ArrayList<>();
+            for (int linkedUserId: evidence.getLinkedUsers()) {
+                userList.add(userService.getUserAccountById(linkedUserId));
+            }
+            portfolioEvidenceList.add(new PortfolioEvidence(evidence, userList));
+        }
         String message = "Evidence for user " + userId + " and project " + projectId + " retrieved";
         PORTFOLIO_LOGGER.info(message);
-        return evidence;
+        return portfolioEvidenceList;
     }
 
     /**
@@ -130,7 +138,7 @@ public class EvidenceService {
             if (!evidence.getSkills().isEmpty()) {
                 skillList = String.join(" ", evidence.getSkills());
             } else {
-                skillList = null;
+                skillList = "";
             }
             Set<Categories> categoriesSet = new HashSet<>(evidence.getCategories());
             for (Integer id: userIdList) {
@@ -138,8 +146,7 @@ public class EvidenceService {
             }
 
             for (Integer userId: userIdList) {
-                Evidence copiedEvidence = new Evidence(userId, evidence.getProjectId(), evidence.getTitle(), evidence.getDescription(), evidence.getDate());
-                copiedEvidence.addSkill(skillList);
+                Evidence copiedEvidence = new Evidence(userId, evidence.getProjectId(), evidence.getTitle(), evidence.getDescription(), evidence.getDate(), skillList);
                 copiedEvidence.setCategories(categoriesSet);
                 for (WebLink webLink : evidence.getWebLinks()) {
                     copiedEvidence.addWebLink(webLink);
@@ -169,6 +176,21 @@ public class EvidenceService {
     public Collection<String> getSkillsFromEvidence(List<Evidence> evidenceList) {
         Collection<String> skills = new HashSet<>();
         for (Evidence userEvidence : evidenceList) {
+            skills.addAll(userEvidence.getSkills());
+        }
+        List<String> skillList = new ArrayList<>(skills);
+        skillList.sort(String::compareToIgnoreCase);
+        return skillList;
+    }
+
+    /**
+     * Gets all skills from a list of portfolio evidence. Each skill returned is unique.
+     * @param evidenceList A list of evidence to retrieve skills from.
+     * @return All the skills for that list of evidence.
+     */
+    public Collection<String> getSkillsFromPortfolioEvidence(List<PortfolioEvidence> evidenceList) {
+        Collection<String> skills = new HashSet<>();
+        for (PortfolioEvidence userEvidence : evidenceList) {
             skills.addAll(userEvidence.getSkills());
         }
         List<String> skillList = new ArrayList<>(skills);

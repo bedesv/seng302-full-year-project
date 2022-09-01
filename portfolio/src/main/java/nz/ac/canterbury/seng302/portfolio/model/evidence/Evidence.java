@@ -30,11 +30,11 @@ public class Evidence {
 
     private Date date;
     @ElementCollection
-    private List<WebLink> webLinks;
+    private final List<WebLink> webLinks;
     @ElementCollection
     private List<String> skills; //skills related to this piece of evidence
-
-    private Set<Integer> linkedUsers = new HashSet<>();
+    @ElementCollection
+    private final Set<Integer> linkedUsers = new HashSet<>();
 
 
     public Evidence() {
@@ -59,6 +59,7 @@ public class Evidence {
             this.skills.remove(0);
         }
         this.skills = this.skills.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
+        this.linkedUsers.add(ownerId);
     }
 
 

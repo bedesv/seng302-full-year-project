@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.controller.evidence;
 
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
+import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.user.PortfolioUserService;
@@ -72,9 +73,9 @@ public class CategoriesController {
         }
 
         // Add all of the skills that the user has to the page
-        List<Evidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
+        List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
-        model.addAttribute("skillsList", evidenceService.getSkillsFromEvidence(allUsersEvidenceList));
+        model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
         model.addAttribute("categoryName", category);
         model.addAttribute("evidenceList", evidenceList);
         return "templatesEvidence/categories";
@@ -119,8 +120,8 @@ public class CategoriesController {
             return PORTFOLIO_REDIRECT;
         }
         // Add all of the skills that the user has to the page
-        List<Evidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
-        model.addAttribute("skillsList", evidenceService.getSkillsFromEvidence(allUsersEvidenceList));
+        List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
+        model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
 
         model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("categoryName", category);
