@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
@@ -35,7 +36,7 @@ class EvidenceServiceTests {
     @Autowired
     ProjectService projectService;
 
-    @Autowired
+    @MockBean
     UserAccountClientService userService;
 
     @Autowired
@@ -49,6 +50,7 @@ class EvidenceServiceTests {
         projectService.saveProject(new Project("Project Name", "Test Project", Date.valueOf("2022-04-9"), Date.valueOf("2022-06-16")));
         projectService.saveProject(new Project("Project Name", "Test Project", Date.valueOf("2022-05-9"), Date.valueOf("2022-05-16")));
         projects = projectService.getAllProjects();
+        Mockito.doReturn(new User(UserResponse.newBuilder().setId(0).build())).when(userService).getUserAccountById(0);
     }
 
     //Refresh the database after each test.
@@ -71,6 +73,7 @@ class EvidenceServiceTests {
 
     //When the date of the evidence is in the range of the project near the start, test it is accepted.
     @Test
+    @Transactional
     void whenDateInRangeAtStart_testEvidenceSaved() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
         evidenceService.saveEvidence(evidence);
@@ -90,6 +93,7 @@ class EvidenceServiceTests {
 
     //When the date of the evidence is in the range of the project near the end, test it is accepted.
     @Test
+    @Transactional
     void whenDateInRangeAtEnd_testEvidenceSaved() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-16"));
         evidenceService.saveEvidence(evidence);
@@ -127,6 +131,7 @@ class EvidenceServiceTests {
 
     //When evidence is added, check that can be accessed.
     @Test
+    @Transactional
     void whenEvidenceAdded_testEvidenceExists() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-16"));
         evidenceService.saveEvidence(evidence);
@@ -952,22 +957,7 @@ class EvidenceServiceTests {
         int testUserId2 = 2;
         int testUserId3 = 3;
 
-        User user0 = new User(UserResponse.newBuilder().setId(testUserId0).build());
-        User user1 = new User(UserResponse.newBuilder().setId(testUserId1).build());
-        User user2 = new User(UserResponse.newBuilder().setId(testUserId2).build());
-        User user3 = new User(UserResponse.newBuilder().setId(testUserId3).build());
-        Set<User> userIdSet = new HashSet<>();
-
-        UserAccountClientService mockUserService = Mockito.spy(userService);
-        Mockito.doReturn(user0).when(mockUserService).getUserAccountById(testUserId0);
-        Mockito.doReturn(user1).when(mockUserService).getUserAccountById(testUserId1);
-        Mockito.doReturn(user2).when(mockUserService).getUserAccountById(testUserId2);
-        Mockito.doReturn(user3).when(mockUserService).getUserAccountById(testUserId3);
-        userIdSet.add(user0);
-        userIdSet.add(user1);
-        userIdSet.add(user2);
-        userIdSet.add(user3);
-
+        Set<Integer> userIdSet = new HashSet<>(Arrays.asList(testUserId0, testUserId1, testUserId2, testUserId3));
         Evidence evidence = new Evidence(testUserId0, projects.get(1).getId(), "Evidence One", TEST_DESCRIPTION, Date.valueOf("2022-05-12"), "skill1 skill_2 {skill}  a     b  ");
         evidenceService.saveEvidence(evidence);
         evidenceService.copyEvidenceToNewUser(evidence.getId(), List.of(testUserId1, testUserId2, testUserId3));
