@@ -35,7 +35,7 @@
                         <div class="user-tag-inside">
                             <img class="user-tag-image" th:src="${user.getProfileImagePath()}" alt="Profile Photo">
                             <div class="user-tag-text" >
-                                <p class="user-tag-fullName" th:text="${user.getFullName()}"></p>
+                                <a class="user-tag-fullName" th:href="@{profile-{id}(id=${user.getId()})}" th:text="${user.getFullName()}"></a>
                                 <p class="user-tag-nickname" th:text="${user.getUsername()}"></p>
                             </div>
                         </div>
