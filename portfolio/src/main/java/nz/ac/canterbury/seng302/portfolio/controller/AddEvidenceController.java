@@ -138,23 +138,27 @@ public class AddEvidenceController {
         int userId = userService.getUserId(principal);
         Evidence evidence = new Evidence(userId, projectId, title, description, date, skills);
         evidence.setCategories(categories);
+
+        List<Boolean> validationResponse = evidenceService.validateEvidence(model, title, description, evidence.getSkills());
+        if (validationResponse.contains(false)){
+            evidence.setTitle(ValidationUtil.stripTitle(title));
+            evidence.setDescription(ValidationUtil.stripTitle(description));
+            evidence.setSkills(evidenceService.stripSkills(evidence.getSkills()));
+            addEvidenceToModel(model, projectId, userId, evidence);
+            return ADD_EVIDENCE;
+        }
+
         try {
             evidenceService.saveEvidence(evidence);
         } catch (IllegalArgumentException exception) {
             if (Objects.equals(exception.getMessage(), "Title not valid")) {
                 model.addAttribute("titleError", "Title cannot be all special characters");
-            } else if (Objects.equals(exception.getMessage(), "Title cannot contain special characters")) {
-                model.addAttribute("titleError", "Title cannot contain special characters");
             } else if (Objects.equals(exception.getMessage(), "Description not valid")) {
                 model.addAttribute("descriptionError", "Description cannot be all special characters");
-            } else if (Objects.equals(exception.getMessage(), "Description cannot contain special characters")) {
-                model.addAttribute("descriptionError", "Description cannot contain special characters");
             } else if (Objects.equals(exception.getMessage(), "Date not valid")) {
                 model.addAttribute("dateError", "Date must be within the project dates");
             } else if (Objects.equals(exception.getMessage(), "Skills not valid")) {
                 model.addAttribute("skillsError", "Skills cannot be more than 50 characters long");
-            } else if (Objects.equals(exception.getMessage(), "Skills cannot contain special characters")) {
-                model.addAttribute("skillsError", "Skills cannot contain special characters");
             } else {
                 model.addAttribute("generalError", exception.getMessage());
             }

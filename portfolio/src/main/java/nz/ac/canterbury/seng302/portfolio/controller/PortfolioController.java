@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.portfolio.model.WebLink;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.PortfolioUserService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -116,6 +117,9 @@ public class PortfolioController {
             Model model
     ) {
         int id = Integer.parseInt(evidenceId);
+
+        webLink = ValidationUtil.stripTitle(webLink);
+        webLinkName = ValidationUtil.stripTitle(webLinkName);
 
         if (evidenceService.getEvidenceById(id).getNumberWeblinks() >= MAX_WEBLINKS_PER_EVIDENCE) {
             model.addAttribute("saveError", "Cannot add more than " + MAX_WEBLINKS_PER_EVIDENCE + " weblinks");
