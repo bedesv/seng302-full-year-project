@@ -54,6 +54,8 @@ public class AddEvidenceController {
 
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
 
+    private static final int MAX_WEBLINKS_PER_EVIDENCE = 5;
+
     /**
      * Display the add evidence page.
      * @param principal Authentication state of client
@@ -83,6 +85,7 @@ public class AddEvidenceController {
             model.addAttribute("minEvidenceDate", Project.dateToString(project.getStartDate(), TIMEFORMAT));
             model.addAttribute("maxEvidenceDate", Project.dateToString(project.getEndDate(), TIMEFORMAT));
             model.addAttribute("evidenceId", Integer.parseInt(evidenceId));
+            model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
             return ADD_EVIDENCE;
         } catch (IllegalArgumentException e) {
             return PORTFOLIO_REDIRECT;

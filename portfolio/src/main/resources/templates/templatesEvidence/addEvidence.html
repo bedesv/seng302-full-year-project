@@ -120,7 +120,17 @@
             <input type="hidden" id="evidence-form__hidden-skills-field" name="evidenceSkills"/>
             <p class="evidence-form__error-message" th:text="${skillsError}" />
             <input type="hidden" id="evidence-form__hidden--change-skills-field" name="skillsToChange"/>
-
+            <!-- Web Links !-->
+            <label>Web Links</label>
+            <div id="evidence-form__webLink-container"></div>
+            <input type="text" id="evidence-form__webLink-name" onkeyup="checkValid()" placeholder="Web Link Name"/>
+            <input type="text" id="evidence-form__webLink-link" onkeyup="checkValid()" placeholder="Web Link"/>
+            <div class="evidence__button-wrapper flex-row">
+              <button id="weblink-button" type="button" class="btn-fill-primary" onclick="addWebLinks()">
+                Add Weblink
+              </button>
+            </div>
+            <input type="hidden" id="evidence-form__hidden-webLinks-field" name="evidenceWebLinks"/>
             <!-- Users !-->
             <label>Users
                 <span data-toggle="tooltip"

@@ -437,3 +437,6 @@ function arraysEqual(a, b) {
     return true;
 }
 
+function addWebLinks() {
+
+}
