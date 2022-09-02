@@ -234,6 +234,15 @@ class GroupChartDataServiceTest {
     }
 
     @Test
+    void whenStartDateAndEndDateBothOnSunday_testGetGroupEvidenceOverTimeWeek() {
+        Date startDate = Date.valueOf("2022-05-01");
+        Date endDate = Date.valueOf("2022-06-05");
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, new ArrayList<>());
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "week");
+        assertEquals(6, result.size());
+    }
+
+    @Test
     void whenUserInGroupWithEvidenceOnLowerBound_testGetGroupEvidenceOverTimeWeek() {
         List<User> testUserList = new ArrayList<>();
         Date startDate = Date.valueOf("2022-05-01");
@@ -386,6 +395,32 @@ class GroupChartDataServiceTest {
         Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "month");
         assertEquals(0, result.get("2022-06"));
     }
+
+    @Test
+    void whenStartDateAndEndDateOnBoundaryOfFeb_testGetGroupEvidenceOverTimeMonth() {
+        Date startDate = Date.valueOf("2022-01-31");
+        Date endDate = Date.valueOf("2022-03-01");
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, new ArrayList<>());
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "month");
+        System.out.println(Arrays.asList(result));
+        assertEquals(3, result.size());
+        assertEquals(0, result.get("2022-01"));
+        assertEquals(0, result.get("2022-02"));
+        assertEquals(0, result.get("2022-03"));
+    }
+
+    @Test
+    void whenStartDateOnEndOfMothEndDateOnEndOfMonth_testGetGroupEvidenceOverTimeMonth() {
+        Date startDate = Date.valueOf("2022-01-31");
+        Date endDate = Date.valueOf("2022-03-31");
+        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, new ArrayList<>());
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataOverTime(testGroup, startDate, endDate, "month");
+        assertEquals(3, result.size());
+        assertEquals(0, result.get("2022-01"));
+        assertEquals(0, result.get("2022-02"));
+        assertEquals(0, result.get("2022-03"));
+    }
+
 
 
     //////////////////////////Category Tests///////////////////////////

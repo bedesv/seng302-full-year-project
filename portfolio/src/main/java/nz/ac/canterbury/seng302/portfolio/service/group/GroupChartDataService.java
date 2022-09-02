@@ -65,7 +65,7 @@ public class GroupChartDataService {
         int parentProjectId = group.getParentProject();
         Map<String, Integer> evidenceCountsByMember = new HashMap<>();
 
-        // Iterate through every user in the group
+        // Iterate through every user in the group and add the number of evidence they have produced for the given project
         for (User user : group.getMembers()) {
             evidenceCountsByMember.put(user.getId() + " " + user.getFullName(), evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId).size());
         }
@@ -109,7 +109,8 @@ public class GroupChartDataService {
             evidenceCountOverTime.put(date.toString(), 0);
         }
         for (User user : group.getMembers()) {
-            // Iterate through all of that user's evidence for the groups project
+            // Iterate through all of that user's evidence for the groups project and if the evidence falls on one of the days
+            // mentioned above add 1 to that day
             for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
                 LocalDate evidenceDate = Instant.ofEpochMilli(e.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
                 if (evidenceDate.isAfter(start.minusDays(1)) && evidenceDate.isBefore(finish.plusDays(1))) {
@@ -132,12 +133,14 @@ public class GroupChartDataService {
         LocalDate start = Instant.ofEpochMilli(startDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate finish = Instant.ofEpochMilli(endDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 
-        //Populate the map with all days within the bounds with key value 0
+        //Populate the map with all the weeks inclusive from the start date to the end date with a value of zero
+        //Weeks are represented by the date of Sunday of that week
         for(LocalDate date = start.with(DayOfWeek.SUNDAY); date.isBefore(finish.with(DayOfWeek.SUNDAY).plusDays(1)); date = date.plusDays(7)) {
             evidenceCountOverTime.put(date.toString(), 0);
         }
         for (User user : group.getMembers()) {
-            // Iterate through all of that user's evidence for the groups project
+            // Iterate through all of that user's evidence for the groups project and if the evidence falls in one of the weeks
+            // mentioned above add 1 to the value for that week
             for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
                 LocalDate evidenceDate = Instant.ofEpochMilli(e.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
                 if (evidenceDate.isAfter(start.minusDays(1)) && evidenceDate.isBefore(finish.plusDays(1))) {
@@ -160,12 +163,13 @@ public class GroupChartDataService {
         LocalDate start = Instant.ofEpochMilli(startDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate finish = Instant.ofEpochMilli(endDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 
-        //Populate the map with all days within the bounds with key value 0
-        for(LocalDate date = start; date.isBefore(finish.plusDays(1)); date = date.plusMonths(1)) {
+        //Populate the map with all month values inclusive from the start date to the end date
+        for(LocalDate date = start; date.getMonthValue() < finish.getMonthValue() + 1; date = date.plusMonths(1)) {
             evidenceCountOverTime.put(date.toString().substring(0, 7), 0);
         }
         for (User user : group.getMembers()) {
-            // Iterate through all of that user's evidence for the groups project
+            // Iterate through all of that user's evidence for the groups project and if the evidence falls in one of the months
+            // mentioned above add 1 to the value for that month
             for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
                 LocalDate evidenceDate = Instant.ofEpochMilli(e.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
                 if (evidenceDate.isAfter(start.minusDays(1)) && evidenceDate.isBefore(finish.plusDays(1))) {
