@@ -38,6 +38,15 @@ public class ValidationUtil {
         return matcher.replaceAll("");
     }
 
+    public static String stripName(String name){
+        String regex = "[^\\p{L}\\p{P}\\p{Z}]";
+        Pattern pattern = Pattern.compile(
+                regex,
+                Pattern.UNICODE_CHARACTER_CLASS);
+        Matcher matcher = pattern.matcher(name);
+        return matcher.replaceAll("");
+    }
+
     /**
      * Checks if the given attribute valid
      * Add attribute to model if isn't valid
@@ -48,7 +57,7 @@ public class ValidationUtil {
      */
     public static boolean validAttribute(Model model, String attribute, String title, String value) {
         if (attribute.contains("Name") && !ValidationUtil.nameValid(value)){
-            model.addAttribute(attribute + "Error", title +  " cannot contain special characters");
+            model.addAttribute(attribute + "Error", title +  " cannot contain special characters, or numbers");
             return false;
         } else if (!ValidationUtil.titleValid(value)){
             model.addAttribute(attribute + "Error", title +  " cannot contain special characters");

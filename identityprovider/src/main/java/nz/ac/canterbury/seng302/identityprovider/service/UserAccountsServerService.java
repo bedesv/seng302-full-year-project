@@ -649,7 +649,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
             validationErrors.add(validationError);
         }
         else if (!nameValid(firstName)) {
-            ValidationError validationError = ValidationError.newBuilder().setErrorText("First name must not contain special characters").setFieldName(FIRST_NAME_FIELD).build();
+            ValidationError validationError = ValidationError.newBuilder().setErrorText("First name must not contain special characters, or numbers").setFieldName(FIRST_NAME_FIELD).build();
             validationErrors.add(validationError);
         }
         if (firstName.length() > 64) {
@@ -668,7 +668,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
     private List<ValidationError> checkMiddleName(String middleName) {
         List<ValidationError> validationErrors = new ArrayList<>();
         if (!nameValid(middleName)){
-            ValidationError validationError = ValidationError.newBuilder().setErrorText("Middle name must not contain special characters").setFieldName(MIDDLE_NAME_FIELD).build();
+            ValidationError validationError = ValidationError.newBuilder().setErrorText("Middle name must not contain special characters, or numbers").setFieldName(MIDDLE_NAME_FIELD).build();
             validationErrors.add(validationError);
         }
         if (middleName.length() > 64) {
@@ -693,7 +693,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
             ValidationError validationError = ValidationError.newBuilder().setErrorText("Last name must not contain only whitespace").setFieldName(LAST_NAME_FIELD).build();
             validationErrors.add(validationError);
         } else if (!nameValid(lastName)) {
-            ValidationError validationError = ValidationError.newBuilder().setErrorText("Last name must not contain special characters").setFieldName(LAST_NAME_FIELD).build();
+            ValidationError validationError = ValidationError.newBuilder().setErrorText("Last name must not contain special characters, or numbers").setFieldName(LAST_NAME_FIELD).build();
             validationErrors.add(validationError);
         }
         if (lastName.length() > 64) {

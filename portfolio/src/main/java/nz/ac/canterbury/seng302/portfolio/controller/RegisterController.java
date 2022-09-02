@@ -75,7 +75,7 @@ public class RegisterController {
         //Check for emojis early, prevents grpc error
         List<Boolean> validationResponses = userAccountClientService.validateAttributes(model, username, firstName, middleName, lastName, nickname, pronouns, bio, email);
         if (validationResponses.contains(false)){
-            updateModel(model, ValidationUtil.stripTitle(username), ValidationUtil.stripTitle(firstName), ValidationUtil.stripTitle(middleName), ValidationUtil.stripTitle(lastName), ValidationUtil.stripTitle(nickname), ValidationUtil.stripTitle(bio), ValidationUtil.stripTitle(email), ValidationUtil.stripTitle(pronouns));
+            updateModel(model, ValidationUtil.stripTitle(username), ValidationUtil.stripName(firstName), ValidationUtil.stripName(middleName), ValidationUtil.stripName(lastName), ValidationUtil.stripTitle(nickname), ValidationUtil.stripTitle(bio), ValidationUtil.stripTitle(email), ValidationUtil.stripTitle(pronouns));
             return REGISTER;
         }
 
