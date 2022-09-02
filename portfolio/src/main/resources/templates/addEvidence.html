@@ -38,7 +38,7 @@
             <!-- Evidence Description !-->
             <label>Description *</label>
             <span id="evidence-form__helper">Minimum 50 characters</span>
-            <textarea minlength="50" maxlength="1024" type="text" id="evidence-form__description-field" class="edit-input" onkeyup="checkEmpty()" name="evidenceDescription" placeholder="Evidence Description" th:text="${evidenceDescription}" required></textarea>
+            <textarea minlength="50" maxlength="1024" type="text" id="evidence-form__description-field" class="edit-input" onkeyup="checkEmpty()" name="evidenceDescription" placeholder="Evidence Description" th:text="${evidenceDescription}" th:pattern="${isNotBlankPattern}" required></textarea>
             <p class="form-error-message" th:text="${descriptionError}" />
             <!-- Evidence Date !-->
             <label>Date *
