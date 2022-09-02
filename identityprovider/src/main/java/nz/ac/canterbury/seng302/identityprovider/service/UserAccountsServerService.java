@@ -648,7 +648,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
             ValidationError validationError = ValidationError.newBuilder().setErrorText("First name must not contain only whitespace").setFieldName(FIRST_NAME_FIELD).build();
             validationErrors.add(validationError);
         }
-        else if (!titleValid(firstName)) {
+        else if (!nameValid(firstName)) {
             ValidationError validationError = ValidationError.newBuilder().setErrorText("First name must not contain special characters").setFieldName(FIRST_NAME_FIELD).build();
             validationErrors.add(validationError);
         }
@@ -667,7 +667,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
      */
     private List<ValidationError> checkMiddleName(String middleName) {
         List<ValidationError> validationErrors = new ArrayList<>();
-        if (!titleValid(middleName)){
+        if (!nameValid(middleName)){
             ValidationError validationError = ValidationError.newBuilder().setErrorText("Middle name must not contain special characters").setFieldName(MIDDLE_NAME_FIELD).build();
             validationErrors.add(validationError);
         }
@@ -692,7 +692,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
         } else if (lastName.isBlank()) {
             ValidationError validationError = ValidationError.newBuilder().setErrorText("Last name must not contain only whitespace").setFieldName(LAST_NAME_FIELD).build();
             validationErrors.add(validationError);
-        } else if (!titleValid(lastName)) {
+        } else if (!nameValid(lastName)) {
             ValidationError validationError = ValidationError.newBuilder().setErrorText("Last name must not contain special characters").setFieldName(LAST_NAME_FIELD).build();
             validationErrors.add(validationError);
         }
@@ -1051,6 +1051,21 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
         Matcher matcher = pattern.matcher(title);
         String result = matcher.replaceAll("");
         return result.length() == title.length();
+    }
+
+    /**
+     * Allows all Characters from and Language (L), Punctuation (P), Whitespace (Z)
+     * @param name being validated
+     * @return true if valid, else false.
+     */
+    public static boolean nameValid(String name) {
+        String regex = "[^\\p{L}\\p{P}\\p{Z}]";
+        Pattern pattern = Pattern.compile(
+                regex,
+                Pattern.UNICODE_CHARACTER_CLASS);
+        Matcher matcher = pattern.matcher(name);
+        String result = matcher.replaceAll("");
+        return result.length() == name.length();
     }
 
 }

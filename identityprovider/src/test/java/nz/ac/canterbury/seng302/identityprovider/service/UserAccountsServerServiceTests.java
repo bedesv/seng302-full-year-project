@@ -314,9 +314,9 @@ class UserAccountsServerServiceTests {
     void givenBadNames_editUser() {
         EditUserRequest editUserRequest = EditUserRequest.newBuilder()
                 .setUserId(testId)
-                .setFirstName("??")
-                .setMiddleName("{{{##}}}")
-                .setLastName("Ma8ter")
+                .setFirstName("??👩👩👩👩")
+                .setMiddleName("{{{#/*-+&^%#}}}")
+                .setLastName("Ma8!@#$%^&*()_+=")
                 .setNickname("")
                 .setBio("")
                 .setPersonalPronouns("")
@@ -561,9 +561,9 @@ class UserAccountsServerServiceTests {
     @Test
     void givenBadNames_registerUser() {
         UserRegisterRequest userRegisterRequest = UserRegisterRequest.newBuilder()
-                .setFirstName("I999")
-                .setMiddleName("|||")
-                .setLastName(";;;")
+                .setFirstName("I👩👩")
+                .setMiddleName("💔")
+                .setLastName("!@#$%^&*()_+")
                 .setEmail("a@a.a")
                 .setPassword("password")
                 .setUsername("test")

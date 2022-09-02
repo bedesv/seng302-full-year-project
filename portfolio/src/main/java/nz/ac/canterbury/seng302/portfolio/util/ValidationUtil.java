@@ -47,11 +47,29 @@ public class ValidationUtil {
      * @return true if valid, else false
      */
     public static boolean validAttribute(Model model, String attribute, String title, String value) {
-        if (!ValidationUtil.titleValid(value)){
+        if (attribute.contains("Name") && !ValidationUtil.nameValid(value)){
+            model.addAttribute(attribute + "Error", title +  " cannot contain special characters");
+            return false;
+        } else if (!ValidationUtil.titleValid(value)){
             model.addAttribute(attribute + "Error", title +  " cannot contain special characters");
             return false;
         } else {
             return true;
         }
+    }
+
+    /**
+     * Allows all Characters from and Language (L), Punctuation (P), Whitespace (Z)
+     * @param name being validated
+     * @return true if valid, else false.
+     */
+    public static boolean nameValid(String name) {
+        String regex = "[^\\p{L}\\p{P}\\p{Z}]";
+        Pattern pattern = Pattern.compile(
+                regex,
+                Pattern.UNICODE_CHARACTER_CLASS);
+        Matcher matcher = pattern.matcher(name);
+        String result = matcher.replaceAll("");
+        return result.length() == name.length();
     }
 }
