@@ -24,6 +24,11 @@
     margin-bottom: 0.5rem;
 }
 
+#editable-skill-tag {
+    margin: 0 !important;
+    border: none !important;
+}
+
 #evidence-form__form input, #evidence-form__form textarea {
     margin: 0 0 1rem 1rem;
     border: none;

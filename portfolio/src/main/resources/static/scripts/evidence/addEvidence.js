@@ -57,7 +57,11 @@ function removeUser(user) {
 }
 
 function saveSkillEdit(oldSkill, newSkill) {
-    skillList[skillList.indexOf(oldSkill)] = newSkill;
+    console.log(oldSkill)
+    console.log(newSkill)
+    console.log(ALL_SKILLS)
+    console.log(skillList)
+    skillList[skillList.indexOf(oldSkill.replaceAll("_", " "))] = newSkill.replaceAll("_", " ");
     if (ALL_SKILLS.includes(oldSkill)) {
         changedSkills[oldSkill] = newSkill
     } else {
@@ -112,7 +116,7 @@ function submitSkillEdit() {
     const editedSkill = document.getElementById("editable-skill-tag");
     if (editedSkill) {
         const newSkill = editedSkill.value;
-        const oldSkill = editedSkill.getAttribute('data-old-value');
+        const oldSkill = editedSkill.getAttribute('data-old-value').replaceAll(" ", "_");
 
         let isAlreadySkill = false;
         for (const testSkill of skillList) {
@@ -129,6 +133,7 @@ function submitSkillEdit() {
         if (newSkill === "" || newSkill === "_") {
             console.log("bad bad error thingy: empty skill");
             // error and trap user
+            editedSkill.focus();
         } else if (!isAlreadySkill || oldSkill.toLowerCase() === newSkill.toLowerCase()) {
             saveSkillEdit(oldSkill, newSkill);
             console.log("save");
@@ -137,6 +142,7 @@ function submitSkillEdit() {
         } else {
             console.log("bad bad error thingy: duplicate skill!");
             // error and trap user
+            editedSkill.focus();
         }
 
     }
