@@ -326,11 +326,11 @@ class UserAccountsServerServiceTests {
 
         assertEquals(3, response.getValidationErrorsCount());
         assertEquals("firstName", response.getValidationErrors(0).getFieldName());
-        assertEquals("First name must not contain special characters", response.getValidationErrors(0).getErrorText());
+        assertEquals("First name must not contain special characters, or numbers", response.getValidationErrors(0).getErrorText());
         assertEquals("middleName", response.getValidationErrors(1).getFieldName());
-        assertEquals("Middle name must not contain special characters", response.getValidationErrors(1).getErrorText());
+        assertEquals("Middle name must not contain special characters, or numbers", response.getValidationErrors(1).getErrorText());
         assertEquals("lastName", response.getValidationErrors(2).getFieldName());
-        assertEquals("Last name must not contain special characters", response.getValidationErrors(2).getErrorText());
+        assertEquals("Last name must not contain special characters, or numbers", response.getValidationErrors(2).getErrorText());
         assertEquals("Edit user failed: Validation failed", response.getMessage());
 
         assertFalse(response.getIsSuccess());
@@ -572,11 +572,11 @@ class UserAccountsServerServiceTests {
         assertEquals("Register attempt failed: Validation failed", response.getMessage());
         assertEquals(3, response.getValidationErrorsCount());
         assertEquals("firstName", response.getValidationErrors(0).getFieldName());
-        assertEquals("First name must not contain special characters", response.getValidationErrors(0).getErrorText());
+        assertEquals("First name must not contain special characters, or numbers", response.getValidationErrors(0).getErrorText());
         assertEquals("middleName", response.getValidationErrors(1).getFieldName());
-        assertEquals("Middle name must not contain special characters", response.getValidationErrors(1).getErrorText());
+        assertEquals("Middle name must not contain special characters, or numbers", response.getValidationErrors(1).getErrorText());
         assertEquals("lastName", response.getValidationErrors(2).getFieldName());
-        assertEquals("Last name must not contain special characters", response.getValidationErrors(2).getErrorText());
+        assertEquals("Last name must not contain special characters, or numbers", response.getValidationErrors(2).getErrorText());
 
         assertFalse(response.getIsSuccess());
     }
