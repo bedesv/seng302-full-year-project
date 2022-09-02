@@ -131,18 +131,21 @@ function submitSkillEdit() {
         }
 
         if (newSkill === "" || newSkill === "_") {
-            console.log("bad bad error thingy: empty skill");
-            // error and trap user
-            editedSkill.focus();
+            skillsInput.setCustomValidity("bad bad error thingy: empty skill!");
+            console.log("bad bad error thingy: empty skill!");
+            editedSkillTag = null;
+            updateSkillTagsInDOM(skillList);
         } else if (!isAlreadySkill || oldSkill.toLowerCase() === newSkill.toLowerCase()) {
             saveSkillEdit(oldSkill, newSkill);
             console.log("save");
             editedSkillTag = null;
             updateSkillTagsInDOM(skillList);
         } else {
+            const skillsInput = document.getElementById("skills-input");
+            skillsInput.setCustomValidity("bad bad error thingy: duplicate skill!");
             console.log("bad bad error thingy: duplicate skill!");
-            // error and trap user
-            editedSkill.focus();
+            editedSkillTag = null;
+            updateSkillTagsInDOM(skillList);
         }
 
     }
