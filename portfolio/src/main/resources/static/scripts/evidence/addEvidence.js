@@ -437,10 +437,13 @@ function arraysEqual(a, b) {
     return true;
 }
 
+/**
+ * Takes information from input box on addEvidence form and keeps track of the web link.
+ * @type {*[]}
+ */
 let webLinks = [];
 let numWebLinks = 0;
 function addWebLinks() {
-
     let webLinkNameElement = document.getElementById("evidence-form__webLink-name");
     let webLinkElement = document.getElementById("evidence-form__webLink-link");
     let webLink = {name: webLinkNameElement.value, link: webLinkElement.value}
@@ -460,6 +463,11 @@ function addWebLinks() {
     }
 }
 
+/**
+ * Adds given web link into the DOM.
+ * @param webLink Web link to add.
+ * @param index The index of the web link in the dom and in webLinks array.
+ */
 function addWebLinkToDOM(webLink, index) {
     let webLinkContainer = document.getElementById("evidence-form__webLink-container");
     let webLinkHTML;
@@ -481,6 +489,10 @@ function addWebLinkToDOM(webLink, index) {
 
 }
 
+/**
+ * Removes web link from the DOM on addEvidence form.
+ * @param webLinkIndex
+ */
 function removeWebLink(webLinkIndex) {
     if (numWebLinks === 5) {
         document.getElementById("evidence-form__webLink-name").hidden = false;
@@ -488,11 +500,8 @@ function removeWebLink(webLinkIndex) {
         document.getElementById("weblink-button").hidden = false;
     }
     numWebLinks--;
-    console.log(parseInt(webLinkIndex));
     document.getElementById("evidence-form__webLink-container").innerHTML = "";
-    console.log(webLinks);
     webLinks.splice(parseInt(webLinkIndex), 1);
-    console.log(webLinks)
     for (let i = 0; i < webLinks.length; i++) {
         addWebLinkToDOM(webLinks[i], i);
     }
