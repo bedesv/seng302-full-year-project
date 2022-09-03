@@ -80,10 +80,6 @@ function removeUser(user) {
 }
 
 function saveSkillEdit(oldSkill, newSkill) {
-    console.log(oldSkill)
-    console.log(newSkill)
-    console.log(ALL_SKILLS)
-    console.log(skillList)
     skillList[skillList.indexOf(oldSkill.replaceAll("_", " "))] = newSkill.replaceAll("_", " ");
     if (ALL_SKILLS.includes(oldSkill)) {
         changedSkills[oldSkill] = newSkill
@@ -159,7 +155,6 @@ function submitSkillEdit() {
             updateSkillTagsInDOM(skillList);
         } else if (!isAlreadySkill || oldSkill.toLowerCase() === newSkill.toLowerCase()) {
             saveSkillEdit(oldSkill, newSkill);
-            console.log("save");
             editedSkillTag = null;
             updateSkillTagsInDOM(skillList);
         } else {
@@ -274,7 +269,6 @@ function updateHiddenFields() {
         skillChanges += changedSkills[oldSkill]
         skillChanges += " ";
     }
-    console.log(skillChanges)
     document.getElementById("evidence-form__hidden--change-skills-field").value = skillChanges;
 }
 
