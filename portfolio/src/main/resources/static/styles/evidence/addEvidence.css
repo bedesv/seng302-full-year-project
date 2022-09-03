@@ -88,8 +88,11 @@
     position: relative;
 }
 
-p {
+.strip-margin {
     margin: 0 !important;
+}
+
+p {
     padding: 0;
 }
 

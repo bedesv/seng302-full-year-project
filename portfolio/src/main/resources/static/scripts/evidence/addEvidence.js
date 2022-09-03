@@ -17,6 +17,8 @@ let userList = [];
 function addToSkills(skill) {
     for (const testSkill of skillList) {
         if (testSkill.toLowerCase() === skill.toLowerCase().replaceAll("_", " ")) {
+            const skillsError = document.getElementById("evidence-form__skills-error");
+            skillsError.innerHTML = "Skill not saved: skill already exists"
             return;
         }
     }
@@ -129,10 +131,9 @@ function submitSkillEdit() {
                 isAlreadySkill = true;
             }
         }
-
+        const skillsError = document.getElementById("evidence-form__skills-error");
         if (newSkill === "" || newSkill === "_") {
-            skillsInput.setCustomValidity("bad bad error thingy: empty skill!");
-            console.log("bad bad error thingy: empty skill!");
+            skillsError.innerHTML = "Skill not saved: skills can't be empty";
             editedSkillTag = null;
             updateSkillTagsInDOM(skillList);
         } else if (!isAlreadySkill || oldSkill.toLowerCase() === newSkill.toLowerCase()) {
@@ -141,9 +142,7 @@ function submitSkillEdit() {
             editedSkillTag = null;
             updateSkillTagsInDOM(skillList);
         } else {
-            const skillsInput = document.getElementById("skills-input");
-            skillsInput.setCustomValidity("bad bad error thingy: duplicate skill!");
-            console.log("bad bad error thingy: duplicate skill!");
+            skillsError.innerHTML = "Skill not saved: skill already exists";
             editedSkillTag = null;
             updateSkillTagsInDOM(skillList);
         }
@@ -271,7 +270,7 @@ function updateSkillTagsInDOM(tags) {
         let element = createElementFromHTML(`<div class="skill-tag-con">
                                                           <div class="skill-tag">
                                                             <div class="skill-tag-inside">
-                                                              <p id="skill-tag-${sanitizeHTML(tag)}" onclick="editSkill('${sanitizeHTML(tag)}')">${sanitizeHTML(tag)}</p>
+                                                              <p class="strip-margin" id="skill-tag-${sanitizeHTML(tag)}" onclick="editSkill('${sanitizeHTML(tag)}')">${sanitizeHTML(tag)}</p>
                                                               <i class="bi bi-x" onclick="clickSkillXButton('${sanitizeHTML(tag)}')"></i>
                                                             </div>
                                                           </div>
@@ -303,8 +302,8 @@ function updateUserTagsInDOM(tags) {
                                 <div class="user-tag-inside">
                                   <img class="user-tag-image" src=${user.profilePicture} alt="Profile Photo">
                                   <div class="user-tag-text" >
-                                      <p class="user-tag-fullName">${sanitizeHTML(user.fullName)}</p>
-                                      <p class="user-tag-nickname"> ${sanitizeHTML(user.username)}</p>
+                                      <p class="user-tag-fullName strip-margin">${sanitizeHTML(user.fullName)}</p>
+                                      <p class="user-tag-nickname strip-margin"> ${sanitizeHTML(user.username)}</p>
                                   </div>
                                   <i class="bi bi-x" onclick="clickUserXButton('${sanitizeHTML(tag)}')"></i>
                                 </div>
