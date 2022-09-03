@@ -445,7 +445,7 @@ function addWebLinks() {
     if (webLinkName) {
         webLinkHTML = `<div class="web-link">
                             <p class="web-link__name">${webLinkName}</p>
-                            <a target="_blank" href="${webLink}">${webLink}</a>
+                            <a class="web-link__link" target="_blank" href="${webLink}">${webLink}</a>
                         </div>`
     } else {
         webLinkHTML = `<div class="web-link">
@@ -453,9 +453,7 @@ function addWebLinks() {
                             <a target="_blank" href="${webLink}">${webLink}</a>
                         </div>`
     }
-    console.log("HERE");
+
     webLinkContainer.appendChild(
         createElementFromHTML(webLinkHTML))
-    console.log("HERE2");
-
 }

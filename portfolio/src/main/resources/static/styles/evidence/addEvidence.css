@@ -250,7 +250,10 @@ p {
 
 .web-link {
     display: flex;
-    gap: 8px;
+}
+
+.web-link__link {
+    margin-left: 8px !important;
 }
 
 #evidence-form__webLink-container {
@@ -258,4 +261,5 @@ p {
     flex-direction: column;
     gap: 4px;
     margin-bottom: 10px;
+    margin-left: 1rem;
 }
