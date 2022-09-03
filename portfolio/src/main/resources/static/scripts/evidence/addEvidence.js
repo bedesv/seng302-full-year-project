@@ -438,5 +438,24 @@ function arraysEqual(a, b) {
 }
 
 function addWebLinks() {
+    let webLinkContainer = document.getElementById("evidence-form__webLink-container");
+    let webLinkName = document.getElementById("evidence-form__webLink-name").value;
+    let webLink = document.getElementById("evidence-form__webLink-link").value;
+    let webLinkHTML;
+    if (webLinkName) {
+        webLinkHTML = `<div class="web-link">
+                            <p class="web-link__name">${webLinkName}</p>
+                            <a target="_blank" href="${webLink}">${webLink}</a>
+                        </div>`
+    } else {
+        webLinkHTML = `<div class="web-link">
+                            <p class="web-link__name"></p>
+                            <a target="_blank" href="${webLink}">${webLink}</a>
+                        </div>`
+    }
+    console.log("HERE");
+    webLinkContainer.appendChild(
+        createElementFromHTML(webLinkHTML))
+    console.log("HERE2");
 
 }

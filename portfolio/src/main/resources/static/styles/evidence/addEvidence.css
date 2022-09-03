@@ -247,3 +247,15 @@ p {
 #users-input:focus {
     outline: none;
 }
+
+.web-link {
+    display: flex;
+    gap: 8px;
+}
+
+#evidence-form__webLink-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+}
