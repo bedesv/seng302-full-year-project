@@ -454,6 +454,7 @@ function addWebLinks() {
             numWebLinks++;
             webLinkNameElement.value = "";
             webLinkElement.value = "";
+            document.getElementById("evidence-form__hidden-webLinks-field").value = webLinks;
         }
     }
     if (numWebLinks === 5) {
