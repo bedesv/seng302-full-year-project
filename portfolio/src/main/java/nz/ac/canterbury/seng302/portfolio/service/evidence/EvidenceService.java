@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.service.evidence;
 
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
+import nz.ac.canterbury.seng302.portfolio.model.evidence.Commit;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
@@ -32,6 +33,41 @@ public class EvidenceService {
     private ProjectService projectService;
 
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
+
+    /**
+     * Updates a user's evidence with new skills.
+     * Skills are space separated in order, i.e. old new old2 new2 old3 new3 ...
+     *
+     * @param userId The user of this portfolio
+     * @param projectId The project for this portfolio
+     * @param skillsToChange A string in form 'old new old2 new2 old3 new3' stating skills to change
+     */
+    public void updateEvidenceSkills(int userId, int projectId, String skillsToChange) {
+        if (Objects.equals(skillsToChange, "")) {
+            return; // No need to update skills if there are none to change.
+        }
+        List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(userId, projectId);
+        List<String> skills = getSkillsFromEvidence(evidenceList);
+        for (int i = 0; i < skills.size(); i += 1) {
+            skills.set(i, skills.get(i).toLowerCase());
+        }
+        List<String> skillsList = new ArrayList<>(Arrays.asList(skillsToChange.split("\\s+")));
+        List<List<String>> skillChanges = new ArrayList<>();
+        for (int i = 1; i < skillsList.size(); i += 2) {
+            String old = skillsList.get(i - 1);
+            String changed = skillsList.get(i);
+            // Either a skill is having its capitalization changed, or the changed skill should not already be a skill
+            if (old.equalsIgnoreCase(changed) || !skills.contains(changed.toLowerCase())) {
+                List<String> skillPair = new ArrayList<>();
+                skillPair.add(old);
+                skillPair.add(changed);
+                skillChanges.add(skillPair);
+            }
+        }
+        for (Evidence evidence : evidenceList) {
+            evidence.changeSkills(skillChanges);
+        }
+    }
 
     /**
      * Get list of all pieces of evidence for a specific portfolio.
@@ -148,12 +184,17 @@ public class EvidenceService {
             for (Integer userId: userIdList) {
                 Evidence copiedEvidence = new Evidence(userId, evidence.getProjectId(), evidence.getTitle(), evidence.getDescription(), evidence.getDate(), skillList);
                 copiedEvidence.setCategories(categoriesSet);
+
                 for (WebLink webLink : evidence.getWebLinks()) {
                     copiedEvidence.addWebLink(webLink);
+                }
+                for (Commit commit : evidence.getCommits()) {
+                    copiedEvidence.addCommit(commit);
                 }
                 for (Integer linkedUserId: evidence.getLinkedUsers()) {
                     copiedEvidence.addLinkedUsers(linkedUserId);
                 }
+
                 // This is to make sure that there are no duplicate skills in the other user's portfolio
                 List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(copiedEvidence.getOwnerId(), copiedEvidence.getProjectId());
                 copiedEvidence.conformSkills(getSkillsFromEvidence(evidenceList));
@@ -173,8 +214,8 @@ public class EvidenceService {
      * @param evidenceList A list of evidence to retrieve skills from.
      * @return All the skills for that list of evidence.
      */
-    public Collection<String> getSkillsFromEvidence(List<Evidence> evidenceList) {
-        Collection<String> skills = new HashSet<>();
+    public List<String> getSkillsFromEvidence(List<Evidence> evidenceList) {
+        Set<String> skills = new HashSet<>();
         for (Evidence userEvidence : evidenceList) {
             skills.addAll(userEvidence.getSkills());
         }
@@ -234,6 +275,27 @@ public class EvidenceService {
                 PORTFOLIO_LOGGER.error(message);
                 throw new NoSuchElementException("Evidence not found: web link not saved");
             }
+    }
+
+    /**
+     * Saves a commit to the evidence specified by evidenceId.
+     * @param evidenceId The ID of the evidence to have the commit added to.
+     * @param commit The commit object added to the evidence
+     * @throws NoSuchElementException If evidence specified by evidenceId does not exist NoSuchElementException
+     * is thrown.
+     */
+    public void saveCommit(int evidenceId, Commit commit) throws NoSuchElementException {
+        try {
+            Evidence evidence = getEvidenceById(evidenceId);
+            evidence.addCommit(commit);
+            saveEvidence(evidence);
+            String message = "Evidence commit saved successfully";
+            PORTFOLIO_LOGGER.info(message);
+        } catch (NoSuchElementException e) {
+            String message = "Evidence " + evidenceId + " not found. Commit not saved";
+            PORTFOLIO_LOGGER.error(message);
+            throw new NoSuchElementException("Evidence not found: commit not saved");
+        }
     }
 
     /**

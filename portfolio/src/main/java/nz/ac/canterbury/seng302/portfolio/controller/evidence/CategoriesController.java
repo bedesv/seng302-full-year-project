@@ -58,13 +58,13 @@ public class CategoriesController {
         List<Evidence> evidenceList;
 
         if (Objects.equals(category, "Quantitative")) {
-            categorySelection = Categories.Quantitative;
+            categorySelection = Categories.QUANTITATIVE;
             evidenceList = evidenceService.getEvidenceByCategoryForPortfolio(userId, projectId, categorySelection);
         } else if (Objects.equals(category, "Qualitative")) {
-            categorySelection = Categories.Qualitative;
+            categorySelection = Categories.QUALITATIVE;
             evidenceList = evidenceService.getEvidenceByCategoryForPortfolio(userId, projectId, categorySelection);
         } else  if (Objects.equals(category, "Service")) {
-            categorySelection = Categories.Service;
+            categorySelection = Categories.SERVICE;
             evidenceList = evidenceService.getEvidenceByCategoryForPortfolio(userId, projectId, categorySelection);
         } else if (Objects.equals(category, "")) {
             evidenceList = evidenceService.retrieveEvidenceWithNoCategory(userId, projectId);
@@ -106,13 +106,13 @@ public class CategoriesController {
         List<Evidence> evidenceList;
 
         if (Objects.equals(category, "Quantitative")) {
-            categorySelection = Categories.Quantitative;
+            categorySelection = Categories.QUANTITATIVE;
             evidenceList = evidenceService.getEvidenceByCategoryForPortfolio(userId, projectId, categorySelection);
         } else if (Objects.equals(category, "Qualitative")) {
-            categorySelection = Categories.Qualitative;
+            categorySelection = Categories.QUALITATIVE;
             evidenceList = evidenceService.getEvidenceByCategoryForPortfolio(userId, projectId, categorySelection);
         } else  if (Objects.equals(category, "Service")) {
-            categorySelection = Categories.Service;
+            categorySelection = Categories.SERVICE;
             evidenceList = evidenceService.getEvidenceByCategoryForPortfolio(userId, projectId, categorySelection);
         } else if (Objects.equals(category, "")) {
             evidenceList = evidenceService.retrieveEvidenceWithNoCategory(userId, projectId);

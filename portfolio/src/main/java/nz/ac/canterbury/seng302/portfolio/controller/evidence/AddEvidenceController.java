@@ -3,9 +3,12 @@ package nz.ac.canterbury.seng302.portfolio.controller.evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
+import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
+import nz.ac.canterbury.seng302.portfolio.service.group.GroupRepositorySettingsService;
+import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.*;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -35,6 +38,12 @@ public class AddEvidenceController {
 
     @Autowired
     private UserAccountClientService userService;
+
+    @Autowired
+    private GroupRepositorySettingsService groupRepositorySettingsService;
+
+    @Autowired
+    private GroupsClientService groupsService;
 
     @Autowired
     private PortfolioUserService portfolioUserService;
@@ -102,6 +111,7 @@ public class AddEvidenceController {
             @RequestParam(name="isQualitative", required = false) String isQualitative,
             @RequestParam(name="isService", required = false) String isService,
             @RequestParam(name="evidenceSkills") String skills,
+            @RequestParam(name="skillsToChange") String skillsToChange,
             @RequestParam(name="evidenceUsers") String users,
             Model model
     ) {
@@ -131,7 +141,8 @@ public class AddEvidenceController {
             categories.add(Categories.Service);
         }
 
-        int userId = userService.getUserId(principal);
+        int userId = user.getId();
+        evidenceService.updateEvidenceSkills(userId, projectId, skillsToChange);
         Evidence evidence = getEvidenceById(evidenceId, userId, projectId);
         evidence.setTitle(title);
         evidence.setDescription(description);
@@ -218,19 +229,31 @@ public class AddEvidenceController {
      */
     private void addEvidenceToModel(Model model, int projectId, int userId, Evidence evidence) {
         List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
+        model.addAttribute("categories", evidence.getCategories());
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(evidenceList));
         model.addAttribute("evidenceTitle", evidence.getTitle());
         model.addAttribute("evidenceDescription", evidence.getDescription());
         model.addAttribute("evidenceDate", Project.dateToString(evidence.getDate(), TIMEFORMAT));
         model.addAttribute("evidenceSkills", String.join(" ", evidence.getSkills()) + " ");
         model.addAttribute("users", userService.getAllUsersExcept(userId));
+        List<Group> groups = groupsService.getAllGroups().getGroups();
+        List<Group> userGroups = new ArrayList<>();
+        for (Group group : groups) {
+            for (User user : group.getMembers()) {
+                if (user.getId() == userId) {
+                    userGroups.add(group);
+                }
+            }
+        }
+        model.addAttribute("groups", userGroups);
+        model.addAttribute("displayCommits", !userGroups.isEmpty());
     }
 
     /**
      * A method which deletes the evidence based on its id.
      * @return the portfolio page of the user
      */
-    @DeleteMapping(value = "/addEvidence-{evidenceId}")
+    @DeleteMapping(value = "/deleteEvidence-{evidenceId}")
     public String deleteEvidenceById(
             @PathVariable(name="evidenceId") String evidenceId) {
         int id = Integer.parseInt(evidenceId);

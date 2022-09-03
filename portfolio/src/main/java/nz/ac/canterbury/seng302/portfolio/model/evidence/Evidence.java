@@ -34,6 +34,8 @@ public class Evidence {
     @ElementCollection
     private List<String> skills; //skills related to this piece of evidence
     @ElementCollection
+    private List<Commit> commits;
+    @ElementCollection
     private final Set<Integer> linkedUsers = new HashSet<>();
 
 
@@ -52,6 +54,7 @@ public class Evidence {
         this.description = description;
         this.date = date;
         webLinks = new ArrayList<>();
+        commits = new ArrayList<>();
         this.skills = new ArrayList<>(Arrays.asList(skills.split("\\s+")));
         // If the entered string is "" or has leading spaces, the regex adds an empty element at the start of the skill list
         // which should not happen.
@@ -99,6 +102,10 @@ public class Evidence {
         this.webLinks.add(webLink);
     }
 
+    public List<Commit> getCommits() {return commits; }
+
+    public void addCommit(Commit commit) {this.commits.add(commit); }
+
     public List<String> getSkills() {return skills;}
 
     public void addSkill (String skill) {this.skills.add(skill);}
@@ -131,8 +138,35 @@ public class Evidence {
                 newSkills.add(skill);
             }
         }
-        skills = newSkills;
+        // Remove duplicate skills
+        skills = newSkills.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
     }
+
+    /**
+     * Changes skills to conform to a list of skill changes
+     * Each change is a tuple of two strings, old then new.
+     * Any skill matching the old string is changed to the new one.
+     * @param skillChanges A list of master skills to compare against.
+     */
+    public void changeSkills(List<List<String>> skillChanges) {
+        List<String> newSkills = new ArrayList<>();
+        for (String skill : skills) {
+            boolean inChanges = false;
+            for (List<String> skillChange : skillChanges) {
+                if (!inChanges && skillChange.get(0).equalsIgnoreCase(skill)) {
+                    newSkills.add(skillChange.get(1));
+                    inChanges = true;
+                }
+            }
+            if (!inChanges) {
+                newSkills.add(skill);
+            }
+        }
+        // Remove duplicate skills
+        skills = newSkills.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public int getNumberCommits() {return commits.size();}
 
     public int getNumberWeblinks() { return webLinks.size(); }
 
@@ -171,5 +205,4 @@ public class Evidence {
     public void setCategories(Set<Categories> categories) {
         this.categories = categories;
     }
-
 }
