@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.service.group;
 import com.google.common.annotations.VisibleForTesting;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
+import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
@@ -38,7 +39,7 @@ public class GroupChartDataService {
         // Iterate through every user in the group
         for (User user : group.getMembers()) {
             // Iterate through all of that user's evidence for the groups project
-            for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
+            for (PortfolioEvidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
 
                 // Increase the count of the category by 1 if the piece of evidence has that category
                 if (e.getCategories().contains(Categories.SERVICE)) {
