@@ -437,35 +437,63 @@ function arraysEqual(a, b) {
     return true;
 }
 
+let webLinks = [];
 let numWebLinks = 0;
 function addWebLinks() {
-    let webLinkContainer = document.getElementById("evidence-form__webLink-container");
-    let webLinkName = document.getElementById("evidence-form__webLink-name");
-    let webLink = document.getElementById("evidence-form__webLink-link");
+
+    let webLinkNameElement = document.getElementById("evidence-form__webLink-name");
+    let webLinkElement = document.getElementById("evidence-form__webLink-link");
+    let webLink = {name: webLinkNameElement.value, link: webLinkElement.value}
     if (numWebLinks < 5) {
-        if (webLink.value) {
-            let webLinkHTML;
-            if (webLinkName.value) {
-                webLinkHTML = `<div class="web-link">
-                            <p class="web-link__name">${webLinkName.value}</p>
-                            <a class="web-link__link" target="_blank" href="${webLink.value}">${webLink.value}</a>
-                        </div>`
-            } else {
-                webLinkHTML = `<div class="web-link">
-                            <p class="web-link__name"></p>
-                            <a target="_blank" href="${webLink.value}">${webLink.value}</a>
-                        </div>`
-            }
-            webLinkContainer.appendChild(
-                createElementFromHTML(webLinkHTML))
+        if (webLink.link) {
+            addWebLinkToDOM(webLink, numWebLinks);
+            webLinks.push(webLink);
             numWebLinks++;
-            webLinkName.value = "";
-            webLink.value = "";
+            webLinkNameElement.value = "";
+            webLinkElement.value = "";
         }
     }
     if (numWebLinks === 5) {
-        webLinkName.hidden = true;
-        webLink.hidden = true;
+        webLinkNameElement.hidden = true;
+        webLinkElement.hidden = true;
         document.getElementById("weblink-button").hidden = true;
+    }
+}
+
+function addWebLinkToDOM(webLink, index) {
+    let webLinkContainer = document.getElementById("evidence-form__webLink-container");
+    let webLinkHTML;
+    if (webLink.name) {
+        webLinkHTML = `<div class="web-link">
+                            <p class="web-link__name">${webLink.name}</p>
+                            <a class="web-link__link" target="_blank" href="${webLink.link}">${webLink.link}</a>
+                            <i class="bi bi-x" onclick="removeWebLink(sanitizeHTML('${index}'))">
+                        </div>`
+    } else {
+        webLinkHTML = `<div class="web-link">
+                            <p class="web-link__name"></p>
+                            <a target="_blank" href="${webLink}">${webLink}</a>
+                            <i class="bi bi-x" onclick="removeWebLink(sanitizeHTML('${index}'))">
+                        </div>`
+    }
+    webLinkContainer.appendChild(
+        createElementFromHTML(webLinkHTML))
+
+}
+
+function removeWebLink(webLinkIndex) {
+    if (numWebLinks === 5) {
+        document.getElementById("evidence-form__webLink-name").hidden = false;
+        document.getElementById("evidence-form__webLink-link").hidden = false;
+        document.getElementById("weblink-button").hidden = false;
+    }
+    numWebLinks--;
+    console.log(parseInt(webLinkIndex));
+    document.getElementById("evidence-form__webLink-container").innerHTML = "";
+    console.log(webLinks);
+    webLinks.splice(parseInt(webLinkIndex), 1);
+    console.log(webLinks)
+    for (let i = 0; i < webLinks.length; i++) {
+        addWebLinkToDOM(webLinks[i], i);
     }
 }
