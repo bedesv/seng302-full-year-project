@@ -437,23 +437,35 @@ function arraysEqual(a, b) {
     return true;
 }
 
+let numWebLinks = 0;
 function addWebLinks() {
     let webLinkContainer = document.getElementById("evidence-form__webLink-container");
-    let webLinkName = document.getElementById("evidence-form__webLink-name").value;
-    let webLink = document.getElementById("evidence-form__webLink-link").value;
-    let webLinkHTML;
-    if (webLinkName) {
-        webLinkHTML = `<div class="web-link">
-                            <p class="web-link__name">${webLinkName}</p>
-                            <a class="web-link__link" target="_blank" href="${webLink}">${webLink}</a>
+    let webLinkName = document.getElementById("evidence-form__webLink-name");
+    let webLink = document.getElementById("evidence-form__webLink-link");
+    if (numWebLinks < 5) {
+        if (webLink.value) {
+            let webLinkHTML;
+            if (webLinkName.value) {
+                webLinkHTML = `<div class="web-link">
+                            <p class="web-link__name">${webLinkName.value}</p>
+                            <a class="web-link__link" target="_blank" href="${webLink.value}">${webLink.value}</a>
                         </div>`
-    } else {
-        webLinkHTML = `<div class="web-link">
+            } else {
+                webLinkHTML = `<div class="web-link">
                             <p class="web-link__name"></p>
-                            <a target="_blank" href="${webLink}">${webLink}</a>
+                            <a target="_blank" href="${webLink.value}">${webLink.value}</a>
                         </div>`
+            }
+            webLinkContainer.appendChild(
+                createElementFromHTML(webLinkHTML))
+            numWebLinks++;
+            webLinkName.value = "";
+            webLink.value = "";
+        }
     }
-
-    webLinkContainer.appendChild(
-        createElementFromHTML(webLinkHTML))
+    if (numWebLinks === 5) {
+        webLinkName.hidden = true;
+        webLink.hidden = true;
+        document.getElementById("weblink-button").hidden = true;
+    }
 }
