@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.service.group;
 
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
+import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
@@ -62,9 +63,11 @@ class GroupChartDataServiceTest {
 
         Evidence testEvidence1 = new Evidence();
         Evidence testEvidence2 = new Evidence();
-        List<Evidence> testEvidenceList = new ArrayList<>();
-        testEvidenceList.add(testEvidence1);
-        testEvidenceList.add(testEvidence2);
+        PortfolioEvidence testPortfolioEvidence1 = new PortfolioEvidence(testEvidence1, new ArrayList<>());
+        PortfolioEvidence testPortfolioEvidence2 = new PortfolioEvidence(testEvidence2, new ArrayList<>());
+        List<PortfolioEvidence> testEvidenceList = new ArrayList<>();
+        testEvidenceList.add(testPortfolioEvidence1);
+        testEvidenceList.add(testPortfolioEvidence2);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(testEvidenceList).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
@@ -85,8 +88,10 @@ class GroupChartDataServiceTest {
         Set<Categories> testCategoriesSet = new HashSet<>(Arrays.asList(Categories.QUANTITATIVE, Categories.QUALITATIVE));
         Evidence testEvidence1 = new Evidence();
         testEvidence1.setCategories(testCategoriesSet);
-        List<Evidence> testEvidenceList = new ArrayList<>();
-        testEvidenceList.add(testEvidence1);
+        PortfolioEvidence testPortfolioEvidence1 = new PortfolioEvidence(testEvidence1, new ArrayList<>());
+
+        List<PortfolioEvidence> testEvidenceList = new ArrayList<>();
+        testEvidenceList.add(testPortfolioEvidence1);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(testEvidenceList).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
@@ -109,12 +114,16 @@ class GroupChartDataServiceTest {
         Evidence testEvidence2 = new Evidence();
         testEvidence1.setCategories(testCategoriesSet);
         testEvidence2.setCategories(testCategoriesSet);
-        List<Evidence> testEvidenceList = new ArrayList<>();
-        testEvidenceList.add(testEvidence1);
-        testEvidenceList.add(testEvidence2);
+
+        PortfolioEvidence testPortfolioEvidence1 = new PortfolioEvidence(testEvidence1, new ArrayList<>());
+        PortfolioEvidence testPortfolioEvidence2 = new PortfolioEvidence(testEvidence2, new ArrayList<>());
+
+        List<PortfolioEvidence> testPortfolioEvidenceList = new ArrayList<>();
+        testPortfolioEvidenceList.add(testPortfolioEvidence1);
+        testPortfolioEvidenceList.add(testPortfolioEvidence2);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
-        Mockito.doReturn(testEvidenceList).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
+        Mockito.doReturn(testPortfolioEvidenceList).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
         groupChartDataService.setEvidenceService(mockedEvidenceService);
 
         Map<String, Integer> result = groupChartDataService.getGroupCategoryInfo(testGroup);
@@ -146,8 +155,11 @@ class GroupChartDataServiceTest {
         Evidence testEvidence1 = new Evidence();
         Evidence testEvidence2 = new Evidence();
 
+        PortfolioEvidence testPortfolioEvidence1 = new PortfolioEvidence(testEvidence1, new ArrayList<>());
+        PortfolioEvidence testPortfolioEvidence2 = new PortfolioEvidence(testEvidence2, new ArrayList<>());
+
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
-        Mockito.doReturn(List.of(testEvidence1), List.of(testEvidence2)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
+        Mockito.doReturn(List.of(testPortfolioEvidence1), List.of(testPortfolioEvidence2)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
         groupChartDataService.setEvidenceService(mockedEvidenceService);
 
         Map<String, Integer> result = groupChartDataService.getGroupCategoryInfo(testGroup);
@@ -168,10 +180,11 @@ class GroupChartDataServiceTest {
         testEvidence1.setCategories(testCategoriesSet1);
         testEvidence2.setCategories(testCategoriesSet2);
 
-
+        PortfolioEvidence testPortfolioEvidence1 = new PortfolioEvidence(testEvidence1, new ArrayList<>());
+        PortfolioEvidence testPortfolioEvidence2 = new PortfolioEvidence(testEvidence2, new ArrayList<>());
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
-        Mockito.doReturn(List.of(testEvidence1), List.of(testEvidence2)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
+        Mockito.doReturn(List.of(testPortfolioEvidence1), List.of(testPortfolioEvidence2)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
         groupChartDataService.setEvidenceService(mockedEvidenceService);
 
         Map<String, Integer> result = groupChartDataService.getGroupCategoryInfo(testGroup);
@@ -191,10 +204,11 @@ class GroupChartDataServiceTest {
         testEvidence1.setCategories(testCategoriesSet);
         testEvidence2.setCategories(testCategoriesSet);
 
-
+        PortfolioEvidence testPortfolioEvidence1 = new PortfolioEvidence(testEvidence1, new ArrayList<>());
+        PortfolioEvidence testPortfolioEvidence2 = new PortfolioEvidence(testEvidence2, new ArrayList<>());
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
-        Mockito.doReturn(List.of(testEvidence1), List.of(testEvidence2)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
+        Mockito.doReturn(List.of(testPortfolioEvidence1), List.of(testPortfolioEvidence2)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
         groupChartDataService.setEvidenceService(mockedEvidenceService);
 
         Map<String, Integer> result = groupChartDataService.getGroupCategoryInfo(testGroup);
@@ -216,13 +230,15 @@ class GroupChartDataServiceTest {
         testEvidence1.setCategories(testCategoriesSet);
         testEvidence2.setCategories(testCategoriesSet);
 
-
+        PortfolioEvidence testPortfolioEvidence1 = new PortfolioEvidence(testEvidence1, new ArrayList<>());
+        PortfolioEvidence testPortfolioEvidence2 = new PortfolioEvidence(testEvidence2, new ArrayList<>());
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
-        Mockito.doReturn(List.of(testEvidence1), List.of(testEvidence2)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
+        Mockito.doReturn(List.of(testPortfolioEvidence1), List.of(testPortfolioEvidence2)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
         groupChartDataService.setEvidenceService(mockedEvidenceService);
 
         Map<String, Integer> result = groupChartDataService.getGroupCategoryInfo(testGroup1);
+        System.out.println(result);
         assertEquals(1, result.get("Service"));
         assertEquals(1, result.get("Quantitative"));
         assertEquals(1, result.get("Qualitative"));
