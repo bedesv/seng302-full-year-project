@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller.evidence;
 
+import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
