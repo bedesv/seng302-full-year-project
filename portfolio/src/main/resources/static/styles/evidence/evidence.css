@@ -222,6 +222,11 @@ html {
     flex-wrap: wrap;
 }
 
+#weblink-incorrect {
+    color: red;
+    margin-left: 15px;
+}
+
 .user-tag-con {
     display: inline-flex;
     flex-wrap: wrap;
