@@ -78,7 +78,7 @@ class CommitTests {
     void whenNoEvidenceAdded_testCommitNotSaved() {
         Exception exception = assertThrows(Exception.class,
                 () -> evidenceService.saveCommit(0, new Commit("Tester", Date.valueOf("2022-05-14"), "www.testCommit.com", "#Test test 1 commit" )));
-        String expectedMessage = "Evidence not found: commit not saved";
+        String expectedMessage = "Evidence " + 0 + " not found. Commit not saved";
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
     }

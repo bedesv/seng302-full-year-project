@@ -291,7 +291,7 @@ public class EvidenceService {
      * @param evidenceId The id of the piece of evidence to remove a commit from
      * @param commitIndex The index of the commit to be removed
      */
-    public void deleteCommit(int evidenceId, int commitIndex) {
+    public void removeCommit(int evidenceId, int commitIndex) {
         try {
             Evidence evidence = getEvidenceById(evidenceId);
             evidence.removeCommit(commitIndex);
