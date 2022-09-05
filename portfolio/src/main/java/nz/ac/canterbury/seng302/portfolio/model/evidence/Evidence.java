@@ -41,6 +41,7 @@ public class Evidence {
 
     public Evidence() {
         webLinks = new ArrayList<>();
+        commits = new ArrayList<>();
     }
 
     public Evidence(int ownerId, int projectId, String title, String description, Date date) {
@@ -210,7 +211,9 @@ public class Evidence {
      * @param commitIndex The index of the commit to be removed
      */
     public void removeCommit(int commitIndex) {
-        if (this.commits.size() > commitIndex) {
+        if (commitIndex < 0) {
+            throw new NoSuchElementException("Commit index is invalid because it is less than one. Commit not deleted.");
+        } else if (this.commits.size() > commitIndex) {
             this.commits.remove(commitIndex);
         } else {
             throw new NoSuchElementException("Evidence has less than " + (commitIndex + 1) + " commits. Commit not deleted.");
