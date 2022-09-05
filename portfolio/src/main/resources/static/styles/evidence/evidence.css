@@ -61,14 +61,24 @@ html {
 }
 
 .evidence-title__child {
-    display: inline-block;
+    display: flex;
+    flex-direction: row;
     vertical-align: middle;
     margin: auto;
+}
+
+.evidence-title__title-date {
+    display: flex;
+    flex-direction: column;
 }
 
 /** Evidence delete and edit buttons */
 
 .evidence-title-div__buttons {
+    margin-left: auto;
+}
+
+.evidence-title-div__button {
     float: right;
     display: inline;
     padding: 25px 10px 25px 10px;
