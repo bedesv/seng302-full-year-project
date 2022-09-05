@@ -205,6 +205,18 @@ public class Evidence {
         this.skills = this.skills.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
     }
 
+    /**
+     * Removes the commit with the given index from the piece of evidence
+     * @param commitIndex The index of the commit to be removed
+     */
+    public void removeCommit(int commitIndex) {
+        if (this.commits.size() > commitIndex) {
+            this.commits.remove(commitIndex);
+        } else {
+            throw new NoSuchElementException("Evidence has less than " + (commitIndex + 1) + " commits. Commit not deleted.");
+        }
+    }
+
     public void setCategories(Set<Categories> categories) {
         this.categories = categories;
     }
