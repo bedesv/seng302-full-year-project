@@ -50,6 +50,8 @@ public class GroupChartDataController {
 
     /**
      * Used by the front end to fetch the number of evidence per skill
+     * @param endDateString A string representation of the date that evidence must be on or before to be included in the data.
+     * @param startDateString A string representation of the date that evidence must be on or after to be included in the data.
      * @param groupId The id of the group that data is requested for
      * @return A map of skill names to the number of times they're used
      */
