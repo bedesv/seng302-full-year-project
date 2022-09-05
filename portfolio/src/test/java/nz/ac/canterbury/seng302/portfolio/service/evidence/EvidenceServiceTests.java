@@ -982,6 +982,19 @@ class EvidenceServiceTests {
 
     @Test
     @Transactional
+    void whenEvidenceExistsWithCommits_testCopyToAnotherUserPortfolio() {
+        int testUser0 = 0;
+        int testUser1 = 1;
+        Evidence evidence1 = new Evidence(testUser0, projects.get(1).getId(), "Three", TEST_DESCRIPTION, Date.valueOf("2022-05-14"));
+        evidenceService.saveEvidence(evidence1);
+        evidenceService.saveCommit(evidence1.getId(), new Commit("Tester", Date.valueOf("2022-05-14"), "www.testCommit.com", "#Test test 1 commit" ));
+        evidenceService.copyEvidenceToNewUser(evidence1.getId(), List.of(testUser1));
+        List<Evidence> evidenceList = (List<Evidence>) evidenceRepository.findAll();
+        assertEquals(1, evidenceList.get(1).getNumberCommits());
+    }
+
+    @Test
+    @Transactional
     void whenOtherUserAlreadyHasSkills_testCopiedEvidenceConformSkills() {
         int testUser0 = 0;
         int testUser1 = 1;
@@ -1086,6 +1099,41 @@ class EvidenceServiceTests {
         evidenceService.updateEvidenceSkills(1, projects.get(1).getId(), "skill1 skill2");
         List<Evidence> evidenceList = evidenceService.retrieveEvidenceBySkill("skill1", projects.get(1).getId());
         assertEquals(0, evidenceList.size());
+    }
+
+    ////////////////////////////////////////////////
+    //////////////Modify Weblinks///////////////////
+    ////////////////////////////////////////////////
+
+    @Test
+    @Transactional
+    void whenEvidenceExistsWithOneWebLink_testModifyWeblink() {
+        int testUser0 = 0;
+        Evidence evidence1 = new Evidence(testUser0, projects.get(1).getId(), "Three", TEST_DESCRIPTION, Date.valueOf("2022-05-14"));
+        evidenceService.saveEvidence(evidence1);
+        evidenceService.saveWebLink(evidence1.getId(), new WebLink("http://localhost:9000/portfolio", "My web link"));
+        WebLink webLink = new WebLink("http://localhost:9000/planner", "Changed");
+        evidenceService.modifyWebLink(evidence1.getId(), webLink, 0);
+        Evidence evidence = evidenceService.getEvidenceById(evidence1.getId());
+        assertEquals(webLink.getLink(), evidence.getWebLinks().get(0).getLink());
+        assertEquals(webLink.getName(), evidence.getWebLinks().get(0).getName());
+    }
+
+    @Test
+    @Transactional
+    void whenEvidenceExistsWithMultipleWebLink_testModifyWeblink() {
+        int testUser0 = 0;
+        Evidence evidence1 = new Evidence(testUser0, projects.get(1).getId(), "Three", TEST_DESCRIPTION, Date.valueOf("2022-05-14"));
+        evidenceService.saveEvidence(evidence1);
+        evidenceService.saveWebLink(evidence1.getId(), new WebLink("http://localhost:9000/portfolio", "My web link"));
+        evidenceService.saveWebLink(evidence1.getId(), new WebLink("http://localhost:9000/planner", "My web link1"));
+        evidenceService.saveWebLink(evidence1.getId(), new WebLink("http://localhost:9000/profile", "My web link2"));
+        evidenceService.saveWebLink(evidence1.getId(), new WebLink("http://localhost:9000/projects", "My web link3"));
+        WebLink webLink = new WebLink("http://localhost:9000/planner", "Changed");
+        evidenceService.modifyWebLink(evidence1.getId(), webLink, 2);
+        Evidence evidence = evidenceService.getEvidenceById(evidence1.getId());
+        assertEquals(webLink.getLink(), evidence.getWebLinks().get(2).getLink());
+        assertEquals(webLink.getName(), evidence.getWebLinks().get(2).getName());
     }
 
 }

@@ -93,6 +93,10 @@ public class User {
     }
 
 
+    public String getFirstLast() {
+        return firstName + " " + lastName;
+    }
+
     public String getNickname() {
         return nickname;
     }

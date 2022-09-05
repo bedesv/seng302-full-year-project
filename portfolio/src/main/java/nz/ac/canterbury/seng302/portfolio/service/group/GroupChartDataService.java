@@ -14,11 +14,41 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.*;
 
 @Service
 public class GroupChartDataService {
     @Autowired
     private EvidenceService evidenceService;
+
+
+    /**
+     * Iterates through all group members then the members' pieces of evidence then the skills within those evidence
+     * to count the occurrence of skills within all pieces of evidence for that group
+     * @param group the group object that the data is wanted for
+     * @param startDate The start date, evidence must be created on or after this date.
+     * @param endDate The end date, evidence must be created on or before this date.
+     * @return A map of skills and their occurrence in the group's pieces of evidence
+     */
+    public Map<String, Integer> getGroupSkillData(Group group, Date startDate, Date endDate) {
+        int parentProjectId = group.getParentProject();
+
+        Map<String, Integer> skillCounts = new HashMap<>();
+        // Iterate through every user in the group
+        for (User user : group.getMembers()) {
+            // Iterate through all of that user's evidence for the groups project
+            for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
+                if(!startDate.after(e.getDate()) && !endDate.before(e.getDate())) {
+                    //Iterate through all skills within that piece of evidence
+                    for(String skill : e.getSkills()) {
+                        skillCounts.merge(skill.toUpperCase(), 1, Integer::sum);
+                    }
+                }
+            }
+        }
+        return skillCounts;
+    }
+
 
     /**
      * Iterates through the groups members then the members' pieces of evidence
