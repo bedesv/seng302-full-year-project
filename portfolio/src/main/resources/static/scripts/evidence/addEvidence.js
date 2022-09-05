@@ -204,7 +204,6 @@ function updateUserTagsInDOM(tags) {
         parent.removeChild(parent.firstChild);
     }
     let userInput = parent.firstChild
-    console.log(userInput);
     for (let tag of tags) {
         for (user of ALL_USERS) {
             if (tag === user.id) {
@@ -270,7 +269,6 @@ function autocompleteSkills(event) {
 
 // Perform autocompleting on users. This is a complex endeavour!
 function autocompleteUsers(event) {
-    console.log(ALL_USERS);
     let val = event.target.value;
     /*close any already open lists of autocompleted values*/
     destroyAutocomplete();

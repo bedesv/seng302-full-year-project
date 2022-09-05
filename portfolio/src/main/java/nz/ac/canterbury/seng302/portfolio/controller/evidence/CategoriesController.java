@@ -72,12 +72,14 @@ public class CategoriesController {
             return PORTFOLIO_REDIRECT;
         }
 
-        // Add all of the skills that the user has to the page
+        List<PortfolioEvidence> portfolioEvidenceList = evidenceService.convertEvidenceForPortfolio(evidenceList);
+
+        // Add all the skills that the user has to the page
         List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
         model.addAttribute("categoryName", category);
-        model.addAttribute("evidenceList", evidenceList);
+        model.addAttribute("evidenceList", portfolioEvidenceList);
         return "templatesEvidence/categories";
     }
 
@@ -119,7 +121,7 @@ public class CategoriesController {
         } else {
             return PORTFOLIO_REDIRECT;
         }
-        // Add all of the skills that the user has to the page
+        // Add all the skills that the user has to the page
         List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
 
