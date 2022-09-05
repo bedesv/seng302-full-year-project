@@ -7,6 +7,8 @@ import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -58,7 +60,7 @@ class GroupChartDataServiceTest {
         List<User> testUserList = new ArrayList<>();
         testUserList.add(testUser1);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));;
+        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
@@ -68,102 +70,29 @@ class GroupChartDataServiceTest {
         assertEquals(0, result.size());
     }
 
-    @Test
-    void whenOneUserWithEvidenceWithSkillsBeforeStart_testGetGroupSkillData() {
+    @ParameterizedTest
+    @CsvSource({"2022-01-09,0", "2022-01-10,1", "2022-01-11,1", "2022-02-09,1", "2022-02-10,1", "2022-02-11,0",  })
+    void whenOneUserWithEvidenceWithSkillsTestDateBoundaries_testGetGroupSkillData(String evidenceDate, int expectedResult) {
         List<User> testUserList = new ArrayList<>();
         testUserList.add(testUser1);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-09"));;
+        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf(evidenceDate));
         testEvidence1.addSkill("test");
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
         groupChartDataService.setEvidenceService(mockedEvidenceService);
 
         Map<String, Integer> result = groupChartDataService.getGroupSkillData(testGroup, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
-        assertEquals(0, result.size());
+        assertEquals(expectedResult, result.size());
     }
 
-    @Test
-    void whenOneUserWithEvidenceWithSkillsOnStart_testGetGroupSkillData() {
-        List<User> testUserList = new ArrayList<>();
-        testUserList.add(testUser1);
-        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-10"));;
-        testEvidence1.addSkill("test");
-        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
-        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
-        groupChartDataService.setEvidenceService(mockedEvidenceService);
-
-        Map<String, Integer> result = groupChartDataService.getGroupSkillData(testGroup, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    void whenOneUserWithEvidenceWithSkillsAfterStart_testGetGroupSkillData() {
-        List<User> testUserList = new ArrayList<>();
-        testUserList.add(testUser1);
-        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));;
-        testEvidence1.addSkill("test");
-        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
-        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
-        groupChartDataService.setEvidenceService(mockedEvidenceService);
-
-        Map<String, Integer> result = groupChartDataService.getGroupSkillData(testGroup, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    void whenOneUserWithEvidenceWithSkillsBeforeFinish_testGetGroupSkillData() {
-        List<User> testUserList = new ArrayList<>();
-        testUserList.add(testUser1);
-        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-09"));;
-        testEvidence1.addSkill("test");
-        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
-        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
-        groupChartDataService.setEvidenceService(mockedEvidenceService);
-
-        Map<String, Integer> result = groupChartDataService.getGroupSkillData(testGroup, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    void whenOneUserWithEvidenceWithSkillsOnFinish_testGetGroupSkillData() {
-        List<User> testUserList = new ArrayList<>();
-        testUserList.add(testUser1);
-        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-10"));;
-        testEvidence1.addSkill("test");
-        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
-        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
-        groupChartDataService.setEvidenceService(mockedEvidenceService);
-
-        Map<String, Integer> result = groupChartDataService.getGroupSkillData(testGroup, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    void whenOneUserWithEvidenceWithSkillsAfterFinish_testGetGroupSkillData() {
-        List<User> testUserList = new ArrayList<>();
-        testUserList.add(testUser1);
-        Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-11"));;
-        testEvidence1.addSkill("test");
-        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
-        Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
-        groupChartDataService.setEvidenceService(mockedEvidenceService);
-
-        Map<String, Integer> result = groupChartDataService.getGroupSkillData(testGroup, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
-        assertEquals(0, result.size());
-    }
 
     @Test
     void whenOneUserWithEvidenceWithMultipleSkills_testGetGroupSkillData() {
         List<User> testUserList = new ArrayList<>();
         testUserList.add(testUser1);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));;
+        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
         testEvidence1.addSkill("test");
         testEvidence1.addSkill("jUnit");
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
@@ -180,7 +109,7 @@ class GroupChartDataServiceTest {
         testUserList.add(testUser1);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
         Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
-        Evidence testEvidence2 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));;
+        Evidence testEvidence2 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
         testEvidence1.addSkill("test");
         testEvidence1.addSkill("jUnit");
         testEvidence2.addSkill("test");
