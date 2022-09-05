@@ -8,18 +8,11 @@ import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -43,16 +36,19 @@ public class GroupChartDataController {
     @Autowired
     private UserAccountClientService userService;
 
-    private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
-
-
     /**
      * Used by the front end to fetch the number of evidence for each category
      * @param groupId The id of the group that data is requested for
      * @return A map of category names to the number of times they're used
      */
     @GetMapping("/group-{groupId}-categoriesData")
-    public Map<String, Integer> getCategoriesData(@PathVariable int groupId) {
+    public Map<String, Integer> getCategoriesData(@AuthenticationPrincipal AuthState principal,
+                                                  @PathVariable int groupId) {
+        User user = userService.getUserAccountByPrincipal(principal);
+        if (user.getUsername() == null) {
+            return Collections.emptyMap();
+        }
+
         Group group = new Group(groupsClientService.getGroupDetailsById(groupId));
         return groupChartDataService.getGroupCategoryInfo(group);
     }
@@ -95,7 +91,13 @@ public class GroupChartDataController {
      * @return A map of group member ids + first and last names and the number of evidence for each.
      */
     @GetMapping("/group-{groupId}-membersData")
-    public @ResponseBody Map<String, Integer> getEvidenceDataCompareGroupMembers(@PathVariable int groupId) {
+    public @ResponseBody Map<String, Integer> getEvidenceDataCompareGroupMembers(@AuthenticationPrincipal AuthState principal,
+                                                                                 @PathVariable int groupId) {
+        User user = userService.getUserAccountByPrincipal(principal);
+        if (user.getUsername() == null) {
+            return Collections.emptyMap();
+        }
+
         Group group = new Group(groupsClientService.getGroupDetailsById(groupId));
         return groupChartDataService.getGroupEvidenceDataCompareMembers(group);
     }
@@ -108,10 +110,16 @@ public class GroupChartDataController {
      * @return A map of group member ids + first and last names and the number of evidence for each.
      */
     @GetMapping("/group-{groupId}-{timeRange}-{startDateString}-{endDateString}-dataOverTime")
-    public @ResponseBody Map<String, Integer> getEvidenceDataOverTime(@PathVariable int groupId,
+    public @ResponseBody Map<String, Integer> getEvidenceDataOverTime(@AuthenticationPrincipal AuthState principal,
+                                                                      @PathVariable int groupId,
                                                                       @PathVariable String timeRange,
                                                                       @PathVariable String startDateString,
                                                                       @PathVariable String endDateString) throws ParseException {
+        User user = userService.getUserAccountByPrincipal(principal);
+        if (user.getUsername() == null) {
+            return Collections.emptyMap();
+        }
+
         Date startDate;
         Date endDate;
         try {
