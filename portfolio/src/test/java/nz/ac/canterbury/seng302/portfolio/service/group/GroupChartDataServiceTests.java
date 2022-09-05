@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 @AutoConfigureTestDatabase
 @SpringBootTest
-class GroupChartDataServiceTest {
+class GroupChartDataServiceTests {
 
     @Autowired
     private GroupChartDataService groupChartDataService;
@@ -344,8 +344,8 @@ class GroupChartDataServiceTest {
 
     @Test
     void whenTwoUsersWithEvidenceWithAllCategoriesInDifferentGroups_testGetGroupCategoryDataForEachGroup() {
-        List<User> testUserList1 = new ArrayList<>(Arrays.asList(testUser1));
-        List<User> testUserList2 = new ArrayList<>(Arrays.asList(testUser1));
+        List<User> testUserList1 = new ArrayList<>(List.of(testUser1));
+        List<User> testUserList2 = new ArrayList<>(List.of(testUser1));
         Group testGroup1 = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList1);
         Group testGroup2 = new Group(testGroupId + 1, "Short Name 2", "Long Name 2", testParentProjectId, testUserList2);
 
