@@ -69,6 +69,17 @@ public class EvidenceService {
         }
     }
 
+    public List<PortfolioEvidence> convertEvidenceForPortfolio(List<Evidence> evidenceList) {
+        List<PortfolioEvidence> portfolioEvidenceList = new ArrayList<>();
+        for (Evidence evidence: evidenceList) {
+            List<User> userList = new ArrayList<>();
+            for (int linkedUserId: evidence.getLinkedUsers()) {
+                userList.add(userService.getUserAccountById(linkedUserId));
+            }
+            portfolioEvidenceList.add(new PortfolioEvidence(evidence, userList));
+        }
+        return portfolioEvidenceList;
+    }
     /**
      * Get list of all pieces of evidence for a specific portfolio.
      * Portfolios can be identified by a user and project.
@@ -80,14 +91,7 @@ public class EvidenceService {
         List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(userId, projectId);
         evidenceList.sort(Comparator.comparing(Evidence::getDate));
         Collections.reverse(evidenceList);
-        List<PortfolioEvidence> portfolioEvidenceList =  new ArrayList<>();
-        for (Evidence evidence: evidenceList) {
-            List<User> userList = new ArrayList<>();
-            for (int linkedUserId: evidence.getLinkedUsers()) {
-                userList.add(userService.getUserAccountById(linkedUserId));
-            }
-            portfolioEvidenceList.add(new PortfolioEvidence(evidence, userList));
-        }
+        List<PortfolioEvidence> portfolioEvidenceList =  convertEvidenceForPortfolio(evidenceList);
         String message = "Evidence for user " + userId + " and project " + projectId + " retrieved";
         PORTFOLIO_LOGGER.info(message);
         return portfolioEvidenceList;
