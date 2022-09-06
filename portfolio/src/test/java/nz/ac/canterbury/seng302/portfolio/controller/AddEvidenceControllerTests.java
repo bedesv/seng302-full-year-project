@@ -220,11 +220,11 @@ class AddEvidenceControllerTests {
         Mockito.when(userService.getUserAccountByPrincipal(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
         Mockito.when(userService.getUserId(validAuthState)).thenReturn(1);
         PortfolioUser portfolioUser = new PortfolioUser(1, "name", true);
-        User user = new User(UserResponse.newBuilder().build());
         portfolioUser.setCurrentProject(1);
         Mockito.when(portfolioUserService.getUserById(1)).thenReturn(portfolioUser);
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
+        User user = new User(UserResponse.newBuilder().build());
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(user);
         Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
         // This line is what makes the evidence not exist
@@ -261,9 +261,11 @@ class AddEvidenceControllerTests {
         AuthState validAuthState = setupSecurity();
         Mockito.when(userService.getUserAccountByPrincipal(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
         Mockito.when(userService.getUserId(validAuthState)).thenReturn(1);
-        PortfolioUser user = new PortfolioUser(1, "name", true);
-        user.setCurrentProject(1);
-        Mockito.when(portfolioUserService.getUserById(1)).thenReturn(user);
+        PortfolioUser portfolioUser = new PortfolioUser(1, "name", true);
+        portfolioUser.setCurrentProject(1);
+        Mockito.when(portfolioUserService.getUserById(1)).thenReturn(portfolioUser);
+        User user = new User(UserResponse.newBuilder().build());
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(user);
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
