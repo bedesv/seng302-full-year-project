@@ -140,14 +140,13 @@ html {
 }
 
 .evidence__date {
-    margin: 0 1rem 0 0;
     padding: 0;
-    float: left;
     height: 5rem;
     line-height: 5rem;
+    width: 24%;
+    margin-left: auto;
     cursor: pointer;
-    width: 30%;
-    font-size: 25px;
+    font-size: 18px;
 }
 
 .evidence__title {
@@ -160,7 +159,7 @@ html {
     height: 5rem;
     line-height: 5rem;
     cursor: pointer;
-    width: 69%;
+    width: 75%;
     font-size: 25px;
 }
 

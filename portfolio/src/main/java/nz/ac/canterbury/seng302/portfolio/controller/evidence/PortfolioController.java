@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.controller.evidence;
 
-import nz.ac.canterbury.seng302.portfolio.model.evidence.Commit;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
@@ -8,7 +7,6 @@ import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.user.PortfolioUserService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-import org.hibernate.annotations.GeneratorType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -61,7 +59,6 @@ public class PortfolioController {
         int userId = user.getId();
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
         List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
-        evidenceList.get(0).addCommit(new Commit());
 
         model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("skillsList", evidenceService.getSkillsFromEvidence(evidenceList));
