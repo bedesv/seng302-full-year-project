@@ -1,2 +1,9 @@
 <!DOCTYPE html>
-<div id="group-chart-div"> Stats go here</div>
+<div class="group-chart__settings-div">
+    <label for="graphs">Select Graph</label>
+    <select name="graphs" id="graphs" onchange="updateGroupGraphElement()">
+        <option value="cat_graph">Categories Graph</option>
+        <option value="skill_graph">Skills Graph</option>
+    </select>
+</div>
+    <div id="group-chart__graph-div"> Stats go here</div>

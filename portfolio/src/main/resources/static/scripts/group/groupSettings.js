@@ -23,10 +23,12 @@ function drawChart(chartData) {
 
     var options = {
         title: 'My Daily Activities',
-        pieHole: 0.4,
+        pieHole: 0.2,
+        'width':800,
+        'height': 800
     };
 
-    var chart = new google.visualization.PieChart(document.getElementById('group-chart-div'));
+    var chart = new google.visualization.PieChart(document.getElementById('group-chart__graph-div'));
     chart.draw(data, options);
 }
 
