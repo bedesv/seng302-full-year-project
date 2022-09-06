@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller.evidence;
 
+import nz.ac.canterbury.seng302.portfolio.model.evidence.Commit;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
@@ -60,6 +61,7 @@ public class PortfolioController {
         int userId = user.getId();
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
         List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
+        evidenceList.get(0).addCommit(new Commit());
 
         model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("skillsList", evidenceService.getSkillsFromEvidence(evidenceList));
@@ -149,7 +151,7 @@ public class PortfolioController {
         }
         model.addAttribute("webLinks", evidence.getWebLinks());
         model.addAttribute("evidenceId", evidence.getId());
-        return "elements/webLink";
+        return "templatesEvidence/webLink";
     }
 
     /**
@@ -167,7 +169,7 @@ public class PortfolioController {
         Evidence evidence = evidenceService.getEvidenceById(id);
         model.addAttribute("webLinks", evidence.getWebLinks());
         model.addAttribute("evidenceId", evidence.getId());
-        return "elements/webLink";
+        return "templatesEvidence/webLink";
     }
 
 }

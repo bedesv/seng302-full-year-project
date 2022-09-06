@@ -67,10 +67,21 @@ html {
     margin: auto;
 }
 
-.evidence-title__title-date {
+.evidence-title__left-div {
     display: flex;
     flex-direction: column;
 }
+
+.evidence-title__weblinks-commits-div {
+    display: flex;
+    flex-direction:row;
+    padding-bottom: 20px;
+}
+
+#evidence-title__weblinks {
+    padding-right: 15px;
+}
+
 
 /** Evidence delete and edit buttons */
 
