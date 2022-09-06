@@ -481,7 +481,7 @@ function addWebLinkToDOM(webLink, index) {
     } else {
         webLinkHTML = `<div class="web-link">
                             <p class="web-link__name"></p>
-                            <a target="_blank" href="${webLink}">${webLink}</a>
+                            <a target="_blank" href="${webLink.link}">${webLink.link}</a>
                             <i class="bi bi-x" onclick="removeWebLink(sanitizeHTML('${index}'))">
                         </div>`
     }
