@@ -33,6 +33,9 @@ repositories {
 
 dependencies {
 
+    // https://mavenlibs.com/maven/dependency/org.webjars.bower/google-chart
+    implementation group: 'org.webjars.bower', name: 'google-chart', version: '1.0.4'
+
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'

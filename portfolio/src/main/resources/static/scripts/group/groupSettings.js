@@ -1,3 +1,35 @@
+google.charts.load("current", {packages:["corechart"]});
+
+async function updateGroupGraphElement() {
+    let url
+    url = new URL (`${CONTEXT}/group-${GROUP_ID}-categoriesData`)
+    const chartData = await fetch(url, {
+        method: "GET"
+    }).then(res => {
+        return res.json();
+    })
+    drawChart(chartData)
+}
+
+function drawChart(chartData) {
+
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'word');
+    data.addColumn('number', 'count');
+    console.log(chartData)
+    for (let key in chartData) {
+        data.addRow([key, chartData[key]]);
+    }
+
+    var options = {
+        title: 'My Daily Activities',
+        pieHole: 0.4,
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('group-chart-div'));
+    chart.draw(data, options);
+}
+
 /**
  * Uses the Javascript fetch API to fetch updated repository information
  * then updates the page to reflect the new information.
@@ -55,3 +87,4 @@ async function saveGroupRepositorySettings() {
     groupRepositoryWrapper.innerHTML = updatedRepositoryInformation
     return false;
 }
+

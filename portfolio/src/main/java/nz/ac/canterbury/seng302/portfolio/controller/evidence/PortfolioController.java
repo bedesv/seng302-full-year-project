@@ -7,7 +7,6 @@ import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.user.PortfolioUserService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-import org.hibernate.annotations.GeneratorType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -149,7 +148,7 @@ public class PortfolioController {
         }
         model.addAttribute("webLinks", evidence.getWebLinks());
         model.addAttribute("evidenceId", evidence.getId());
-        return "elements/webLink";
+        return "templatesEvidence/webLink";
     }
 
     /**
@@ -167,7 +166,7 @@ public class PortfolioController {
         Evidence evidence = evidenceService.getEvidenceById(id);
         model.addAttribute("webLinks", evidence.getWebLinks());
         model.addAttribute("evidenceId", evidence.getId());
-        return "elements/webLink";
+        return "templatesEvidence/webLink";
     }
 
 }
