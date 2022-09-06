@@ -15,9 +15,9 @@ function checkValid() {
             || (document.getElementById("evidence-form__title-field").value===originalEvidenceTitle
                 &&document.getElementById("evidence-form__description-field").value===originalEvidenceDescription
                 &&document.getElementById("evidence-form__date-field").value===originalEvidenceDate
-                &&document.getElementById("flex-check--quantitative").checked===(originalCategories.includes("Quantitative"))
-                &&document.getElementById("flex-check--qualitative").checked===(originalCategories.includes("Qualitative"))
-                &&document.getElementById("flex-check--service").checked===(originalCategories.includes("Service"))
+                &&document.getElementById("flex-check--quantitative").checked===(originalCategories.includes("QUANTITATIVE"))
+                &&document.getElementById("flex-check--qualitative").checked===(originalCategories.includes("QUALITATIVE"))
+                &&document.getElementById("flex-check--service").checked===(originalCategories.includes("SERVICE"))
                 &&arraysMatch(originalEvidenceSkills, skillList)
                 //&&arraysMatch(originalEvidenceUsers, userList)
             );
