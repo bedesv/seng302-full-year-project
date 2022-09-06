@@ -80,6 +80,7 @@ function removeUser(user) {
 }
 
 function saveSkillEdit(oldSkill, newSkill) {
+    newSkill = newSkill.replaceAll("_", " ").trim().replaceAll(" ", "_");
     skillList[skillList.indexOf(oldSkill.replaceAll("_", " "))] = newSkill.replaceAll("_", " ");
     if (ALL_SKILLS.includes(oldSkill)) {
         changedSkills[oldSkill] = newSkill
@@ -90,10 +91,12 @@ function saveSkillEdit(oldSkill, newSkill) {
             }
         }
     }
+    checkValid();
 }
 
 // Change a skill tag to be editable.
 function editSkill(tag) {
+    submitSkillEdit();
     const oldSkillObject = document.getElementById("skill-tag-" + tag)
     editedSkillTag = "skill-tag-" + tag;
     const parent = oldSkillObject.parentNode
@@ -270,6 +273,7 @@ function updateHiddenFields() {
         skillChanges += " ";
     }
     document.getElementById("evidence-form__hidden--change-skills-field").value = skillChanges;
+    console.log(skillChanges);
 }
 
 // Updates the tags shown before the skills input list to reflect the list of tags given.
@@ -463,7 +467,6 @@ document.addEventListener("click", function (event) {
     }
     if (event.target.id !== "editable-skill-tag" && event.target.id !== editedSkillTag) {
         submitSkillEdit();
-
     }
 });
 
