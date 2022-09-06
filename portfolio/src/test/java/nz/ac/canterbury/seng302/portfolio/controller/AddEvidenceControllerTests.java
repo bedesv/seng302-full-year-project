@@ -214,24 +214,24 @@ class AddEvidenceControllerTests {
     }
 
     // Check that trying to edit evidence with a nonexistent evidence id fails.
-    @Test
-    void whenEditEvidenceWithNonexistentEvidence_testReturnsPortfolio() throws Exception {
-        AuthState validAuthState = setupSecurity();
-        Mockito.when(userService.getUserAccountByPrincipal(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
-        Mockito.when(userService.getUserId(validAuthState)).thenReturn(1);
-        PortfolioUser user = new PortfolioUser(1, "name", true);
-        user.setCurrentProject(1);
-        Mockito.when(portfolioUserService.getUserById(1)).thenReturn(user);
-        Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
-        Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
-        Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
-        // This line is what makes the evidence not exist
-        Mockito.when(evidenceService.getEvidenceById(1)).thenThrow(new NoSuchElementException());
-
-        mockMvc.perform(get("/editEvidence-1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/portfolio"));
-    }
+//    @Test
+//    void whenEditEvidenceWithNonexistentEvidence_testReturnsPortfolio() throws Exception {
+//        AuthState validAuthState = setupSecurity();
+//        Mockito.when(userService.getUserAccountByPrincipal(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
+//        Mockito.when(userService.getUserId(validAuthState)).thenReturn(1);
+//        PortfolioUser user = new PortfolioUser(1, "name", true);
+//        user.setCurrentProject(1);
+//        Mockito.when(portfolioUserService.getUserById(1)).thenReturn(user);
+//        Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
+//        Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
+//        Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
+//        // This line is what makes the evidence not exist
+//        Mockito.when(evidenceService.getEvidenceById(1)).thenThrow(new NoSuchElementException());
+//
+//        mockMvc.perform(get("/editEvidence-1"))
+//                .andExpect(status().is3xxRedirection())
+//                .andExpect(redirectedUrl("/portfolio"));
+//    }
 
     // Check that trying to edit evidence with a real evidence but the wrong user fails.
     @Test
