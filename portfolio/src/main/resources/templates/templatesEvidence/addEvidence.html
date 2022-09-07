@@ -125,6 +125,7 @@
             <div th:if="${evidenceId == -1 || evidenceId =='-1'}" id="evidence-form__webLink-container"></div>
             <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="text" id="evidence-form__webLink-name" onkeyup="checkValid()" placeholder="Web Link Name"/>
             <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="text" id="evidence-form__webLink-link" onkeyup="checkValid()" placeholder="Web Link"/>
+            <P th:if="${webLinkError}" style="color: red">Incorrect Web Link Format</P>
             <div th:if="${evidenceId == -1 || evidenceId =='-1'}" class="evidence__button-wrapper flex-row">
               <button id="weblink-button" type="button" class="btn-fill-primary" onclick="addWebLinks()">
                 Add Weblink
