@@ -1,6 +1,7 @@
 google.charts.load("current", {packages:["corechart"]});
 
 async function updateGroupGraphElement() {
+    console.log("hi")
     let url
     url = new URL (`${CONTEXT}/group-${GROUP_ID}-categoriesData`)
     const chartData = await fetch(url, {
