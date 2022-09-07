@@ -1,3 +1,7 @@
+window.onload = (event) => {
+    formatUserIdsToTag();
+}
+
 // If the evidence title/description are not valid, set the save button to disabled.
 function checkValid() {
     if (evidenceId === -1) {
@@ -65,6 +69,13 @@ function addToUsers(user) {
         }
     }
     userList.push(user);
+}
+
+function formatUserIdsToTag() {
+    checkValid();
+    userList += document.getElementById("users-input").value.split(" ");
+    document.getElementById("users-input").value =  document.getElementById("users-input").value.replace(/\d+/g, '');
+    updateUserTagsInDOM(userList);
 }
 
 function removeLastUser() {
