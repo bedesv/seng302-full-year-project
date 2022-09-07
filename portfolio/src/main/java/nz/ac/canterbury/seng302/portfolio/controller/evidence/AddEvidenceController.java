@@ -158,6 +158,7 @@ public class AddEvidenceController {
         evidence.setDate(date);
         evidence.setCategories(categories);
         List<WebLink> webLinks = new ArrayList<>();
+
         try {
             for (int i = 0; i < webLinkLinks.size(); i++) {
                 evidenceService.validateWebLink(webLinkLinks.get(i));
