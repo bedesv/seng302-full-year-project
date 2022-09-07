@@ -261,7 +261,7 @@ public class EvidenceService {
         } catch (NoSuchElementException e) {
             String message = "Evidence " + evidenceId + " not found. Weblink not saved";
             PORTFOLIO_LOGGER.error(message);
-            throw new NoSuchElementException("Evidence not found: web link not saved");
+            throw new NoSuchElementException(message);
         }
     }
 
@@ -282,7 +282,30 @@ public class EvidenceService {
         } catch (NoSuchElementException e) {
             String message = "Evidence " + evidenceId + " not found. Commit not saved";
             PORTFOLIO_LOGGER.error(message);
-            throw new NoSuchElementException("Evidence not found: commit not saved");
+            throw new NoSuchElementException(message);
+        }
+    }
+
+    /**
+     * Deletes the commit at the given index from the specified piece of evidence
+     * @param evidenceId The id of the piece of evidence to remove a commit from
+     * @param commitIndex The index of the commit to be removed
+     */
+    public void removeCommit(int evidenceId, int commitIndex) {
+        try {
+            Evidence evidence = getEvidenceById(evidenceId);
+            evidence.removeCommit(commitIndex);
+            String message = "Commit successfully removed from evidence " + evidenceId;
+            PORTFOLIO_LOGGER.info(message);
+        } catch (NoSuchElementException e) {
+            String message;
+            if (e.getMessage().contains("Commit")) {
+                message = "Evidence " + evidenceId + " has less than " + (commitIndex + 1) + " commits. Commit not deleted.";
+            } else {
+                message = "Evidence " + evidenceId + " not found. Commit not deleted";
+            }
+            PORTFOLIO_LOGGER.error(message);
+            throw new NoSuchElementException(message);
         }
     }
 
