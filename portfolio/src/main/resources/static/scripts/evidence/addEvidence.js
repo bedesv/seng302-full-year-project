@@ -442,6 +442,8 @@ function arraysEqual(a, b) {
  * @type {*[]}
  */
 let webLinks = [];
+let webLinkLinks = [];
+let webLinkNames = [];
 let numWebLinks = 0;
 function addWebLinks() {
     let webLinkNameElement = document.getElementById("evidence-form__webLink-name");
@@ -451,10 +453,13 @@ function addWebLinks() {
         if (webLink.link) {
             addWebLinkToDOM(webLink, numWebLinks);
             webLinks.push(webLink);
+            webLinkNames.push(webLink.name);
+            webLinkLinks.push(webLink.link);
             numWebLinks++;
             webLinkNameElement.value = "";
             webLinkElement.value = "";
-            document.getElementById("evidence-form__hidden-webLinks-field").value = webLinks;
+            document.getElementById("evidence-form__hidden-webLinks-names").value = webLinkNames;
+            document.getElementById("evidence-form__hidden-webLinks-links").value = webLinkLinks;
         }
     }
     if (numWebLinks === 5) {
@@ -503,6 +508,8 @@ function removeWebLink(webLinkIndex) {
     numWebLinks--;
     document.getElementById("evidence-form__webLink-container").innerHTML = "";
     webLinks.splice(parseInt(webLinkIndex), 1);
+    webLinkNames.splice(parseInt(webLinkIndex), 1);
+    webLinkLinks.splice(parseInt(webLinkIndex), 1);
     for (let i = 0; i < webLinks.length; i++) {
         addWebLinkToDOM(webLinks[i], i);
     }
