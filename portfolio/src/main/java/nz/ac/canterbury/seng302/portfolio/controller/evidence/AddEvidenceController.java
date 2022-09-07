@@ -6,11 +6,14 @@ import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
+import nz.ac.canterbury.seng302.portfolio.service.group.GitlabConnectionService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupRepositorySettingsService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.*;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.models.Commit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +52,9 @@ public class AddEvidenceController {
 
     @Autowired
     private EvidenceService evidenceService;
+
+    @Autowired
+    private GitlabConnectionService gitlabConnectionService;
 
     private static final String TIMEFORMAT = "yyyy-MM-dd";
 
@@ -230,14 +236,21 @@ public class AddEvidenceController {
         model.addAttribute("users", userService.getAllUsersExcept(userId));
         List<Group> groups = groupsService.getAllGroups().getGroups();
         List<Group> userGroups = new ArrayList<>();
+        List<Commit> commits = new ArrayList<>();
         for (Group group : groups) {
             for (User user : group.getMembers()) {
                 if (user.getId() == userId) {
                     userGroups.add(group);
+                    try {
+                        commits.addAll(gitlabConnectionService.getAllCommits(group.getGroupId()));
+                    } catch (GitLabApiException | NoSuchFieldException | RuntimeException e) {
+                        PORTFOLIO_LOGGER.error(e.getMessage());
+                    }
                 }
             }
         }
         model.addAttribute("groups", userGroups);
+        model.addAttribute("commits", commits);
         model.addAttribute("displayCommits", !userGroups.isEmpty());
     }
 
