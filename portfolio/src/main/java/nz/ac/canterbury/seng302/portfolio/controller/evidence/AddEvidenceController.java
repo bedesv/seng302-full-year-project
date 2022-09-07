@@ -123,15 +123,6 @@ public class AddEvidenceController {
             @RequestParam(name="evidenceWebLinkNames") List<String> webLinkNames,
             Model model
     ) {
-        List<WebLink> webLinks = new ArrayList<>();
-        for (int i = 0; i < webLinkLinks.size(); i++) {
-            if (Objects.equals(webLinkNames.get(i), "")) {
-                webLinks.add(new WebLink(webLinkLinks.get(i)));
-            } else {
-                webLinks.add(new WebLink(webLinkLinks.get(i), webLinkNames.get(i)));
-            }
-        }
-
         User user = userService.getUserAccountByPrincipal(principal);
         int projectId = portfolioUserService.getUserById(user.getId()).getCurrentProject();
         Project project = projectService.getProjectById(projectId);
@@ -166,8 +157,17 @@ public class AddEvidenceController {
         evidence.setSkills(skills);
         evidence.setDate(date);
         evidence.setCategories(categories);
-
+        List<WebLink> webLinks = new ArrayList<>();
         try {
+            for (int i = 0; i < webLinkLinks.size(); i++) {
+                evidenceService.validateWebLink(webLinkLinks.get(i));
+                if (webLinkNames.get(i).isEmpty()) {
+                    webLinks.add(new WebLink(webLinkLinks.get(i)));
+                } else {
+                    webLinks.add(new WebLink(webLinkLinks.get(i), webLinkNames.get(i)));
+                }
+            }
+            evidence.setWebLinks(webLinks);
             evidenceService.saveEvidence(evidence);
         } catch (IllegalArgumentException exception) {
             if (Objects.equals(exception.getMessage(), "Title not valid")) {
@@ -178,6 +178,8 @@ public class AddEvidenceController {
                 model.addAttribute("dateError", "Date must be within the project dates");
             } else if (Objects.equals(exception.getMessage(), "Skills not valid")) {
                 model.addAttribute("skillsError", "Skills cannot be more than 50 characters long");
+            } else if (Objects.equals(exception.getMessage(), "Weblink not in valid format")) {
+                model.addAttribute("webLinkError", "Weblink is invalid");
             } else {
                 model.addAttribute("generalError", exception.getMessage());
             }
