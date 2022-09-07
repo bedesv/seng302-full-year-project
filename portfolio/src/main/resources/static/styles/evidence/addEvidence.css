@@ -61,6 +61,7 @@
 .evidence-form__control-button:hover {
     background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
     cursor: pointer;
+    color: black;
 }
 
 .evidence-form__control-button:disabled {

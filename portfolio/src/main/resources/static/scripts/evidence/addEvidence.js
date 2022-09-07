@@ -80,7 +80,6 @@ function removeUser(user) {
 }
 
 function saveSkillEdit(oldSkill, newSkill) {
-    newSkill = newSkill.replaceAll("_", " ").trim().replaceAll(" ", "_");
     skillList[skillList.indexOf(oldSkill.replaceAll("_", " "))] = newSkill.replaceAll("_", " ");
     if (ALL_SKILLS.includes(oldSkill)) {
         changedSkills[oldSkill] = newSkill
@@ -137,7 +136,7 @@ function editSkill(tag) {
 function submitSkillEdit() {
     const editedSkill = document.getElementById("editable-skill-tag");
     if (editedSkill) {
-        const newSkill = editedSkill.value;
+        const newSkill = editedSkill.value.replaceAll("_", " ").trim().replaceAll(" ", "_");
         const oldSkill = editedSkill.getAttribute('data-old-value').replaceAll(" ", "_");
 
         let isAlreadySkill = false;
