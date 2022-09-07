@@ -168,7 +168,9 @@ public class AddEvidenceController {
                     webLinks.add(new WebLink(webLinkLinks.get(i), webLinkNames.get(i)));
                 }
             }
-            evidence.setWebLinks(webLinks);
+            if (!webLinks.isEmpty()) {
+                evidence.setWebLinks(webLinks);
+            }
             evidenceService.saveEvidence(evidence);
         } catch (IllegalArgumentException exception) {
             if (Objects.equals(exception.getMessage(), "Title not valid")) {
