@@ -118,7 +118,8 @@
                 </div>
             </div>
             <input type="hidden" id="evidence-form__hidden-skills-field" name="evidenceSkills"/>
-            <p class="evidence-form__error-message" th:text="${skillsError}" />
+            <p id="evidence-form__skills-error" class="evidence-form__error-message" th:text="${skillsError}" />
+
             <input type="hidden" id="evidence-form__hidden--change-skills-field" name="skillsToChange"/>
 
             <!-- Users !-->
