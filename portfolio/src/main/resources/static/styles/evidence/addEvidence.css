@@ -47,7 +47,7 @@
     height: 3rem;
     line-height: 3rem;
     text-align: center;
-    color: black;
+    color: black !important;
     font-size: 1rem;
     text-decoration: none;
 }
