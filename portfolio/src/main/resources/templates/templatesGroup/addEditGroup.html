@@ -24,7 +24,7 @@
         <!-- Name, Date -->
         <header class="group-form__header flex-column">
             <div th:if="${groupId == -1}">
-                <h1> Create New Group</h1>
+                <h1 th:text="${currentProject.getName} + ': Creating New Group'"></h1>
             </div>
             <div th:if="${groupId != -1}">
                 <h1 th:text="'Editing: ' + ${groupShortName} + ' - ' + ${groupLongName}"></h1>
