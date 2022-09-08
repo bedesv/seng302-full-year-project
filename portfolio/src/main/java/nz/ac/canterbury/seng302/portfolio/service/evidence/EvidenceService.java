@@ -7,10 +7,12 @@ import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.net.URL;
 import java.util.*;
@@ -399,5 +401,34 @@ public class EvidenceService {
         return repository.findByOwnerIdAndProjectIdAndCategoriesIsNullOrderByDateDescIdDesc(userId, projectId);
     }
 
+    /**
+     * Method to remove special characters from skills
+     * @param skills may include special chars
+     * @return skills without special chars
+     */
+    public List<String> stripSkills(Collection<String> skills) {
+        List<String> stripped = new ArrayList<>();
+        for (String skill : skills) {
+            stripped.add(ValidationUtil.stripTitle(skill));
+        }
+        return stripped;
+    }
 
+    public List<Boolean> validateEvidence(Model model, String title, String description, List<String> skills){
+        List<Boolean> validationResponses = new ArrayList<>();
+        validationResponses.add(ValidationUtil.validAttribute(model, "title", "Title", title));
+        validationResponses.add(ValidationUtil.validAttribute(model, "description", "Description", description));
+        boolean skillError = false;
+        String invalidSkill = "";
+        for (String skill : skills){
+            if (!ValidationUtil.titleValid(skill)){
+                skillError = true;
+                invalidSkill = skill;
+            }
+        }
+        if (skillError){
+            validationResponses.add(ValidationUtil.validAttribute(model, "skills", "Skills", invalidSkill));
+        }
+        return validationResponses;
+    }
 }

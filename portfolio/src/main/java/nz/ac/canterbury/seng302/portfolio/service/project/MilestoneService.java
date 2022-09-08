@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.repository.project.MilestoneRepository
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,8 +59,12 @@ public class MilestoneService {
      * Save the milestone to the repository
      */
     public void saveMilestone(Milestone milestone) {
-        projectEditsService.refreshProject(milestone.getMilestoneParentProjectId());
-        milestoneRepository.save(milestone);
+        if (!ValidationUtil.titleValid(milestone.getMilestoneName())){
+            throw new IllegalArgumentException("Milestone name must not contain special characters");
+        } else {
+            projectEditsService.refreshProject(milestone.getMilestoneParentProjectId());
+            milestoneRepository.save(milestone);
+        }
     }
 
     /**
@@ -83,9 +88,9 @@ public class MilestoneService {
      * @param milestoneId The milestone ID
      * @param milestoneName The new deadline name
      * @param milestoneDate The new deadline date
-     * @throws UnsupportedOperationException Throws UnsupportedOperationException is the new date doesn't fall within the parent project dates
+     * @throws IllegalArgumentException Throws IllegalArgumentException is the new date doesn't fall within the parent project dates
      */
-    public void updateMilestone(int parentProjectId, int milestoneId, String milestoneName, Date milestoneDate) throws UnsupportedOperationException {
+    public void updateMilestone(int parentProjectId, int milestoneId, String milestoneName, Date milestoneDate) throws IllegalArgumentException {
         Milestone milestone = getMilestoneById(milestoneId);
         Project parentProject = projectService.getProjectById(parentProjectId);
         Date projectStartDate = parentProject.getStartDate();
@@ -93,7 +98,7 @@ public class MilestoneService {
         if (milestoneDate.compareTo(projectEndDate) > 0 || milestoneDate.compareTo(projectStartDate) < 0) {
             String message = "Milestone date (" + milestoneDate + ") must be within the project dates (" + projectStartDate + " - " + projectEndDate + ")";
             PORTFOLIO_LOGGER.error(message);
-            throw new UnsupportedOperationException(message);
+            throw new IllegalArgumentException(message);
         }
         milestone.setMilestoneDate(milestoneDate);
         milestone.setMilestoneName(milestoneName);
@@ -107,16 +112,16 @@ public class MilestoneService {
      * @param parentProjectId The parent project of the milestone
      * @param milestoneName The new milestone name
      * @param milestoneDate The new milestone date
-     * @throws UnsupportedOperationException Throws UnsupportedOperationException is the new date doesn't fall within the parent project dates
+     * @throws IllegalArgumentException Throws IllegalArgumentException is the new date doesn't fall within the parent project dates
      */
-    public void createNewMilestone(int parentProjectId, String milestoneName, Date milestoneDate) throws UnsupportedOperationException {
+    public void createNewMilestone(int parentProjectId, String milestoneName, Date milestoneDate) throws IllegalArgumentException {
         Project parentProject = projectService.getProjectById(parentProjectId);
         Date projectStartDate = parentProject.getStartDate();
         Date projectEndDate = parentProject.getEndDate();
         if (milestoneDate.compareTo(projectEndDate) > 0 || milestoneDate.compareTo(projectStartDate) < 0) {
             String message = "Milestone date (" + milestoneDate + ") must be within the project dates (" + projectStartDate + " - " + projectEndDate + ")";
             PORTFOLIO_LOGGER.error(message);
-            throw new UnsupportedOperationException(message);
+            throw new IllegalArgumentException(message);
         } else {
             saveMilestone(new Milestone(parentProjectId, milestoneName, milestoneDate));
             String message = "New milestone created with name " + milestoneName + " and date " + milestoneDate;

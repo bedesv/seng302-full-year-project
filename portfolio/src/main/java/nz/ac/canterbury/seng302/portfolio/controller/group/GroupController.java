@@ -2,11 +2,11 @@ package nz.ac.canterbury.seng302.portfolio.controller.group;
 
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.group.GroupRepositorySettings;
-import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.group.GitlabConnectionService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupRepositorySettingsService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.GroupDetailsResponse;
 import org.gitlab4j.api.GitLabApiException;
@@ -47,7 +47,6 @@ public class GroupController {
     @GetMapping("/group-{id}")
     public String groups(@AuthenticationPrincipal AuthState principal, Model model, @PathVariable String id){
         int userId = userAccountClientService.getUserId(principal);
-        User user = userAccountClientService.getUserAccountById(userId);
         int groupId = Integer.parseInt(id);
         GroupDetailsResponse response = groupsClientService.getGroupDetailsById(groupId);
         if (response.getGroupId() == 0) {
@@ -56,7 +55,6 @@ public class GroupController {
         Group group = new Group(response);
         model.addAttribute("group", group);
         model.addAttribute("userInGroup", groupsClientService.userInGroup(group.getGroupId(), userId));
-        model.addAttribute("user", user);
         return GROUP_PAGE;
     }
 
@@ -104,18 +102,17 @@ public class GroupController {
                                         @PathVariable String id) {
         // Update the group repository information
         int groupId = Integer.parseInt(id);
-        groupRepositorySettingsService.updateRepositoryInformation(groupId, repositoryName, gitlabAccessToken, gitlabProjectId, gitlabServerUrl);
+        groupRepositorySettingsService.updateRepositoryInformation(groupId, ValidationUtil.stripTitle(repositoryName), ValidationUtil.stripTitle(gitlabAccessToken), gitlabProjectId, ValidationUtil.stripTitle(gitlabServerUrl));
 
         // Return the updated repository information
         GroupRepositorySettings groupRepositorySettings = groupRepositorySettingsService.getGroupRepositorySettingsByGroupId(groupId);
         List<Commit> commits = null;
         try {
             commits = gitlabConnectionService.getAllCommits(groupId);
-        } catch (GitLabApiException ignored) {
-            // Ignored because the commits variable is already null.
-        } catch (NoSuchFieldException ignored) {
-            // Ignored because this only occurs if the group doesn't have any repository settings, but
-            // we've just added them, so it must have settings.
+        } catch (GitLabApiException | NoSuchFieldException ignored) {
+            // Ignoring GitLabApiException because the commits variable is already null.
+            // Ignoring NoSuchFieldException because this only occurs if the group doesn't have any repository settings,
+            // but we've just added them, so it must have settings.
         }
         model.addAttribute("firstLoad", false);
         model.addAttribute("changesSaved", true);

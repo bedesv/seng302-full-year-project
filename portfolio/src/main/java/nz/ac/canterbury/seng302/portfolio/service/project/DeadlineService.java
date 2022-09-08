@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.repository.project.DeadlineRepository;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,8 @@ public class DeadlineService {
     private ProjectEditsService projectEditsService;
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
 
+    private static final String DEADLINE_DATE_ERROR = "Deadline date must be within the project dates";
+
 
     /**
      * Gets a list of all deadlines
@@ -37,19 +40,18 @@ public class DeadlineService {
 
     /**
      * Get the deadline by its id
-     *
      * @param deadlineId the id of the deadline
      * @return the deadline of the project which has the provided id
      * @throws NoSuchElementException if the deadline is not found
      */
-    public Deadline getDeadlineById(Integer deadlineId) throws NoSuchElementException {
+    public Deadline getDeadlineById(Integer deadlineId) throws IllegalArgumentException {
         Optional<Deadline> deadline = deadlineRepository.findById(deadlineId);
         if (deadline.isPresent()) {
             return deadline.get();
         } else {
             String message = "Deadline " + deadlineId + " not found.";
             PORTFOLIO_LOGGER.error(message);
-            throw new NoSuchElementException(message);
+            throw new IllegalArgumentException(message);
         }
     }
 
@@ -82,15 +84,18 @@ public class DeadlineService {
      * Saves the provided deadline into the repository
      */
     public void saveDeadline(Deadline deadline) {
-        projectEditsService.refreshProject(deadline.getDeadlineParentProjectId());
-        deadlineRepository.save(deadline);
-        String message = "Deadline " + deadline.getDeadlineId() + " saved";
-        PORTFOLIO_LOGGER.info(message);
+        if (!ValidationUtil.titleValid(deadline.getDeadlineName())){
+            throw new IllegalArgumentException("Deadline name must not contain special characters");
+        } else {
+            projectEditsService.refreshProject(deadline.getDeadlineParentProjectId());
+            deadlineRepository.save(deadline);
+            String message = "Deadline " + deadline.getDeadlineId() + " saved";
+            PORTFOLIO_LOGGER.info(message);
+        }
     }
 
     /**
      * Updates the deadline's date to a new date
-     *
      * @param deadlineId      the id of the deadline to be updated
      * @param newDeadlineDate the new date the deadline should be set to
      * @throws UnsupportedOperationException if the new deadline date falls outside the project dates
@@ -99,7 +104,6 @@ public class DeadlineService {
         Deadline newDeadline = getDeadlineById(deadlineId);
         Date projectStartDate = projectService.getProjectById(newDeadline.getDeadlineParentProjectId()).getStartDate();
         Date projectEndDate = projectService.getProjectById(newDeadline.getDeadlineParentProjectId()).getEndDate();
-
         if (newDeadlineDate.compareTo(projectEndDate) > 0 || newDeadlineDate.compareTo(projectStartDate) < 0) {
             String message = "Deadline date (" + newDeadlineDate + ") must be within the project dates (" + projectStartDate + " - " + projectEndDate + ")";
             PORTFOLIO_LOGGER.error(message);
@@ -118,9 +122,9 @@ public class DeadlineService {
      * @param deadlineId The deadline ID
      * @param deadlineName The new deadline name
      * @param deadlineDate The new deadline date
-     * @throws UnsupportedOperationException Throws UnsupportedOperationException is the new date doesn't fall within the parent project dates
+     * @throws IllegalArgumentException Throws UnsupportedOperationException is the new date doesn't fall within the parent project dates
      */
-    public void updateDeadline(int parentProjectId, int deadlineId, String deadlineName, Date deadlineDate) throws UnsupportedOperationException {
+    public void updateDeadline(int parentProjectId, int deadlineId, String deadlineName, Date deadlineDate) throws IllegalArgumentException {
         Deadline deadline = getDeadlineById(deadlineId);
         Project parentProject = projectService.getProjectById(parentProjectId);
         Date projectStartDate = parentProject.getStartDate();
@@ -128,7 +132,7 @@ public class DeadlineService {
         if (deadlineDate.compareTo(projectEndDate) > 0 || deadlineDate.compareTo(projectStartDate) < 0) {
             String message = "Deadline date (" + deadlineDate + ") must be within the project dates (" + projectStartDate + " - " + projectEndDate + ")";
             PORTFOLIO_LOGGER.error(message);
-            throw new UnsupportedOperationException(message);
+            throw new IllegalArgumentException(message);
         }
         deadline.setDeadlineDate(deadlineDate);
         deadline.setDeadlineName(deadlineName);
@@ -142,16 +146,16 @@ public class DeadlineService {
      * @param parentProjectId The parent project of the deadline
      * @param deadlineName The new deadline name
      * @param deadlineDate The new deadline date
-     * @throws UnsupportedOperationException Throws UnsupportedOperationException is the new date doesn't fall within the parent project dates
+     * @throws IllegalArgumentException Throws UnsupportedOperationException is the new date doesn't fall within the parent project dates
      */
-    public void createNewDeadline(int parentProjectId, String deadlineName, Date deadlineDate) throws UnsupportedOperationException {
+    public void createNewDeadline(int parentProjectId, String deadlineName, Date deadlineDate) throws IllegalArgumentException {
         Project parentProject = projectService.getProjectById(parentProjectId);
         Date projectStartDate = parentProject.getStartDate();
         Date projectEndDate = parentProject.getEndDate();
         if (deadlineDate.compareTo(projectEndDate) > 0 || deadlineDate.compareTo(projectStartDate) < 0) {
             String message = "Deadline date (" + deadlineDate + ") must be within the project dates (" + projectStartDate + " - " + projectEndDate + ")";
             PORTFOLIO_LOGGER.error(message);
-            throw new UnsupportedOperationException(message);
+            throw new IllegalArgumentException(message);
         } else {
             saveDeadline(new Deadline(parentProjectId, deadlineName, deadlineDate));
             String message = "New deadline created with name " + deadlineName + " and date " + deadlineDate;

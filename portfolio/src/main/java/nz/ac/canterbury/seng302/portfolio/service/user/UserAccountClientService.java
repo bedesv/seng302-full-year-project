@@ -6,6 +6,7 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.model.user.UserListResponse;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.*;
 
@@ -324,6 +326,35 @@ public class UserAccountClientService {
     @VisibleForTesting
     protected UserAccountServiceGrpc.UserAccountServiceBlockingStub getUserStub() {
         return userStub;
+    }
+
+    /**
+     * Validate all attributes for a user
+     * Used by edit and register
+     * Update te global modle to inclue the error messages
+     * @param model global model
+     * @param username of user
+     * @param firstName of user
+     * @param middleName of user
+     * @param lastName of user
+     * @param nickname of user
+     * @param pronouns of user
+     * @param bio of user
+     * @param email of user
+     * @return a list of booleans, if contains false, invalid input present
+     */
+    public List<Boolean> validateAttributes(Model model, String username, String firstName, String middleName, String lastName, String nickname, String pronouns, String bio, String email){
+        //Check for emojis early, prevents grpc error
+        List<Boolean> validationResponses = new ArrayList<>();
+        validationResponses.add(ValidationUtil.validAttribute(model, "username", "Username", username));
+        validationResponses.add(ValidationUtil.validAttribute(model, "firstName", "First name", firstName));
+        validationResponses.add(ValidationUtil.validAttribute(model, "middleName", "Middle name", middleName));
+        validationResponses.add(ValidationUtil.validAttribute(model, "lastName", "Last name", lastName));
+        validationResponses.add(ValidationUtil.validAttribute(model, "nickname", "Nickname", nickname));
+        validationResponses.add(ValidationUtil.validAttribute(model, "pronouns", "Pronouns", pronouns));
+        validationResponses.add(ValidationUtil.validAttribute(model, "bio", "Bio", bio));
+        validationResponses.add(ValidationUtil.validAttribute(model, "email", "Email", email));
+        return validationResponses;
     }
 
 }

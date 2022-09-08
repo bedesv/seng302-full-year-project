@@ -82,9 +82,13 @@ public class Evidence {
         return title;
     }
 
+    public void setTitle(String title) { this.title = title; }
+
     public String getDescription() {
         return description;
     }
+
+    public void setDescription(String description) { this.description = description; }
 
     public Date getDate() {
         return date;
@@ -111,6 +115,8 @@ public class Evidence {
     public void addCommit(Commit commit) {this.commits.add(commit); }
 
     public List<String> getSkills() {return skills;}
+
+    public void setSkills(List<String> skills) { this.skills = skills; }
 
     public void addSkill (String skill) {this.skills.add(skill);}
 
@@ -178,14 +184,6 @@ public class Evidence {
         List<Categories> sortedCategories = new ArrayList<>(categories);
         Collections.sort(sortedCategories);
         return sortedCategories;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public void setDate(Date date) {

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 
@@ -29,13 +30,10 @@ public class UserListController {
      * @return The mapping to the html for the first page of the list of users.
      */
     @GetMapping("/userList")
-    public String userList(@AuthenticationPrincipal AuthState principal,
-                           Model model) {
+    public String userList(@AuthenticationPrincipal AuthState principal) {
         int id = userAccountClientService.getUserId(principal);
         String sortType = portfolioUserService.getUserListSortType(id);
         String isAscending = String.valueOf(portfolioUserService.isUserListSortAscending(id));
-        User user = userAccountClientService.getUserAccountById(id);
-        model.addAttribute("user", user);
         return "redirect:/userList-1" + sortingSuffix(sortType, isAscending);
     }
 
@@ -54,8 +52,6 @@ public class UserListController {
                                @RequestParam(name = "isAscending", required = false) String isAscending)
                                {
         int id = userAccountClientService.getUserId(principal);
-        User user = userAccountClientService.getUserAccountById(id);
-        model.addAttribute("user", user);
         if (!goodPage(page)) {
             return "redirect:/userList";
         }
@@ -83,14 +79,9 @@ public class UserListController {
         if (pageInt > maxPage) {
             return "redirect:/userList-" + maxPage + sortingSuffix(sortType, isAscending);
         }
-       // Below code is just begging to be added as a method somewhere...
-       String role = principal.getClaimsList().stream()
-               .filter(claim -> claim.getType().equals("role"))
-               .findFirst()
-               .map(ClaimDTO::getValue)
-               .orElse("NOT FOUND");
-        model.addAttribute("isCourseAdmin", role.contains("courseadministrator"));
-        model.addAttribute("isTeacher", role.contains("teacher") || role.contains("courseadministrator"));
+        Collection<UserRole> roles = userAccountClientService.getUserAccountByPrincipal(principal).getRoles();
+        model.addAttribute("isCourseAdmin", roles.contains(UserRole.COURSE_ADMINISTRATOR));
+        model.addAttribute("isTeacher", roles.contains(UserRole.TEACHER) || roles.contains(UserRole.COURSE_ADMINISTRATOR));
         model.addAttribute("users", users);
         model.addAttribute("currentUserId", id);
         model.addAttribute("firstPage", 1);
