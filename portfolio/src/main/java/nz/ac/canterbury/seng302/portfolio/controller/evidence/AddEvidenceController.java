@@ -119,8 +119,8 @@ public class AddEvidenceController {
             @RequestParam(name="evidenceSkills") String skills,
             @RequestParam(name="skillsToChange") String skillsToChange,
             @RequestParam(name="evidenceUsers") String users,
-            @RequestParam(name="evidenceWebLinks") List<String> webLinkLinks,
-            @RequestParam(name="evidenceWebLinkNames") List<String> webLinkNames,
+            @RequestParam(required = false, name="evidenceWebLinks") List<String> webLinkLinks,
+            @RequestParam(required = false, name="evidenceWebLinkNames") List<String> webLinkNames,
             Model model
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
@@ -160,16 +160,18 @@ public class AddEvidenceController {
         List<WebLink> webLinks = new ArrayList<>();
 
         try {
-            for (int i = 0; i < webLinkLinks.size(); i++) {
-                evidenceService.validateWebLink(webLinkLinks.get(i));
-                if (webLinkNames.get(i).isEmpty()) {
-                    webLinks.add(new WebLink(webLinkLinks.get(i)));
-                } else {
-                    webLinks.add(new WebLink(webLinkLinks.get(i), webLinkNames.get(i)));
+            if (webLinkLinks != null && webLinkNames != null) {
+                for (int i = 0; i < webLinkLinks.size(); i++) {
+                    evidenceService.validateWebLink(webLinkLinks.get(i));
+                    if (webLinkNames.get(i).isEmpty()) {
+                        webLinks.add(new WebLink(webLinkLinks.get(i)));
+                    } else {
+                        webLinks.add(new WebLink(webLinkLinks.get(i), webLinkNames.get(i)));
+                    }
                 }
-            }
-            if (!webLinks.isEmpty()) {
-                evidence.setWebLinks(webLinks);
+                if (!webLinks.isEmpty()) {
+                    evidence.setWebLinks(webLinks);
+                }
             }
             evidenceService.saveEvidence(evidence);
         } catch (IllegalArgumentException exception) {
