@@ -57,6 +57,7 @@
                 </span></label>
 
                 <input type="date" id="project-form__start-date-field" name="projectStartDate" th:placeholder="${projectStartDateString}" th:value="${projectStartDateString}" th:min="${minProjectStartDate}" onchange="updateMinEndDate()" required>
+                <p th:text="${startDateError}" class="form-error-message"></p>
 
                 <label for="project-form__end-date-field">Project End Date *
                     <span th:if="${dateRestrictions.hasRestrictions}" data-toggle="tooltip"
@@ -65,6 +66,7 @@
                           + ' and cannot be moved beyond it'">
                 </span></label>
                 <input type="date" id="project-form__end-date-field" name="projectEndDate" th:placeholder="${projectEndDateString}" th:value="${projectEndDateString}" th:max="${maxProjectEndDate}" onchange="updateMaxStartDate()" required>
+                <p th:text="${endDateError}" class="form-error-message"></p>
 
                 <button type="submit" id="project-form__save">Save Changes</button>
                 <a id="project-form__discard" th:href="@{projects}">Discard</a>
