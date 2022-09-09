@@ -2,13 +2,13 @@ package nz.ac.canterbury.seng302.portfolio.controller.project;
 
 import nz.ac.canterbury.seng302.portfolio.model.group.PortfolioGroup;
 import nz.ac.canterbury.seng302.portfolio.model.project.DateRestrictions;
-import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.group.PortfolioGroupService;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectDateService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +19,7 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.sql.Date;
+import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.List;
 
@@ -52,6 +53,7 @@ public class EditProjectController {
     private static final String DATE_FORMAT_STRING = "yyyy-MM-dd";
 
     private static final String REDIRECT_PROJECT_DETAILS = "redirect:/projectDetails-";
+    private static final String EDIT_PROJECT = "templatesProject/editProject";
 
     /**
      * Method to return a calendar object representing the very beginning of a day
@@ -80,24 +82,11 @@ public class EditProjectController {
             return REDIRECT_PROJECT_DETAILS + projectId;
         }
 
-        // Add user details to model
-        User user = userAccountClientService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
-
         int id = Integer.parseInt(projectId);
         Project project;
 
-        // If editing existing project
-        if (id != -1) {
-            // Try to find existing project
-            try {
-                project = projectService.getProjectById(id);
-            } catch (Exception ignored) {
-                project = defaultProject;
-            }
-
-        // Otherwise, we are adding new project, so setup default values
-        } else {
+        // If creating new project
+        if (id == -1) {
             project = new Project();
             // Set project name with current year
             Calendar cal = getCalendarDay();
@@ -109,30 +98,17 @@ public class EditProjectController {
             // Set project end date as 8 months after start
             cal.add(Calendar.MONTH, 8);
             project.setEndDate(java.util.Date.from(cal.toInstant()));
+        // Otherwise, we are adding new project, so setup default values
+        } else {
+            // Try to find existing project
+            try {
+                project = projectService.getProjectById(id);
+            } catch (Exception ignored) {
+                project = defaultProject;
+            }
         }
-
-        /* Add project details to the model */
-        model.addAttribute("projectId", project.getId());
-        model.addAttribute("projectName", project.getName());
-        model.addAttribute("projectDescription", project.getDescription());
-        model.addAttribute("projectStartDateString", Project.dateToString(project.getStartDate(), DATE_FORMAT_STRING));
-        model.addAttribute("projectEndDateString", Project.dateToString(project.getEndDate(), DATE_FORMAT_STRING));
-
-        // A project can only be added up to a year ago
-        Calendar cal = getCalendarDay();
-        cal.add(Calendar.YEAR, -1);
-        java.util.Date minStartDate = java.util.Date.from(cal.toInstant());
-        model.addAttribute("minProjectStartDate", Project.dateToString(minStartDate, DATE_FORMAT_STRING));
-
-        // A project must end within 10 years from today
-        cal.add(Calendar.YEAR, 11);
-        java.util.Date maxEndDate = java.util.Date.from(cal.toInstant());
-        model.addAttribute("maxProjectEndDate", Project.dateToString(maxEndDate, DATE_FORMAT_STRING));
-
-        DateRestrictions dateRestrictions = projectDateService.getDateRestrictions(Integer.parseInt(projectId));
-        model.addAttribute("dateRestrictions", dateRestrictions);
-
-        return "templatesProject/editProject";
+        updateModel(model, project, id);
+        return EDIT_PROJECT;
     }
 
     /**
@@ -152,7 +128,8 @@ public class EditProjectController {
             @RequestParam(value="projectName") String projectName,
             @RequestParam(value="projectStartDate") Date projectStartDate,
             @RequestParam(value="projectEndDate") Date projectEndDate,
-            @RequestParam(value="projectDescription") String projectDescription
+            @RequestParam(value="projectDescription") String projectDescription,
+            Model model
     ) {
         if (!userAccountClientService.isTeacher(principal)) {
             return REDIRECT_PROJECT_DETAILS + projectId;
@@ -167,10 +144,10 @@ public class EditProjectController {
             return PROJECT_REDIRECT;
         }
 
+        model.addAttribute("projectId", id);
         // Check the project name isn't null, empty, too long or consists of whitespace
         // Also check that the project description and date fields are valid.
-        if (projectName == null || projectName.length() > 255 || projectName.isBlank() ||
-                projectDescription.length() > 255 || projectEndDate == null || projectStartDate == null) {
+        if (projectName.length() > 255 || projectName.isBlank() || projectDescription.length() > 255 || projectEndDate == null || projectStartDate == null) {
             return EDIT_PROJECT_REDIRECT + projectId;
             // Check project name is
         }
@@ -195,35 +172,48 @@ public class EditProjectController {
 
         DateRestrictions dateRestrictions = projectDateService.getDateRestrictions(Integer.parseInt(projectId));
         if (dateRestrictions.hasRestrictions()) {
-            if (projectStartCal.before(dateRestrictions.getStartDate())) {
-                return EDIT_PROJECT_REDIRECT + projectId;
-            }
-            if (!projectEndCal.after(dateRestrictions.getEndDate())) {
-                return EDIT_PROJECT_REDIRECT + projectId;
+            Calendar dateRestrictionStartDate = getCalendarDay();
+            dateRestrictionStartDate.setTime(dateRestrictions.getStartDate());
+            Calendar dateRestrictionsEndDate = getCalendarDay();
+            dateRestrictionsEndDate.setTime(dateRestrictions.getEndDate());
+            if (!projectStartCal.before(dateRestrictionStartDate)||!projectEndCal.after(dateRestrictionsEndDate)){
+                if (!projectStartCal.before(dateRestrictionStartDate)){
+                    model.addAttribute("startDateError", "Start date must be before earliest sprint, event, etc");
+                }
+                if (!projectEndCal.after(dateRestrictionsEndDate)) {
+                    model.addAttribute("endDateError", "End date must be after latest sprint, event, etc");
+                }
+                updateModel(model, new Project(ValidationUtil.stripTitle(projectName), ValidationUtil.stripTitle(projectDescription), projectStartDate, projectEndDate), id);
+                return EDIT_PROJECT;
             }
         }
 
-        // If editing existing project
+        // If creating a new project
         Project savedProject;
-        if (id > 0) {
+        if (id == -1) {
             try {
-                Project existingProject = projectService.getProjectById(id);
-                existingProject.setName(projectName);
-                existingProject.setStartDate(projectStartDate);
-                existingProject.setEndDate(projectEndDate);
-                existingProject.setDescription(projectDescription);
-                savedProject = projectService.saveProject(existingProject);
-
-            } catch(Exception ignored) {
-                return EDIT_PROJECT_REDIRECT + projectId;
+                Project newProject = new Project(projectName, projectDescription, projectStartDate, projectEndDate);
+                savedProject = projectService.saveProject(newProject);
+            } catch (IllegalArgumentException e) {
+                updateProjectModel(model, "title", "Project name", projectName);
+                updateProjectModel(model, "description", "Project description", projectDescription);
+                updateModel(model, new Project(ValidationUtil.stripTitle(projectName), ValidationUtil.stripTitle(projectDescription), projectStartDate, projectEndDate), id);
+                return EDIT_PROJECT;
             }
-
-        // Otherwise, create a new project with given values
         } else {
-            Project newProject = new Project(projectName, projectDescription, projectStartDate, projectEndDate);
-            savedProject = projectService.saveProject(newProject);
+            // Otherwise, update project with given values
+            try {
+                savedProject = projectService.updateProject(id, projectName, projectDescription, projectStartDate, projectEndDate);
+            } catch(IllegalArgumentException e) {
+                updateProjectModel(model, "title", "Project name", projectName);
+                updateProjectModel(model, "description", "Project description", projectDescription);
+                Project project = projectService.getProjectById(id);
+                project.setName(ValidationUtil.stripTitle(projectName));
+                project.setDescription(ValidationUtil.stripTitle(projectDescription));
+                updateModel(model, project, id);
+                return EDIT_PROJECT;
+            }
         }
-
         return REDIRECT_PROJECT_DETAILS + savedProject.getId();
     }
 
@@ -255,4 +245,47 @@ public class EditProjectController {
         return PROJECT_REDIRECT;
     }
 
+    /**
+     * Abstracted these additions instead of being repeated three times
+     * @param model global model
+     * @param project selected project
+     */
+    private void updateModel(Model model, Project project, int projectId){
+        // A project can only be added up to a year ago
+        Calendar cal = getCalendarDay();
+        cal.add(Calendar.YEAR, -1);
+        java.util.Date minStartDate = java.util.Date.from(cal.toInstant());
+
+        // A project must end within 10 years from today
+        cal.add(Calendar.YEAR, 11);
+        java.util.Date maxEndDate = java.util.Date.from(cal.toInstant());
+
+        DateRestrictions dateRestrictions = projectDateService.getDateRestrictions(project.getId());
+
+        /* Add project details to the model */
+        model.addAttribute("project", project);
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("projectStartDateString", Project.dateToString(project.getStartDate(), DATE_FORMAT_STRING));
+        model.addAttribute("projectEndDateString", Project.dateToString(project.getEndDate(), DATE_FORMAT_STRING));
+        /*Add date restrictions*/
+        model.addAttribute("minProjectStartDate", Project.dateToString(minStartDate, DATE_FORMAT_STRING));
+        model.addAttribute("maxProjectEndDate", Project.dateToString(maxEndDate, DATE_FORMAT_STRING));
+        model.addAttribute("dateRestrictions", dateRestrictions);
+    }
+
+    /**
+     * Method to udpdate model if error
+     * @param model global model
+     * @param attribute being validated
+     * @param title for error message
+     * @param value attribute value
+     */
+    private void updateProjectModel(Model model, String attribute, String title, String value){
+        if (!ValidationUtil.titleValid(value)){
+            model.addAttribute(attribute + "Error", title + " cannot contain special characters");
+        }
+    }
+
 }
+
+

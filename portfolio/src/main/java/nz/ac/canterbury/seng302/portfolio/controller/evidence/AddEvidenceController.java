@@ -11,6 +11,7 @@ import nz.ac.canterbury.seng302.portfolio.service.group.GroupRepositorySettingsS
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.*;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
@@ -72,8 +73,6 @@ public class AddEvidenceController {
             @PathVariable("evidenceId") String evidenceId,
             Model model
     ) {
-        User user = userService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
 
         int userId = userService.getUserId(principal);
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
@@ -125,7 +124,6 @@ public class AddEvidenceController {
         int projectId = portfolioUserService.getUserById(user.getId()).getCurrentProject();
         Project project = projectService.getProjectById(projectId);
 
-        model.addAttribute("user", user);
         model.addAttribute("minEvidenceDate", Project.dateToString(project.getStartDate(), TIMEFORMAT));
         model.addAttribute("maxEvidenceDate", Project.dateToString(project.getEndDate(), TIMEFORMAT));
 
@@ -158,6 +156,15 @@ public class AddEvidenceController {
         System.out.println(commits);
         //evidence.setCommits(commits); // TODO
 
+        List<Boolean> validationResponse = evidenceService.validateEvidence(model, title, description, evidence.getSkills());
+        if (validationResponse.contains(false)){
+            evidence.setTitle(ValidationUtil.stripTitle(title));
+            evidence.setDescription(ValidationUtil.stripTitle(description));
+            evidence.setSkills(evidenceService.stripSkills(evidence.getSkills()));
+            addEvidenceToModel(model, projectId, userId, evidence);
+            return ADD_EVIDENCE;
+        }
+
         try {
             evidenceService.saveEvidence(evidence);
         } catch (IllegalArgumentException exception) {
@@ -172,6 +179,9 @@ public class AddEvidenceController {
             } else {
                 model.addAttribute("generalError", exception.getMessage());
             }
+            evidence.setTitle(ValidationUtil.stripTitle(title));
+            evidence.setDescription(ValidationUtil.stripTitle(description));
+            evidence.setSkills(evidenceService.stripSkills(evidence.getSkills()));
             addEvidenceToModel(model, projectId, userId, evidence);
             return ADD_EVIDENCE; // Fail silently as client has responsibility for error checking
         }

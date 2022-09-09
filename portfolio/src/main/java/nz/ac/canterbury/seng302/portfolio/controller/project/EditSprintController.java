@@ -2,10 +2,10 @@ package nz.ac.canterbury.seng302.portfolio.controller.project;
 
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.project.Sprint;
-import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.project.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +34,7 @@ public class EditSprintController {
     private static final String TIME_FORMAT = "yyyy-MM-dd";
 
     private static final String REDIRECT_PROJECT_DETAILS = "redirect:/projectDetails-";
+    private static final String EDIT_SPRINT = "templatesProject/editSprint";
 
 
     /**
@@ -52,8 +53,6 @@ public class EditSprintController {
         if (!userAccountClientService.isTeacher(principal)) {
             return REDIRECT_PROJECT_DETAILS + projectIdString;
         }
-        User user = userAccountClientService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
 
         int projectId;
         int sprintId;
@@ -72,7 +71,6 @@ public class EditSprintController {
         } catch (NoSuchElementException e) {
             return PROJECTS_REDIRECT;
         }
-        model.addAttribute("projectId", projectId);
 
         //editing existing sprint
         if (sprintId != -1) {
@@ -85,17 +83,8 @@ public class EditSprintController {
         } else {
             sprint = sprintService.createDefaultSprint(projectId);
         }
-        // Add sprint details to model
-        model.addAttribute("sprintName", sprint.getName());
-        model.addAttribute("sprintLabel", sprint.getLabel());
-        model.addAttribute("sprintDescription", sprint.getDescription());
-        model.addAttribute("sprintStartDate", Project.dateToString(sprint.getStartDate(), TIME_FORMAT));
-        model.addAttribute("sprintEndDate", Project.dateToString(sprint.getEndDate(), TIME_FORMAT));
-
-        // Add date boundaries for sprint to model
-        model.addAttribute("minSprintStartDate", Project.dateToString(project.getStartDate(), TIME_FORMAT));
-        model.addAttribute("maxSprintEndDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
-        return "templatesProject/editSprint";
+        updateModel(model, project, sprint);
+        return EDIT_SPRINT;
     }
 
     /**
@@ -124,8 +113,6 @@ public class EditSprintController {
         if (!userAccountClientService.isTeacher(principal)) {
             return REDIRECT_PROJECT_DETAILS + projectIdString;
         }
-        User user = userAccountClientService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
 
         int projectId;
         int sprintId;
@@ -139,6 +126,7 @@ public class EditSprintController {
         } catch (NumberFormatException e) {
             return PROJECTS_REDIRECT ;
         }
+
         try {
             project = projectService.getProjectById(projectId);
         } catch (NoSuchElementException e) {
@@ -163,29 +151,42 @@ public class EditSprintController {
             model.addAttribute("dateError", datesError);
             validation = true;
         }
+        if (!ValidationUtil.titleValid(sprintName)){
+            model.addAttribute("titleError", "Sprint name cannot contain special characters");
+            validation = true;
+        }
+
+        if (!ValidationUtil.titleValid(sprintDescription)){
+            model.addAttribute("descriptionError", "Sprint description cannot contain special characters");
+            validation = true;
+        }
 
         if (validation) {
-            // Add sprint details to model
-            model.addAttribute("sprintName", sprintName);
-            model.addAttribute("sprintDescription", sprintDescription);
-            model.addAttribute("sprintStartDate", sprintStartDateString);
-            model.addAttribute("sprintEndDate", sprintEndDateString);
-
-            // Add date boundaries for sprint to model
-            model.addAttribute("minSprintStartDate", Project.dateToString(project.getStartDate(), TIME_FORMAT));
-            model.addAttribute("maxSprintEndDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
-            return "templatesProject/editSprint";
+            updateModel(model, project, new Sprint(projectId, ValidationUtil.stripTitle(sprintName), ValidationUtil.stripTitle(sprintDescription), sprintStartDate, sprintEndDate));
+            return EDIT_SPRINT;
         }
 
         if (sprintId != -1) {
             try {
                 sprintService.getSprintById(sprintId);
-            } catch (NoSuchElementException e) {
-                return PROJECTS_REDIRECT;
+                sprintService.editSprint(projectId, sprintId, sprintName, sprintDescription, sprintStartDate, sprintEndDate);
+            } catch (NoSuchElementException | IllegalArgumentException e) {
+                Sprint sprint = sprintService.getSprintById(sprintId);
+                sprint.setName(ValidationUtil.stripTitle(sprintName));
+                sprint.setDescription(ValidationUtil.stripTitle(sprintDescription));
+                sprint.setStartDate(sprintStartDate);
+                sprint.setEndDate(sprintEndDate);
+                updateModel(model, project, sprint);
+                return EDIT_SPRINT;
             }
-            sprintService.editSprint(projectId, sprintId, sprintName, sprintDescription, sprintStartDate, sprintEndDate);
         } else {
-            sprintService.createNewSprint(projectId, sprintName, sprintDescription, sprintStartDate, sprintEndDate);
+            try {
+                sprintService.createNewSprint(projectId, sprintName, sprintDescription, sprintStartDate, sprintEndDate);
+            } catch (IllegalArgumentException e) {
+                updateModel(model, project, new Sprint(projectId, ValidationUtil.stripTitle(sprintName), ValidationUtil.stripTitle(sprintDescription), sprintStartDate, sprintEndDate));
+                return EDIT_SPRINT;
+            }
+
         }
         return REDIRECT_PROJECT_DETAILS + projectIdString;
     }
@@ -208,5 +209,25 @@ public class EditSprintController {
 
         sprintService.deleteSprint(Integer.parseInt(parentProjectId), Integer.parseInt(sprintId));
         return REDIRECT_PROJECT_DETAILS + parentProjectId;
+    }
+
+
+    /**
+     * Abstracted these additions instead of being repeated three times
+     * @param model global model
+     * @param project current project
+     * @param sprint selected sprint
+     */
+    private void updateModel(Model model, Project project, Sprint sprint) {
+        model.addAttribute("projectId", project.getId());
+        // Add sprint details to model
+        model.addAttribute("sprintName", sprint.getName());
+        model.addAttribute("sprintLabel", sprint.getLabel());
+        model.addAttribute("sprintDescription", sprint.getDescription());
+        model.addAttribute("sprintStartDate", Project.dateToString(sprint.getStartDate(), TIME_FORMAT));
+        model.addAttribute("sprintEndDate", Project.dateToString(sprint.getEndDate(), TIME_FORMAT));
+        // Add date boundaries for sprint to model
+        model.addAttribute("minSprintStartDate", Project.dateToString(project.getStartDate(), TIME_FORMAT));
+        model.addAttribute("maxSprintEndDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
     }
 }

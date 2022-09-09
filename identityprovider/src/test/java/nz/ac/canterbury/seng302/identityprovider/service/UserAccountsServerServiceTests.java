@@ -314,9 +314,9 @@ class UserAccountsServerServiceTests {
     void givenBadNames_editUser() {
         EditUserRequest editUserRequest = EditUserRequest.newBuilder()
                 .setUserId(testId)
-                .setFirstName("??")
-                .setMiddleName("{{{##}}}")
-                .setLastName("Ma8ter")
+                .setFirstName("??👩👩👩👩")
+                .setMiddleName("{{{#/*-+&^%#}}}")
+                .setLastName("Ma8!@#$%^&*()_+=")
                 .setNickname("")
                 .setBio("")
                 .setPersonalPronouns("")
@@ -326,11 +326,11 @@ class UserAccountsServerServiceTests {
 
         assertEquals(3, response.getValidationErrorsCount());
         assertEquals("firstName", response.getValidationErrors(0).getFieldName());
-        assertEquals("First name must not contain special characters", response.getValidationErrors(0).getErrorText());
+        assertEquals("First name must not contain special characters, or numbers", response.getValidationErrors(0).getErrorText());
         assertEquals("middleName", response.getValidationErrors(1).getFieldName());
-        assertEquals("Middle name must not contain special characters", response.getValidationErrors(1).getErrorText());
+        assertEquals("Middle name must not contain special characters, or numbers", response.getValidationErrors(1).getErrorText());
         assertEquals("lastName", response.getValidationErrors(2).getFieldName());
-        assertEquals("Last name must not contain special characters", response.getValidationErrors(2).getErrorText());
+        assertEquals("Last name must not contain special characters, or numbers", response.getValidationErrors(2).getErrorText());
         assertEquals("Edit user failed: Validation failed", response.getMessage());
 
         assertFalse(response.getIsSuccess());
@@ -561,9 +561,9 @@ class UserAccountsServerServiceTests {
     @Test
     void givenBadNames_registerUser() {
         UserRegisterRequest userRegisterRequest = UserRegisterRequest.newBuilder()
-                .setFirstName("I999")
-                .setMiddleName("|||")
-                .setLastName(";;;")
+                .setFirstName("I👩👩")
+                .setMiddleName("💔")
+                .setLastName("!@#$%^&*()_+")
                 .setEmail("a@a.a")
                 .setPassword("password")
                 .setUsername("test")
@@ -572,11 +572,11 @@ class UserAccountsServerServiceTests {
         assertEquals("Register attempt failed: Validation failed", response.getMessage());
         assertEquals(3, response.getValidationErrorsCount());
         assertEquals("firstName", response.getValidationErrors(0).getFieldName());
-        assertEquals("First name must not contain special characters", response.getValidationErrors(0).getErrorText());
+        assertEquals("First name must not contain special characters, or numbers", response.getValidationErrors(0).getErrorText());
         assertEquals("middleName", response.getValidationErrors(1).getFieldName());
-        assertEquals("Middle name must not contain special characters", response.getValidationErrors(1).getErrorText());
+        assertEquals("Middle name must not contain special characters, or numbers", response.getValidationErrors(1).getErrorText());
         assertEquals("lastName", response.getValidationErrors(2).getFieldName());
-        assertEquals("Last name must not contain special characters", response.getValidationErrors(2).getErrorText());
+        assertEquals("Last name must not contain special characters, or numbers", response.getValidationErrors(2).getErrorText());
 
         assertFalse(response.getIsSuccess());
     }

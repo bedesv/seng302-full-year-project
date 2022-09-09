@@ -8,7 +8,6 @@ import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.project.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -43,18 +42,11 @@ public class ProjectSummariesController {
      */
     @GetMapping("/projects")
     public String projects(@AuthenticationPrincipal AuthState principal, Model model) {
-        // Add user details to model
-        User user = userAccountClientService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
 
         List<Project> projects = projectService.getAllProjects();
         Map<Integer, List<Sprint>> sprints = sprintService.getAllByParentProjectId();
 
-        int id = Integer.parseInt(principal.getClaimsList().stream()
-                .filter(claim -> claim.getType().equals("nameid"))
-                .findFirst()
-                .map(ClaimDTO::getValue)
-                .orElse("-100"));
+        int id = userAccountClientService.getUserId(principal);
         /* Return the name of the Thymeleaf template
         detects the role of the current user and returns appropriate page */
         if (userAccountClientService.isTeacher(principal)) {

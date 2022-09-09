@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller.group;
 
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
-import nz.ac.canterbury.seng302.portfolio.model.group.GroupListResponse;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.model.user.UserListResponse;
@@ -62,7 +61,6 @@ public class GroupsController {
     @GetMapping("/groups")
     public String groups(@AuthenticationPrincipal AuthState principal, Model model){
         int userId = userAccountClientService.getUserId(principal);
-        User user = userAccountClientService.getUserAccountById(userId);
         boolean userIsTeacher = userAccountClientService.isTeacher(principal);
         boolean userIsAdmin = userAccountClientService.isAdmin(principal);
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
@@ -90,7 +88,6 @@ public class GroupsController {
 
         model.addAttribute(GROUPS_STRING, groups);
         model.addAttribute("allGroupIds", allGroupIds);
-        model.addAttribute("user", user);
         model.addAttribute(USER_IS_TEACHER, userIsTeacher);
         model.addAttribute(USER_IS_ADMIN, userIsAdmin);
         model.addAttribute(GROUPLESS_GROUP_ID_STRING, GROUPLESS_GROUP_ID);
@@ -183,11 +180,9 @@ public class GroupsController {
                                  @PathVariable("groupId") Integer groupId,
                                  @RequestParam(value="members") List<Integer> members,
                                  Model model) {
-
-        int id = userAccountClientService.getUserId(principal);
-        User user = userAccountClientService.getUserAccountById(id);
         boolean userIsTeacher = userAccountClientService.isTeacher(principal);
         boolean userIsAdmin = userAccountClientService.isAdmin(principal);
+        int id = userAccountClientService.getUserId(principal);
         int projectId = portfolioUserService.getUserById(id).getCurrentProject();
 
         Group group;
@@ -243,7 +238,6 @@ public class GroupsController {
         }
 
         model.addAttribute(GROUP_STRING, group);
-        model.addAttribute("user", user);
         model.addAttribute(USER_IS_TEACHER, userIsTeacher);
         model.addAttribute(USER_IS_ADMIN, userIsAdmin);
         model.addAttribute(GROUPLESS_GROUP_ID_STRING, GROUPLESS_GROUP_ID);
@@ -266,7 +260,6 @@ public class GroupsController {
                                 Model model) {
 
         int userId = userAccountClientService.getUserId(principal);
-        User user = userAccountClientService.getUserAccountById(userId);
         boolean userIsTeacher = userAccountClientService.isTeacher(principal);
         boolean userIsAdmin = userAccountClientService.isAdmin(principal);
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
@@ -281,7 +274,6 @@ public class GroupsController {
             group = new Group(groupsClientService.getGroupDetailsById(groupId));
         }
         model.addAttribute(GROUP_STRING, group);
-        model.addAttribute("user", user);
         model.addAttribute(USER_IS_TEACHER, userIsTeacher);
         model.addAttribute(USER_IS_ADMIN, userIsAdmin);
         model.addAttribute(USER_IS_MEMBER, groupsClientService.userInGroup(groupId, userId));
@@ -305,11 +297,9 @@ public class GroupsController {
                                  @PathVariable("groupId") Integer groupId,
                                  @RequestParam(value="members") List<Integer> members,
                                  Model model) {
-
-        int id = userAccountClientService.getUserId(principal);
-        User user = userAccountClientService.getUserAccountById(id);
         boolean userIsTeacher = userAccountClientService.isTeacher(principal);
         boolean userIsAdmin = userAccountClientService.isAdmin(principal);
+        int id = userAccountClientService.getUserId(principal);
         int projectId = portfolioUserService.getUserById(id).getCurrentProject();
 
         Group group = new Group();
@@ -349,7 +339,6 @@ public class GroupsController {
         }
 
         model.addAttribute(GROUP_STRING, group);
-        model.addAttribute("user", user);
         model.addAttribute(USER_IS_TEACHER, userIsTeacher);
         model.addAttribute(USER_IS_ADMIN, userIsAdmin);
         model.addAttribute(GROUPLESS_GROUP_ID_STRING, GROUPLESS_GROUP_ID);

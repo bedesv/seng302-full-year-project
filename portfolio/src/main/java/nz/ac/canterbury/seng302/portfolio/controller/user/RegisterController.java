@@ -4,6 +4,7 @@ import io.grpc.StatusRuntimeException;
 import nz.ac.canterbury.seng302.portfolio.authentication.CookieUtil;
 import nz.ac.canterbury.seng302.portfolio.service.AuthenticateClientService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterResponse;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -70,6 +72,13 @@ public class RegisterController {
                            Model model) {
         UserRegisterResponse userRegisterResponse;
 
+        //Check for emojis early, prevents grpc error
+        List<Boolean> validationResponses = userAccountClientService.validateAttributes(model, username, firstName, middleName, lastName, nickname, pronouns, bio, email);
+        if (validationResponses.contains(false)){
+            updateModel(model, ValidationUtil.stripTitle(username), ValidationUtil.stripName(firstName), ValidationUtil.stripName(middleName), ValidationUtil.stripName(lastName), ValidationUtil.stripTitle(nickname), ValidationUtil.stripTitle(bio), ValidationUtil.stripTitle(email), ValidationUtil.stripTitle(pronouns));
+            return REGISTER;
+        }
+
         try {
             //Call the grpc with users validated params
             userRegisterResponse = userAccountClientService.register(username.toLowerCase(Locale.ROOT), password, firstName,
@@ -105,20 +114,10 @@ public class RegisterController {
                 return LOGIN;
             }
         } else {
-            // Add attributes back into the page so the user doesn't have to enter them again
-            model.addAttribute("username", username);
-            model.addAttribute("firstName", firstName);
-            model.addAttribute("middleName", middleName);
-            model.addAttribute("lastName", lastName);
-            model.addAttribute("nickname", nickname);
-            model.addAttribute("bio", bio);
-            model.addAttribute("email", email);
-            model.addAttribute("pronouns", pronouns);
-
             // Add errors to the page to tell the user what they need to fix
             List<ValidationError> validationErrors = userRegisterResponse.getValidationErrorsList();
             model.addAttribute("validationErrors", validationErrors);
-
+            updateModel(model, username, firstName, middleName, lastName, nickname, bio, email, pronouns);
             return REGISTER;
         }
 
@@ -132,6 +131,18 @@ public class RegisterController {
     @GetMapping("/register")
     public String register() {
         return REGISTER;
+    }
+
+    private void updateModel(Model model, String username, String firstName, String middleName, String lastName, String nickname, String bio, String email, String pronouns){
+        // Add attributes back into the page so the user doesn't have to enter them again
+        model.addAttribute("username", username);
+        model.addAttribute("firstName", firstName);
+        model.addAttribute("middleName", middleName);
+        model.addAttribute("lastName", lastName);
+        model.addAttribute("nickname", nickname);
+        model.addAttribute("bio", bio);
+        model.addAttribute("email", email);
+        model.addAttribute("pronouns", pronouns);
     }
 
 }
