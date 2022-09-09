@@ -1,35 +1,66 @@
-google.charts.load("current", {packages:["corechart"]});
+google.charts.load("current", {packages:["corechart"]}).then(updateAllCharts);
+// google.setOnLoadCallback(() => {setTimeout(updateAllCharts, 0)})
 
-async function updateGroupGraphElement() {
-    console.log("hi")
-    let url
-    url = new URL (`${CONTEXT}/group-${GROUP_ID}-categoriesData`)
-    const chartData = await fetch(url, {
+async function updateAllCharts() {
+    await updateCategoriesChart();
+    await updateSkillsChart()
+}
+
+async function fetchChartData(dataType) {
+    let url;
+    if (dataType === 'categories') {
+        url = new URL (`${CONTEXT}/group-${GROUP_ID}-categoriesData`);
+    }
+    return await fetch(url, {
         method: "GET"
     }).then(res => {
         return res.json();
-    })
-    drawChart(chartData)
+    });
+
 }
 
-function drawChart(chartData) {
+async function updateCategoriesChart() {
+    let chartData = await fetchChartData('categories')
 
-    var data = new google.visualization.DataTable();
+    let data = new google.visualization.DataTable();
     data.addColumn('string', 'word');
     data.addColumn('number', 'count');
-    console.log(chartData)
     for (let key in chartData) {
         data.addRow([key, chartData[key]]);
     }
 
-    var options = {
-        title: 'My Daily Activities',
-        pieHole: 0.2,
-        'width':800,
-        'height': 800
+    let options = {
+        title: 'Categories',
+        pieHole: 0.4,
+        backgroundColor: { fill:'transparent' },
+        pieSliceTextStyle: {color: 'black'},
+        height: "100%"
+
     };
 
-    var chart = new google.visualization.PieChart(document.getElementById('group-chart__graph-div'));
+    let chart = new google.visualization.PieChart(document.getElementById('group-chart__categories-chart'));
+    chart.draw(data, options);
+}
+
+window.onresize = () => {updateSkillsChart(); updateCategoriesChart()}
+
+async function updateSkillsChart() {
+    let chartData = await fetchChartData('categories')
+
+    let data = new google.visualization.DataTable();
+    data.addColumn('string', 'word');
+    data.addColumn('number', 'count');
+    for (let key in chartData) {
+        data.addRow([key, chartData[key]]);
+    }
+
+    let options = {
+        title: 'My Daily Activities',
+        backgroundColor: { fill:'transparent' },
+        pieSliceTextStyle: {color: 'black'},
+    };
+
+    let chart = new google.visualization.PieChart(document.getElementById('group-chart__skills-chart'));
     chart.draw(data, options);
 }
 
