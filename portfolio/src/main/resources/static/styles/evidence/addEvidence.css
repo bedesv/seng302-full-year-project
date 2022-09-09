@@ -247,3 +247,8 @@ p {
 #users-input:focus {
     outline: none;
 }
+
+#add-evidence-commits__wrapper {
+    display: flex;
+    flex-direction: row;
+}

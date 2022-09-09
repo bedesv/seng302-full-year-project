@@ -118,6 +118,7 @@ public class AddEvidenceController {
             @RequestParam(name="evidenceSkills") String skills,
             @RequestParam(name="skillsToChange") String skillsToChange,
             @RequestParam(name="evidenceUsers") String users,
+            @RequestParam(name="evidenceCommits") String commits,
             Model model
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
@@ -154,6 +155,8 @@ public class AddEvidenceController {
         evidence.setSkills(skills);
         evidence.setDate(date);
         evidence.setCategories(categories);
+        System.out.println(commits);
+        //evidence.setCommits(commits); // TODO
 
         try {
             evidenceService.saveEvidence(evidence);

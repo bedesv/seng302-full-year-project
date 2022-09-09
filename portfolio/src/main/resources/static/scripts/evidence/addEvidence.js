@@ -26,6 +26,7 @@ function checkValid() {
 
 let skillList = []
 let userList = []
+let commitList = []
 
 // Adds a skill to the list of skills. Makes sure it is not already present,
 // and if the user has already entered that skill on another piece of evidence, make sure the capitalization is correct.
@@ -75,6 +76,23 @@ function removeUser(user) {
     userList.splice(userList.indexOf(user), 1);
 }
 
+function saveCommitChanges() {
+    newCommits = [];
+    for (child of document.getElementById("commit-selection-box").children) {
+        id = child.children[0].textContent;
+        checked = child.children[1].checked;
+        if (checked) {
+            newCommits.push(id);
+        }
+    }
+    commitList = newCommits;
+    updateCommitsInDOM(commitList);
+}
+
+function removeCommit(commit) {
+    commitList.splice(commitList.indexOf(commit), 1);
+}
+
 // Remove a skill tag when the 'x' button is clicked
 function clickSkillXButton(tag) {
     removeSkill(tag);
@@ -93,6 +111,12 @@ function clickUserXButton(tag) {
     if (userList.length === 0) {
         document.getElementById("users-input").placeholder = 'Add Users';
     }
+}
+
+// Remove a commit when the 'x' button is clicked
+function clickCommitXButton(commit) {
+    removeCommit(commit);
+    updateCommitsInDOM(commitList);
 }
 
 // Listen for input so the tags and autocomplete can be triggered
@@ -187,6 +211,33 @@ function updateSkillTagsInDOM(tags) {
                                                           </div>
                                                         </div>`)
         parent.insertBefore(element, skillInput);
+    }
+}
+
+// Updates the list of commits the user has linked to their piece of evidence.
+function updateCommitsInDOM(commits) {
+    let commitString = "";
+    for (const commit of commits) {
+        commitString += commit;
+        commitString += " ";
+    }
+    document.getElementById("evidence-form__hidden-commits-field").value = commitString;
+
+    let parent = document.getElementById("commit-container");
+    while (parent.childNodes.length > 0) {
+        parent.removeChild(parent.firstChild);
+    }
+    for (let tag of commits) {
+        // TODO
+        let element = createElementFromHTML(`<div class="skill-tag-con">
+                                                          <div class="skill-tag">
+                                                            <div class="skill-tag-inside">
+                                                              <p>${sanitizeHTML(tag)}</p>
+                                                              <i class="bi bi-x" onclick="clickCommitXButton('${sanitizeHTML(tag)}')"></i>
+                                                            </div>
+                                                          </div>
+                                                        </div>`)
+        parent.appendChild(element);
     }
 }
 
