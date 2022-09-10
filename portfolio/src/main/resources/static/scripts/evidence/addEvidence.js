@@ -575,6 +575,20 @@ document.getElementById("users-input").dispatchEvent(new Event('input', {
     cancelable: true,
 }))
 
+
+var commitsModal = document.getElementById('add-evidence-commits__modal')
+commitsModal.addEventListener('show.bs.modal', function (event) {
+    for (child of document.getElementById("commit-selection-box").children) {
+        id = child.children[0].textContent;
+        if (commitList.includes(id)) {
+            child.children[1].checked = true;
+        } else {
+            child.children[1].checked = false;
+        }
+    }
+})
+
+
 function arraysMatch(original,newList) {
     //split the original string into a list
     let originalList = original.split(" ");
