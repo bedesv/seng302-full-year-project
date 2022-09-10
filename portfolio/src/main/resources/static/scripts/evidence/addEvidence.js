@@ -340,8 +340,8 @@ function updateCommitsInDOM(commits) {
                                               <div class="skill-tag">
                                                 <div class="commit-tag-inside">
                                                    <div class="commit-tag-text">
-                                                       <p class="strip-margin">${sanitizeHTML(commit.message)}</p>
-                                                       <p class="commit-author strip-margin"> ${sanitizeHTML(commit.name)}</p>
+                                                       <p class="strip-margin">${sanitizeHTML(commit.description)}</p>
+                                                       <p class="commit-author strip-margin"> ${sanitizeHTML(commit.author)}</p>
                                                    </div>
                                                   <i class="bi bi-x" onclick="clickCommitXButton('${sanitizeHTML(tag)}')"></i>
                                                 </div>

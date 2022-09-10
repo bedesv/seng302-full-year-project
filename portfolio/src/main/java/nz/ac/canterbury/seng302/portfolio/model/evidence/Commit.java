@@ -5,13 +5,16 @@ import java.util.Date;
 
 @Embeddable
 public class Commit {
-    String Author;
-    Date date;
-    String link;
-    String description;
 
-    public Commit(String author, Date date, String link, String description) {
-        this.Author = author;
+    private String id;
+    private String author;
+    private Date date;
+    private String link;
+    private String description;
+
+    public Commit(String id, String author, Date date, String link, String description) {
+        this.id = id;
+        this.author = author;
         this.date = date;
         this.link = link;
         this.description = description;
@@ -20,12 +23,16 @@ public class Commit {
     public Commit() {
     }
 
+    public String getId() {
+        return id;
+    }
+
     public String getAuthor() {
-        return Author;
+        return author;
     }
 
     public void setAuthor(String author) {
-        Author = author;
+        this.author = author;
     }
 
     public Date getDate() {

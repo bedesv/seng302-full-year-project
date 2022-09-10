@@ -36,13 +36,13 @@
 
     <script type="text/javascript" th:inline="javascript" th:each="commit, iterInfo: ${commits}">
         commit = {
-            name: [[${commit.committerName}]],
-            message: [[${commit.title}]],
+            author: [[${commit.committerName}]],
+            description: [[${commit.title}]],
             date: [[${commit.committedDate}]],
+            link: [[${commit.URL}]]
         }
         id = [[${commit.id}]];
         ALL_COMMITS[id] = commit;
-        console.log(ALL_COMMITS);
     </script>
 
 </head>

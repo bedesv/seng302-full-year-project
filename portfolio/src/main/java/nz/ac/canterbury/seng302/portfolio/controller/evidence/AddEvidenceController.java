@@ -1,5 +1,8 @@
 package nz.ac.canterbury.seng302.portfolio.controller.evidence;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
@@ -117,9 +120,20 @@ public class AddEvidenceController {
             @RequestParam(name="evidenceSkills") String skills,
             @RequestParam(name="skillsToChange") String skillsToChange,
             @RequestParam(name="evidenceUsers") String users,
-            @RequestParam(name="evidenceCommits") String commits,
+            @RequestParam(name="evidenceCommits") String commitString,
             Model model
     ) {
+
+        // Format commit string into valid list
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<nz.ac.canterbury.seng302.portfolio.model.evidence.Commit> commitList;
+        try {
+            commitList = objectMapper.readValue(commitString, new TypeReference<>() {});
+        } catch (JsonProcessingException e) {
+            PORTFOLIO_LOGGER.info(e.getMessage());
+            return ADD_EVIDENCE; // Fail silently as client has responsibility for error checking
+        }
+
         User user = userService.getUserAccountByPrincipal(principal);
         int projectId = portfolioUserService.getUserById(user.getId()).getCurrentProject();
         Project project = projectService.getProjectById(projectId);
@@ -153,8 +167,6 @@ public class AddEvidenceController {
         evidence.setSkills(skills);
         evidence.setDate(date);
         evidence.setCategories(categories);
-        System.out.println(commits);
-        //evidence.setCommits(commits); // TODO
 
         List<Boolean> validationResponse = evidenceService.validateEvidence(model, title, description, evidence.getSkills());
         if (validationResponse.contains(false)){
@@ -167,6 +179,9 @@ public class AddEvidenceController {
 
         try {
             evidenceService.saveEvidence(evidence);
+            for (nz.ac.canterbury.seng302.portfolio.model.evidence.Commit commit : commitList) {
+                evidenceService.saveCommit(evidence.getId(), commit);
+            }
         } catch (IllegalArgumentException exception) {
             if (Objects.equals(exception.getMessage(), "Title not valid")) {
                 model.addAttribute("titleError", "Title cannot be all special characters");
