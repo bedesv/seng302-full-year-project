@@ -83,10 +83,9 @@ function removeUser(user) {
 function saveCommitChanges() {
     newCommits = [];
     for (child of document.getElementById("commit-selection-box").children) {
-        id = child.children[0].textContent;
-        checked = child.children[1].checked;
-        if (checked) {
-            newCommits.push(id);
+        checkbox = child.children[1];
+        if (checkbox.checked) {
+            newCommits.push(checkbox.id);
         }
     }
     commitList = newCommits;
@@ -335,15 +334,18 @@ function updateCommitsInDOM(commits) {
         parent.removeChild(parent.firstChild);
     }
     for (let tag of commits) {
-        // TODO
+        commit = ALL_COMMITS[tag];
         let element = createElementFromHTML(`<div class="skill-tag-con">
-                                                          <div class="skill-tag">
-                                                            <div class="skill-tag-inside">
-                                                              <p>${sanitizeHTML(tag)}</p>
-                                                              <i class="bi bi-x" onclick="clickCommitXButton('${sanitizeHTML(tag)}')"></i>
-                                                            </div>
-                                                          </div>
-                                                        </div>`)
+                                              <div class="skill-tag">
+                                                <div class="commit-tag-inside">
+                                                   <div class="commit-tag-text">
+                                                       <p class="strip-margin">${sanitizeHTML(commit.message)}</p>
+                                                       <p class="commit-author strip-margin"> ${sanitizeHTML(commit.name)}</p>
+                                                   </div>
+                                                  <i class="bi bi-x" onclick="clickCommitXButton('${sanitizeHTML(tag)}')"></i>
+                                                </div>
+                                              </div>
+                                            </div>`)
         parent.appendChild(element);
     }
 }
@@ -579,7 +581,7 @@ document.getElementById("users-input").dispatchEvent(new Event('input', {
 var commitsModal = document.getElementById('add-evidence-commits__modal')
 commitsModal.addEventListener('show.bs.modal', function (event) {
     for (child of document.getElementById("commit-selection-box").children) {
-        id = child.children[0].textContent;
+        id = child.children[1].id;
         if (commitList.includes(id)) {
             child.children[1].checked = true;
         } else {

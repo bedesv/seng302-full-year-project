@@ -13,6 +13,7 @@
     <script th:inline="javascript">
         const ALL_SKILLS = [[${skillsList}]];
         let ALL_USERS = [];
+        let ALL_COMMITS = {};
         let evidenceId = [[${evidenceId}]];
         let originalEvidenceTitle = [[${evidenceTitle}]];
         let originalEvidenceDescription = [[${evidenceDescription}]];
@@ -31,6 +32,17 @@
         }
         user.id = user.id.toString();
         ALL_USERS.push(user);
+    </script>
+
+    <script type="text/javascript" th:inline="javascript" th:each="commit, iterInfo: ${commits}">
+        commit = {
+            name: [[${commit.committerName}]],
+            message: [[${commit.title}]],
+            date: [[${commit.committedDate}]],
+        }
+        id = [[${commit.id}]];
+        ALL_COMMITS[id] = commit;
+        console.log(ALL_COMMITS);
     </script>
 
 </head>
@@ -163,12 +175,15 @@
                 </div>
                 <div class="modal-body add-evidence-commits__wrapper">
                     <div id="commit-selection-box">
-                        <div th:each="commit: ${commits}" th:id="${commit.id}" class="row">
-                            <div class="col-10" th:text="${commit.id}"></div>
-                            <input class="col-auto" type="checkbox"/>
+                        <div th:each="commit: ${commits}" th:id="${commit.id}" class="row commit-tag-outside">
+                            <div class="col-11 commit-modal-inside">
+                                <p class="strip-margin" th:text="${commit.title}"></p>
+                                <p class="commit-author strip-margin" th:text="${commit.committerName}"></p>
+                            </div>
+                            <input class="col-auto" th:id="${commit.id}" type="checkbox"/>
                         </div>
                     </div>
-                    <button onclick="saveCommitChanges()" data-bs-dismiss="modal">Save Changes</button>
+                    <button class="btn btn-primary" onclick="saveCommitChanges()" data-bs-dismiss="modal">Save Changes</button>
                 </div>
             </div>
         </div>
