@@ -86,6 +86,10 @@
     flex-direction: column;
 }
 
+#commit-container {
+    margin-bottom: 10px;
+}
+
 /* skill and user input */
 
 .input-container {

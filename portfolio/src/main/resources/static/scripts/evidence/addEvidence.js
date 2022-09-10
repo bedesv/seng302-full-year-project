@@ -322,11 +322,12 @@ function updateSkillTagsInDOM(tags) {
 
 // Updates the list of commits the user has linked to their piece of evidence.
 function updateCommitsInDOM(commits) {
-    let commitString = "";
+    let commitObjects = [];
     for (const commit of commits) {
-        commitString += commit;
-        commitString += " ";
+        commitObjects.push(ALL_COMMITS[commit]);
     }
+    let commitString = JSON.stringify(commitObjects);
+    console.log(commitString);
     document.getElementById("evidence-form__hidden-commits-field").value = commitString;
 
     let parent = document.getElementById("commit-container");
