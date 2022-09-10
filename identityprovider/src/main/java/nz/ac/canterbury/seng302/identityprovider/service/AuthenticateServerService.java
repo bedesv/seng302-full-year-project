@@ -45,7 +45,7 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
     @VisibleForTesting
     AuthenticateResponse authenticateHandler(AuthenticateRequest request) {
         AuthenticateResponse.Builder reply = AuthenticateResponse.newBuilder();
-        if (userAccountsServerService.isBadUserName(request.getUsername())){
+        if (!userAccountsServerService.titleValid(request.getUsername())){
             IDENTITY_LOGGER.info("Log in attempt failed: cannot contain special characters");
             reply
                     .setMessage("Log in attempt failed: username cannot contain special characters")

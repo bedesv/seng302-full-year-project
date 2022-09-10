@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.user.PortfolioUserService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,7 +53,6 @@ public class PortfolioController {
             Model model
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
         model.addAttribute("pageUser", user);
         model.addAttribute("owner", true);
 
@@ -82,8 +82,6 @@ public class PortfolioController {
             Model model
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
-
         User pageUser = userService.getUserAccountById(userId);
         model.addAttribute("pageUser", pageUser);
 
@@ -124,6 +122,10 @@ public class PortfolioController {
         int id = Integer.parseInt(evidenceId);
         int index = Integer.parseInt(webLinkIndex);
         Evidence evidence = evidenceService.getEvidenceById(id);
+
+        webLink = ValidationUtil.stripTitle(webLink);
+        webLinkName = ValidationUtil.stripTitle(webLinkName);
+
         if (evidence.getNumberWeblinks() >= MAX_WEBLINKS_PER_EVIDENCE) {
             model.addAttribute("saveError", "Cannot add more than " + MAX_WEBLINKS_PER_EVIDENCE + " weblinks");
         } else {
@@ -148,7 +150,7 @@ public class PortfolioController {
         }
         model.addAttribute("webLinks", evidence.getWebLinks());
         model.addAttribute("evidenceId", evidence.getId());
-        return "templatesEvidence/webLink";
+        return "fragments/webLink";
     }
 
     /**
@@ -166,7 +168,7 @@ public class PortfolioController {
         Evidence evidence = evidenceService.getEvidenceById(id);
         model.addAttribute("webLinks", evidence.getWebLinks());
         model.addAttribute("evidenceId", evidence.getId());
-        return "templatesEvidence/webLink";
+        return "fragments/webLink";
     }
 
 }

@@ -59,7 +59,7 @@
         <form id="evidence-form__form" class="flex-column" th:action="@{editEvidence-{evidenceId}(evidenceId=${evidenceId})}" th:method="post">
             <!-- Evidence Name !-->
             <label>Title *</label>
-            <input minlength="2" maxlength="64" type="text" id="evidence-form__title-field" onkeyup="checkValid()" name="evidenceTitle" placeholder="Evidence Title" th:value="${evidenceTitle}" th:pattern="${titlePattern}" title="Evidence Name must not be blank and cannot contain special characters" required>
+            <input minlength="2" maxlength="64" type="text" id="evidence-form__title-field" onkeyup="checkValid()" name="evidenceTitle" placeholder="Evidence Title" th:value="${evidenceTitle}" th:pattern="${isNotBlankPattern}" title="Evidence Name must not be blank and cannot contain special characters" required>
             <p class="evidence-form__error-message" th:text="${titleError}" />
             <!-- Evidence Description !-->
             <label>Description *</label>
@@ -82,21 +82,20 @@
             </label>
             <div class="flex-row" id="evidence-form__categories-check">
                 <div class="form-check edit-input">
-                    <input type="checkbox" value="" id="flex-check--quantitative" name="isQuantitative" onclick="checkValid()" th:checked="${#strings.contains(categories,  'Quantitative')?true:false}">
+                    <input type="checkbox" value="" id="flex-check--quantitative" name="isQuantitative" onclick="checkValid()" th:checked="${#strings.contains(categories,  'QUANTITATIVE')?true:false}">
                     <label class="form-check-label" for="flex-check--quantitative">
                         Quantitative
                     </label>
                 </div>
-
                 <div class="form-check">
-                    <input type="checkbox" value="" id="flex-check--qualitative" name="isQualitative" onclick="checkValid()" th:checked="${#strings.contains(categories,  'Qualitative')?true:false}">
+                    <input type="checkbox" value="" id="flex-check--qualitative" name="isQualitative" onclick="checkValid()" th:checked="${#strings.contains(categories,  'QUALITATIVE')?true:false}">
                     <label class="form-check-label" for="flex-check--qualitative">
                         Qualitative
                     </label>
                 </div>
 
                 <div class="form-check">
-                    <input type="checkbox" value="" id="flex-check--service" name="isService" onclick="checkValid()" th:checked="${#strings.contains(categories,  'Service')?true:false}">
+                    <input type="checkbox" value="" id="flex-check--service" name="isService" onclick="checkValid()" th:checked="${#strings.contains(categories,  'SERVICE')?true:false}">
                     <label class="form-check-label" for="flex-check--service">
                         Service
                     </label>
@@ -118,7 +117,8 @@
                 </div>
             </div>
             <input type="hidden" id="evidence-form__hidden-skills-field" name="evidenceSkills"/>
-            <p class="evidence-form__error-message" th:text="${skillsError}" />
+            <p id="evidence-form__skills-error" class="evidence-form__error-message" th:text="${skillsError}" />
+
             <input type="hidden" id="evidence-form__hidden--change-skills-field" name="skillsToChange"/>
 
             <!-- Users !-->

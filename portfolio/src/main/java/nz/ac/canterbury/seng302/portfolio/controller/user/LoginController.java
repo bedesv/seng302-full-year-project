@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.authentication.CookieUtil;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.AuthenticateClientService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class LoginController {
     private AuthenticateClientService authenticateClientService;
 
     @Autowired
-    private UserAccountClientService userService;
+    private UserAccountClientService userAccountClientService;
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
 
     private static final String COOKIE_NAME = "lens-session-token";
@@ -50,7 +51,7 @@ public class LoginController {
         if (principal == null) {
             return LOGIN;
         }
-        User user = userService.getUserAccountByPrincipal(principal);
+        User user = userAccountClientService.getUserAccountByPrincipal(principal);
         if (Objects.equals(user.getUsername(), "")) {
             return LOGIN;
         } else {
@@ -75,7 +76,7 @@ public class LoginController {
      */
     @GetMapping("/logout")
     public String logout(@AuthenticationPrincipal AuthState principal, HttpServletResponse response) {
-        User user = userService.getUserAccountByPrincipal(principal);
+        User user = userAccountClientService.getUserAccountByPrincipal(principal);
         CookieUtil.clear(
                 response,
                 COOKIE_NAME
@@ -112,6 +113,10 @@ public class LoginController {
             @RequestParam(name="password") String password,
             Model model
     ) {
+        //Check for emojis early, prevents grpc error
+        if (!ValidationUtil.validAttribute(model, "username", "Username" , username)){
+            return LOGIN;
+        }
         AuthenticateResponse loginReply;
         try {
             loginReply = authenticateClientService.authenticate(username.toLowerCase(Locale.ROOT), password);

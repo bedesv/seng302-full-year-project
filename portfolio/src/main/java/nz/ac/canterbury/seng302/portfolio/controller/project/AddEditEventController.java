@@ -2,10 +2,10 @@ package nz.ac.canterbury.seng302.portfolio.controller.project;
 
 import nz.ac.canterbury.seng302.portfolio.model.project.Event;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
-import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.project.EventService;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,7 +35,7 @@ public class AddEditEventController {
     private static final String TIME_FORMAT = "yyyy-MM-dd'T'HH:mm";
     private static final String REDIRECT_PROJECTS = "redirect:/projects";
     private static final String REDIRECT_PROJECT_DETAILS = "redirect:/projectDetails-";
-    private static final String REDIRECT_EVENT_FORM = "redirect:/addEditEvent";
+    private static final String ADD_EDIT_EVENT = "templatesProject/addEditEvent";
 
 
     /**
@@ -52,15 +52,9 @@ public class AddEditEventController {
             return REDIRECT_PROJECT_DETAILS + parentProjectId;
         }
 
-        // Add user details to model for displaying in top banner
-        int userId = userAccountClientService.getUserId(principal);
-        User user = userAccountClientService.getUserAccountById(userId);
-        model.addAttribute("user", user);
-
         // Add parent project ID
         int projectId = Integer.parseInt(parentProjectId);
         Project project = projectService.getProjectById(projectId);
-        model.addAttribute("projectId", project.getId());
 
         Event event;
         //Check if it is existing or new event
@@ -89,21 +83,13 @@ public class AddEditEventController {
                 event.setEventEndDate(twoDaysAfterProjectStart);
             }
         }
-
-        //Add event details to model
-        model.addAttribute("eventName", event.getEventName());
-        model.addAttribute("eventStartDate", Project.dateToString(event.getEventStartDate(), TIME_FORMAT));
-        model.addAttribute("eventEndDate", Project.dateToString(event.getEventEndDate(), TIME_FORMAT));
-
-        // Add event date boundaries for event to the model
-        model.addAttribute("minEventStartDate", Project.dateToString(project.getStartDate(), TIME_FORMAT));
-        model.addAttribute("maxEventEndDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
-        return "templatesProject/addEditEvent";
+        updateModel(model, project, event);
+        return ADD_EDIT_EVENT;
     }
 
     @PostMapping("/editEvent-{eventId}-{parentProjectId}")
     public String addEditEvent(
-            @AuthenticationPrincipal AuthState principle,
+            @AuthenticationPrincipal AuthState principal,
             @PathVariable("parentProjectId") String projectIdString,
             @PathVariable("eventId") String eventIdString,
             @RequestParam(value="eventName") String eventName,
@@ -111,14 +97,9 @@ public class AddEditEventController {
             @RequestParam(value="eventEndDate") String eventEnd,
             Model model) throws ParseException {
         //Check if it is a teacher making the request
-        if (!userAccountClientService.isTeacher(principle)) {
+        if (!userAccountClientService.isTeacher(principal)) {
             return REDIRECT_PROJECT_DETAILS + projectIdString;
         }
-
-        // Add user details to model for displaying in top banner
-        int userId = userAccountClientService.getUserId(principle);
-        User user = userAccountClientService.getUserAccountById(userId);
-        model.addAttribute("user", user);
 
         // Ensure request parameters represent a valid sprint.
         // Check ids can be parsed
@@ -145,8 +126,10 @@ public class AddEditEventController {
             try {
                 Event newEvent = new Event(projectId, eventName, eventStartDate, eventEndDate);
                 eventService.saveEvent(newEvent);
-            } catch (Exception ignored) {
-                return REDIRECT_EVENT_FORM + "-" + eventId + "-" + projectId;
+            } catch (IllegalArgumentException ignored) {
+                updateModel(model, projectService.getProjectById(projectId), new Event(projectId, ValidationUtil.stripTitle(eventName), eventStartDate, eventEndDate));
+                model.addAttribute("titleError", "Event name cannot contain special characters");
+                return ADD_EDIT_EVENT;
             }
         } else {
             //Edit existing event
@@ -155,8 +138,14 @@ public class AddEditEventController {
                 existingEvent.setEventName(eventName);
                 eventService.updateEventDates(eventId, eventStartDate, eventEndDate);
                 eventService.saveEvent(existingEvent);
-            } catch (Exception ignored) {
-                return REDIRECT_EVENT_FORM + "-" + eventId + "-" + projectId;
+            } catch (IllegalArgumentException ignored) {
+                Event event = eventService.getEventById(eventId);
+                event.setEventName(ValidationUtil.stripTitle(eventName));
+                event.setEventStartDate(startDate);
+                event.setEventEndDate(endDate);
+                updateModel(model, projectService.getProjectById(projectId), event);
+                model.addAttribute("titleError", "Event name cannot contain special characters");
+                return ADD_EDIT_EVENT;
             }
         }
         return REDIRECT_PROJECT_DETAILS + projectIdString;
@@ -179,5 +168,22 @@ public class AddEditEventController {
 
         eventService.deleteEventById(Integer.parseInt(eventId));
         return REDIRECT_PROJECT_DETAILS + parentProjectId;
+    }
+
+    /**
+     * Abstracted these additions instead of being repeated three times
+     * @param model global model
+     * @param project parent project id
+     * @param event being updated
+     */
+    private void updateModel(Model model, Project project, Event event){
+        model.addAttribute("projectId", project.getId());
+        //Add event details to model
+        model.addAttribute("eventName", event.getEventName());
+        model.addAttribute("eventStartDate", Project.dateToString(event.getEventStartDate(), TIME_FORMAT));
+        model.addAttribute("eventEndDate", Project.dateToString(event.getEventEndDate(), TIME_FORMAT));
+        // Add event date boundaries for event to the model
+        model.addAttribute("minEventStartDate", Project.dateToString(project.getStartDate(), TIME_FORMAT));
+        model.addAttribute("maxEventEndDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
     }
 }

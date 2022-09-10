@@ -41,6 +41,7 @@ public class Evidence {
 
     public Evidence() {
         webLinks = new ArrayList<>();
+        commits = new ArrayList<>();
     }
 
     public Evidence(int ownerId, int projectId, String title, String description, Date date) {
@@ -81,9 +82,13 @@ public class Evidence {
         return title;
     }
 
+    public void setTitle(String title) { this.title = title; }
+
     public String getDescription() {
         return description;
     }
+
+    public void setDescription(String description) { this.description = description; }
 
     public Date getDate() {
         return date;
@@ -110,6 +115,8 @@ public class Evidence {
     public void addCommit(Commit commit) {this.commits.add(commit); }
 
     public List<String> getSkills() {return skills;}
+
+    public void setSkills(List<String> skills) { this.skills = skills; }
 
     public void addSkill (String skill) {this.skills.add(skill);}
 
@@ -179,14 +186,6 @@ public class Evidence {
         return sortedCategories;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public void setDate(Date date) {
         this.date = date;
     }
@@ -203,6 +202,20 @@ public class Evidence {
             this.skills.remove(0);
         }
         this.skills = this.skills.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    /**
+     * Removes the commit with the given index from the piece of evidence
+     * @param commitIndex The index of the commit to be removed
+     */
+    public void removeCommit(int commitIndex) {
+        if (commitIndex < 0) {
+            throw new NoSuchElementException("Commit index is invalid because it is less than one. Commit not deleted.");
+        } else if (this.commits.size() > commitIndex) {
+            this.commits.remove(commitIndex);
+        } else {
+            throw new NoSuchElementException("Evidence has less than " + (commitIndex + 1) + " commits. Commit not deleted.");
+        }
     }
 
     public void setCategories(Set<Categories> categories) {

@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.controller.user;
 
-import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.ChangePasswordResponse;
@@ -26,17 +25,10 @@ public class ChangePasswordController {
 
     /**
      * Get mapping to return change password page
-     * @param principal Authentication principal storing current user information
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return change password page
      */
     @GetMapping("/changePassword")
-    public String securitySettings(
-            @AuthenticationPrincipal AuthState principal,
-            Model model
-    ) {
-        User user = userAccountClientService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
+    public String securitySettings() {
         return CHANGE_PASSWORD_ENDPOINT;
     }
 
@@ -57,9 +49,6 @@ public class ChangePasswordController {
 
         //Get current user ID
         int id = userAccountClientService.getUserId(principal);
-
-        User user = userAccountClientService.getUserAccountById(id);
-        model.addAttribute("user", user);
 
         ChangePasswordResponse changePasswordResponse;
         //Try to connect to IDP to submit password response

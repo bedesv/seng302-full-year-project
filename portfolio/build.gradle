@@ -62,6 +62,7 @@ dependencies {
     testImplementation "io.cucumber:cucumber-java:${cucumberVersion}"
 
     testImplementation "io.cucumber:cucumber-junit:${cucumberVersion}"
+    testImplementation "io.cucumber:cucumber-spring:${cucumberVersion}"
     testImplementation "org.junit.vintage:junit-vintage-engine:${junitVersion}"
 
     testImplementation 'org.mockito:mockito-inline:2.13.0'

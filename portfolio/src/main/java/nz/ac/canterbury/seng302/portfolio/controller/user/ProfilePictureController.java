@@ -30,24 +30,10 @@ public class ProfilePictureController {
 
     /**
      * Get mapping to open addProfilePicture page
-     * @param principal Authentication principal storing current user information
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return the addProfilePicture page
      */
     @GetMapping("/addProfilePicture")
-    public String addProfilePicture(
-            @AuthenticationPrincipal AuthState principal,
-            Model model
-    ) {
-        Integer id = Integer.valueOf(principal.getClaimsList().stream()
-                .filter(claim -> claim.getType().equals(NAME_ID_CLAIM_TYPE))
-                .findFirst()
-                .map(ClaimDTO::getValue)
-                .orElse("-100"));
-
-        User user = userAccountClientService.getUserAccountById(id);
-        model.addAttribute("user", user);
-        model.addAttribute("username", user.getUsername());
+    public String addProfilePicture() {
         return "templatesUser/addProfilePicture";
     }
 
@@ -80,7 +66,6 @@ public class ProfilePictureController {
             userAccountClientService.uploadUserProfilePhoto(decodedByte, id, fileType);
             // Generic attributes that need to be set for the profile page
             User user = userAccountClientService.getUserAccountById(id);
-            model.addAttribute("user", user);
             model.addAttribute("name", user.getFirstName() + " " + user.getLastName());
             Timestamp ts = user.getCreated();
             Instant timeCreated = Instant.ofEpochSecond( ts.getSeconds() , ts.getNanos() );
@@ -109,7 +94,7 @@ public class ProfilePictureController {
                                        Model model) {
 
         //get userId using the Authentication Principle
-        Integer id = Integer.valueOf(principal.getClaimsList().stream()
+        int id = Integer.parseInt(principal.getClaimsList().stream()
                 .filter(claim -> claim.getType().equals(NAME_ID_CLAIM_TYPE))
                 .findFirst()
                 .map(ClaimDTO::getValue)
@@ -120,7 +105,6 @@ public class ProfilePictureController {
 
         //Get the new version of user
         User user = userAccountClientService.getUserAccountById(id);
-        model.addAttribute("user", user);
         model.addAttribute("username", username);
 
         //if remove profile picture was successful return to profile
