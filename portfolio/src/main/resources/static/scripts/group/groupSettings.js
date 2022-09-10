@@ -1,11 +1,20 @@
+// Load Google Charts then update charts once it's done
 google.charts.load("current", {packages:["corechart"]}).then(updateAllCharts);
-// google.setOnLoadCallback(() => {setTimeout(updateAllCharts, 0)})
 
+// Update charts when the window resizes
+window.onresize = updateAllCharts
+
+/**
+ * Updates all the charts
+ */
 async function updateAllCharts() {
     await updateCategoriesChart();
-    await updateSkillsChart()
 }
 
+/**
+ * Sends a get request to the backend for the specified type of group statistic data
+ * @param dataType A string specifying what data is required
+ */
 async function fetchChartData(dataType) {
     let url;
     if (dataType === 'categories') {
@@ -19,9 +28,15 @@ async function fetchChartData(dataType) {
 
 }
 
+/**
+ * Fetches categories data from the backend then creates a pie chart
+ * with the received data
+ */
 async function updateCategoriesChart() {
+    // Fetch updated chart data
     let chartData = await fetchChartData('categories')
 
+    // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'word');
     data.addColumn('number', 'count');
@@ -29,38 +44,17 @@ async function updateCategoriesChart() {
         data.addRow([key, chartData[key]]);
     }
 
+    // Specify options for the chart
     let options = {
         title: 'Categories',
-        pieHole: 0.4,
+        pieHole: 0.2,
         backgroundColor: { fill:'transparent' },
-        pieSliceTextStyle: {color: 'black'},
-        height: "100%"
+        pieSliceTextStyle: {color: 'black'}
 
     };
 
+    // Create the chart
     let chart = new google.visualization.PieChart(document.getElementById('group-chart__categories-chart'));
-    chart.draw(data, options);
-}
-
-window.onresize = () => {updateSkillsChart(); updateCategoriesChart()}
-
-async function updateSkillsChart() {
-    let chartData = await fetchChartData('categories')
-
-    let data = new google.visualization.DataTable();
-    data.addColumn('string', 'word');
-    data.addColumn('number', 'count');
-    for (let key in chartData) {
-        data.addRow([key, chartData[key]]);
-    }
-
-    let options = {
-        title: 'My Daily Activities',
-        backgroundColor: { fill:'transparent' },
-        pieSliceTextStyle: {color: 'black'},
-    };
-
-    let chart = new google.visualization.PieChart(document.getElementById('group-chart__skills-chart'));
     chart.draw(data, options);
 }
 
