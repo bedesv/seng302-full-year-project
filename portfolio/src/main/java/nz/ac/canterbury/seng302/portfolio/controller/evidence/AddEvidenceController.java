@@ -124,16 +124,6 @@ public class AddEvidenceController {
             Model model
     ) {
 
-        // Format commit string into valid list
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<nz.ac.canterbury.seng302.portfolio.model.evidence.Commit> commitList;
-        try {
-            commitList = objectMapper.readValue(commitString, new TypeReference<>() {});
-        } catch (JsonProcessingException e) {
-            PORTFOLIO_LOGGER.info(e.getMessage());
-            return ADD_EVIDENCE; // Fail silently as client has responsibility for error checking
-        }
-
         User user = userService.getUserAccountByPrincipal(principal);
         int projectId = portfolioUserService.getUserById(user.getId()).getCurrentProject();
         Project project = projectService.getProjectById(projectId);
@@ -145,7 +135,7 @@ public class AddEvidenceController {
         try {
             date = new SimpleDateFormat(TIMEFORMAT).parse(dateString);
         } catch (ParseException exception) {
-            return ADD_EVIDENCE; // Fail silently as client has responsibility for error checking
+            return PORTFOLIO_REDIRECT; // Fail silently as client has responsibility for error checking
         }
 
         Set<Categories> categories = new HashSet<>();
@@ -175,6 +165,20 @@ public class AddEvidenceController {
             evidence.setSkills(evidenceService.stripSkills(evidence.getSkills()));
             addEvidenceToModel(model, projectId, userId, evidence);
             return ADD_EVIDENCE;
+        }
+
+        // Format commit string into valid list
+        if (Objects.equals(commitString, "")) {
+            commitString = "[]";
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<nz.ac.canterbury.seng302.portfolio.model.evidence.Commit> commitList;
+        try {
+            commitList = objectMapper.readValue(commitString, new TypeReference<>() {});
+        } catch (JsonProcessingException e) {
+            PORTFOLIO_LOGGER.info(e.getMessage());
+            addEvidenceToModel(model, projectId, userId, evidence);
+            return ADD_EVIDENCE; // Fail silently as client has responsibility for error checking
         }
 
         try {

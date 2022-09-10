@@ -7,6 +7,7 @@ import nz.ac.canterbury.seng302.portfolio.model.user.PortfolioUser;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
+import nz.ac.canterbury.seng302.portfolio.service.group.GitlabConnectionService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupRepositorySettingsService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.user.PortfolioUserService;
@@ -67,6 +68,8 @@ class AddEvidenceControllerTests {
     @MockBean
     GlobalControllerAdvice globalControllerAdvice;
 
+    @MockBean
+    GitlabConnectionService gitlabConnectionService;
 
     /**
      * Helper function to create a valid AuthState given an ID
@@ -137,8 +140,11 @@ class AddEvidenceControllerTests {
                         .param("evidenceDescription", "test description")
                         .param("evidenceDate", "2002-02-16")
                         .param("evidenceSkills", "")
+                        .param("isQuantitative", "")
+                        .param("isQualitative", "")
+                        .param("isService", "")
+                        .param("evidenceCommits", "")
                         .param("evidenceUsers", "")
-                        .param("evidenceSkills", "")
                         .param("skillsToChange", ""))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/portfolio"));
@@ -162,9 +168,12 @@ class AddEvidenceControllerTests {
                         .param("evidenceDescription", "test description")
                         .param("evidenceDate", "2002-02-16")
                         .param("evidenceSkills", "")
-                        .param("skillsToChange", "")
-                        .param("evidenceSkills", "")
-                        .param("evidenceUsers", ""))
+                        .param("isQuantitative", "")
+                        .param("isQualitative", "")
+                        .param("isService", "")
+                        .param("evidenceCommits", "")
+                        .param("evidenceUsers", "")
+                        .param("skillsToChange", ""))
                 .andExpect(status().isOk())
                 .andExpect(redirectedUrl(null));
     }
@@ -187,12 +196,12 @@ class AddEvidenceControllerTests {
                         .param("evidenceSkills", "")
                         .param("isQuantitative", "")
                         .param("isQualitative", "")
-                        .param("isQuantitative", "")
                         .param("isService", "")
-                        .param("evidenceSkills", "")
+                        .param("evidenceCommits", "")
+                        .param("evidenceUsers", "")
                         .param("skillsToChange", ""))
-                .andExpect(status().isOk())
-                .andExpect(redirectedUrl(null));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/portfolio"));
     }
 
     // Check that trying to edit evidence with a mangled evidence id fails.
