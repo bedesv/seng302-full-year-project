@@ -46,7 +46,7 @@ public class GroupChartDataService {
                 }
             }
         }
-
+        // Sorts map by skill amount and caps the new map at 10 elements.
         Map<String, Integer> result = skillCounts.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
@@ -55,17 +55,6 @@ public class GroupChartDataService {
                         Map.Entry::getKey,
                         Map.Entry::getValue,
                         (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-        
-
-        System.out.println("##########################################");
-        System.out.println("Here are the skill counts" + skillCounts);
-        result.entrySet().forEach(entry -> {
-            System.out.println(entry.getKey() + " " + entry.getValue());
-        });
-        System.out.println("##########################################");
-        //https://howtodoinjava.com/java/sort/java-sort-map-by-values/
-        //https://jsfiddle.net/api/post/library/pure/
-        //https://developers.google.com/chart/interactive/docs/gallery/columnchart
         return result;
     }
 

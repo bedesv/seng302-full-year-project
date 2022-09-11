@@ -52,7 +52,7 @@ async function updateCategoriesChart() {
         title: 'Categories',
         pieHole: 0.2,
         backgroundColor: { fill:'transparent' },
-        pieSliceTextStyle: {color: 'black'}
+        pieSliceTextStyle: {color: 'black'},
     };
 
     // Create the categories chart
@@ -67,7 +67,6 @@ async function updateCategoriesChart() {
 async function updateSkillsChart() {
     // Fetch updated chart data
     let chartData = await fetchChartData('skills')
-    console.log(chartData);
 
     //https://howtodoinjava.com/java/sort/java-sort-map-by-values/
     //https://jsfiddle.net/api/post/library/pure/
@@ -76,7 +75,7 @@ async function updateSkillsChart() {
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'Skills');
-    data.addColumn('number', 'Count');
+    data.addColumn('number', 'Number of Skills');
     for (let key in chartData) {
         data.addRow([key, chartData[key]]);
     }
@@ -84,7 +83,7 @@ async function updateSkillsChart() {
     // Specify options for the column chart
     let options = {
         title: 'Skills',
-        backgroundColor: { fill:'transparent' }
+        backgroundColor: { fill:'transparent' },
     };
 
     // Create the categories chart
