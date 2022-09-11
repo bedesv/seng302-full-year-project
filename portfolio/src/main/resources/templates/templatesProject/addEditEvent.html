@@ -34,7 +34,7 @@
         <!-- Add/Edit Event Form -->
         <form id="event-form__form" class="flex-column" th:action="@{editEvent-{event}-{project}(project=${parentProjectId}, event=${eventId})}" th:method="post">
             <label for="event-form__name-field">Event Name *</label>
-            <input type="text" id="event-form__name-field" name="eventName" maxlength="30" placeholder="Event Name" th:value="${eventName}" th:pattern="${isNotBlankPattern}" title="Event Name must not be blank and cannot contain special characters" onkeyup="countCharacters()">
+            <input type="text" id="event-form__name-field" name="eventName" maxlength="30" placeholder="Event Name" th:value="${eventName}" th:pattern="${isNotBlankPattern}" required title="Event Name must not be blank and cannot contain special characters" onkeyup="countCharacters()">
             <span id="char-count">30/30 characters remain</span>
             <p th:text="${titleError}" class="form-error-message"></p>
 
