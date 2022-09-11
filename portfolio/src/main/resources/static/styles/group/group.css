@@ -266,7 +266,6 @@ html {
 #group-chart__categories-chart, #group-chart__skills-chart, #group-chart__evidence-chart {
     flex-grow: 1;
     overflow: hidden;
-
 }
 
 

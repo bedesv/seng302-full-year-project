@@ -45,7 +45,10 @@ public class GroupChartDataController {
      */
     @GetMapping("/group-{groupId}-categoriesData")
     public Map<String, Integer> getCategoriesData(@AuthenticationPrincipal AuthState principal,
-                                                  @PathVariable int groupId) {
+                                                  @PathVariable int groupId,
+                                                  @RequestParam String startDateString,
+                                                  @RequestParam String endDateString) {
+        //do nothing with the dates yet
         User user = userService.getUserAccountByPrincipal(principal);
         if (user.getUsername() == null) {
             return Collections.emptyMap();
@@ -87,8 +90,6 @@ public class GroupChartDataController {
         group.setParentProject(parentProjectId);
         return groupChartDataService.getGroupSkillData(group, startDate, endDate);
     }
-
-
 
     /**
      * Used by the front end to fetch the number of evidence for each group member

@@ -45,6 +45,15 @@ public class GroupChartDataService {
                 }
             }
         }
+        System.out.println("##########################################");
+        System.out.println("Here are the skill counts" + skillCounts);
+        skillCounts.entrySet().forEach(entry -> {
+            System.out.println(entry.getKey() + " " + entry.getValue());
+        });
+        System.out.println("##########################################");
+        //https://howtodoinjava.com/java/sort/java-sort-map-by-values/
+        //https://jsfiddle.net/api/post/library/pure/
+        //https://developers.google.com/chart/interactive/docs/gallery/columnchart
         return skillCounts;
     }
 

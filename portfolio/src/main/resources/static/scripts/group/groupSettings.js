@@ -9,6 +9,7 @@ window.onresize = updateAllCharts
  */
 async function updateAllCharts() {
     await updateCategoriesChart();
+    await updateSkillsChart();
 }
 
 /**
@@ -18,14 +19,16 @@ async function updateAllCharts() {
 async function fetchChartData(dataType) {
     let url;
     if (dataType === 'categories') {
-        url = new URL (`${CONTEXT}/group-${GROUP_ID}-categoriesData`);
+        url = new URL (`${CONTEXT}/group-${GROUP_ID}-categoriesData?`);
     }
-    return await fetch(url, {
-        method: "GET"
+    if (dataType === 'skills') {
+        url = new URL (`${CONTEXT}/group-${GROUP_ID}-skillsData?`);
+    }
+    return await fetch(url+new URLSearchParams({startDateString: START_DATE, endDateString: END_DATE}), {
+        method: "GET",
     }).then(res => {
         return res.json();
     });
-
 }
 
 /**
@@ -50,12 +53,43 @@ async function updateCategoriesChart() {
         pieHole: 0.2,
         backgroundColor: { fill:'transparent' },
         pieSliceTextStyle: {color: 'black'}
-
     };
 
-    // Create the chart
+    // Create the categories chart
     let chart = new google.visualization.PieChart(document.getElementById('group-chart__categories-chart'));
     chart.draw(data, options);
+}
+
+/**
+ * Fetches categories data from the backend then creates a pie chart
+ * with the received data
+ */
+async function updateSkillsChart() {
+    // Fetch updated chart data
+    let chartData = await fetchChartData('skills')
+    console.log(chartData);
+
+    //https://howtodoinjava.com/java/sort/java-sort-map-by-values/
+    //https://jsfiddle.net/api/post/library/pure/
+    //https://developers.google.com/chart/interactive/docs/gallery/columnchart
+
+    // // Convert the json data to a format Google Chart can read
+    // let data = new google.visualization.DataTable();
+    // data.addColumn('skillTitle', 'Skills');
+    // data.addColumn('count', 'Count');
+    // for (let key in chartData) {
+    //     data.addRow([key, chartData[key]]);
+    // }
+    //
+    // // Specify options for the column chart
+    // let options = {
+    //     title: 'Skills',
+    //     backgroundColor: { fill:'transparent' }
+    // };
+    //
+    // // Create the categories chart
+    // let chart = new google.visualization.ColumnChart(document.getElementById('group-chart__skills-chart'));
+    // chart.draw(data, options);
 }
 
 /**
