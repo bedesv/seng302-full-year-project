@@ -15,22 +15,26 @@ function checkValid() {
             || (document.getElementById("evidence-form__title-field").value===originalEvidenceTitle
                 &&document.getElementById("evidence-form__description-field").value===originalEvidenceDescription
                 &&document.getElementById("evidence-form__date-field").value===originalEvidenceDate
-                &&document.getElementById("flex-check--quantitative").checked===(originalCategories.includes("Quantitative"))
-                &&document.getElementById("flex-check--qualitative").checked===(originalCategories.includes("Qualitative"))
-                &&document.getElementById("flex-check--service").checked===(originalCategories.includes("Service"))
+                &&document.getElementById("flex-check--quantitative").checked===(originalCategories.includes("QUANTITATIVE"))
+                &&document.getElementById("flex-check--qualitative").checked===(originalCategories.includes("QUALITATIVE"))
+                &&document.getElementById("flex-check--service").checked===(originalCategories.includes("SERVICE"))
                 &&arraysMatch(originalEvidenceSkills, skillList)
                 &&arraysMatch(originalEvidenceUsers, userList)
             );
     }
 }
 
-let skillList = []
+let skillList = [];
+let changedSkills = {};
+let editedSkillTag = null;
 
 // Adds a skill to the list of skills. Makes sure it is not already present,
 // and if the user has already entered that skill on another piece of evidence, make sure the capitalization is correct.
 function addToSkills(skill) {
     for (const testSkill of skillList) {
         if (testSkill.toLowerCase() === skill.toLowerCase().replaceAll("_", " ")) {
+            const skillsError = document.getElementById("evidence-form__skills-error");
+            skillsError.innerHTML = "Skill not saved: skill already exists"
             return;
         }
     }
@@ -75,6 +79,95 @@ function removeLastUser() {
 function removeUser(user) {
     userList.splice(userList.indexOf(user), 1);
     checkValid();
+}
+
+function saveSkillEdit(oldSkill, newSkill) {
+    skillList[skillList.indexOf(oldSkill.replaceAll("_", " "))] = newSkill.replaceAll("_", " ");
+    if (ALL_SKILLS.includes(oldSkill)) {
+        changedSkills[oldSkill] = newSkill
+    } else {
+        for (const skill in changedSkills) {
+            if (changedSkills[skill] === oldSkill) {
+                changedSkills[skill] = newSkill;
+            }
+        }
+    }
+    checkValid();
+}
+
+// Change a skill tag to be editable.
+function editSkill(tag) {
+    submitSkillEdit();
+    const oldSkillObject = document.getElementById("skill-tag-" + tag)
+    editedSkillTag = "skill-tag-" + tag;
+    const parent = oldSkillObject.parentNode
+    parent.removeChild(oldSkillObject);
+    const editableSkillObject = createElementFromHTML(`<input id="editable-skill-tag" value="${tag}" data-old-value="${tag}"/>`)
+    parent.prepend(editableSkillObject);
+    const skillObject = document.getElementById("editable-skill-tag")
+    skillObject.focus();
+    skillObject.value = skillObject.value.replaceAll(' ', '_');
+    skillObject.selectionStart = skillObject.value.length;
+    skillObject.selectionEnd = skillObject.value.length;
+
+    skillObject.addEventListener("input", (event) => {
+        let location = event.target.selectionStart;
+        let value = event.target.value;
+        let size = value.length;
+        value = value.replaceAll(' ', '_');
+        value = value.replace(/_+/g, '_');
+        value = value.slice(0, 50);
+        skillObject.value = value;
+        location -= size;
+        location += value.length;
+        event.target.selectionStart = location;
+        event.target.selectionEnd = location;
+    })
+
+    skillObject.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") { // ENTER adds a tag
+            event.preventDefault(); // do not submit the form (the default action inside forms), instead just add a tag
+            submitSkillEdit();
+        } else if (event.key === "Escape") {
+            editedSkillTag = null
+            updateSkillTagsInDOM(skillList);
+        }
+    })
+}
+
+function submitSkillEdit() {
+    const editedSkill = document.getElementById("editable-skill-tag");
+    if (editedSkill) {
+        const newSkill = editedSkill.value.replaceAll("_", " ").trim().replaceAll(" ", "_");
+        const oldSkill = editedSkill.getAttribute('data-old-value').replaceAll(" ", "_");
+
+        let isAlreadySkill = false;
+        for (const testSkill of skillList) {
+            if (testSkill.toLowerCase() === newSkill.toLowerCase().replaceAll("_", " ")) {
+                isAlreadySkill = true;
+            }
+        }
+        for (const testSkill of ALL_SKILLS) {
+            if (testSkill.toLowerCase() === newSkill.toLowerCase().replaceAll("_", " ")) {
+                isAlreadySkill = true;
+            }
+        }
+        const skillsError = document.getElementById("evidence-form__skills-error");
+        if (newSkill === "" || newSkill === "_") {
+            skillsError.innerHTML = "Skill not saved: skills can't be empty";
+            editedSkillTag = null;
+            updateSkillTagsInDOM(skillList);
+        } else if (!isAlreadySkill || oldSkill.toLowerCase() === newSkill.toLowerCase()) {
+            saveSkillEdit(oldSkill, newSkill);
+            editedSkillTag = null;
+            updateSkillTagsInDOM(skillList);
+        } else {
+            skillsError.innerHTML = "Skill not saved: skill already exists";
+            editedSkillTag = null;
+            updateSkillTagsInDOM(skillList);
+        }
+
+    }
 }
 
 // Remove a skill tag when the 'x' button is clicked
@@ -165,14 +258,28 @@ document.getElementById("users-input").addEventListener("keydown", (event) => {
     updateFocus(event);
 })
 
-// Updates the tags shown before the skills input list to reflect the list of tags given.
-function updateSkillTagsInDOM(tags) {
+function updateHiddenFields() {
     let skills = "";
-    for (const skill of tags) {
+    for (const skill of skillList) {
         skills += skill.replaceAll(" ", "_");
         skills += " ";
     }
     document.getElementById("evidence-form__hidden-skills-field").value = skills;
+
+    let skillChanges = "";
+    for (const oldSkill in changedSkills) {
+        skillChanges += oldSkill
+        skillChanges += " "
+        skillChanges += changedSkills[oldSkill]
+        skillChanges += " ";
+    }
+    document.getElementById("evidence-form__hidden--change-skills-field").value = skillChanges;
+    console.log(skillChanges);
+}
+
+// Updates the tags shown before the skills input list to reflect the list of tags given.
+function updateSkillTagsInDOM(tags) {
+    updateHiddenFields();
 
     let parent = document.getElementById("skill-container");
     while (parent.childNodes.length > 2) {
@@ -183,7 +290,7 @@ function updateSkillTagsInDOM(tags) {
         let element = createElementFromHTML(`<div class="skill-tag-con">
                                                           <div class="skill-tag">
                                                             <div class="skill-tag-inside">
-                                                              <p>${sanitizeHTML(tag)}</p>
+                                                              <p class="strip-margin" id="skill-tag-${sanitizeHTML(tag)}" onclick="editSkill('${sanitizeHTML(tag)}')">${sanitizeHTML(tag)}</p>
                                                               <i class="bi bi-x" onclick="clickSkillXButton('${sanitizeHTML(tag)}')"></i>
                                                             </div>
                                                           </div>
@@ -215,8 +322,8 @@ function updateUserTagsInDOM(tags) {
                                 <div class="user-tag-inside">
                                   <img class="user-tag-image" src=${user.profilePicture} alt="Profile Photo">
                                   <div class="user-tag-text" >
-                                      <p class="user-tag-fullName">${sanitizeHTML(user.fullName)}</p>
-                                      <p class="user-tag-nickname"> ${sanitizeHTML(user.username)}</p>
+                                      <p class="user-tag-fullName strip-margin">${sanitizeHTML(user.fullName)}</p>
+                                      <p class="user-tag-nickname strip-margin"> ${sanitizeHTML(user.username)}</p>
                                   </div>
                                   <i class="bi bi-x" onclick="clickUserXButton('${sanitizeHTML(tag)}')"></i>
                                 </div>
@@ -359,6 +466,9 @@ document.addEventListener("click", function (event) {
             autocompleteItem.parentNode.removeChild(autocompleteItem);
         }
     }
+    if (event.target.id !== "editable-skill-tag" && event.target.id !== editedSkillTag) {
+        submitSkillEdit();
+    }
 });
 
 // HTML sanitization courtesy of  https://portswigger.net/web-security/cross-site-scripting/preventing
@@ -378,7 +488,10 @@ let usersDiv = document.getElementById("user-input-container")
  * allows clicking skills container to select the input and puts outline on div
  */
 skillsDiv.addEventListener('click', (event) => {
-    skillsInput.focus();
+    // If we click in a skill tag, we are editing that skill tag and so should not focus on the user input.
+    if (!event.target.id.includes("skill-tag")) {
+        skillsInput.focus();
+    }
 });
 skillsInput.addEventListener('focus', (event) => {
     skillsDiv.style.outline = 'black solid 2px';
@@ -435,6 +548,84 @@ function arraysEqual(a, b) {
         if (a[i] !== b[i]) return false;
     }
     return true;
+}
+
+/**
+ * Takes information from input box on addEvidence form and keeps track of the web link.
+ * @type {*[]}
+ */
+let webLinks = [];
+let webLinkLinks = [];
+let webLinkNames = [];
+let numWebLinks = 0;
+function addWebLinks() {
+    let webLinkNameElement = document.getElementById("evidence-form__webLink-name");
+    let webLinkElement = document.getElementById("evidence-form__webLink-link");
+    let webLink = {name: webLinkNameElement.value, link: webLinkElement.value}
+    if (numWebLinks < 5) {
+        if (webLink.link) {
+            addWebLinkToDOM(webLink, numWebLinks);
+            webLinks.push(webLink);
+            webLinkNames.push(webLink.name);
+            webLinkLinks.push(webLink.link);
+            numWebLinks++;
+            webLinkNameElement.value = "";
+            webLinkElement.value = "";
+            document.getElementById("evidence-form__hidden-webLinks-names").value = webLinkNames;
+            document.getElementById("evidence-form__hidden-webLinks-links").value = webLinkLinks;
+        }
+    }
+    if (numWebLinks === 5) {
+        webLinkNameElement.hidden = true;
+        webLinkElement.hidden = true;
+        document.getElementById("weblink-button").hidden = true;
+    }
+}
+
+/**
+ * Adds given web link into the DOM.
+ * @param webLink Web link to add.
+ * @param index The index of the web link in the dom and in webLinks array.
+ */
+function addWebLinkToDOM(webLink, index) {
+    let webLinkContainer = document.getElementById("evidence-form__webLink-container");
+    let webLinkHTML;
+    if (webLink.name) {
+        webLinkHTML = `<div class="web-link">
+                            <p class="web-link__name">${webLink.name}</p>
+                            <a class="web-link__link" target="_blank" href="${webLink.link}">${webLink.link}</a>
+                            <i class="bi bi-x" onclick="removeWebLink(sanitizeHTML('${index}'))">
+                        </div>`
+    } else {
+        webLinkHTML = `<div class="web-link">
+                            <p class="web-link__name"></p>
+                            <a target="_blank" href="${webLink.link}">${webLink.link}</a>
+                            <i class="bi bi-x" onclick="removeWebLink(sanitizeHTML('${index}'))">
+                        </div>`
+    }
+    webLinkContainer.appendChild(
+        createElementFromHTML(webLinkHTML))
+
+}
+
+/**
+ * Removes web link from the DOM on addEvidence form.
+ * @param webLinkIndex
+ */
+function removeWebLink(webLinkIndex) {
+    if (numWebLinks === 5) {
+        document.getElementById("evidence-form__webLink-name").hidden = false;
+        document.getElementById("evidence-form__webLink-link").hidden = false;
+        document.getElementById("weblink-button").hidden = false;
+    }
+    numWebLinks--;
+    document.getElementById("evidence-form__webLink-container").innerHTML = "";
+    webLinks.splice(parseInt(webLinkIndex), 1);
+    webLinkNames.splice(parseInt(webLinkIndex), 1);
+    webLinkLinks.splice(parseInt(webLinkIndex), 1);
+    for (let i = 0; i < webLinks.length; i++) {
+        addWebLinkToDOM(webLinks[i], i);
+    }
 }
 
 updateUserTagsInDOM(userList);

@@ -48,7 +48,6 @@ public class SkillsController {
                                         @RequestParam("skill") String skill,
                                         Model model) {
         User user = userService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
         model.addAttribute("pageUser", user);
         model.addAttribute("owner", true);
 
@@ -86,7 +85,6 @@ public class SkillsController {
             Model model) {
 
         User user = userService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
         User pageUser = userService.getUserAccountById(userId);
 
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
@@ -99,7 +97,6 @@ public class SkillsController {
 
         String skillName = skill.replace("_", " ");
         model.addAttribute("skillName", skillName);
-        model.addAttribute("user", user);
         model.addAttribute("pageUser", pageUser);
         model.addAttribute("evidenceList", evidenceWithSkillList);
 

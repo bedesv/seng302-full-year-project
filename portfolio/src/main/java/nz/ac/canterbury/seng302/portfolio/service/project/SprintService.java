@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.project.Sprint;
 import nz.ac.canterbury.seng302.portfolio.repository.project.SprintRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -85,8 +86,14 @@ public class SprintService {
      * Saves a sprint to the repository
      */
     public void saveSprint(Sprint sprint) {
-        projectEditsService.refreshProject(sprint.getParentProjectId());
-        repository.save(sprint);
+        if (!ValidationUtil.titleValid(sprint.getName())){
+            throw new IllegalArgumentException("Sprint name must not contain special characters");
+        } else if (!ValidationUtil.titleValid(sprint.getDescription())){
+            throw new IllegalArgumentException("Sprint description must not contain special characters");
+        } else {
+            projectEditsService.refreshProject(sprint.getParentProjectId());
+            repository.save(sprint);
+        }
     }
 
     /**

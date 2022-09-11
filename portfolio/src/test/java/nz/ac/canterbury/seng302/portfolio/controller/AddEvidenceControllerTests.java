@@ -113,6 +113,7 @@ class AddEvidenceControllerTests {
         Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
         mockMvc.perform(get("/editEvidence--1"))
                 .andExpect(status().isOk())
@@ -129,6 +130,7 @@ class AddEvidenceControllerTests {
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
         mockMvc.perform(post("/editEvidence--1")
                         .param("evidenceTitle", "test title")
@@ -137,7 +139,9 @@ class AddEvidenceControllerTests {
                         .param("evidenceSkills", "")
                         .param("evidenceUsers", "")
                         .param("evidenceSkills", "")
-                        .param("skillsToChange", ""))
+                        .param("skillsToChange", "")
+                        .param("evidenceWebLinks", "")
+                        .param("evidenceWebLinkNames", ""))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/portfolio"));
     }
@@ -152,6 +156,7 @@ class AddEvidenceControllerTests {
         Mockito.doThrow(IllegalArgumentException.class).when(evidenceService).saveEvidence(any());
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
         Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
 
         mockMvc.perform(post("/editEvidence--1")
@@ -174,6 +179,7 @@ class AddEvidenceControllerTests {
         Mockito.when(portfolioUserService.getUserById(any(Integer.class))).thenReturn(new PortfolioUser(1, "name", true));
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
         Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
 
         mockMvc.perform(post("/editEvidence--1")
@@ -215,11 +221,13 @@ class AddEvidenceControllerTests {
         AuthState validAuthState = setupSecurity();
         Mockito.when(userService.getUserAccountByPrincipal(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
         Mockito.when(userService.getUserId(validAuthState)).thenReturn(1);
-        PortfolioUser user = new PortfolioUser(1, "name", true);
-        user.setCurrentProject(1);
-        Mockito.when(portfolioUserService.getUserById(1)).thenReturn(user);
+        PortfolioUser portfolioUser = new PortfolioUser(1, "name", true);
+        portfolioUser.setCurrentProject(1);
+        Mockito.when(portfolioUserService.getUserById(1)).thenReturn(portfolioUser);
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
+        User user = new User(UserResponse.newBuilder().build());
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(user);
         Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
         // This line is what makes the evidence not exist
         Mockito.when(evidenceService.getEvidenceById(1)).thenThrow(new NoSuchElementException());
@@ -255,9 +263,11 @@ class AddEvidenceControllerTests {
         AuthState validAuthState = setupSecurity();
         Mockito.when(userService.getUserAccountByPrincipal(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
         Mockito.when(userService.getUserId(validAuthState)).thenReturn(1);
-        PortfolioUser user = new PortfolioUser(1, "name", true);
-        user.setCurrentProject(1);
-        Mockito.when(portfolioUserService.getUserById(1)).thenReturn(user);
+        PortfolioUser portfolioUser = new PortfolioUser(1, "name", true);
+        portfolioUser.setCurrentProject(1);
+        Mockito.when(portfolioUserService.getUserById(1)).thenReturn(portfolioUser);
+        User user = new User(UserResponse.newBuilder().build());
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(user);
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());

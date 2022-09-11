@@ -24,6 +24,11 @@
     margin-bottom: 0.5rem;
 }
 
+#editable-skill-tag {
+    margin: 0 !important;
+    border: none !important;
+}
+
 #evidence-form__form input, #evidence-form__form textarea {
     margin: 0 0 1rem 1rem;
     border: none;
@@ -47,7 +52,7 @@
     height: 3rem;
     line-height: 3rem;
     text-align: center;
-    color: black;
+    color: black !important;
     font-size: 1rem;
     text-decoration: none;
 }
@@ -56,6 +61,7 @@
 .evidence-form__control-button:hover {
     background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
     cursor: pointer;
+    color: black;
 }
 
 .evidence-form__control-button:disabled {
@@ -86,8 +92,11 @@
     position: relative;
 }
 
-p {
+.strip-margin {
     margin: 0 !important;
+}
+
+p {
     padding: 0;
 }
 
@@ -246,4 +255,20 @@ p {
 
 #users-input:focus {
     outline: none;
+}
+
+.web-link {
+    display: flex;
+}
+
+.web-link__link {
+    margin-left: 8px !important;
+}
+
+#evidence-form__webLink-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+    margin-left: 1rem;
 }

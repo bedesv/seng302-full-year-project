@@ -1144,4 +1144,61 @@ class EvidenceServiceTests {
         assertEquals(webLink.getName(), evidence.getWebLinks().get(2).getName());
     }
 
+    ///////////////////////////////////////////////
+    //////////////Delete Commits///////////////////
+    ///////////////////////////////////////////////
+
+    @Test
+    @Transactional
+    void whenNoCommits_testRemoveCommit() {
+        Evidence testEvidence = new Evidence();
+        evidenceRepository.save(testEvidence);
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> evidenceService.removeCommit(testEvidence.getId(), 0));
+        assertEquals("Evidence " + testEvidence.getId() + " has less than 1 commits. Commit not deleted.", exception.getMessage());
+    }
+
+    @Test
+    @Transactional
+    void whenNoCommits_testRemoveCommitWithIndexTooLow() {
+        Evidence testEvidence = new Evidence();
+        evidenceRepository.save(testEvidence);
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> evidenceService.removeCommit(testEvidence.getId(), -1));
+        assertEquals("Evidence " + testEvidence.getId() + " has less than 0 commits. Commit not deleted.", exception.getMessage());
+    }
+
+    @Test
+    @Transactional
+    void whenOneCommit_testRemoveCommit() {
+        Evidence testEvidence = new Evidence();
+        evidenceRepository.save(testEvidence);
+        testEvidence.addCommit(new Commit());
+        assertEquals(1, testEvidence.getNumberCommits());
+        evidenceService.removeCommit(testEvidence.getId(), 0);
+        assertEquals(0, testEvidence.getNumberCommits());
+    }
+
+    @Test
+    @Transactional
+    void whenOneCommit_testRemoveCommitWithIndexTooHigh() {
+        Evidence testEvidence = new Evidence();
+        evidenceRepository.save(testEvidence);
+        testEvidence.addCommit(new Commit());
+        assertEquals(1, testEvidence.getNumberCommits());
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> evidenceService.removeCommit(testEvidence.getId(), 1));
+        assertEquals("Evidence " + testEvidence.getId() + " has less than 2 commits. Commit not deleted.", exception.getMessage());
+        assertEquals(1, testEvidence.getNumberCommits());
+    }
+
+    @Test
+    @Transactional
+    void whenOneCommit_testRemoveCommitWithIndexTooLow() {
+        Evidence testEvidence = new Evidence();
+        evidenceRepository.save(testEvidence);
+        testEvidence.addCommit(new Commit());
+        assertEquals(1, testEvidence.getNumberCommits());
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> evidenceService.removeCommit(testEvidence.getId(), -1));
+        assertEquals("Evidence " + testEvidence.getId() + " has less than 0 commits. Commit not deleted.", exception.getMessage());
+        assertEquals(1, testEvidence.getNumberCommits());
+    }
+
 }

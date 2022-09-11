@@ -1,9 +1,10 @@
 package nz.ac.canterbury.seng302.portfolio.controller.group;
 
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
-import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
+import nz.ac.canterbury.seng302.portfolio.service.user.PortfolioUserService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.CreateGroupResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.ModifyGroupDetailsResponse;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -27,8 +29,11 @@ public class EditGroupController {
 
     @Autowired
     private GroupsController groupsController;
+    @Autowired
+    private PortfolioUserService portfolioUserService;
 
     private static final String GROUPS_REDIRECT = "redirect:/groups";
+    private static final String ADD_EDIT_GROUP = "templatesGroup/addEditGroup";
 
     /**
      * The get mapping to return the page to add/edit a group
@@ -48,10 +53,6 @@ public class EditGroupController {
             return GROUPS_REDIRECT;
         }
 
-        // Add user details to model for displaying in top banner
-        User user = userAccountClientService.getUserAccountById(userId);
-        model.addAttribute("user", user);
-
         Group group;
         //Check if it is existing or new group
         if (Integer.parseInt(groupId) != -1) {
@@ -67,7 +68,7 @@ public class EditGroupController {
         model.addAttribute("groupId", Integer.parseInt(groupId));
         model.addAttribute("groupShortName", group.getShortName());
         model.addAttribute("groupLongName", group.getLongName());
-        return "templatesGroup/addEditGroup";
+        return ADD_EDIT_GROUP;
     }
 
     /**
@@ -92,8 +93,7 @@ public class EditGroupController {
             return GROUPS_REDIRECT;
         }
 
-        User user = userAccountClientService.getUserAccountById(userId);
-
+        int parentProjectId = portfolioUserService.getUserById(userId).getCurrentProject();
         int groupId;
 
         try {
@@ -102,11 +102,19 @@ public class EditGroupController {
             return GROUPS_REDIRECT;
         }
 
+        List<Boolean> validFields = new ArrayList<>();
+        validFields.add(ValidationUtil.validAttribute(model, "shortName", "Short name" ,groupShortName));
+        validFields.add(ValidationUtil.validAttribute(model, "longName", "Long name", groupShortName));
+        if (validFields.contains(false)){
+            updateModel(model, groupId, ValidationUtil.stripTitle(groupShortName), ValidationUtil.stripTitle(groupLongName));
+            return ADD_EDIT_GROUP;
+        }
+
         List<ValidationError> validationErrorList;
         boolean responseSuccess;
 
         if (groupId == -1) {
-            CreateGroupResponse response = groupsClientService.createGroup(groupShortName, groupLongName);
+            CreateGroupResponse response = groupsClientService.createGroup(groupShortName, groupLongName, parentProjectId);
             responseSuccess = response.getIsSuccess();
             validationErrorList = response.getValidationErrorsList();
         } else {
@@ -128,14 +136,8 @@ public class EditGroupController {
                 }
             }
 
-            // Add user details to model for displaying in top banner
-            model.addAttribute("user", user);
-
-            //Add event details to model so the user doesn't have to enter them again
-            model.addAttribute("groupId", groupId);
-            model.addAttribute("groupShortName", groupShortName);
-            model.addAttribute("groupLongName", groupLongName);
-            return "templatesGroup/addEditGroup";
+            updateModel(model, groupId, groupShortName, groupLongName);
+            return ADD_EDIT_GROUP;
         } else {
             return GROUPS_REDIRECT;
         }
@@ -159,5 +161,19 @@ public class EditGroupController {
             }
         }
         return GROUPS_REDIRECT;
+    }
+
+    /**
+     * Update model
+     * @param model global model
+     * @param groupId of group
+     * @param groupShortName of group
+     * @param groupLongName of group
+     */
+    private void updateModel(Model model, int groupId, String groupShortName, String groupLongName){
+        //Add event details to model so the user doesn't have to enter them again
+        model.addAttribute("groupId", groupId);
+        model.addAttribute("groupShortName", groupShortName);
+        model.addAttribute("groupLongName", groupLongName);
     }
 }

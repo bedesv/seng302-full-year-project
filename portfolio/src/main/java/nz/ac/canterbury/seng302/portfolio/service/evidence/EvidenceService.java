@@ -9,11 +9,13 @@ import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.net.URL;
 import java.util.*;
@@ -299,7 +301,7 @@ public class EvidenceService {
         } catch (NoSuchElementException e) {
             String message = "Evidence " + evidenceId + " not found. Weblink not saved";
             PORTFOLIO_LOGGER.error(message);
-            throw new NoSuchElementException("Evidence not found: web link not saved");
+            throw new NoSuchElementException(message);
         }
     }
 
@@ -320,7 +322,30 @@ public class EvidenceService {
         } catch (NoSuchElementException e) {
             String message = "Evidence " + evidenceId + " not found. Commit not saved";
             PORTFOLIO_LOGGER.error(message);
-            throw new NoSuchElementException("Evidence not found: commit not saved");
+            throw new NoSuchElementException(message);
+        }
+    }
+
+    /**
+     * Deletes the commit at the given index from the specified piece of evidence
+     * @param evidenceId The id of the piece of evidence to remove a commit from
+     * @param commitIndex The index of the commit to be removed
+     */
+    public void removeCommit(int evidenceId, int commitIndex) {
+        try {
+            Evidence evidence = getEvidenceById(evidenceId);
+            evidence.removeCommit(commitIndex);
+            String message = "Commit successfully removed from evidence " + evidenceId;
+            PORTFOLIO_LOGGER.info(message);
+        } catch (NoSuchElementException e) {
+            String message;
+            if (e.getMessage().contains("Commit")) {
+                message = "Evidence " + evidenceId + " has less than " + (commitIndex + 1) + " commits. Commit not deleted.";
+            } else {
+                message = "Evidence " + evidenceId + " not found. Commit not deleted";
+            }
+            PORTFOLIO_LOGGER.error(message);
+            throw new NoSuchElementException(message);
         }
     }
 
@@ -412,5 +437,36 @@ public class EvidenceService {
      */
     public List<Evidence> retrieveEvidenceWithNoCategory(int userId, int projectId) {
         return repository.findByOwnerIdAndProjectIdAndCategoriesIsNullOrderByDateDescIdDesc(userId, projectId);
+    }
+
+    /**
+     * Method to remove special characters from skills
+     * @param skills may include special chars
+     * @return skills without special chars
+     */
+    public List<String> stripSkills(Collection<String> skills) {
+        List<String> stripped = new ArrayList<>();
+        for (String skill : skills) {
+            stripped.add(ValidationUtil.stripTitle(skill));
+        }
+        return stripped;
+    }
+
+    public List<Boolean> validateEvidence(Model model, String title, String description, List<String> skills){
+        List<Boolean> validationResponses = new ArrayList<>();
+        validationResponses.add(ValidationUtil.validAttribute(model, "title", "Title", title));
+        validationResponses.add(ValidationUtil.validAttribute(model, "description", "Description", description));
+        boolean skillError = false;
+        String invalidSkill = "";
+        for (String skill : skills){
+            if (!ValidationUtil.titleValid(skill)){
+                skillError = true;
+                invalidSkill = skill;
+            }
+        }
+        if (skillError){
+            validationResponses.add(ValidationUtil.validAttribute(model, "skills", "Skills", invalidSkill));
+        }
+        return validationResponses;
     }
 }

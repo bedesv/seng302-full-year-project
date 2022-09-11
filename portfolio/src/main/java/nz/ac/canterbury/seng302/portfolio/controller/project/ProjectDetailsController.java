@@ -48,10 +48,6 @@ public class ProjectDetailsController {
      */
     @GetMapping("/projectDetails-{id}")
     public String projectDetails(@AuthenticationPrincipal AuthState principal, Model model, @PathVariable("id") String id) {
-        // Add user details to model
-        User user = userAccountClientService.getUserAccountByPrincipal(principal);
-        model.addAttribute("user", user);
-
         /* Add project details to the model */
         int projectId = Integer.parseInt(id);
         try {

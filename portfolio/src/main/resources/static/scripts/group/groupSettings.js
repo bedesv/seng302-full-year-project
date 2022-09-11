@@ -1,3 +1,63 @@
+// Load Google Charts then update charts once it's done
+google.charts.load("current", {packages:["corechart"]}).then(updateAllCharts);
+
+// Update charts when the window resizes
+window.onresize = updateAllCharts
+
+/**
+ * Updates all the charts
+ */
+async function updateAllCharts() {
+    await updateCategoriesChart();
+}
+
+/**
+ * Sends a get request to the backend for the specified type of group statistic data
+ * @param dataType A string specifying what data is required
+ */
+async function fetchChartData(dataType) {
+    let url;
+    if (dataType === 'categories') {
+        url = new URL (`${CONTEXT}/group-${GROUP_ID}-categoriesData`);
+    }
+    return await fetch(url, {
+        method: "GET"
+    }).then(res => {
+        return res.json();
+    });
+
+}
+
+/**
+ * Fetches categories data from the backend then creates a pie chart
+ * with the received data
+ */
+async function updateCategoriesChart() {
+    // Fetch updated chart data
+    let chartData = await fetchChartData('categories')
+
+    // Convert the json data to a format Google Chart can read
+    let data = new google.visualization.DataTable();
+    data.addColumn('string', 'word');
+    data.addColumn('number', 'count');
+    for (let key in chartData) {
+        data.addRow([key, chartData[key]]);
+    }
+
+    // Specify options for the chart
+    let options = {
+        title: 'Categories',
+        pieHole: 0.2,
+        backgroundColor: { fill:'transparent' },
+        pieSliceTextStyle: {color: 'black'}
+
+    };
+
+    // Create the chart
+    let chart = new google.visualization.PieChart(document.getElementById('group-chart__categories-chart'));
+    chart.draw(data, options);
+}
+
 /**
  * Uses the Javascript fetch API to fetch updated repository information
  * then updates the page to reflect the new information.
@@ -5,7 +65,7 @@
 async function updateGroupRepositoryElement(firstLoad) {
     // Build the url
     let url
-    url = new URL (`${CONTEXT}/groupSettings-${GROUP_ID}-repository`)
+    url = new URL (`${CONTEXT}/group-${GROUP_ID}-repository`)
     url.searchParams.append("firstLoad", firstLoad)
 
     // Send a get request to fetch the updated group repository
@@ -16,9 +76,15 @@ async function updateGroupRepositoryElement(firstLoad) {
         return res.text()
     })
 
+
     // Update the page with the new HTML content
     const groupRepositoryWrapper = document.getElementById("repository_container")
     groupRepositoryWrapper.innerHTML = updatedRepositoryInformation
+
+    if(!userInGroup && !authUserIsTeacher) {
+        document.getElementById("open-modal__button").hidden = true;
+    }
+
 }
 
 /**
@@ -29,7 +95,7 @@ async function saveGroupRepositorySettings() {
     bootstrap.Modal.getInstance(document.getElementById("group-repository-settings__modal")).hide()
     // Build the url with the repository information as parameters
     let url
-    url = new URL (`${CONTEXT}/groupSettings-${GROUP_ID}-repository`)
+    url = new URL (`${CONTEXT}/group-${GROUP_ID}-repository`)
     url.searchParams.append("repositoryName", document.getElementById("group-repository__name").value)
     url.searchParams.append("gitlabAccessToken", document.getElementById("group-repository__api-key").value)
     url.searchParams.append("gitlabProjectId", document.getElementById("group-repository__id").value)
@@ -49,3 +115,4 @@ async function saveGroupRepositorySettings() {
     groupRepositoryWrapper.innerHTML = updatedRepositoryInformation
     return false;
 }
+
