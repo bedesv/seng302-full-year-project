@@ -21,6 +21,11 @@
         let originalCategories = [[${categories}]];
         let originalEvidenceSkills = [[${evidenceSkills}]];
         let originalEvidenceUsers = [[${evidenceUsers}]];
+        let ORIGINAL_COMMITS = JSON.parse([[${evidenceCommits}]]);
+        let commitList = [];
+        for (const commit of ORIGINAL_COMMITS) {
+            commitList.push(commit.id);
+        }
     </script>
 
     <script type="text/javascript" th:inline="javascript" th:each="user, iterInfo: ${users}">
@@ -39,7 +44,8 @@
             author: [[${commit.committerName}]],
             description: [[${commit.title}]],
             date: [[${commit.committedDate}]],
-            link: [[${commit.URL}]]
+            link: [[${commit.url}]],
+            id: [[${commit.id}]]
         }
         id = [[${commit.id}]];
         ALL_COMMITS[id] = commit;

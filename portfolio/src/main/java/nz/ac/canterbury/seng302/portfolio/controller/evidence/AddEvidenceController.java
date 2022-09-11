@@ -64,6 +64,7 @@ public class AddEvidenceController {
 
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
 
+    private static final ObjectMapper mapper = new ObjectMapper();
     /**
      * Display the add evidence page.
      * @param principal Authentication state of client
@@ -171,10 +172,9 @@ public class AddEvidenceController {
         if (Objects.equals(commitString, "")) {
             commitString = "[]";
         }
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
             List<nz.ac.canterbury.seng302.portfolio.model.evidence.Commit> commitList =
-                    objectMapper.readValue(commitString, new TypeReference<>() {});
+                    mapper.readValue(commitString, new TypeReference<>() {});
             evidence.setCommits(commitList);
         } catch (JsonProcessingException e) {
             PORTFOLIO_LOGGER.info(e.getMessage());
@@ -263,6 +263,11 @@ public class AddEvidenceController {
         model.addAttribute("evidenceDescription", evidence.getDescription());
         model.addAttribute("evidenceDate", Project.dateToString(evidence.getDate(), TIMEFORMAT));
         model.addAttribute("evidenceSkills", String.join(" ", evidence.getSkills()) + " ");
+        try {
+            model.addAttribute("evidenceCommits", mapper.writeValueAsString(evidence.getCommits()));
+        } catch (JsonProcessingException e) { // Should never happen if application is set up correctly, but log an error just in case
+            PORTFOLIO_LOGGER.info(e.getMessage());
+        }
         model.addAttribute("users", userService.getAllUsersExcept(userId));
         List<Group> groups = groupsService.getAllGroups().getGroups();
         List<Group> userGroups = new ArrayList<>();

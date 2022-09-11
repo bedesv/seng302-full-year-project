@@ -28,7 +28,6 @@ let skillList = [];
 let changedSkills = {};
 let editedSkillTag = null;
 let userList = [];
-let commitList = [];
 
 // Adds a skill to the list of skills. Makes sure it is not already present,
 // and if the user has already entered that skill on another piece of evidence, make sure the capitalization is correct.
@@ -295,7 +294,6 @@ function updateHiddenFields() {
         skillChanges += " ";
     }
     document.getElementById("evidence-form__hidden--change-skills-field").value = skillChanges;
-    console.log(skillChanges);
 }
 
 // Updates the tags shown before the skills input list to reflect the list of tags given.
@@ -323,11 +321,14 @@ function updateSkillTagsInDOM(tags) {
 // Updates the list of commits the user has linked to their piece of evidence.
 function updateCommitsInDOM(commits) {
     let commitObjects = [];
-    for (const commit of commits) {
-        commitObjects.push(ALL_COMMITS[commit]);
+    for (const tag of commits) {
+        commit = ALL_COMMITS[tag];
+        if (commit === null) {
+            commit = ORIGINAL_COMMITS[tag];
+        }
+        commitObjects.push(commit);
     }
     let commitString = JSON.stringify(commitObjects);
-    console.log(commitString);
     document.getElementById("evidence-form__hidden-commits-field").value = commitString;
 
     let parent = document.getElementById("commit-container");
@@ -336,6 +337,9 @@ function updateCommitsInDOM(commits) {
     }
     for (let tag of commits) {
         commit = ALL_COMMITS[tag];
+        if (commit === null) {
+            commit = ORIGINAL_COMMITS[tag];
+        }
         let element = createElementFromHTML(`<div class="skill-tag-con">
                                               <div class="skill-tag">
                                                 <div class="commit-tag-inside">
@@ -616,3 +620,4 @@ function arraysEqual(a, b) {
     return true;
 }
 
+updateCommitsInDOM(commitList);
