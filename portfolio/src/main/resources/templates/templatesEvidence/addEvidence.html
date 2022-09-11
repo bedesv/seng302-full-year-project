@@ -19,7 +19,13 @@
         let originalEvidenceDate = [[${evidenceDate}]];
         let originalCategories = [[${categories}]];
         let originalEvidenceSkills = [[${evidenceSkills}]];
-        let originalEvidenceUsers = [[${evidenceUsers}]];
+        let evidenceUserIds = [[${evidenceUsers}]];
+        let originalEvidenceUsers = [];
+        let userList = [];
+        for (const userId of evidenceUserIds) {
+            originalEvidenceUsers.push(userId.toString());
+            userList.push(userId.toString());
+        }
     </script>
 
     <script type="text/javascript" th:inline="javascript" th:each="user, iterInfo: ${users}">
@@ -131,7 +137,7 @@
             <div id="user-input-container">
                 <div id="user-container">
                     <div class="input-container">
-                        <input type="text" id="users-input" th:value="${evidenceUsers}" contenteditable="true" autocomplete="off"
+                        <input type="text" id="users-input" contenteditable="true" autocomplete="off"
                                placeholder="Add Users"/>
                     </div>
                 </div>

@@ -1,7 +1,3 @@
-window.onload = (event) => {
-    formatUserIdsToTag();
-}
-
 // If the evidence title/description are not valid, set the save button to disabled.
 function checkValid() {
     if (evidenceId === -1) {
@@ -23,13 +19,12 @@ function checkValid() {
                 &&document.getElementById("flex-check--qualitative").checked===(originalCategories.includes("Qualitative"))
                 &&document.getElementById("flex-check--service").checked===(originalCategories.includes("Service"))
                 &&arraysMatch(originalEvidenceSkills, skillList)
-                //&&arraysMatch(originalEvidenceUsers, userList)
+                &&arraysMatch(originalEvidenceUsers, userList)
             );
     }
 }
 
 let skillList = []
-let userList = []
 
 // Adds a skill to the list of skills. Makes sure it is not already present,
 // and if the user has already entered that skill on another piece of evidence, make sure the capitalization is correct.
@@ -69,21 +64,17 @@ function addToUsers(user) {
         }
     }
     userList.push(user);
-}
-
-function formatUserIdsToTag() {
     checkValid();
-    userList += document.getElementById("users-input").value.split(" ");
-    document.getElementById("users-input").value =  document.getElementById("users-input").value.replace(/\d+/g, '');
-    updateUserTagsInDOM(userList);
 }
 
 function removeLastUser() {
     userList.pop();
+    checkValid();
 }
 
 function removeUser(user) {
     userList.splice(userList.indexOf(user), 1);
+    checkValid();
 }
 
 // Remove a skill tag when the 'x' button is clicked
@@ -446,3 +437,4 @@ function arraysEqual(a, b) {
     return true;
 }
 
+updateUserTagsInDOM(userList);

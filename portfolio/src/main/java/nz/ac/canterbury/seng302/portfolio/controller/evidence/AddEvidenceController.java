@@ -235,7 +235,9 @@ public class AddEvidenceController {
         model.addAttribute("evidenceDescription", evidence.getDescription());
         model.addAttribute("evidenceDate", Project.dateToString(evidence.getDate(), TIMEFORMAT));
         model.addAttribute("evidenceSkills", String.join(" ", evidence.getSkills()) + " ");
-        model.addAttribute("evidenceUsers", String.join(" ", evidence.getLinkedUsers().toString() + " "));
+        Set<Integer> linkedUsers = evidence.getLinkedUsers();
+        linkedUsers.remove(userId);
+        model.addAttribute("evidenceUsers", linkedUsers);
         model.addAttribute("users", userService.getAllUsersExcept(userId));
         List<Group> groups = groupsService.getAllGroups().getGroups();
         List<Group> userGroups = new ArrayList<>();
