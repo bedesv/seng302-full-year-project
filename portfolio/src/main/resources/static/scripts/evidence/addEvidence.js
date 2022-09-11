@@ -20,6 +20,7 @@ function checkValid() {
                 &&document.getElementById("flex-check--service").checked===(originalCategories.includes("SERVICE"))
                 &&arraysMatch(originalEvidenceSkills, skillList)
                 //&&arraysMatch(originalEvidenceUsers, userList)
+                &&originalCommitList === commitList
             );
     }
 }
@@ -81,6 +82,11 @@ function removeUser(user) {
 
 function saveCommitChanges() {
     newCommits = [];
+    for (const commit of commitList) {
+        if (!ALL_COMMITS[commit] && ORIGINAL_COMMITS[commit]) {
+            newCommits.push(commit);
+        }
+    }
     for (child of document.getElementById("commit-selection-box").children) {
         checkbox = child.children[1];
         if (checkbox.checked) {
@@ -88,11 +94,13 @@ function saveCommitChanges() {
         }
     }
     commitList = newCommits;
+    checkValid();
     updateCommitsInDOM(commitList);
 }
 
 function removeCommit(commit) {
     commitList.splice(commitList.indexOf(commit), 1);
+    checkValid();
 }
 
 function saveSkillEdit(oldSkill, newSkill) {
@@ -323,7 +331,7 @@ function updateCommitsInDOM(commits) {
     let commitObjects = [];
     for (const tag of commits) {
         commit = ALL_COMMITS[tag];
-        if (commit === null) {
+        if (!commit) {
             commit = ORIGINAL_COMMITS[tag];
         }
         commitObjects.push(commit);
@@ -337,7 +345,8 @@ function updateCommitsInDOM(commits) {
     }
     for (let tag of commits) {
         commit = ALL_COMMITS[tag];
-        if (commit === null) {
+        if (!commit) {
+            console.log(ORIGINAL_COMMITS);
             commit = ORIGINAL_COMMITS[tag];
         }
         let element = createElementFromHTML(`<div class="skill-tag-con">

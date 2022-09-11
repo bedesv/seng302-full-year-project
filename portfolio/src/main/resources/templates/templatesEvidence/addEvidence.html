@@ -21,10 +21,14 @@
         let originalCategories = [[${categories}]];
         let originalEvidenceSkills = [[${evidenceSkills}]];
         let originalEvidenceUsers = [[${evidenceUsers}]];
-        let ORIGINAL_COMMITS = JSON.parse([[${evidenceCommits}]]);
+        let originalCommits = JSON.parse([[${evidenceCommits}]]);
+        let ORIGINAL_COMMITS = {};
         let commitList = [];
-        for (const commit of ORIGINAL_COMMITS) {
+        let originalCommitList = [];
+        for (const commit of originalCommits) {
             commitList.push(commit.id);
+            originalCommitList.push(commit.id);
+            ORIGINAL_COMMITS[commit.id] = commit;
         }
     </script>
 
