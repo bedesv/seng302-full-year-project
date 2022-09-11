@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupChartDataService {
@@ -45,16 +46,27 @@ public class GroupChartDataService {
                 }
             }
         }
+
+        Map<String, Integer> result = skillCounts.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .limit(10)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        
+
         System.out.println("##########################################");
         System.out.println("Here are the skill counts" + skillCounts);
-        skillCounts.entrySet().forEach(entry -> {
+        result.entrySet().forEach(entry -> {
             System.out.println(entry.getKey() + " " + entry.getValue());
         });
         System.out.println("##########################################");
         //https://howtodoinjava.com/java/sort/java-sort-map-by-values/
         //https://jsfiddle.net/api/post/library/pure/
         //https://developers.google.com/chart/interactive/docs/gallery/columnchart
-        return skillCounts;
+        return result;
     }
 
 
