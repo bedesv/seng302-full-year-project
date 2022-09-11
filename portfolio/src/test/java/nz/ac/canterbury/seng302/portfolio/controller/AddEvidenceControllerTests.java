@@ -204,6 +204,33 @@ class AddEvidenceControllerTests {
                 .andExpect(redirectedUrl("/portfolio"));
     }
 
+    // Check that sending malformed commit data results in a redirect to the portfolio
+    @Test
+    void whenSaveEvidenceWithBadCommits_testReturnsAddEvidence() throws Exception {
+        AuthState validAuthState = setupSecurity();
+        Mockito.when(userService.getUserAccountByPrincipal(validAuthState)).thenReturn(new User(UserResponse.newBuilder().build()));
+        Mockito.when(userService.getUserId(validAuthState)).thenReturn(1);
+        Mockito.when(portfolioUserService.getUserById(any(Integer.class))).thenReturn(new PortfolioUser(1, "name", true));
+        Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
+        Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
+        Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
+
+        mockMvc.perform(post("/editEvidence--1")
+                        .param("evidenceTitle", "test title")
+                        .param("evidenceDescription", "test description")
+                        .param("evidenceDate", "2021-12-12")
+                        .param("evidenceSkills", "")
+                        .param("isQuantitative", "")
+                        .param("isQualitative", "")
+                        .param("isService", "")
+                        .param("evidenceCommits", "bad commit data")
+                        .param("evidenceUsers", "")
+                        .param("skillsToChange", ""))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/portfolio"));
+    }
+
     // Check that trying to edit evidence with a mangled evidence id fails.
     @Test
     void whenEditEvidenceWithBadEvidence_testReturnsPortfolio() throws Exception {

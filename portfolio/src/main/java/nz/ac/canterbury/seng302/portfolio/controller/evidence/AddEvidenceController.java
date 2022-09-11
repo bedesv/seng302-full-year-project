@@ -178,7 +178,7 @@ public class AddEvidenceController {
         } catch (JsonProcessingException e) {
             PORTFOLIO_LOGGER.info(e.getMessage());
             addEvidenceToModel(model, projectId, userId, evidence);
-            return ADD_EVIDENCE; // Fail silently as client has responsibility for error checking
+            return PORTFOLIO_REDIRECT; // Fail silently as client has responsibility for error checking
         }
 
         try {
