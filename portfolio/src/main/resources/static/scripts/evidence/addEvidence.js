@@ -548,3 +548,80 @@ function arraysEqual(a, b) {
     return true;
 }
 
+/**
+ * Takes information from input box on addEvidence form and keeps track of the web link.
+ * @type {*[]}
+ */
+let webLinks = [];
+let webLinkLinks = [];
+let webLinkNames = [];
+let numWebLinks = 0;
+function addWebLinks() {
+    let webLinkNameElement = document.getElementById("evidence-form__webLink-name");
+    let webLinkElement = document.getElementById("evidence-form__webLink-link");
+    let webLink = {name: webLinkNameElement.value, link: webLinkElement.value}
+    if (numWebLinks < 5) {
+        if (webLink.link) {
+            addWebLinkToDOM(webLink, numWebLinks);
+            webLinks.push(webLink);
+            webLinkNames.push(webLink.name);
+            webLinkLinks.push(webLink.link);
+            numWebLinks++;
+            webLinkNameElement.value = "";
+            webLinkElement.value = "";
+            document.getElementById("evidence-form__hidden-webLinks-names").value = webLinkNames;
+            document.getElementById("evidence-form__hidden-webLinks-links").value = webLinkLinks;
+        }
+    }
+    if (numWebLinks === 5) {
+        webLinkNameElement.hidden = true;
+        webLinkElement.hidden = true;
+        document.getElementById("weblink-button").hidden = true;
+    }
+}
+
+/**
+ * Adds given web link into the DOM.
+ * @param webLink Web link to add.
+ * @param index The index of the web link in the dom and in webLinks array.
+ */
+function addWebLinkToDOM(webLink, index) {
+    let webLinkContainer = document.getElementById("evidence-form__webLink-container");
+    let webLinkHTML;
+    if (webLink.name) {
+        webLinkHTML = `<div class="web-link">
+                            <p class="web-link__name">${webLink.name}</p>
+                            <a class="web-link__link" target="_blank" href="${webLink.link}">${webLink.link}</a>
+                            <i class="bi bi-x" onclick="removeWebLink(sanitizeHTML('${index}'))">
+                        </div>`
+    } else {
+        webLinkHTML = `<div class="web-link">
+                            <p class="web-link__name"></p>
+                            <a target="_blank" href="${webLink.link}">${webLink.link}</a>
+                            <i class="bi bi-x" onclick="removeWebLink(sanitizeHTML('${index}'))">
+                        </div>`
+    }
+    webLinkContainer.appendChild(
+        createElementFromHTML(webLinkHTML))
+
+}
+
+/**
+ * Removes web link from the DOM on addEvidence form.
+ * @param webLinkIndex
+ */
+function removeWebLink(webLinkIndex) {
+    if (numWebLinks === 5) {
+        document.getElementById("evidence-form__webLink-name").hidden = false;
+        document.getElementById("evidence-form__webLink-link").hidden = false;
+        document.getElementById("weblink-button").hidden = false;
+    }
+    numWebLinks--;
+    document.getElementById("evidence-form__webLink-container").innerHTML = "";
+    webLinks.splice(parseInt(webLinkIndex), 1);
+    webLinkNames.splice(parseInt(webLinkIndex), 1);
+    webLinkLinks.splice(parseInt(webLinkIndex), 1);
+    for (let i = 0; i < webLinks.length; i++) {
+        addWebLinkToDOM(webLinks[i], i);
+    }
+}
