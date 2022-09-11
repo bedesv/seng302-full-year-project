@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupChartDataService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
+import nz.ac.canterbury.seng302.portfolio.service.group.PortfolioGroupService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.slf4j.Logger;
@@ -15,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -36,6 +35,9 @@ public class GroupChartDataController {
     @Autowired
     private UserAccountClientService userService;
 
+    @Autowired
+    private PortfolioGroupService portfolioGroupService;
+
     /**
      * Used by the front end to fetch the number of evidence for each category
      * @param groupId The id of the group that data is requested for
@@ -48,8 +50,9 @@ public class GroupChartDataController {
         if (user.getUsername() == null) {
             return Collections.emptyMap();
         }
-
         Group group = new Group(groupsClientService.getGroupDetailsById(groupId));
+        int parentProjectId = portfolioGroupService.findParentProjectIdByGroupId(group.getGroupId());
+        group.setParentProject(parentProjectId);
         return groupChartDataService.getGroupCategoryInfo(group);
     }
 
@@ -80,6 +83,8 @@ public class GroupChartDataController {
             return Collections.emptyMap();
         }
         Group group = new Group(groupsClientService.getGroupDetailsById(groupId));
+        int parentProjectId = portfolioGroupService.findParentProjectIdByGroupId(group.getGroupId());
+        group.setParentProject(parentProjectId);
         return groupChartDataService.getGroupSkillData(group, startDate, endDate);
     }
 
@@ -99,6 +104,8 @@ public class GroupChartDataController {
         }
 
         Group group = new Group(groupsClientService.getGroupDetailsById(groupId));
+        int parentProjectId = portfolioGroupService.findParentProjectIdByGroupId(group.getGroupId());
+        group.setParentProject(parentProjectId);
         return groupChartDataService.getGroupEvidenceDataCompareMembers(group);
     }
 
@@ -114,7 +121,7 @@ public class GroupChartDataController {
                                                                       @PathVariable int groupId,
                                                                       @PathVariable String timeRange,
                                                                       @PathVariable String startDateString,
-                                                                      @PathVariable String endDateString) throws ParseException {
+                                                                      @PathVariable String endDateString) {
         User user = userService.getUserAccountByPrincipal(principal);
         if (user.getUsername() == null) {
             return Collections.emptyMap();
@@ -130,6 +137,8 @@ public class GroupChartDataController {
             return Collections.emptyMap();
         }
         Group group = new Group(groupsClientService.getGroupDetailsById(groupId));
+        int parentProjectId = portfolioGroupService.findParentProjectIdByGroupId(group.getGroupId());
+        group.setParentProject(parentProjectId);
         return groupChartDataService.getGroupEvidenceDataOverTime(group, startDate, endDate, timeRange);
     }
 }
