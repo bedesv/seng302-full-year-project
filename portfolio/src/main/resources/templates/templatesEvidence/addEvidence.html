@@ -183,17 +183,22 @@
                     <h5 class="modal-title" id="add-evidence-commits__modal--label">Add Commits</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body add-evidence-commits__wrapper">
+                <div th:if="${commits.size} > 0" class="modal-body add-evidence-commits__wrapper">
                     <div id="commit-selection-box">
                         <div th:each="commit: ${commits}" th:id="${commit.id}" class="row commit-tag-outside">
                             <div class="col-11 commit-modal-inside">
                                 <p class="strip-margin" th:text="${commit.title}"></p>
-                                <p class="commit-author strip-margin" th:text="${commit.committerName}"></p>
+                                <p class="commit-author strip-margin" th:text="${commit.committerName} + '  -  ' + ${commit.status}"></p>
                             </div>
                             <input class="col-auto" th:id="${commit.id}" type="checkbox"/>
                         </div>
                     </div>
                     <button class="btn btn-primary" onclick="saveCommitChanges()" data-bs-dismiss="modal">Save Changes</button>
+                </div>
+                <div th:if="${commits.size} == 0" class="modal-body add-evidence-commits__wrapper">
+                    <div class="evidence-form__error-message">
+                        No commits found! Make sure a repository is linked in a group you are in.
+                    </div>
                 </div>
             </div>
         </div>

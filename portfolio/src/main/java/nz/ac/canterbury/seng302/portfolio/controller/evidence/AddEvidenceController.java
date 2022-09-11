@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
+import nz.ac.canterbury.seng302.portfolio.model.evidence.Commit;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
@@ -17,7 +18,6 @@ import nz.ac.canterbury.seng302.portfolio.service.user.*;
 import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.models.Commit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -173,7 +174,7 @@ public class AddEvidenceController {
             commitString = "[]";
         }
         try {
-            List<nz.ac.canterbury.seng302.portfolio.model.evidence.Commit> commitList =
+            List<Commit> commitList =
                     mapper.readValue(commitString, new TypeReference<>() {});
             evidence.setCommits(commitList);
         } catch (JsonProcessingException e) {
@@ -271,7 +272,7 @@ public class AddEvidenceController {
         model.addAttribute("users", userService.getAllUsersExcept(userId));
         List<Group> groups = groupsService.getAllGroups().getGroups();
         List<Group> userGroups = new ArrayList<>();
-        List<Commit> commits = new ArrayList<>();
+        List<org.gitlab4j.api.models.Commit> commits = new ArrayList<>();
         for (Group group : groups) {
             for (User user : group.getMembers()) {
                 if (user.getId() == userId) {
@@ -283,6 +284,11 @@ public class AddEvidenceController {
                     }
                 }
             }
+        }
+        DateFormat formatter = new SimpleDateFormat("HH:mm:ss a MMM dd yyyy");
+        for (org.gitlab4j.api.models.Commit commit : commits) {
+            Date date = commit.getCommittedDate();
+            commit.setStatus(formatter.format(date));
         }
         model.addAttribute("groups", userGroups);
         model.addAttribute("commits", commits);
