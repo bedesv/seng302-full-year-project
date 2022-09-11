@@ -73,23 +73,23 @@ async function updateSkillsChart() {
     //https://jsfiddle.net/api/post/library/pure/
     //https://developers.google.com/chart/interactive/docs/gallery/columnchart
 
-    // // Convert the json data to a format Google Chart can read
-    // let data = new google.visualization.DataTable();
-    // data.addColumn('skillTitle', 'Skills');
-    // data.addColumn('count', 'Count');
-    // for (let key in chartData) {
-    //     data.addRow([key, chartData[key]]);
-    // }
-    //
-    // // Specify options for the column chart
-    // let options = {
-    //     title: 'Skills',
-    //     backgroundColor: { fill:'transparent' }
-    // };
-    //
-    // // Create the categories chart
-    // let chart = new google.visualization.ColumnChart(document.getElementById('group-chart__skills-chart'));
-    // chart.draw(data, options);
+    // Convert the json data to a format Google Chart can read
+    let data = new google.visualization.DataTable();
+    data.addColumn('string', 'Skills');
+    data.addColumn('number', 'Count');
+    for (let key in chartData) {
+        data.addRow([key, chartData[key]]);
+    }
+
+    // Specify options for the column chart
+    let options = {
+        title: 'Skills',
+        backgroundColor: { fill:'transparent' }
+    };
+
+    // Create the categories chart
+    let chart = new google.visualization.ColumnChart(document.getElementById('group-chart__skills-chart'));
+    chart.draw(data, options);
 }
 
 /**

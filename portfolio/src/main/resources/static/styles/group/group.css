@@ -260,7 +260,7 @@ html {
 
 .skills-categories-chart__flex-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 #group-chart__categories-chart, #group-chart__skills-chart, #group-chart__evidence-chart {
