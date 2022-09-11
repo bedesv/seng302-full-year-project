@@ -172,9 +172,10 @@ public class AddEvidenceController {
             commitString = "[]";
         }
         ObjectMapper objectMapper = new ObjectMapper();
-        List<nz.ac.canterbury.seng302.portfolio.model.evidence.Commit> commitList;
         try {
-            commitList = objectMapper.readValue(commitString, new TypeReference<>() {});
+            List<nz.ac.canterbury.seng302.portfolio.model.evidence.Commit> commitList =
+                    objectMapper.readValue(commitString, new TypeReference<>() {});
+            evidence.setCommits(commitList);
         } catch (JsonProcessingException e) {
             PORTFOLIO_LOGGER.info(e.getMessage());
             addEvidenceToModel(model, projectId, userId, evidence);
@@ -183,9 +184,6 @@ public class AddEvidenceController {
 
         try {
             evidenceService.saveEvidence(evidence);
-            for (nz.ac.canterbury.seng302.portfolio.model.evidence.Commit commit : commitList) {
-                evidenceService.saveCommit(evidence.getId(), commit);
-            }
         } catch (IllegalArgumentException exception) {
             if (Objects.equals(exception.getMessage(), "Title not valid")) {
                 model.addAttribute("titleError", "Title cannot be all special characters");

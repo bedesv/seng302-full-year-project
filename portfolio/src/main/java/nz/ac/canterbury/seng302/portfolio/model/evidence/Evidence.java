@@ -218,6 +218,10 @@ public class Evidence {
         }
     }
 
+    public void setCommits(List<Commit> commits) {
+        this.commits = commits;
+    }
+
     public void setCategories(Set<Categories> categories) {
         this.categories = categories;
     }
