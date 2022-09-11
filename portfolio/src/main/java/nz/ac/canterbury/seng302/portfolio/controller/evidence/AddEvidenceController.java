@@ -276,6 +276,33 @@ public class AddEvidenceController {
     }
 
     /**
+     * Returns a list of commits for a user based on a project.
+     * @param projectId The project the user has selected
+     * @param userId The id of the user
+     * @return A list of all commits in repositories the user has access to
+     */
+    private List<org.gitlab4j.api.models.Commit> getCommitList(int projectId, int userId) {
+        List<Group> groups = groupsService.getAllGroupsInProject(projectId);
+        Map<String, org.gitlab4j.api.models.Commit> commitMap = new HashMap<>();
+        for (Group group : groups) {
+            for (User user : group.getMembers()) {
+                if (user.getId() == userId) {
+                    List<org.gitlab4j.api.models.Commit> commits = new ArrayList<>();
+                    try {
+                        commits = gitlabConnectionService.getAllCommits(group.getGroupId());
+                    } catch (GitLabApiException | NoSuchFieldException | RuntimeException e) {
+                        PORTFOLIO_LOGGER.error(e.getMessage());
+                    }
+                    for (org.gitlab4j.api.models.Commit commit : commits) {
+                        commitMap.put(commit.getId(), commit);
+                    }
+                }
+            }
+        }
+        return new ArrayList<>(commitMap.values());
+    }
+
+    /**
      * Adds helpful evidence related variables to the model.
      * They are a title, description, date, and a list of all skills for the user.
      * @param model The model to add things to
@@ -294,24 +321,10 @@ public class AddEvidenceController {
         try {
             model.addAttribute("evidenceCommits", mapper.writeValueAsString(evidence.getCommits()));
         } catch (JsonProcessingException e) { // Should never happen if application is set up correctly, but log an error just in case
-            PORTFOLIO_LOGGER.info(e.getMessage());
+            PORTFOLIO_LOGGER.error(e.getMessage());
         }
         model.addAttribute("users", userService.getAllUsersExcept(userId));
-        List<Group> groups = groupsService.getAllGroups().getGroups();
-        List<Group> userGroups = new ArrayList<>();
-        List<org.gitlab4j.api.models.Commit> commits = new ArrayList<>();
-        for (Group group : groups) {
-            for (User user : group.getMembers()) {
-                if (user.getId() == userId) {
-                    userGroups.add(group);
-                    try {
-                        commits.addAll(gitlabConnectionService.getAllCommits(group.getGroupId()));
-                    } catch (GitLabApiException | NoSuchFieldException | RuntimeException e) {
-                        PORTFOLIO_LOGGER.error(e.getMessage());
-                    }
-                }
-            }
-        }
+        List<org.gitlab4j.api.models.Commit> commits = getCommitList(projectId, userId);
         DateFormat formatter = new SimpleDateFormat("HH:mm:ss a MMM dd yyyy");
         for (org.gitlab4j.api.models.Commit commit : commits) {
             Date date = commit.getCommittedDate();
@@ -319,9 +332,8 @@ public class AddEvidenceController {
         }
         commits.sort(Comparator.comparing(org.gitlab4j.api.models.Commit::getCommittedDate));
         Collections.reverse(commits);
-        model.addAttribute("groups", userGroups);
         model.addAttribute("commits", commits);
-        model.addAttribute("displayCommits", !userGroups.isEmpty());
+        model.addAttribute("displayCommits", !commits.isEmpty());
     }
 
     /**
