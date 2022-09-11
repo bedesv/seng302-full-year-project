@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng302.portfolio.controller.evidence;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Commit;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
@@ -167,7 +166,6 @@ public class AddEvidenceController {
         evidence.setSkills(skills);
         evidence.setDate(date);
         evidence.setCategories(categories);
-        List<WebLink> webLinks = new ArrayList<>();
 
         List<Boolean> validationResponse = evidenceService.validateEvidence(model, title, description, evidence.getSkills());
         if (validationResponse.contains(false)){
@@ -193,19 +191,7 @@ public class AddEvidenceController {
         }
 
         try {
-            if (webLinkLinks != null && webLinkNames != null) {
-                for (int i = 0; i < webLinkLinks.size(); i++) {
-                    evidenceService.validateWebLink(webLinkLinks.get(i));
-                    if (webLinkNames.get(i).isEmpty()) {
-                        webLinks.add(new WebLink(webLinkLinks.get(i)));
-                    } else {
-                        webLinks.add(new WebLink(webLinkLinks.get(i), webLinkNames.get(i)));
-                    }
-                }
-                if (!webLinks.isEmpty()) {
-                    evidence.setWebLinks(webLinks);
-                }
-            }
+            addWebLinksToEvidence(evidence, webLinkLinks, webLinkNames);
             evidenceService.saveEvidence(evidence);
         } catch (IllegalArgumentException exception) {
             if (Objects.equals(exception.getMessage(), "Title not valid")) {
@@ -228,6 +214,23 @@ public class AddEvidenceController {
             return ADD_EVIDENCE; // Fail silently as client has responsibility for error checking
         }
         return PORTFOLIO_REDIRECT;
+    }
+
+    private void addWebLinksToEvidence(Evidence evidence, List<String> webLinkLinks, List<String> webLinkNames) {
+        List<WebLink> webLinks = new ArrayList<>();
+        if (webLinkLinks != null && webLinkNames != null) {
+            for (int i = 0; i < webLinkLinks.size(); i++) {
+                evidenceService.validateWebLink(webLinkLinks.get(i));
+                if (webLinkNames.get(i).isEmpty()) {
+                    webLinks.add(new WebLink(webLinkLinks.get(i)));
+                } else {
+                    webLinks.add(new WebLink(webLinkLinks.get(i), webLinkNames.get(i)));
+                }
+            }
+            if (!webLinks.isEmpty()) {
+                evidence.setWebLinks(webLinks);
+            }
+        }
     }
 
     /**
@@ -314,6 +317,8 @@ public class AddEvidenceController {
             Date date = commit.getCommittedDate();
             commit.setStatus(formatter.format(date));
         }
+        commits.sort(Comparator.comparing(org.gitlab4j.api.models.Commit::getCommittedDate));
+        Collections.reverse(commits);
         model.addAttribute("groups", userGroups);
         model.addAttribute("commits", commits);
         model.addAttribute("displayCommits", !userGroups.isEmpty());
