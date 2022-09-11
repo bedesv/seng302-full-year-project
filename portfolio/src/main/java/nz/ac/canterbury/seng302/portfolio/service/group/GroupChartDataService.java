@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class GroupChartDataService {
+
     @Autowired
     private EvidenceService evidenceService;
-
 
     /**
      * Iterates through all group members then the members' pieces of evidence then the skills within those evidence

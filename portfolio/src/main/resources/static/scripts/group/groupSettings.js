@@ -51,6 +51,7 @@ async function updateCategoriesChart() {
     let options = {
         title: 'Categories',
         pieHole: 0.2,
+        titleTextStyle: {fontSize: 20},
         backgroundColor: { fill:'transparent' },
         pieSliceTextStyle: {color: 'black'},
     };
@@ -82,7 +83,8 @@ async function updateSkillsChart() {
 
     // Specify options for the column chart
     let options = {
-        title: 'Skills',
+        title: 'Top 10 Skills',
+        titleTextStyle: {fontSize: 20},
         backgroundColor: { fill:'transparent' },
     };
 
