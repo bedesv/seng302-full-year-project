@@ -145,7 +145,10 @@ class AddEvidenceControllerTests {
                         .param("isService", "")
                         .param("evidenceCommits", "")
                         .param("evidenceUsers", "")
-                        .param("skillsToChange", ""))
+                        .param("evidenceSkills", "")
+                        .param("skillsToChange", "")
+                        .param("evidenceWebLinks", "")
+                        .param("evidenceWebLinkNames", ""))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/portfolio"));
     }

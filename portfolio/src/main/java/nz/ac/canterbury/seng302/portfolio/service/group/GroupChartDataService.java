@@ -63,7 +63,6 @@ public class GroupChartDataService {
         categoryCounts.put("Service", 0);
         categoryCounts.put("Quantitative", 0);
         categoryCounts.put("Qualitative", 0);
-
         // Iterate through every user in the group
         for (User user : group.getMembers()) {
             // Iterate through all of that user's evidence for the groups project

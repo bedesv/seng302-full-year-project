@@ -68,10 +68,10 @@
     <div id="evidence-form__wrapper">
         <!-- Heading -->
         <header class="evidence-form__header flex-column">
-            <div th:if="${evidenceId == -1}">
+            <div th:if="${evidenceId == -1 || evidenceId =='-1'}">
                 <h1 id="evidence__name" th:text="'Add Evidence'"></h1>
             </div>
-            <div th:if="${evidenceId != -1}">
+            <div th:if="${evidenceId != -1 && evidenceId !='-1'}">
                 <h1 th:text="'Editing: ' + ${evidenceTitle}"></h1>
             </div>
 
@@ -142,7 +142,19 @@
             <p id="evidence-form__skills-error" class="evidence-form__error-message" th:text="${skillsError}" />
 
             <input type="hidden" id="evidence-form__hidden--change-skills-field" name="skillsToChange"/>
-
+            <!-- Web Links !-->
+            <label th:if="${evidenceId == -1 || evidenceId =='-1'}">Web Links</label>
+            <div th:if="${evidenceId == -1 || evidenceId =='-1'}" id="evidence-form__webLink-container"></div>
+            <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="text" id="evidence-form__webLink-name" onkeyup="checkValid()" placeholder="Web Link Name"/>
+            <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="text" id="evidence-form__webLink-link" onkeyup="checkValid()" placeholder="Web Link"/>
+            <P th:if="${webLinkError}" style="color: red">Incorrect Web Link Format</P>
+            <div th:if="${evidenceId == -1 || evidenceId =='-1'}" class="evidence__button-wrapper flex-row">
+              <button id="weblink-button" type="button" class="btn-fill-primary" onclick="addWebLinks()">
+                Add Weblink
+              </button>
+            </div>
+            <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="hidden" id="evidence-form__hidden-webLinks-names" name="evidenceWebLinkNames"/>
+            <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="hidden" id="evidence-form__hidden-webLinks-links" name="evidenceWebLinks"/>
             <!-- Users !-->
             <label>Users
                 <span data-toggle="tooltip"

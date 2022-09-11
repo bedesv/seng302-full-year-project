@@ -102,6 +102,10 @@ public class Evidence {
         return webLinks;
     }
 
+    public void setWebLinks(List<WebLink> webLinks) {
+        this.webLinks = webLinks;
+    }
+
     public void addWebLink(WebLink webLink) {
         this.webLinks.add(webLink);
     }

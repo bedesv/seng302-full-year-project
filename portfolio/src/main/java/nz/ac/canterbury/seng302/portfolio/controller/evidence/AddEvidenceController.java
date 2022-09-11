@@ -1,11 +1,13 @@
 package nz.ac.canterbury.seng302.portfolio.controller.evidence;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Commit;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
+import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
@@ -65,7 +67,10 @@ public class AddEvidenceController {
 
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
 
+    private static final int MAX_WEBLINKS_PER_EVIDENCE = 5;
+
     private static final ObjectMapper mapper = new ObjectMapper();
+
     /**
      * Display the add evidence page.
      * @param principal Authentication state of client
@@ -93,6 +98,7 @@ public class AddEvidenceController {
             model.addAttribute("minEvidenceDate", Project.dateToString(project.getStartDate(), TIMEFORMAT));
             model.addAttribute("maxEvidenceDate", Project.dateToString(project.getEndDate(), TIMEFORMAT));
             model.addAttribute("evidenceId", Integer.parseInt(evidenceId));
+            model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
             return ADD_EVIDENCE;
         } catch (IllegalArgumentException e) {
             return PORTFOLIO_REDIRECT;
@@ -123,6 +129,8 @@ public class AddEvidenceController {
             @RequestParam(name="skillsToChange") String skillsToChange,
             @RequestParam(name="evidenceUsers") String users,
             @RequestParam(name="evidenceCommits") String commitString,
+            @RequestParam(required = false, name="evidenceWebLinks") List<String> webLinkLinks,
+            @RequestParam(required = false, name="evidenceWebLinkNames") List<String> webLinkNames,
             Model model
     ) {
 
@@ -159,6 +167,7 @@ public class AddEvidenceController {
         evidence.setSkills(skills);
         evidence.setDate(date);
         evidence.setCategories(categories);
+        List<WebLink> webLinks = new ArrayList<>();
 
         List<Boolean> validationResponse = evidenceService.validateEvidence(model, title, description, evidence.getSkills());
         if (validationResponse.contains(false)){
@@ -184,6 +193,19 @@ public class AddEvidenceController {
         }
 
         try {
+            if (webLinkLinks != null && webLinkNames != null) {
+                for (int i = 0; i < webLinkLinks.size(); i++) {
+                    evidenceService.validateWebLink(webLinkLinks.get(i));
+                    if (webLinkNames.get(i).isEmpty()) {
+                        webLinks.add(new WebLink(webLinkLinks.get(i)));
+                    } else {
+                        webLinks.add(new WebLink(webLinkLinks.get(i), webLinkNames.get(i)));
+                    }
+                }
+                if (!webLinks.isEmpty()) {
+                    evidence.setWebLinks(webLinks);
+                }
+            }
             evidenceService.saveEvidence(evidence);
         } catch (IllegalArgumentException exception) {
             if (Objects.equals(exception.getMessage(), "Title not valid")) {
@@ -194,6 +216,8 @@ public class AddEvidenceController {
                 model.addAttribute("dateError", "Date must be within the project dates");
             } else if (Objects.equals(exception.getMessage(), "Skills not valid")) {
                 model.addAttribute("skillsError", "Skills cannot be more than 50 characters long");
+            } else if (Objects.equals(exception.getMessage(), "Weblink not in valid format")) {
+                model.addAttribute("webLinkError", "Weblink is invalid");
             } else {
                 model.addAttribute("generalError", exception.getMessage());
             }

@@ -52,7 +52,7 @@
     height: 3rem;
     line-height: 3rem;
     text-align: center;
-    color: black;
+    color: black !important;
     font-size: 1rem;
     text-decoration: none;
 }
@@ -287,4 +287,20 @@ p {
 #add-evidence-commits__wrapper {
     display: flex;
     flex-direction: row;
+}
+
+.web-link {
+    display: flex;
+}
+
+.web-link__link {
+    margin-left: 8px !important;
+}
+
+#evidence-form__webLink-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+    margin-left: 1rem;
 }
