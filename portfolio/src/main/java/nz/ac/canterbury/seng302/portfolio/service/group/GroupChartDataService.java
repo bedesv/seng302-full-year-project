@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.portfolio.service.group;
 
 import com.google.common.annotations.VisibleForTesting;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
-import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
@@ -37,7 +36,7 @@ public class GroupChartDataService {
         // Iterate through every user in the group
         for (User user : group.getMembers()) {
             // Iterate through all of that user's evidence for the groups project
-            for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
+            for (PortfolioEvidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
                 if(!startDate.after(e.getDate()) && !endDate.before(e.getDate())) {
                     //Iterate through all skills within that piece of evidence
                     for(String skill : e.getSkills()) {
@@ -140,7 +139,7 @@ public class GroupChartDataService {
         for (User user : group.getMembers()) {
             // Iterate through all of that user's evidence for the groups project and if the evidence falls on one of the days
             // mentioned above add 1 to that day
-            for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
+            for (PortfolioEvidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
                 LocalDate evidenceDate = Instant.ofEpochMilli(e.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
                 if (evidenceDate.isAfter(start.minusDays(1)) && evidenceDate.isBefore(finish.plusDays(1))) {
                     evidenceCountOverTime.merge(evidenceDate.toString(), 1, Integer::sum);
@@ -170,7 +169,7 @@ public class GroupChartDataService {
         for (User user : group.getMembers()) {
             // Iterate through all of that user's evidence for the groups project and if the evidence falls in one of the weeks
             // mentioned above add 1 to the value for that week
-            for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
+            for (PortfolioEvidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
                 LocalDate evidenceDate = Instant.ofEpochMilli(e.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
                 if (evidenceDate.isAfter(start.minusDays(1)) && evidenceDate.isBefore(finish.plusDays(1))) {
                     evidenceCountOverTime.merge(evidenceDate.with(DayOfWeek.SUNDAY).toString(), 1, Integer::sum);
@@ -199,7 +198,7 @@ public class GroupChartDataService {
         for (User user : group.getMembers()) {
             // Iterate through all of that user's evidence for the groups project and if the evidence falls in one of the months
             // mentioned above add 1 to the value for that month
-            for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
+            for (PortfolioEvidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
                 LocalDate evidenceDate = Instant.ofEpochMilli(e.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
                 if (evidenceDate.isAfter(start.minusDays(1)) && evidenceDate.isBefore(finish.plusDays(1))) {
                     evidenceCountOverTime.merge(evidenceDate.toString().substring(0, 7), 1, Integer::sum);

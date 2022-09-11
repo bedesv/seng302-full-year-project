@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.service.group;
 
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
+import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
@@ -60,7 +61,8 @@ class GroupChartDataServiceTests {
         List<User> testUserList = new ArrayList<>();
         testUserList.add(testUser1);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
@@ -76,8 +78,9 @@ class GroupChartDataServiceTests {
         List<User> testUserList = new ArrayList<>();
         testUserList.add(testUser1);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf(evidenceDate));
-        testEvidence1.addSkill("test");
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf(evidenceDate));
+        testEvidence1A.addSkill("test");
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
         groupChartDataService.setEvidenceService(mockedEvidenceService);
@@ -92,9 +95,10 @@ class GroupChartDataServiceTests {
         List<User> testUserList = new ArrayList<>();
         testUserList.add(testUser1);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
-        testEvidence1.addSkill("test");
-        testEvidence1.addSkill("jUnit");
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
+        testEvidence1A.addSkill("test");
+        testEvidence1A.addSkill("jUnit");
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
         groupChartDataService.setEvidenceService(mockedEvidenceService);
@@ -132,7 +136,8 @@ class GroupChartDataServiceTests {
         testUser1.setLastName("One");
         testUserList.add(testUser1);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence();
+        Evidence testEvidence1A = new Evidence();
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
@@ -151,7 +156,8 @@ class GroupChartDataServiceTests {
         testUserList.add(testUser1);
         testUserList.add(testUser2);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence();
+        Evidence testEvidence1A = new Evidence();
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1), List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
@@ -204,7 +210,8 @@ class GroupChartDataServiceTests {
         Date endDate = Date.valueOf("2022-06-01");
         testUserList.add(testUser1);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-04-30"));
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-04-30"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
@@ -221,7 +228,9 @@ class GroupChartDataServiceTests {
         Date startDate = Date.valueOf("2022-05-01");
         Date endDate = Date.valueOf("2022-06-01");
         testUserList.add(testUser1);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-01"));
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-01"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
@@ -238,7 +247,9 @@ class GroupChartDataServiceTests {
         Date startDate = Date.valueOf("2022-05-01");
         Date endDate = Date.valueOf("2022-06-01");
         testUserList.add(testUser1);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-06-01"));
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-06-01"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
@@ -255,7 +266,9 @@ class GroupChartDataServiceTests {
         Date startDate = Date.valueOf("2022-05-01");
         Date endDate = Date.valueOf("2022-06-01");
         testUserList.add(testUser1);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-10"));
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-10"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
@@ -273,8 +286,10 @@ class GroupChartDataServiceTests {
         Date endDate = Date.valueOf("2022-06-01");
         testUserList.add(testUser1);
         testUserList.add(testUser2);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-10"));
-        Evidence testEvidence2 = new Evidence(testUser2.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-10"));
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-10"));
+        Evidence testEvidence2A = new Evidence(testUser2.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-10"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+        PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence2A, new ArrayList<>());
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
@@ -293,8 +308,8 @@ class GroupChartDataServiceTests {
         Date endDate = Date.valueOf("2022-06-01");
         testUserList.add(testUser1);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-04-30"));
-
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-04-30"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
 
@@ -319,7 +334,8 @@ class GroupChartDataServiceTests {
         Date startDate = Date.valueOf("2022-05-01");
         Date endDate = Date.valueOf("2022-06-01");
         testUserList.add(testUser1);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-01"));
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-01"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
@@ -336,7 +352,8 @@ class GroupChartDataServiceTests {
         Date startDate = Date.valueOf("2022-05-01");
         Date endDate = Date.valueOf("2022-06-01");
         testUserList.add(testUser1);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-06-01"));
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-06-01"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
@@ -353,7 +370,8 @@ class GroupChartDataServiceTests {
         Date startDate = Date.valueOf("2022-05-01");
         Date endDate = Date.valueOf("2022-06-01");
         testUserList.add(testUser1);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-06-02"));
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-06-02"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
@@ -370,7 +388,8 @@ class GroupChartDataServiceTests {
         Date startDate = Date.valueOf("2022-05-01");
         Date endDate = Date.valueOf("2022-06-01");
         testUserList.add(testUser1);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-10"));
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-10"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
@@ -389,8 +408,8 @@ class GroupChartDataServiceTests {
         Date endDate = Date.valueOf("2022-06-01");
         testUserList.add(testUser1);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-04-30"));
-
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-04-30"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
 
@@ -405,7 +424,8 @@ class GroupChartDataServiceTests {
         Date startDate = Date.valueOf("2022-01-01");
         Date endDate = Date.valueOf("2022-06-01");
         testUserList.add(testUser1);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-01"));
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-01"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
@@ -422,7 +442,8 @@ class GroupChartDataServiceTests {
         Date startDate = Date.valueOf("2022-01-01");
         Date endDate = Date.valueOf("2022-06-01");
         testUserList.add(testUser1);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-06-01"));
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-06-01"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
@@ -439,7 +460,8 @@ class GroupChartDataServiceTests {
         Date startDate = Date.valueOf("2022-01-01");
         Date endDate = Date.valueOf("2022-06-01");
         testUserList.add(testUser1);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-10"));
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-10"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
@@ -456,7 +478,8 @@ class GroupChartDataServiceTests {
         Date startDate = Date.valueOf("2022-01-01");
         Date endDate = Date.valueOf("2022-06-01");
         testUserList.add(testUser1);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-06-02"));
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-06-02"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
@@ -500,13 +523,15 @@ class GroupChartDataServiceTests {
         List<User> testUserList = new ArrayList<>();
         testUserList.add(testUser1);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
-        Evidence testEvidence2 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
-        testEvidence1.addSkill("test");
-        testEvidence1.addSkill("jUnit");
-        testEvidence2.addSkill("test");
-        testEvidence2.addSkill("Mocking");
-        List<Evidence> testEvidenceList = new ArrayList<>();
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
+        Evidence testEvidence2A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
+        testEvidence1A.addSkill("test");
+        testEvidence1A.addSkill("jUnit");
+        testEvidence2A.addSkill("test");
+        testEvidence2A.addSkill("Mocking");
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+        PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence2A, new ArrayList<>());
+        List<PortfolioEvidence> testEvidenceList = new ArrayList<>();
         testEvidenceList.add(testEvidence1);
         testEvidenceList.add(testEvidence2);
 
@@ -527,10 +552,12 @@ class GroupChartDataServiceTests {
         testUserList.add(testUser1);
         testUserList.add(testUser2);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
-        Evidence testEvidence2 = new Evidence(testUser2.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
-        testEvidence1.addSkill("test");
-        testEvidence2.addSkill("test");
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
+        Evidence testEvidence2A = new Evidence(testUser2.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
+        testEvidence1A.addSkill("test");
+        testEvidence2A.addSkill("test");
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+        PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence2A, new ArrayList<>());
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1), List.of(testEvidence2)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
@@ -546,10 +573,12 @@ class GroupChartDataServiceTests {
         testUserList.add(testUser1);
         testUserList.add(testUser2);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
-        Evidence testEvidence2 = new Evidence(testUser2.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
-        testEvidence1.addSkill("test");
-        testEvidence2.addSkill("Test");
+        Evidence testEvidence1A = new Evidence(testUser1.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
+        Evidence testEvidence2A = new Evidence(testUser2.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-02-05"));
+        testEvidence1A.addSkill("test");
+        testEvidence2A.addSkill("Test");
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+        PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence2A, new ArrayList<>());
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1), List.of(testEvidence2)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
@@ -591,9 +620,11 @@ class GroupChartDataServiceTests {
         testUserList.add(testUser1);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
-        Evidence testEvidence1 = new Evidence();
-        Evidence testEvidence2 = new Evidence();
-        List<Evidence> testEvidenceList = new ArrayList<>();
+        Evidence testEvidence1A = new Evidence();
+        Evidence testEvidence2A = new Evidence();
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+        PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence2A, new ArrayList<>());
+        List<PortfolioEvidence> testEvidenceList = new ArrayList<>();
         testEvidenceList.add(testEvidence1);
         testEvidenceList.add(testEvidence2);
 
@@ -614,9 +645,10 @@ class GroupChartDataServiceTests {
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
         Set<Categories> testCategoriesSet = new HashSet<>(Arrays.asList(Categories.QUANTITATIVE, Categories.QUALITATIVE));
-        Evidence testEvidence1 = new Evidence();
-        testEvidence1.setCategories(testCategoriesSet);
-        List<Evidence> testEvidenceList = new ArrayList<>();
+        Evidence testEvidence1A = new Evidence();
+        testEvidence1A.setCategories(testCategoriesSet);
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+        List<PortfolioEvidence> testEvidenceList = new ArrayList<>();
         testEvidenceList.add(testEvidence1);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
@@ -636,11 +668,13 @@ class GroupChartDataServiceTests {
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
         Set<Categories> testCategoriesSet = new HashSet<>(Arrays.asList(Categories.SERVICE, Categories.QUANTITATIVE, Categories.QUALITATIVE));
-        Evidence testEvidence1 = new Evidence();
-        Evidence testEvidence2 = new Evidence();
-        testEvidence1.setCategories(testCategoriesSet);
-        testEvidence2.setCategories(testCategoriesSet);
-        List<Evidence> testEvidenceList = new ArrayList<>();
+        Evidence testEvidence1A = new Evidence();
+        Evidence testEvidence2A = new Evidence();
+        testEvidence1A.setCategories(testCategoriesSet);
+        testEvidence2A.setCategories(testCategoriesSet);
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+        PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence2A, new ArrayList<>());
+        List<PortfolioEvidence> testEvidenceList = new ArrayList<>();
         testEvidenceList.add(testEvidence1);
         testEvidenceList.add(testEvidence2);
 
@@ -674,8 +708,10 @@ class GroupChartDataServiceTests {
         List<User> testUserList = new ArrayList<>(Arrays.asList(testUser1, testUser2));
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
-        Evidence testEvidence1 = new Evidence();
-        Evidence testEvidence2 = new Evidence();
+        Evidence testEvidence1A = new Evidence();
+        Evidence testEvidence2A = new Evidence();
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+        PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence2A, new ArrayList<>());
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1), List.of(testEvidence2)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
@@ -694,10 +730,12 @@ class GroupChartDataServiceTests {
 
         Set<Categories> testCategoriesSet1 = new HashSet<>(Arrays.asList(Categories.QUANTITATIVE, Categories.QUALITATIVE));
         Set<Categories> testCategoriesSet2 = new HashSet<>(Arrays.asList(Categories.QUANTITATIVE, Categories.SERVICE));
-        Evidence testEvidence1 = new Evidence();
-        Evidence testEvidence2 = new Evidence();
-        testEvidence1.setCategories(testCategoriesSet1);
-        testEvidence2.setCategories(testCategoriesSet2);
+        Evidence testEvidence1A = new Evidence();
+        Evidence testEvidence2A = new Evidence();
+        testEvidence1A.setCategories(testCategoriesSet1);
+        testEvidence2A.setCategories(testCategoriesSet2);
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+        PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence2A, new ArrayList<>());
 
 
 
@@ -717,10 +755,12 @@ class GroupChartDataServiceTests {
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
 
         Set<Categories> testCategoriesSet = new HashSet<>(Arrays.asList(Categories.QUANTITATIVE, Categories.QUALITATIVE, Categories.SERVICE));
-        Evidence testEvidence1 = new Evidence();
-        Evidence testEvidence2 = new Evidence();
-        testEvidence1.setCategories(testCategoriesSet);
-        testEvidence2.setCategories(testCategoriesSet);
+        Evidence testEvidence1A = new Evidence();
+        Evidence testEvidence2A = new Evidence();
+        testEvidence1A.setCategories(testCategoriesSet);
+        testEvidence2A.setCategories(testCategoriesSet);
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+        PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence2A, new ArrayList<>());
 
 
 
@@ -742,12 +782,12 @@ class GroupChartDataServiceTests {
         Group testGroup2 = new Group(testGroupId + 1, "Short Name 2", "Long Name 2", testParentProjectId, testUserList2);
 
         Set<Categories> testCategoriesSet = new HashSet<>(Arrays.asList(Categories.QUANTITATIVE, Categories.QUALITATIVE, Categories.SERVICE));
-        Evidence testEvidence1 = new Evidence();
-        Evidence testEvidence2 = new Evidence();
-        testEvidence1.setCategories(testCategoriesSet);
-        testEvidence2.setCategories(testCategoriesSet);
-
-
+        Evidence testEvidence1A = new Evidence();
+        Evidence testEvidence2A = new Evidence();
+        testEvidence1A.setCategories(testCategoriesSet);
+        testEvidence2A.setCategories(testCategoriesSet);
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+        PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence2A, new ArrayList<>());
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1), List.of(testEvidence2)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));

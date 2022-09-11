@@ -30,7 +30,7 @@ public class Evidence {
 
     private Date date;
     @ElementCollection
-    private final List<WebLink> webLinks;
+    private List<WebLink> webLinks;
     @ElementCollection
     private List<String> skills; //skills related to this piece of evidence
     @ElementCollection

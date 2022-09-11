@@ -23,6 +23,7 @@ public class PortfolioEvidence {
     private final List<WebLink> webLinks;
     private final List<String> skills; //skills related to this piece of evidence
     private final List<User> linkedUsers;
+    private List<Commit> commits;
 
     /**
      * Creates a piece of evidence for display in the portfolio. This is identical to a regular piece of evidence,
@@ -41,6 +42,7 @@ public class PortfolioEvidence {
         this.webLinks = evidence.getWebLinks();
         this.skills = evidence.getSkills();
         this.linkedUsers = userList;
+        this.commits = evidence.getCommits();
     }
 
     public int getId() {
@@ -87,6 +89,14 @@ public class PortfolioEvidence {
         List<Categories> sortedCategories = new ArrayList<>(categories);
         Collections.sort(sortedCategories);
         return sortedCategories;
+    }
+
+    public int getNumberCommits() {
+        return commits.size();
+    }
+
+    public List<Commit> getCommits() {
+        return commits;
     }
 
 }
