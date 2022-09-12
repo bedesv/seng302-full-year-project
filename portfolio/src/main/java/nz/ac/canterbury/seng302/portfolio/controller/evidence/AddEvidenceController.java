@@ -27,7 +27,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -281,9 +280,9 @@ public class AddEvidenceController {
      * @param userId The id of the user
      * @return A list of all commits in repositories the user has access to
      */
-    private List<org.gitlab4j.api.models.Commit> getCommitList(int projectId, int userId) {
+    private List<Commit> getCommitList(int projectId, int userId) {
         List<Group> groups = groupsService.getAllGroupsInProject(projectId);
-        Map<String, org.gitlab4j.api.models.Commit> commitMap = new HashMap<>();
+        Map<String, Commit> commitMap = new HashMap<>();
         for (Group group : groups) {
             for (User user : group.getMembers()) {
                 if (user.getId() == userId) {
@@ -294,7 +293,9 @@ public class AddEvidenceController {
                         PORTFOLIO_LOGGER.error(e.getMessage());
                     }
                     for (org.gitlab4j.api.models.Commit commit : commits) {
-                        commitMap.put(commit.getId(), commit);
+                        Commit portfolioCommit = new Commit(commit.getId(), commit.getCommitterName(),
+                                commit.getCommittedDate(), commit.getWebUrl(), commit.getMessage());
+                        commitMap.put(commit.getId(), portfolioCommit);
                     }
                 }
             }
@@ -324,13 +325,8 @@ public class AddEvidenceController {
             PORTFOLIO_LOGGER.error(e.getMessage());
         }
         model.addAttribute("users", userService.getAllUsersExcept(userId));
-        List<org.gitlab4j.api.models.Commit> commits = getCommitList(projectId, userId);
-        DateFormat formatter = new SimpleDateFormat("HH:mm:ss a MMM dd yyyy");
-        for (org.gitlab4j.api.models.Commit commit : commits) {
-            Date date = commit.getCommittedDate();
-            commit.setStatus(formatter.format(date));
-        }
-        commits.sort(Comparator.comparing(org.gitlab4j.api.models.Commit::getCommittedDate));
+        List<Commit> commits = getCommitList(projectId, userId);
+        commits.sort(Comparator.comparing(Commit::getDate));
         Collections.reverse(commits);
         model.addAttribute("commits", commits);
         model.addAttribute("displayCommits", !commits.isEmpty());

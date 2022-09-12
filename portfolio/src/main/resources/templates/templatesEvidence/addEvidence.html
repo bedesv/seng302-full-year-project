@@ -45,10 +45,10 @@
 
     <script type="text/javascript" th:inline="javascript" th:each="commit, iterInfo: ${commits}">
         commit = {
-            author: [[${commit.committerName}]],
-            description: [[${commit.title}]],
-            date: [[${commit.committedDate}]],
-            link: [[${commit.url}]],
+            author: [[${commit.author}]],
+            description: [[${commit.description}]],
+            date: [[${commit.date}]],
+            link: [[${commit.link}]],
             id: [[${commit.id}]]
         }
         id = [[${commit.id}]];
@@ -199,8 +199,8 @@
                     <div id="commit-selection-box">
                         <div th:each="commit: ${commits}" th:id="${commit.id}" class="row commit-tag-outside">
                             <div class="col-11 commit-modal-inside">
-                                <p class="strip-margin" th:text="${commit.title}"></p>
-                                <p class="commit-author strip-margin" th:text="${commit.committerName} + '  -  ' + ${commit.status}"></p>
+                                <p class="strip-margin" th:text="${commit.description}"></p>
+                                <p class="commit-author strip-margin" th:text="${commit.author} + '  -  ' + ${commit.dateString}"></p>
                             </div>
                             <input class="col-auto" th:id="${commit.id}" type="checkbox"/>
                         </div>

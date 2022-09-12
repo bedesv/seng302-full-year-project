@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.portfolio.model.evidence;
 
 import javax.persistence.Embeddable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Embeddable
@@ -11,6 +13,8 @@ public class Commit {
     private Date date;
     private String link;
     private String description;
+
+    private final DateFormat formatter = new SimpleDateFormat("HH:mm:ss a MMM dd yyyy");
 
     public Commit(String id, String author, Date date, String link, String description) {
         this.id = id;
@@ -41,6 +45,10 @@ public class Commit {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getDateString() {
+        return formatter.format(date);
     }
 
     public String getLink() {
