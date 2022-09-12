@@ -31,13 +31,13 @@
     </div>
 
     <div class="container">
-        <a class="portfolio-mid__portfolio-button" th:href="@{${owner} ? 'profile' : 'profile-' + ${pageUser.id}}">Profile</a>
+        <a class="portfolio-navigation__portfolio-button" th:href="@{${owner} ? 'profile' : 'profile-' + ${pageUser.id}}">Profile</a>
         <div class="row">
             <div class="col-lg-8">
                 <div class="add-evidence__container">
-                    <button th:if="${owner}" class="add-evidence__button" th:href="@{editEvidence-{evidenceId}(evidenceId=-1)}">
+                    <a th:if="${owner}" class="add-evidence__button" th:href="@{editEvidence-{evidenceId}(evidenceId=-1)}">
                         Add Evidence
-                    </button>
+                    </a>
                 </div>
                 <div th:replace="fragments/evidence"></div>
             </div>
@@ -57,6 +57,9 @@
                         <a class="no-skill__link " th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-skill?skill='">No Skill</a>
                         <a th:each="skill: ${skillsList}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-skill?skill=' + ${skill}"></a>
                     </div>
+                </div>
+                <div class="categories">
+                    <a class="all-evidence-link" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}}">All</a>
                 </div>
             </div>
         </div>
