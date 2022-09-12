@@ -987,7 +987,7 @@ class EvidenceServiceTests {
         int testUser1 = 1;
         Evidence evidence1 = new Evidence(testUser0, projects.get(1).getId(), "Three", TEST_DESCRIPTION, Date.valueOf("2022-05-14"));
         evidenceService.saveEvidence(evidence1);
-        evidenceService.saveCommit(evidence1.getId(), new Commit("Tester", Date.valueOf("2022-05-14"), "www.testCommit.com", "#Test test 1 commit" ));
+        evidenceService.saveCommit(evidence1.getId(), new Commit("id", "Tester", Date.valueOf("2022-05-14"), "www.testCommit.com", "#Test test 1 commit" ));
         evidenceService.copyEvidenceToNewUser(evidence1.getId(), List.of(testUser1));
         List<Evidence> evidenceList = (List<Evidence>) evidenceRepository.findAll();
         assertEquals(1, evidenceList.get(1).getNumberCommits());

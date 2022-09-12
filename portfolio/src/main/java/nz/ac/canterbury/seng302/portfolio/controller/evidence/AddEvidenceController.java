@@ -1,19 +1,24 @@
 package nz.ac.canterbury.seng302.portfolio.controller.evidence;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
+import nz.ac.canterbury.seng302.portfolio.model.evidence.Commit;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
+import nz.ac.canterbury.seng302.portfolio.service.group.GitlabConnectionService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupRepositorySettingsService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.*;
 import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+import org.gitlab4j.api.GitLabApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +57,9 @@ public class AddEvidenceController {
 
     @Autowired
     private EvidenceService evidenceService;
+
+    @Autowired
+    private GitlabConnectionService gitlabConnectionService;
 
     private static final String TIMEFORMAT = "yyyy-MM-dd";
 
@@ -118,10 +126,12 @@ public class AddEvidenceController {
             @RequestParam(name="evidenceSkills") String skills,
             @RequestParam(name="skillsToChange") String skillsToChange,
             @RequestParam(name="evidenceUsers") String users,
+            @RequestParam(name="evidenceCommits") String commitString,
             @RequestParam(required = false, name="evidenceWebLinks") List<String> webLinkLinks,
             @RequestParam(required = false, name="evidenceWebLinkNames") List<String> webLinkNames,
             Model model
     ) {
+
         User user = userService.getUserAccountByPrincipal(principal);
         int projectId = portfolioUserService.getUserById(user.getId()).getCurrentProject();
         Project project = projectService.getProjectById(projectId);
@@ -133,7 +143,7 @@ public class AddEvidenceController {
         try {
             date = new SimpleDateFormat(TIMEFORMAT).parse(dateString);
         } catch (ParseException exception) {
-            return ADD_EVIDENCE; // Fail silently as client has responsibility for error checking
+            return PORTFOLIO_REDIRECT; // Fail silently as client has responsibility for error checking
         }
 
         Set<Categories> categories = new HashSet<>();
@@ -155,7 +165,6 @@ public class AddEvidenceController {
         evidence.setSkills(skills);
         evidence.setDate(date);
         evidence.setCategories(categories);
-        List<WebLink> webLinks = new ArrayList<>();
 
         List<Boolean> validationResponse = evidenceService.validateEvidence(model, title, description, evidence.getSkills());
         if (validationResponse.contains(false)){
@@ -166,20 +175,22 @@ public class AddEvidenceController {
             return ADD_EVIDENCE;
         }
 
+        // Format commit string into valid list
+        if (Objects.equals(commitString, "")) {
+            commitString = "[]";
+        }
         try {
-            if (webLinkLinks != null && webLinkNames != null) {
-                for (int i = 0; i < webLinkLinks.size(); i++) {
-                    evidenceService.validateWebLink(webLinkLinks.get(i));
-                    if (webLinkNames.get(i).isEmpty()) {
-                        webLinks.add(new WebLink(webLinkLinks.get(i)));
-                    } else {
-                        webLinks.add(new WebLink(webLinkLinks.get(i), webLinkNames.get(i)));
-                    }
-                }
-                if (!webLinks.isEmpty()) {
-                    evidence.setWebLinks(webLinks);
-                }
-            }
+            List<Commit> commitList =
+                    mapper.readValue(commitString, new TypeReference<>() {});
+            evidence.setCommits(commitList);
+        } catch (JsonProcessingException e) {
+            PORTFOLIO_LOGGER.info(e.getMessage());
+            addEvidenceToModel(model, projectId, userId, evidence);
+            return PORTFOLIO_REDIRECT; // Fail silently as client has responsibility for error checking
+        }
+
+        try {
+            addWebLinksToEvidence(evidence, webLinkLinks, webLinkNames);
             evidenceService.saveEvidence(evidence);
         } catch (IllegalArgumentException exception) {
             if (Objects.equals(exception.getMessage(), "Title not valid")) {
@@ -202,6 +213,23 @@ public class AddEvidenceController {
             return ADD_EVIDENCE; // Fail silently as client has responsibility for error checking
         }
         return PORTFOLIO_REDIRECT;
+    }
+
+    private void addWebLinksToEvidence(Evidence evidence, List<String> webLinkLinks, List<String> webLinkNames) {
+        List<WebLink> webLinks = new ArrayList<>();
+        if (webLinkLinks != null && webLinkNames != null) {
+            for (int i = 0; i < webLinkLinks.size(); i++) {
+                evidenceService.validateWebLink(webLinkLinks.get(i));
+                if (webLinkNames.get(i).isEmpty()) {
+                    webLinks.add(new WebLink(webLinkLinks.get(i)));
+                } else {
+                    webLinks.add(new WebLink(webLinkLinks.get(i), webLinkNames.get(i)));
+                }
+            }
+            if (!webLinks.isEmpty()) {
+                evidence.setWebLinks(webLinks);
+            }
+        }
     }
 
     /**
@@ -247,6 +275,35 @@ public class AddEvidenceController {
     }
 
     /**
+     * Returns a list of commits for a user based on a project.
+     * @param projectId The project the user has selected
+     * @param userId The id of the user
+     * @return A list of all commits in repositories the user has access to
+     */
+    private List<Commit> getCommitList(int projectId, int userId) {
+        List<Group> groups = groupsService.getAllGroupsInProject(projectId);
+        Map<String, Commit> commitMap = new HashMap<>();
+        for (Group group : groups) {
+            for (User user : group.getMembers()) {
+                if (user.getId() == userId) {
+                    List<org.gitlab4j.api.models.Commit> commits = new ArrayList<>();
+                    try {
+                        commits = gitlabConnectionService.getAllCommits(group.getGroupId());
+                    } catch (GitLabApiException | NoSuchFieldException | RuntimeException e) {
+                        PORTFOLIO_LOGGER.error(e.getMessage());
+                    }
+                    for (org.gitlab4j.api.models.Commit commit : commits) {
+                        Commit portfolioCommit = new Commit(commit.getId(), commit.getCommitterName(),
+                                commit.getCommittedDate(), commit.getWebUrl(), commit.getMessage());
+                        commitMap.put(commit.getId(), portfolioCommit);
+                    }
+                }
+            }
+        }
+        return new ArrayList<>(commitMap.values());
+    }
+
+    /**
      * Adds helpful evidence related variables to the model.
      * They are a title, description, date, and a list of all skills for the user.
      * @param model The model to add things to
@@ -262,18 +319,17 @@ public class AddEvidenceController {
         model.addAttribute("evidenceDescription", evidence.getDescription());
         model.addAttribute("evidenceDate", Project.dateToString(evidence.getDate(), TIMEFORMAT));
         model.addAttribute("evidenceSkills", String.join(" ", evidence.getSkills()) + " ");
-        model.addAttribute("users", userService.getAllUsersExcept(userId));
-        List<Group> groups = groupsService.getAllGroups().getGroups();
-        List<Group> userGroups = new ArrayList<>();
-        for (Group group : groups) {
-            for (User user : group.getMembers()) {
-                if (user.getId() == userId) {
-                    userGroups.add(group);
-                }
-            }
+        try {
+            model.addAttribute("evidenceCommits", mapper.writeValueAsString(evidence.getCommits()));
+        } catch (JsonProcessingException e) { // Should never happen if application is set up correctly, but log an error just in case
+            PORTFOLIO_LOGGER.error(e.getMessage());
         }
-        model.addAttribute("groups", userGroups);
-        model.addAttribute("displayCommits", !userGroups.isEmpty());
+        model.addAttribute("users", userService.getAllUsersExcept(userId));
+        List<Commit> commits = getCommitList(projectId, userId);
+        commits.sort(Comparator.comparing(Commit::getDate));
+        Collections.reverse(commits);
+        model.addAttribute("commits", commits);
+        model.addAttribute("displayCommits", !commits.isEmpty());
     }
 
     /**
