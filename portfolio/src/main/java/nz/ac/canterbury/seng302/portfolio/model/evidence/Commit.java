@@ -73,7 +73,12 @@ public class Commit {
         this.description = description;
     }
 
-    private void parseCommit(String link) {
-        this.commitNo = link.substring(link.indexOf("commit/") + 7);
+    private void parseCommit(String link) throws IndexOutOfBoundsException{
+        int index = link.indexOf("commit/") + 7;
+        if (index > -1) {
+            this.commitNo = link.substring(index);
+        } else {
+            this.commitNo = link;
+        }
     }
 }
