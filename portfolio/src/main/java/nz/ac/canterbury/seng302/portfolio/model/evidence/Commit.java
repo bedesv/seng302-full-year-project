@@ -14,8 +14,6 @@ public class Commit {
     private String link;
     private String description;
 
-    private final DateFormat formatter = new SimpleDateFormat("HH:mm:ss a MMM dd yyyy");
-
     public Commit(String id, String author, Date date, String link, String description) {
         this.id = id;
         this.author = author;
@@ -48,6 +46,7 @@ public class Commit {
     }
 
     public String getDateString() {
+        DateFormat formatter = new SimpleDateFormat("HH:mm:ss a MMM dd yyyy");
         return formatter.format(date);
     }
 

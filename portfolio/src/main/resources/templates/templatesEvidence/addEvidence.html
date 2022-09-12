@@ -176,9 +176,9 @@
             <!-- Commits !-->
             <div th:if="${displayCommits}">
                 <button type="button" class="btn btn-primary evidence-form__add-commits-button" id="open-modal__button" data-bs-toggle="modal" data-bs-target="#add-evidence-commits__modal">Add Commits</button>
-                <div id="commit-container"></div>
-                <input type="hidden" id="evidence-form__hidden-commits-field" name="evidenceCommits"/>
             </div>
+            <div id="commit-container"></div>
+            <input type="hidden" id="evidence-form__hidden-commits-field" name="evidenceCommits"/>
 
             <!-- Submit form !-->
             <button type="submit" class="evidence-form__control-button" id="evidence-form__save" disabled>Save Changes</button>
