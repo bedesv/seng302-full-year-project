@@ -38,6 +38,7 @@ function addToSkills(skill) {
             skillsError.innerHTML = "Skill not saved: skill already exists"
             return;
         }
+
     }
     for (const testSkill of ALL_SKILLS) {
         if (testSkill.toLowerCase() === skill.toLowerCase()) {
@@ -190,6 +191,8 @@ function clickUserXButton(tag) {
 
 // Listen for input so the tags and autocomplete can be triggered
 document.getElementById("skills-input").addEventListener("input", (event) => {
+    const skillsError = document.getElementById("evidence-form__skills-error");
+    skillsError.innerHTML = ""
     event.target.style.width = event.target.value.length > 8 ? event.target.value.length + "ch" : "80px";
     let value = event.target.value;
     value = value.replace(/_+/g, '_');
@@ -204,6 +207,11 @@ document.getElementById("skills-input").addEventListener("input", (event) => {
         }
     }
     lastSkill = lastSkill.slice(0, 50);
+    if (/[^a-zA-Z0-9\-_]/.test(lastSkill)) {
+        lastSkill = lastSkill.slice(0, -1)
+        const skillsError = document.getElementById("evidence-form__skills-error");
+        skillsError.innerHTML = "Skills can not contain special Characters"
+    }
     document.getElementById("skills-input").value = lastSkill;
     if (shouldUpdateSkills) {
         updateSkillTagsInDOM(skillList);
