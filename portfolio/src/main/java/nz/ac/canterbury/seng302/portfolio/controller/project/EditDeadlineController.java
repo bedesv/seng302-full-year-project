@@ -2,12 +2,11 @@ package nz.ac.canterbury.seng302.portfolio.controller.project;
 
 import nz.ac.canterbury.seng302.portfolio.model.project.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
-import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.project.DeadlineService;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -15,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -37,6 +37,7 @@ public class EditDeadlineController {
     private static final String REDIRECT_PROJECTS = "redirect:/projects";
 
     private static final String REDIRECT_PROJECT_DETAILS = "redirect:/projectDetails-";
+    private static final String EDIT_DEADLINE = "templatesProject/editDeadline";
 
     /**
      * The get mapping to return the page with the form to add/edit deadlines
@@ -49,22 +50,14 @@ public class EditDeadlineController {
     public String deadLineForm(@AuthenticationPrincipal AuthState principal,
                             @PathVariable("parentProjectId") String parentProjectId,
                             @PathVariable("deadlineId") String deadlineId,
-                            Model model) throws Exception {
+                            Model model) {
         if (!userAccountClientService.isTeacher(principal)) {
             return REDIRECT_PROJECT_DETAILS + parentProjectId;
         }
-        int userId = Integer.parseInt(principal.getClaimsList().stream()
-                .filter(claim -> claim.getType().equals("nameid"))
-                .findFirst()
-                .map(ClaimDTO::getValue)
-                .orElse("-100"));
-        User user = userAccountClientService.getUserAccountById(userId);
-        model.addAttribute("user", user);
-
 
         int projectId = Integer.parseInt(parentProjectId);
         Project project = projectService.getProjectById(projectId);
-        model.addAttribute("projectId", project.getId());
+
 
         Deadline deadline;
 
@@ -81,13 +74,8 @@ public class EditDeadlineController {
         } else {
             deadline = new Deadline(projectId, "Deadline name", deadlineDate);
         }
-        model.addAttribute("deadline", deadline);
-        model.addAttribute("deadlineName", deadline.getDeadlineName());
-        model.addAttribute("deadlineDate", Project.dateToString(deadline.getDeadlineDate(), TIME_FORMAT));
-        model.addAttribute("minDeadlineDate", Project.dateToString(project.getStartDate(), TIME_FORMAT));
-        model.addAttribute("maxDeadlineDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
-        model.addAttribute("maxDeadlineDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
-        return "templatesProject/editDeadline";
+        updateModel(model, project ,deadline);
+        return EDIT_DEADLINE;
     }
 
     /**
@@ -106,7 +94,7 @@ public class EditDeadlineController {
             @PathVariable("deadlineId") String deadlineIdString,
             @RequestParam(value="deadlineName") String deadlineName,
             @RequestParam(value="deadlineDate") String deadlineDateString,
-            Model model) throws Exception {
+            Model model) throws ParseException {
 
         if (!userAccountClientService.isTeacher(principle)) {
             return REDIRECT_PROJECT_DETAILS + projectIdString;
@@ -129,14 +117,22 @@ public class EditDeadlineController {
         if (deadlineId == -1) {
             try {
                 deadlineService.createNewDeadline(projectId, deadlineName, deadlineDate);
-            } catch (UnsupportedOperationException e) {
-                return("redirect:/editDeadline-{deadlineId}-{parentProjectId}");
+            } catch (IllegalArgumentException e) {
+                Deadline deadline = new Deadline(projectId, ValidationUtil.stripTitle(deadlineName), deadlineDate);
+                updateModel(model, projectService.getProjectById(projectId), deadline);
+                model.addAttribute("titleError", "Deadline name cannot contain special characters");
+                return EDIT_DEADLINE;
             }
         } else {
             try {
                 deadlineService.updateDeadline(projectId, deadlineId, deadlineName, deadlineDate);
-            } catch(UnsupportedOperationException e) {
-                return("redirect:/editDeadline-{deadlineId}-{parentProjectId}");
+            } catch (IllegalArgumentException e) {
+                Deadline deadline = deadlineService.getDeadlineById(deadlineId);
+                deadline.setDeadlineName(ValidationUtil.stripTitle(deadlineName));
+                deadline.setDeadlineDate(deadlineDate);
+                updateModel(model, projectService.getProjectById(projectId), deadline);
+                model.addAttribute("titleError", "Deadline name cannot contain special characters");
+                return EDIT_DEADLINE;
             }
         }
         return REDIRECT_PROJECT_DETAILS + projectIdString;
@@ -153,6 +149,22 @@ public class EditDeadlineController {
 
         deadlineService.deleteDeadlineById(Integer.parseInt(deadlineId));
         return REDIRECT_PROJECT_DETAILS + parentProjectId;
+    }
+
+    /**
+     * Abstracted these additions instead of being repeated three times
+     * @param model
+     * @param project
+     * @param deadline
+     */
+    private void updateModel(Model model, Project project, Deadline deadline){
+        model.addAttribute("projectId", project.getId());
+        model.addAttribute("deadline", deadline);
+        model.addAttribute("deadlineName", deadline.getDeadlineName());
+        model.addAttribute("deadlineDate", Project.dateToString(deadline.getDeadlineDate(), TIME_FORMAT));
+        model.addAttribute("minDeadlineDate", Project.dateToString(project.getStartDate(), TIME_FORMAT));
+        model.addAttribute("maxDeadlineDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
+        model.addAttribute("maxDeadlineDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
     }
 
 

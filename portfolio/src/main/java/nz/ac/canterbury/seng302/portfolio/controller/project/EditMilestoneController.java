@@ -1,14 +1,12 @@
 package nz.ac.canterbury.seng302.portfolio.controller.project;
 
-
 import nz.ac.canterbury.seng302.portfolio.model.project.Milestone;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
-import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.project.MilestoneService;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -38,6 +36,7 @@ public class EditMilestoneController {
     private static final String REDIRECT_PROJECTS = "redirect:/projects";
 
     private static final String REDIRECT_PROJECT_DETAILS = "redirect:/projectDetails-";
+    private static final String EDIT_MILESTONE = "templatesProject/editMilestone";
 
     /**
      * The get mapping to return the page with the form to add/edit milestones
@@ -56,14 +55,6 @@ public class EditMilestoneController {
             return REDIRECT_PROJECT_DETAILS + parentProjectId;
         }
 
-        int userId = Integer.parseInt(principal.getClaimsList().stream()
-                .filter(claim -> claim.getType().equals("nameid"))
-                .findFirst()
-                .map(ClaimDTO::getValue)
-                .orElse("-100"));
-        User user = userAccountClientService.getUserAccountById(userId);
-        model.addAttribute("user", user);
-
         int projectId;
         int milestoneId;
 
@@ -74,7 +65,6 @@ public class EditMilestoneController {
             return REDIRECT_PROJECTS;
         }
         Project project = projectService.getProjectById(projectId);
-        model.addAttribute("projectId", projectId);
 
         //Create the default date for a new milestone. current date it falls within project start and finish otherwise project start date
         Date milestoneDate;
@@ -92,13 +82,8 @@ public class EditMilestoneController {
         } else {
             milestone = new Milestone(projectId, "Milestone name", milestoneDate);
         }
-
-        model.addAttribute("milestone", milestone);
-        model.addAttribute("milestoneName", milestone.getMilestoneName());
-        model.addAttribute("milestoneDate", Project.dateToString(milestone.getMilestoneDate(), TIME_FORMAT));
-        model.addAttribute("minMilestoneDate", Project.dateToString(project.getStartDate(), TIME_FORMAT));
-        model.addAttribute("maxMilestoneDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
-        return "templatesProject/editMilestone";
+        updateModel(model, project, milestone);
+        return EDIT_MILESTONE;
     }
 
     /**
@@ -138,14 +123,21 @@ public class EditMilestoneController {
         if (milestoneId == -1) {
             try {
                 milestoneService.createNewMilestone(projectId, milestoneName, milestoneDate);
-            } catch (UnsupportedOperationException e) {
-                return ("redirect:/editMilestone-" + milestoneIdString + "-" + projectIdString);
+            } catch (IllegalArgumentException e) {
+                updateModel(model, projectService.getProjectById(projectId), new Milestone(projectId, ValidationUtil.stripTitle(milestoneName), milestoneDate));
+                model.addAttribute("titleError", "Milestone name cannot contain special characters");
+                return EDIT_MILESTONE;
             }
         } else {
             try {
                 milestoneService.updateMilestone(projectId, milestoneId, milestoneName, milestoneDate);
-            } catch (UnsupportedOperationException e) {
-                return ("redirect:/editMilestone-" + milestoneIdString + "-" + projectIdString);
+            } catch (IllegalArgumentException e) {
+                Milestone milestone = milestoneService.getMilestoneById(milestoneId);
+                milestone.setMilestoneName(ValidationUtil.stripTitle(milestoneName));
+                milestone.setMilestoneDate(milestoneDate);
+                updateModel(model, projectService.getProjectById(projectId), milestone);
+                model.addAttribute("titleError", "Milestone name cannot contain special characters");
+                return EDIT_MILESTONE;
             }
         }
         return REDIRECT_PROJECT_DETAILS + projectIdString;
@@ -168,6 +160,21 @@ public class EditMilestoneController {
 
         milestoneService.deleteMilestoneById(Integer.parseInt(milestoneId));
         return REDIRECT_PROJECT_DETAILS + parentProjectId;
+    }
+
+    /**
+     * Abstracted these additions instead of being repeated three times
+     * @param model
+     * @param project
+     * @param milestone
+     */
+    private void updateModel(Model model, Project project, Milestone milestone){
+        model.addAttribute("projectId", project.getId());
+        model.addAttribute("milestone", milestone);
+        model.addAttribute("milestoneName", milestone.getMilestoneName());
+        model.addAttribute("milestoneDate", Project.dateToString(milestone.getMilestoneDate(), TIME_FORMAT));
+        model.addAttribute("minMilestoneDate", Project.dateToString(project.getStartDate(), TIME_FORMAT));
+        model.addAttribute("maxMilestoneDate", Project.dateToString(project.getEndDate(), TIME_FORMAT));
     }
 
 }

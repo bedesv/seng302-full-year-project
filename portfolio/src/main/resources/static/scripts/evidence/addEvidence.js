@@ -15,11 +15,12 @@ function checkValid() {
             || (document.getElementById("evidence-form__title-field").value===originalEvidenceTitle
                 &&document.getElementById("evidence-form__description-field").value===originalEvidenceDescription
                 &&document.getElementById("evidence-form__date-field").value===originalEvidenceDate
-                &&document.getElementById("flex-check--quantitative").checked===(originalCategories.includes("Quantitative"))
-                &&document.getElementById("flex-check--qualitative").checked===(originalCategories.includes("Qualitative"))
-                &&document.getElementById("flex-check--service").checked===(originalCategories.includes("Service"))
+                &&document.getElementById("flex-check--quantitative").checked===(originalCategories.includes("QUANTITATIVE"))
+                &&document.getElementById("flex-check--qualitative").checked===(originalCategories.includes("QUALITATIVE"))
+                &&document.getElementById("flex-check--service").checked===(originalCategories.includes("SERVICE"))
                 &&arraysMatch(originalEvidenceSkills, skillList)
                 //&&arraysMatch(originalEvidenceUsers, userList)
+                &&originalCommitList === commitList
             );
     }
 }
@@ -77,6 +78,29 @@ function removeLastUser() {
 
 function removeUser(user) {
     userList.splice(userList.indexOf(user), 1);
+}
+
+function saveCommitChanges() {
+    newCommits = [];
+    for (const commit of commitList) {
+        if (!ALL_COMMITS[commit] && ORIGINAL_COMMITS[commit]) {
+            newCommits.push(commit);
+        }
+    }
+    for (child of document.getElementById("commit-selection-box").children) {
+        checkbox = child.children[1];
+        if (checkbox.checked) {
+            newCommits.push(checkbox.id);
+        }
+    }
+    commitList = newCommits;
+    checkValid();
+    updateCommitsInDOM(commitList);
+}
+
+function removeCommit(commit) {
+    commitList.splice(commitList.indexOf(commit), 1);
+    checkValid();
 }
 
 function saveSkillEdit(oldSkill, newSkill) {
@@ -188,6 +212,12 @@ function clickUserXButton(tag) {
     }
 }
 
+// Remove a commit when the 'x' button is clicked
+function clickCommitXButton(commit) {
+    removeCommit(commit);
+    updateCommitsInDOM(commitList);
+}
+
 // Listen for input so the tags and autocomplete can be triggered
 document.getElementById("skills-input").addEventListener("input", (event) => {
     event.target.style.width = event.target.value.length > 8 ? event.target.value.length + "ch" : "80px";
@@ -272,7 +302,6 @@ function updateHiddenFields() {
         skillChanges += " ";
     }
     document.getElementById("evidence-form__hidden--change-skills-field").value = skillChanges;
-    console.log(skillChanges);
 }
 
 // Updates the tags shown before the skills input list to reflect the list of tags given.
@@ -294,6 +323,44 @@ function updateSkillTagsInDOM(tags) {
                                                           </div>
                                                         </div>`)
         parent.insertBefore(element, skillInput);
+    }
+}
+
+// Updates the list of commits the user has linked to their piece of evidence.
+function updateCommitsInDOM(commits) {
+    let commitObjects = [];
+    for (const tag of commits) {
+        commit = ALL_COMMITS[tag];
+        if (!commit) {
+            commit = ORIGINAL_COMMITS[tag];
+        }
+        commitObjects.push(commit);
+    }
+    let commitString = JSON.stringify(commitObjects);
+    document.getElementById("evidence-form__hidden-commits-field").value = commitString;
+
+    let parent = document.getElementById("commit-container");
+    while (parent.childNodes.length > 0) {
+        parent.removeChild(parent.firstChild);
+    }
+    for (let tag of commits) {
+        commit = ALL_COMMITS[tag];
+        if (!commit) {
+            console.log(ORIGINAL_COMMITS);
+            commit = ORIGINAL_COMMITS[tag];
+        }
+        let element = createElementFromHTML(`<div class="skill-tag-con">
+                                              <div class="skill-tag">
+                                                <div class="commit-tag-inside">
+                                                   <div class="commit-tag-text">
+                                                       <p class="strip-margin">${sanitizeHTML(commit.description)}</p>
+                                                       <p class="commit-author strip-margin"> ${sanitizeHTML(commit.author)}</p>
+                                                   </div>
+                                                  <i class="bi bi-x" onclick="clickCommitXButton('${sanitizeHTML(tag)}')"></i>
+                                                </div>
+                                              </div>
+                                            </div>`)
+        parent.appendChild(element);
     }
 }
 
@@ -524,6 +591,20 @@ document.getElementById("users-input").dispatchEvent(new Event('input', {
     cancelable: true,
 }))
 
+
+var commitsModal = document.getElementById('add-evidence-commits__modal')
+commitsModal.addEventListener('show.bs.modal', function (event) {
+    for (child of document.getElementById("commit-selection-box").children) {
+        id = child.children[1].id;
+        if (commitList.includes(id)) {
+            child.children[1].checked = true;
+        } else {
+            child.children[1].checked = false;
+        }
+    }
+})
+
+
 function arraysMatch(original,newList) {
     //split the original string into a list
     let originalList = original.split(" ");
@@ -548,3 +629,82 @@ function arraysEqual(a, b) {
     return true;
 }
 
+/**
+ * Takes information from input box on addEvidence form and keeps track of the web link.
+ * @type {*[]}
+ */
+let webLinks = [];
+let webLinkLinks = [];
+let webLinkNames = [];
+let numWebLinks = 0;
+function addWebLinks() {
+    let webLinkNameElement = document.getElementById("evidence-form__webLink-name");
+    let webLinkElement = document.getElementById("evidence-form__webLink-link");
+    let webLink = {name: webLinkNameElement.value, link: webLinkElement.value}
+    if (numWebLinks < 5) {
+        if (webLink.link) {
+            addWebLinkToDOM(webLink, numWebLinks);
+            webLinks.push(webLink);
+            webLinkNames.push(webLink.name);
+            webLinkLinks.push(webLink.link);
+            numWebLinks++;
+            webLinkNameElement.value = "";
+            webLinkElement.value = "";
+            document.getElementById("evidence-form__hidden-webLinks-names").value = webLinkNames;
+            document.getElementById("evidence-form__hidden-webLinks-links").value = webLinkLinks;
+        }
+    }
+    if (numWebLinks === 5) {
+        webLinkNameElement.hidden = true;
+        webLinkElement.hidden = true;
+        document.getElementById("weblink-button").hidden = true;
+    }
+}
+
+/**
+ * Adds given web link into the DOM.
+ * @param webLink Web link to add.
+ * @param index The index of the web link in the dom and in webLinks array.
+ */
+function addWebLinkToDOM(webLink, index) {
+    let webLinkContainer = document.getElementById("evidence-form__webLink-container");
+    let webLinkHTML;
+    if (webLink.name) {
+        webLinkHTML = `<div class="web-link">
+                            <p class="web-link__name">${webLink.name}</p>
+                            <a class="web-link__link" target="_blank" href="${webLink.link}">${webLink.link}</a>
+                            <i class="bi bi-x" onclick="removeWebLink(sanitizeHTML('${index}'))">
+                        </div>`
+    } else {
+        webLinkHTML = `<div class="web-link">
+                            <p class="web-link__name"></p>
+                            <a target="_blank" href="${webLink.link}">${webLink.link}</a>
+                            <i class="bi bi-x" onclick="removeWebLink(sanitizeHTML('${index}'))">
+                        </div>`
+    }
+    webLinkContainer.appendChild(
+        createElementFromHTML(webLinkHTML))
+
+}
+
+/**
+ * Removes web link from the DOM on addEvidence form.
+ * @param webLinkIndex
+ */
+function removeWebLink(webLinkIndex) {
+    if (numWebLinks === 5) {
+        document.getElementById("evidence-form__webLink-name").hidden = false;
+        document.getElementById("evidence-form__webLink-link").hidden = false;
+        document.getElementById("weblink-button").hidden = false;
+    }
+    numWebLinks--;
+    document.getElementById("evidence-form__webLink-container").innerHTML = "";
+    webLinks.splice(parseInt(webLinkIndex), 1);
+    webLinkNames.splice(parseInt(webLinkIndex), 1);
+    webLinkLinks.splice(parseInt(webLinkIndex), 1);
+    for (let i = 0; i < webLinks.length; i++) {
+        addWebLinkToDOM(webLinks[i], i);
+    }
+}
+
+updateCommitsInDOM(commitList);

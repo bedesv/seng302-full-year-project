@@ -82,9 +82,13 @@ public class Evidence {
         return title;
     }
 
+    public void setTitle(String title) { this.title = title; }
+
     public String getDescription() {
         return description;
     }
+
+    public void setDescription(String description) { this.description = description; }
 
     public Date getDate() {
         return date;
@@ -96,6 +100,10 @@ public class Evidence {
 
     public List<WebLink> getWebLinks() {
         return webLinks;
+    }
+
+    public void setWebLinks(List<WebLink> webLinks) {
+        this.webLinks = webLinks;
     }
 
     public void addWebLink(WebLink webLink) {
@@ -111,6 +119,8 @@ public class Evidence {
     public void addCommit(Commit commit) {this.commits.add(commit); }
 
     public List<String> getSkills() {return skills;}
+
+    public void setSkills(List<String> skills) { this.skills = skills; }
 
     public void addSkill (String skill) {this.skills.add(skill);}
 
@@ -180,14 +190,6 @@ public class Evidence {
         return sortedCategories;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public void setDate(Date date) {
         this.date = date;
     }
@@ -218,6 +220,10 @@ public class Evidence {
         } else {
             throw new NoSuchElementException("Evidence has less than " + (commitIndex + 1) + " commits. Commit not deleted.");
         }
+    }
+
+    public void setCommits(List<Commit> commits) {
+        this.commits = commits;
     }
 
     public void setCategories(Set<Categories> categories) {

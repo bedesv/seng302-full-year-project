@@ -87,6 +87,7 @@ class PortfolioControllerTests {
         Mockito.when(evidenceService.getEvidenceById(any(Integer.class))).thenReturn(new Evidence());
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
         mockMvc.perform(get("/portfolio"))
                 .andExpect(status().isOk())
@@ -105,6 +106,7 @@ class PortfolioControllerTests {
         Mockito.when(evidenceService.getEvidenceById(any(Integer.class))).thenReturn(new Evidence());
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
         mockMvc.perform(get("/portfolio-2"))
                 .andExpect(status().is3xxRedirection())
@@ -123,6 +125,7 @@ class PortfolioControllerTests {
         Mockito.when(evidenceService.getEvidenceById(any(Integer.class))).thenReturn(new Evidence());
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
         mockMvc.perform(get("/portfolio-2"))
                 .andExpect(status().isOk())
@@ -141,6 +144,7 @@ class PortfolioControllerTests {
         Mockito.when(evidenceService.getEvidenceById(any(Integer.class))).thenReturn(new Evidence());
         Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
         mockMvc.perform(get("/portfolio-1"))
                 .andExpect(status().is3xxRedirection())

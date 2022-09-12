@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.project.Event;
 import nz.ac.canterbury.seng302.portfolio.repository.project.EventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,10 +62,14 @@ public class EventService {
      * Save the event to the repository
      */
     public void saveEvent(Event event) {
-        projectEditsService.refreshProject(event.getEventParentProjectId());
-        eventRepository.save(event);
-        String message = "Event " + event.getEventId() + " saved";
-        PORTFOLIO_LOGGER.info(message);
+        if (!ValidationUtil.titleValid(event.getEventName())){
+            throw new IllegalArgumentException("Event name must not contain special characters");
+        } else {
+            projectEditsService.refreshProject(event.getEventParentProjectId());
+            eventRepository.save(event);
+            String message = "Event " + event.getEventId() + " saved";
+            PORTFOLIO_LOGGER.info(message);
+        }
     }
 
     /**
