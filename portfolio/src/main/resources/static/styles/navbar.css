@@ -153,8 +153,8 @@ h5 {
 .site-navigation__link {
     /* Position & size */
     display: block;
-    height: 3rem;
-    line-height: 3rem;
+    height: 2.5rem;
+    line-height: 2.5rem;
     border-radius: 4px;
     margin: 0.5rem 1rem 0.5rem 1rem;
     /*width: 210px;*/
@@ -206,8 +206,8 @@ h5 {
 #projects-button {
     /* Position & size */
     display: block;
-    height: 3rem;
-    line-height: 3rem;
+    height: 2.5rem;
+    line-height: 2.5rem;
     border-radius: 4px;
     margin: 0.5rem 1rem 0.5rem 1rem;
     /*width: 210px;*/
