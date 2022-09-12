@@ -41,7 +41,7 @@
                   <div class="evidence-form__commits-details">
                     <div class="evidence-form__commits-link-container">
                       <p class="evidence-form__commits-link" th:text="'Commit: '"></p>
-                      <a class="evidence-form__commits-link" th:text="${commit.getLink}"></a>
+                      <a class="evidence-form__commits-link" th:href="${commit.getLink}" target="_blank" th:text="${commit.getCommitNo}"></a>
                     </div>
                     <p class="evidence-form__commits-message" th:text="${commit.getDescription}"></p>
                     <div class="evidence-form__commits-date-author-container">

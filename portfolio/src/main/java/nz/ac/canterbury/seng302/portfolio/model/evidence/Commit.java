@@ -13,6 +13,7 @@ public class Commit {
     private Date date;
     private String link;
     private String description;
+    private String commitNo;
 
     public Commit(String id, String author, Date date, String link, String description) {
         this.id = id;
@@ -20,6 +21,7 @@ public class Commit {
         this.date = date;
         this.link = link;
         this.description = description;
+        parseCommit(this.link);
     }
 
     public Commit() {
@@ -56,6 +58,11 @@ public class Commit {
 
     public void setLink(String link) {
         this.link = link;
+        parseCommit(this.link);
+    }
+
+    public String getCommitNo() {
+        return commitNo;
     }
 
     public String getDescription() {
@@ -64,5 +71,9 @@ public class Commit {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    private void parseCommit(String link) {
+        this.commitNo = link.substring(link.indexOf("commit/") + 7);
     }
 }
