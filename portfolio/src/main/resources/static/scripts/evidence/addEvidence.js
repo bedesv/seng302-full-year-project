@@ -218,6 +218,28 @@ function clickCommitXButton(commit) {
     updateCommitsInDOM(commitList);
 }
 
+function submitForm() {
+    saveSkillsOnSubmit();
+    document.getElementById("evidence-form__form").requestSubmit();
+}
+
+function saveSkillsOnSubmit() {
+    let value = document.getElementById("skills-input").value;
+    document.getElementById("skills-input").value = "";
+    document.getElementById("skills-input").placeholder = '';
+    value = value.replace(/_+/g, '_');
+    let skills = value.split(" ");
+    let shouldUpdateSkills = false;
+    for (let skill of skills) {
+        let trimmedSkill = skill.replaceAll("_", " ").trim().replaceAll(" ", "_");
+        if (trimmedSkill !== "") {
+            shouldUpdateSkills = true;
+            addToSkills(trimmedSkill);
+        }
+    }
+    updateSkillTagsInDOM(skillList);
+}
+
 // Listen for input so the tags and autocomplete can be triggered
 document.getElementById("skills-input").addEventListener("input", (event) => {
     event.target.style.width = event.target.value.length > 8 ? event.target.value.length + "ch" : "80px";
