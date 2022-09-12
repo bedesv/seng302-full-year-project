@@ -255,10 +255,9 @@ public class GroupChartDataService {
         List<Sprint> sprints = sprintService.getSprintsByProjectInOrder(project.getId());
         if (!sprints.isEmpty()){
             for (Sprint sprint : sprints) {
-                dateRefineOptions.add(new DateRefineOption(sprint.getName(), sprint.getStartDate(), sprint.getEndDate()));
+                dateRefineOptions.add(new DateRefineOption(sprint.getLabel(), sprint.getStartDate(), sprint.getEndDate()));
             }
         }
         model.addAttribute("dateRefiningOptions", dateRefineOptions);
-        model.addAttribute("selectedDateRefine", dateRefineOptions.get(0));
     }
 }

@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 
 <div class="group-statistics__flex-container">
-    <p th:text="${selectedDateRefine.getTitle()}"></p>
-    <p th:text="${selectedDateRefine.getStartDate()}"></p>
-    <p th:text="${selectedDateRefine.getEndDate()}"></p>
+    <br>
     <div class="dropdown">
         <button class="btn btn-primary dropdown-toggle dropdown__button" type="button" data-toggle="dropdown">Refine Graphs</button>
         <ul class="dropdown-menu">
             <li th:each="dateRefineOption: ${dateRefiningOptions}">
-                <a class="dropdown__link" href="#" th:text="${dateRefineOption.getTitle()}"></a>
+                <a class="dropdown__link" th:text="${dateRefineOption.getTitle()}" th:attr="onclick=|selectRefinement('${dateRefineOption.getStartDate()}', '${dateRefineOption.getEndDate()}')|"></a>
             </li>
         </ul>
     </div>

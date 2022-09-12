@@ -69,10 +69,6 @@ async function updateSkillsChart() {
     // Fetch updated chart data
     let chartData = await fetchChartData('skills')
 
-    //https://howtodoinjava.com/java/sort/java-sort-map-by-values/
-    //https://jsfiddle.net/api/post/library/pure/
-    //https://developers.google.com/chart/interactive/docs/gallery/columnchart
-
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'Skills');
@@ -149,5 +145,18 @@ async function saveGroupRepositorySettings() {
     const groupRepositoryWrapper = document.getElementById("repository_container")
     groupRepositoryWrapper.innerHTML = updatedRepositoryInformation
     return false;
+}
+
+/**
+ * Called in html file, don't remove!
+ * Updates all charts with new values
+ * @param startDate new start date
+ * @param endDate new end date
+ */
+async function selectRefinement(startDate, endDate){
+    START_DATE = startDate;
+    END_DATE = endDate;
+    await updateCategoriesChart();
+    await updateSkillsChart();
 }
 
