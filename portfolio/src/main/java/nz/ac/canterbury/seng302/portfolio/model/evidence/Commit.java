@@ -48,7 +48,7 @@ public class Commit {
     }
 
     public String getDateString() {
-        DateFormat formatter = new SimpleDateFormat("HH:mm:ss a MMM dd yyyy");
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a");
         return formatter.format(date);
     }
 
@@ -73,6 +73,13 @@ public class Commit {
         this.description = description;
     }
 
+    /**
+     * Truncates the full commit link into a new variable commitNum which is just the commit's number.
+     * If it fails to find the substring 'commit/,' which should be just before th number, commitNo becomes
+     * the same string as link.
+     * @param link
+     * @throws IndexOutOfBoundsException
+     */
     private void parseCommit(String link) throws IndexOutOfBoundsException{
         int index = link.indexOf("commit/") + 7;
         if (index > -1) {

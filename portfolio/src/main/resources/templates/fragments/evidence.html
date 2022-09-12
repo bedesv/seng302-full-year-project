@@ -46,7 +46,7 @@
                     <p class="evidence-form__commits-message" th:text="${commit.getDescription}"></p>
                     <div class="evidence-form__commits-date-author-container">
                       <p class="evidence-form__commits-author" th:text="'Author: ' +${commit.getAuthor}"></p>
-                      <p class="evidence-form__commits-date" th:text="'Date: ' +${commit.getDate}"></p>
+                      <p class="evidence-form__commits-date" th:text="'Date: ' +${commit.getDateString}"></p>
                     </div>
                   </div>
                 </div>
