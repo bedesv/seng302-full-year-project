@@ -24,14 +24,20 @@
 <nav th:replace="fragments/navbar :: navbar"></nav>
 
 <div id="page-content" class="constrict">
-    <div class="container">
-        <h1 th:if="${skillName!=''}" th:text="(${owner} ? 'Your ' : ${pageUser.getFullName()} + 's ') + 'evidence with skill: ' + ${skillName}"></h1>
-        <h1 th:if="${skillName==''}" th:text="(${owner} ? 'Your ' : ${pageUser.getFullName()} + 's ') + 'evidence without skills'"></h1>
-        <a class="btn-fill-tertiary" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}}">Portfolio</a>
+    <div class="evidence__header-div">
+        <h1 class="evidence__header-title" th:if="${skillName!=''}" th:text="(${owner} ? 'Your ' : ${pageUser.getFullName()} + 's ') + 'evidence with skill: ' + ${skillName}"></h1>
+        <h1 class="evidence__header-title"  th:if="${skillName==''}" th:text="(${owner} ? 'Your ' : ${pageUser.getFullName()} + 's ') + 'evidence without skills'"></h1>
+        <h2 class="evidence__header-project" th:text="${currentProject.getName}"></h2>
     </div>
     <div class="container">
+        <a class="portfolio-mid__portfolio-button" th:href="@{${owner} ? 'profile' : 'profile-' + ${pageUser.id}}">Profile</a>
         <div class="row">
             <div class="col-lg-8">
+                <div class="add-evidence__container">
+                    <button th:if="${owner}" class="add-evidence__button" th:href="@{editEvidence-{evidenceId}(evidenceId=-1)}">
+                        Add Evidence
+                    </button>
+                </div>
                 <div th:replace="fragments/evidence"></div>
             </div>
             <div class="col-lg">
