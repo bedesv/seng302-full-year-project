@@ -73,7 +73,7 @@ public class GroupChartDataService {
      * @param group the group object that the data is wanted for
      * @return A map of categories to their occurrences in the group's pieces of evidence
      */
-    public Map<String, Integer> getGroupCategoryInfo(Group group) {
+    public Map<String, Integer> getGroupCategoryInfo(Group group, Date startDate, Date endDate) {
         int parentProjectId = group.getParentProject();
 
         // Initialise the hashmap to have a count of 0 for every category
@@ -85,16 +85,17 @@ public class GroupChartDataService {
         for (User user : group.getMembers()) {
             // Iterate through all of that user's evidence for the groups project
             for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
-
-                // Increase the count of the category by 1 if the piece of evidence has that category
-                if (e.getCategories().contains(Categories.SERVICE)) {
-                    categoryCounts.merge("Service", 1, Integer::sum);
-                }
-                if (e.getCategories().contains(Categories.QUANTITATIVE)) {
-                    categoryCounts.merge("Quantitative", 1, Integer::sum);
-                }
-                if (e.getCategories().contains(Categories.QUALITATIVE)) {
-                    categoryCounts.merge("Qualitative", 1, Integer::sum);
+                if(!startDate.after(e.getDate()) && !endDate.before(e.getDate())) {
+                    // Increase the count of the category by 1 if the piece of evidence has that category
+                    if (e.getCategories().contains(Categories.SERVICE)) {
+                        categoryCounts.merge("Service", 1, Integer::sum);
+                    }
+                    if (e.getCategories().contains(Categories.QUANTITATIVE)) {
+                        categoryCounts.merge("Quantitative", 1, Integer::sum);
+                    }
+                    if (e.getCategories().contains(Categories.QUALITATIVE)) {
+                        categoryCounts.merge("Qualitative", 1, Integer::sum);
+                    }
                 }
             }
         }
