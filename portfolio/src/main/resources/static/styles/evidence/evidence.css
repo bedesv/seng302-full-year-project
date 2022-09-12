@@ -277,10 +277,10 @@ html {
 
 .evidence-form__commits-link-container {
     font-size: 14px;
-    /*display: flex;*/
-    /*flex-direction: row;*/
-    /*justify-content: space-between;*/
-    /*gap: 5px;*/
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 5px;
 }
 
 .evidence-form__commits-date-author-container {
