@@ -15,10 +15,12 @@ import nz.ac.canterbury.seng302.portfolio.service.group.GitlabConnectionService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupRepositorySettingsService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
+import nz.ac.canterbury.seng302.portfolio.service.project.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.user.*;
 import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.models.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,9 @@ public class AddEvidenceController {
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private SprintService sprintService;
 
     @Autowired
     private UserAccountClientService userService;
@@ -275,21 +280,27 @@ public class AddEvidenceController {
     }
 
     /**
-     * Returns a list of commits for a user based on a project.
+     * Adds information to the model for the repositories of groups a user is in.
      * @param projectId The project the user has selected
      * @param userId The id of the user
-     * @return A list of all commits in repositories the user has access to
+     * @param model The model to add information to
      */
-    private List<Commit> getCommitList(int projectId, int userId) {
+    private void addRepositoryInfoToModel(int projectId, int userId, Model model) {
         List<Group> groups = groupsService.getAllGroupsInProject(projectId);
         Map<String, Commit> commitMap = new HashMap<>();
+        List<Member> members = new ArrayList<>();
         for (Group group : groups) {
             for (User user : group.getMembers()) {
                 if (user.getId() == userId) {
                     List<org.gitlab4j.api.models.Commit> commits = new ArrayList<>();
+
+                    Calendar calendar = Calendar.getInstance();
+                    Date endDate = calendar.getTime();
+                    calendar.add(Calendar.DATE, -14);
+                    Date startDate = calendar.getTime();
                     try {
-                        commits = gitlabConnectionService.getAllCommits(group.getGroupId());
-                    } catch (GitLabApiException | NoSuchFieldException | RuntimeException e) {
+                        commits = gitlabConnectionService.getFilteredCommits(group.getGroupId(), startDate, endDate, "dev", -1, "");
+                    } catch (RuntimeException e) {
                         PORTFOLIO_LOGGER.error(e.getMessage());
                     }
                     for (org.gitlab4j.api.models.Commit commit : commits) {
@@ -297,10 +308,16 @@ public class AddEvidenceController {
                                 commit.getCommittedDate(), commit.getWebUrl(), commit.getMessage());
                         commitMap.put(commit.getId(), portfolioCommit);
                     }
+                    members.addAll(gitlabConnectionService.getAllMembers(group.getGroupId()));
                 }
             }
         }
-        return new ArrayList<>(commitMap.values());
+        List<Commit> commitList = new ArrayList<>(commitMap.values());
+        commitList.sort(Comparator.comparing(Commit::getDate));
+        Collections.reverse(commitList);
+        model.addAttribute("commits", commitList);
+        model.addAttribute("displayCommits", !commitList.isEmpty());
+        model.addAttribute("repositoryUsers", members);
     }
 
     /**
@@ -325,11 +342,8 @@ public class AddEvidenceController {
             PORTFOLIO_LOGGER.error(e.getMessage());
         }
         model.addAttribute("users", userService.getAllUsersExcept(userId));
-        List<Commit> commits = getCommitList(projectId, userId);
-        commits.sort(Comparator.comparing(Commit::getDate));
-        Collections.reverse(commits);
-        model.addAttribute("commits", commits);
-        model.addAttribute("displayCommits", !commits.isEmpty());
+        addRepositoryInfoToModel(projectId, userId, model);
+        model.addAttribute("sprints", sprintService.getByParentProjectId(projectId));
     }
 
     /**

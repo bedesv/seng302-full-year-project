@@ -30,6 +30,11 @@
             originalCommitList.push(commit.id);
             ORIGINAL_COMMITS[commit.id] = commit;
         }
+
+        let repositoryUsers = [[${repositoryUsers}]];
+        let sprints = [[${sprints}]];
+        console.log(repositoryUsers);
+        console.log(sprints)
     </script>
 
     <script type="text/javascript" th:inline="javascript" th:each="user, iterInfo: ${users}">
@@ -149,7 +154,7 @@
             <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="text" id="evidence-form__webLink-link" onkeyup="checkValid()" placeholder="Web Link"/>
             <P th:if="${webLinkError}" style="color: red">Incorrect Web Link Format</P>
             <div th:if="${evidenceId == -1 || evidenceId =='-1'}" class="evidence__button-wrapper flex-row">
-              <button id="weblink-button" type="button" class="btn-fill-primary" onclick="addWebLinks()">
+              <button id="weblink-button" type="button" class="btn btn-primary" onclick="addWebLinks()">
                 Add Weblink
               </button>
             </div>
@@ -196,6 +201,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div th:if="${commits.size} > 0" class="modal-body add-evidence-commits__wrapper">
+                    <button class="btn btn-primary" onclick="saveCommitChanges()" data-bs-dismiss="modal">Save Changes</button>
                     <div id="commit-selection-box">
                         <div th:each="commit: ${commits}" th:id="${commit.id}" class="row commit-tag-outside">
                             <div class="col-11 commit-modal-inside">
@@ -205,7 +211,6 @@
                             <input class="col-auto" th:id="${commit.id}" type="checkbox"/>
                         </div>
                     </div>
-                    <button class="btn btn-primary" onclick="saveCommitChanges()" data-bs-dismiss="modal">Save Changes</button>
                 </div>
                 <div th:if="${commits.size} == 0" class="modal-body add-evidence-commits__wrapper">
                     <div class="evidence-form__error-message">
