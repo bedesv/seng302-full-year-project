@@ -3,10 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.controller.group;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.group.GroupRepositorySettings;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
-import nz.ac.canterbury.seng302.portfolio.service.group.GitlabConnectionService;
-import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
-import nz.ac.canterbury.seng302.portfolio.service.group.GroupRepositorySettingsService;
-import nz.ac.canterbury.seng302.portfolio.service.group.PortfolioGroupService;
+import nz.ac.canterbury.seng302.portfolio.service.group.*;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
@@ -22,8 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -45,6 +40,8 @@ public class GroupController {
     private ProjectService projectService;
     @Autowired
     private PortfolioGroupService portfolioGroupService;
+    @Autowired
+    private GroupChartDataService groupChartDataService;
 
     /**
      * Get mapping to fetch group settings page
@@ -61,12 +58,12 @@ public class GroupController {
             return "redirect:/groups";
         }
         Group group = new Group(response);
-        Date startDate= projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId()).getStartDate();
-        Date endDate= projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId()).getEndDate();
+        Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
         model.addAttribute("group", group);
         model.addAttribute("userInGroup", groupsClientService.userInGroup(group.getGroupId(), userId));
-        model.addAttribute("graphStartDate", startDate);
-        model.addAttribute("graphEndDate", endDate);
+        model.addAttribute("graphStartDate", project.getStartDate());
+        model.addAttribute("graphEndDate", project.getEndDate());
+        groupChartDataService.setDateRefiningOptions(model, project);
         return GROUP_PAGE;
     }
 

@@ -4,10 +4,15 @@ import com.google.common.annotations.VisibleForTesting;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
+import nz.ac.canterbury.seng302.portfolio.model.project.DateRefineOption;
+import nz.ac.canterbury.seng302.portfolio.model.project.Project;
+import nz.ac.canterbury.seng302.portfolio.model.project.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
+import nz.ac.canterbury.seng302.portfolio.service.project.SprintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.time.DayOfWeek;
 import java.time.Instant;
@@ -21,6 +26,9 @@ public class GroupChartDataService {
 
     @Autowired
     private EvidenceService evidenceService;
+
+    @Autowired
+    private SprintService sprintService;
 
     /**
      * Iterates through all group members then the members' pieces of evidence then the skills within those evidence
@@ -234,5 +242,23 @@ public class GroupChartDataService {
     @VisibleForTesting
     protected EvidenceService getEvidenceService() {
         return evidenceService;
+    }
+
+    /**
+     * Set dropdown options for the
+     * @param model Global model
+     * @param project current project
+     */
+    public void setDateRefiningOptions (Model model, Project project) {
+        List<DateRefineOption> dateRefineOptions = new ArrayList<>();
+        dateRefineOptions.add(new DateRefineOption("Whole Project", project.getStartDate(), project.getEndDate()));
+        List<Sprint> sprints = sprintService.getSprintsByProjectInOrder(project.getId());
+        if (!sprints.isEmpty()){
+            for (Sprint sprint : sprints) {
+                dateRefineOptions.add(new DateRefineOption(sprint.getName(), sprint.getStartDate(), sprint.getEndDate()));
+            }
+        }
+        model.addAttribute("dateRefiningOptions", dateRefineOptions);
+        model.addAttribute("selectedDateRefine", dateRefineOptions.get(0));
     }
 }
