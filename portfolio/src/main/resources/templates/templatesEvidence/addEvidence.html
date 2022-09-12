@@ -13,6 +13,7 @@
     <script th:inline="javascript">
         const ALL_SKILLS = [[${skillsList}]];
         let ALL_USERS = [];
+        let ALL_COMMITS = {};
         let evidenceId = [[${evidenceId}]];
         let originalEvidenceTitle = [[${evidenceTitle}]];
         let originalEvidenceDescription = [[${evidenceDescription}]];
@@ -20,6 +21,15 @@
         let originalCategories = [[${categories}]];
         let originalEvidenceSkills = [[${evidenceSkills}]];
         let originalEvidenceUsers = [[${evidenceUsers}]];
+        let originalCommits = JSON.parse([[${evidenceCommits}]]);
+        let ORIGINAL_COMMITS = {};
+        let commitList = [];
+        let originalCommitList = [];
+        for (const commit of originalCommits) {
+            commitList.push(commit.id);
+            originalCommitList.push(commit.id);
+            ORIGINAL_COMMITS[commit.id] = commit;
+        }
     </script>
 
     <script type="text/javascript" th:inline="javascript" th:each="user, iterInfo: ${users}">
@@ -31,6 +41,18 @@
         }
         user.id = user.id.toString();
         ALL_USERS.push(user);
+    </script>
+
+    <script type="text/javascript" th:inline="javascript" th:each="commit, iterInfo: ${commits}">
+        commit = {
+            author: [[${commit.author}]],
+            description: [[${commit.description}]],
+            date: [[${commit.date}]],
+            link: [[${commit.link}]],
+            id: [[${commit.id}]]
+        }
+        id = [[${commit.id}]];
+        ALL_COMMITS[id] = commit;
     </script>
 
 </head>
@@ -153,14 +175,45 @@
 
             <!-- Commits !-->
             <div th:if="${displayCommits}">
-                <button type="button" class="btn btn-primary evidence-form__add-commits-button">Add Commits</button>
+                <button type="button" class="btn btn-primary evidence-form__add-commits-button" id="open-modal__button" data-bs-toggle="modal" data-bs-target="#add-evidence-commits__modal">Add Commits</button>
             </div>
+            <div id="commit-container"></div>
+            <input type="hidden" id="evidence-form__hidden-commits-field" name="evidenceCommits"/>
 
             <!-- Submit form !-->
             <button type="submit" class="evidence-form__control-button" id="evidence-form__save" disabled>Save Changes</button>
             <a class="evidence-form__control-button" id="evidence-form__discard" th:href="@{portfolio}">Discard</a>
             <p class="evidence-form__error-message" th:text="${generalError}" />
         </form>
+    </div>
+
+    <!-- Commits Modal -->
+    <div class="modal fade" id="add-evidence-commits__modal" tabindex="-1" aria-labelledby="add-evidence-commits--label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header add-evidence-commits__header">
+                    <h5 class="modal-title" id="add-evidence-commits__modal--label">Add Commits</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div th:if="${commits.size} > 0" class="modal-body add-evidence-commits__wrapper">
+                    <div id="commit-selection-box">
+                        <div th:each="commit: ${commits}" th:id="${commit.id}" class="row commit-tag-outside">
+                            <div class="col-11 commit-modal-inside">
+                                <p class="strip-margin" th:text="${commit.description}"></p>
+                                <p class="commit-author strip-margin" th:text="${commit.author} + '  -  ' + ${commit.dateString}"></p>
+                            </div>
+                            <input class="col-auto" th:id="${commit.id}" type="checkbox"/>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveCommitChanges()" data-bs-dismiss="modal">Save Changes</button>
+                </div>
+                <div th:if="${commits.size} == 0" class="modal-body add-evidence-commits__wrapper">
+                    <div class="evidence-form__error-message">
+                        No commits found! Make sure a repository is linked in a group you are in.
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <script rel="script" th:src="@{scripts/evidence/addEvidence.js}"></script>

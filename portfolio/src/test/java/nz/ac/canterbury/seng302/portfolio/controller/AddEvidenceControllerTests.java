@@ -7,6 +7,7 @@ import nz.ac.canterbury.seng302.portfolio.model.user.PortfolioUser;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
+import nz.ac.canterbury.seng302.portfolio.service.group.GitlabConnectionService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupRepositorySettingsService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.user.PortfolioUserService;
@@ -67,6 +68,8 @@ class AddEvidenceControllerTests {
     @MockBean
     GlobalControllerAdvice globalControllerAdvice;
 
+    @MockBean
+    GitlabConnectionService gitlabConnectionService;
 
     /**
      * Helper function to create a valid AuthState given an ID
@@ -137,6 +140,10 @@ class AddEvidenceControllerTests {
                         .param("evidenceDescription", "test description")
                         .param("evidenceDate", "2002-02-16")
                         .param("evidenceSkills", "")
+                        .param("isQuantitative", "")
+                        .param("isQualitative", "")
+                        .param("isService", "")
+                        .param("evidenceCommits", "")
                         .param("evidenceUsers", "")
                         .param("evidenceSkills", "")
                         .param("skillsToChange", "")
@@ -164,9 +171,12 @@ class AddEvidenceControllerTests {
                         .param("evidenceDescription", "test description")
                         .param("evidenceDate", "2002-02-16")
                         .param("evidenceSkills", "")
-                        .param("skillsToChange", "")
-                        .param("evidenceSkills", "")
-                        .param("evidenceUsers", ""))
+                        .param("isQuantitative", "")
+                        .param("isQualitative", "")
+                        .param("isService", "")
+                        .param("evidenceCommits", "")
+                        .param("evidenceUsers", "")
+                        .param("skillsToChange", ""))
                 .andExpect(status().isOk())
                 .andExpect(redirectedUrl(null));
     }
@@ -189,12 +199,39 @@ class AddEvidenceControllerTests {
                         .param("evidenceSkills", "")
                         .param("isQuantitative", "")
                         .param("isQualitative", "")
-                        .param("isQuantitative", "")
                         .param("isService", "")
-                        .param("evidenceSkills", "")
+                        .param("evidenceCommits", "")
+                        .param("evidenceUsers", "")
                         .param("skillsToChange", ""))
-                .andExpect(status().isOk())
-                .andExpect(redirectedUrl(null));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/portfolio"));
+    }
+
+    // Check that sending malformed commit data results in a redirect to the portfolio
+    @Test
+    void whenSaveEvidenceWithBadCommits_testReturnsAddEvidence() throws Exception {
+        AuthState validAuthState = setupSecurity();
+        Mockito.when(userService.getUserAccountByPrincipal(validAuthState)).thenReturn(new User(UserResponse.newBuilder().build()));
+        Mockito.when(userService.getUserId(validAuthState)).thenReturn(1);
+        Mockito.when(portfolioUserService.getUserById(any(Integer.class))).thenReturn(new PortfolioUser(1, "name", true));
+        Mockito.when(globalControllerAdvice.getCurrentProject(validAuthState)).thenReturn(new Project());
+        Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
+        Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
+        Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
+
+        mockMvc.perform(post("/editEvidence--1")
+                        .param("evidenceTitle", "test title")
+                        .param("evidenceDescription", "test description")
+                        .param("evidenceDate", "2021-12-12")
+                        .param("evidenceSkills", "")
+                        .param("isQuantitative", "")
+                        .param("isQualitative", "")
+                        .param("isService", "")
+                        .param("evidenceCommits", "bad commit data")
+                        .param("evidenceUsers", "")
+                        .param("skillsToChange", ""))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/portfolio"));
     }
 
     // Check that trying to edit evidence with a mangled evidence id fails.

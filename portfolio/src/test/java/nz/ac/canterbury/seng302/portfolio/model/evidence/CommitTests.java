@@ -56,7 +56,7 @@ class CommitTests {
     void whenEvidenceAdded_testSaveOneCommit() {
         Evidence evidence = new Evidence(0, project.getId(), "Test Evidence", EVIDENCE_DESCRIPTION, Date.valueOf("2022-05-14"));
         evidenceService.saveEvidence(evidence);
-        evidenceService.saveCommit(evidence.getId(), new Commit("Tester", Date.valueOf("2022-05-14"), "www.testCommit.com", "#Test test commit" ));
+        evidenceService.saveCommit(evidence.getId(), new Commit("id", "Tester", Date.valueOf("2022-05-14"), "www.testCommit.com", "#Test test commit" ));
         Evidence receivedEvidence = evidenceService.getEvidenceById(evidence.getId());
         assertEquals("Tester", receivedEvidence.getCommits().get(0).getAuthor());
     }
@@ -66,9 +66,9 @@ class CommitTests {
     void whenEvidenceAdded_testSaveMultipleCommits() {
         Evidence evidence = new Evidence(0, project.getId(), "Test Evidence", EVIDENCE_DESCRIPTION, Date.valueOf("2022-05-14"));
         evidenceService.saveEvidence(evidence);
-        evidenceService.saveCommit(evidence.getId(), new Commit("Tester", Date.valueOf("2022-05-14"), "www.testCommit.com", "#Test test 1 commit" ));
-        evidenceService.saveCommit(evidence.getId(), new Commit("Tester", Date.valueOf("2022-05-14"), "www.testCommit.com", "#Test test 2 commit" ));
-        evidenceService.saveCommit(evidence.getId(), new Commit("Tester", Date.valueOf("2022-05-14"), "www.testCommit.com", "#Test test 3 commit" ));
+        evidenceService.saveCommit(evidence.getId(), new Commit("id", "Tester", Date.valueOf("2022-05-14"), "www.testCommit.com", "#Test test 1 commit" ));
+        evidenceService.saveCommit(evidence.getId(), new Commit("id", "Tester", Date.valueOf("2022-05-14"), "www.testCommit.com", "#Test test 2 commit" ));
+        evidenceService.saveCommit(evidence.getId(), new Commit("id", "Tester", Date.valueOf("2022-05-14"), "www.testCommit.com", "#Test test 3 commit" ));
         Evidence receivedEvidence = evidenceService.getEvidenceById(evidence.getId());
         assertEquals(3, receivedEvidence.getNumberCommits());
     }
@@ -77,7 +77,7 @@ class CommitTests {
     @Transactional
     void whenNoEvidenceAdded_testCommitNotSaved() {
         Exception exception = assertThrows(Exception.class,
-                () -> evidenceService.saveCommit(0, new Commit("Tester", Date.valueOf("2022-05-14"), "www.testCommit.com", "#Test test 1 commit" )));
+                () -> evidenceService.saveCommit(0, new Commit("id", "Tester", Date.valueOf("2022-05-14"), "www.testCommit.com", "#Test test 1 commit" )));
         String expectedMessage = "Evidence " + 0 + " not found. Commit not saved";
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
