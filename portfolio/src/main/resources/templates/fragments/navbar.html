@@ -29,6 +29,14 @@
                 </li>
                 <li class="site-navigation__item">
                     <h5 class="site-navigation__label">
+                        <a th:href="@{portfolio}" class="site-navigation__link" th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(), '/portfolio') ? 'active':''}">
+                            <span class="bi bi-briefcase navigation_icon" ></span>
+                            Portfolio
+                        </a>
+                    </h5>
+                </li>
+                <li class="site-navigation__item">
+                    <h5 class="site-navigation__label">
                         <a th:href="@{projectDetails-{id}(id=${currentProject.getId})}" class="site-navigation__link" th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(), '/projectDetails') ? 'active':''}">
                             <span class="bi bi-kanban navigation_icon"></span>
                             Project
