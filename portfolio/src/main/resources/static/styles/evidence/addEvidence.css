@@ -81,6 +81,15 @@
     margin-bottom: 15px;
 }
 
+.add-evidence-commits__wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+#commit-container {
+    margin-bottom: 10px;
+}
+
 /* skill and user input */
 
 .input-container {
@@ -167,11 +176,24 @@ p {
     text-align: center;
 }
 
-.skill-tag-inside {
+.skill-tag-inside, .commit-tag-inside {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+}
+
+.commit-modal-inside {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 5px;
+}
+
+.commit-tag-outside {
+    justify-content: center;
 }
 
 #skills-input {
@@ -244,6 +266,11 @@ p {
     color: #636363;
 }
 
+.commit-author {
+    color: #636363;
+    font-size: small;
+}
+
 #users-input {
     display: flex;
     padding: 0 !important;
@@ -255,6 +282,11 @@ p {
 
 #users-input:focus {
     outline: none;
+}
+
+#add-evidence-commits__wrapper {
+    display: flex;
+    flex-direction: row;
 }
 
 .web-link {
