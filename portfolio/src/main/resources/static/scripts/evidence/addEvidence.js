@@ -707,4 +707,13 @@ function removeWebLink(webLinkIndex) {
     }
 }
 
+// Event listeners for the title and description fields to let the user know why the submit button is greyed out.
+document.getElementById("evidence-form__title-field").addEventListener("input", (event) => {
+    event.target.reportValidity();
+});
+
+document.getElementById("evidence-form__description-field").addEventListener("input", (event) => {
+    event.target.reportValidity();
+});
+
 updateCommitsInDOM(commitList);
