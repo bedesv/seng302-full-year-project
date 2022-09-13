@@ -31,8 +31,10 @@
         <div class="evidence__details collapse" th:id="evidence_ + ${evidence.getId}">
             <div class="evidence__details--expanded flex-column" >
                 <h4 class="evidence__description" th:text="${evidence.getDescription} "></h4>
-                <div class="evidence__skills">
+                <div class="evidence__categories">
                     <a th:each="category: ${evidence.getCategories}" class="category__link" th:text="${category}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-categories?category=' + ${category}"></a>
+                </div>
+                <div class="evidence__skills">
                     <a th:each="skill: ${evidence.getSkills}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-skill?skill=' + ${skill}"></a>
                 </div>
                 <!-- Commits -->
