@@ -20,6 +20,7 @@ import nz.ac.canterbury.seng302.portfolio.service.user.*;
 import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.models.Branch;
 import org.gitlab4j.api.models.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -285,39 +286,75 @@ public class AddEvidenceController {
      * @param userId The id of the user
      * @param model The model to add information to
      */
-    private void addRepositoryInfoToModel(int projectId, int userId, Model model) {
-        List<Group> groups = groupsService.getAllGroupsInProject(projectId);
-        Map<String, Commit> commitMap = new HashMap<>();
+    private void addRepositoryInfoToModel(int projectId, int userId, int groupId, Model model) {
+        List<Group> groups = groupsService.getAllGroupsUserIn(projectId, userId);
+        List<Commit> commitList = new ArrayList<>();
         List<Member> members = new ArrayList<>();
-        for (Group group : groups) {
-            for (User user : group.getMembers()) {
-                if (user.getId() == userId) {
-                    List<org.gitlab4j.api.models.Commit> commits = new ArrayList<>();
+        List<Branch> branches = new ArrayList<>();
+        Branch defaultBranch = null;
+        Group mainGroup = null;
+        Date startDate = null;
+        Date endDate = null;
+        if (!groups.isEmpty()) {
+            // Try to set the selected group to the given group id
+            for (Group g : groups) {
+                if (g.getGroupId() == groupId) {
+                    mainGroup = g;
+                }
+            }
 
-                    Calendar calendar = Calendar.getInstance();
-                    Date endDate = calendar.getTime();
-                    calendar.add(Calendar.DATE, -14);
-                    Date startDate = calendar.getTime();
-                    try {
-                        commits = gitlabConnectionService.getFilteredCommits(group.getGroupId(), startDate, endDate, "dev", -1, "");
-                    } catch (RuntimeException e) {
-                        PORTFOLIO_LOGGER.error(e.getMessage());
-                    }
-                    for (org.gitlab4j.api.models.Commit commit : commits) {
-                        Commit portfolioCommit = new Commit(commit.getId(), commit.getCommitterName(),
-                                commit.getCommittedDate(), commit.getWebUrl(), commit.getMessage());
-                        commitMap.put(commit.getId(), portfolioCommit);
-                    }
-                    members.addAll(gitlabConnectionService.getAllMembers(group.getGroupId()));
+            // If selected group is null, set the selected group to the first group in the list
+            if (mainGroup == null) {
+                mainGroup = groups.get(0);
+            }
+
+            List<org.gitlab4j.api.models.Commit> commits = new ArrayList<>();
+
+            // Calculate the current date and the date two weeks ago as the default date range for the search
+            Calendar calendar = Calendar.getInstance();
+            endDate = calendar.getTime();
+            calendar.add(Calendar.DATE, -14);
+            startDate = calendar.getTime();
+
+            // Retrieve commits, members and branches from the group's repository
+            try {
+                commits = gitlabConnectionService.getFilteredCommits(mainGroup.getGroupId(), startDate, endDate, "", -1, "");
+                members = gitlabConnectionService.getAllMembers(mainGroup.getGroupId());
+                branches = gitlabConnectionService.getAllBranches(mainGroup.getGroupId());
+            } catch (RuntimeException e) {
+                PORTFOLIO_LOGGER.error(e.getMessage());
+            }
+
+            // Convert the retrieved commits to our own object
+            for (org.gitlab4j.api.models.Commit commit : commits) {
+                Commit portfolioCommit = new Commit(commit.getId(), commit.getCommitterName(),
+                        commit.getCommittedDate(), commit.getWebUrl(), commit.getMessage());
+                commitList.add(portfolioCommit);
+            }
+
+            // Figure out what the main branch of the repository is
+            for (Branch branch : branches) {
+                if (Boolean.TRUE.equals(branch.getDefault())) {
+                    defaultBranch = branch;
                 }
             }
         }
-        List<Commit> commitList = new ArrayList<>(commitMap.values());
+
+        // Sort the list of commits in reverse chronological order (newest first)
         commitList.sort(Comparator.comparing(Commit::getDate));
         Collections.reverse(commitList);
+
+        // Add all the relevant objects to the page model
         model.addAttribute("commits", commitList);
         model.addAttribute("displayCommits", !commitList.isEmpty());
         model.addAttribute("repositoryUsers", members);
+        model.addAttribute("branches", branches);
+        model.addAttribute("defaultBranch", defaultBranch);
+        model.addAttribute("groups", groups);
+        model.addAttribute("mainGroup", mainGroup);
+        model.addAttribute("startDate", Project.dateToString(startDate, TIMEFORMAT));
+        model.addAttribute("endDate", Project.dateToString(endDate, TIMEFORMAT));
+        model.addAttribute("sprints", sprintService.getByParentProjectId(projectId));
     }
 
     /**
@@ -342,8 +379,7 @@ public class AddEvidenceController {
             PORTFOLIO_LOGGER.error(e.getMessage());
         }
         model.addAttribute("users", userService.getAllUsersExcept(userId));
-        addRepositoryInfoToModel(projectId, userId, model);
-        model.addAttribute("sprints", sprintService.getByParentProjectId(projectId));
+        addRepositoryInfoToModel(projectId, userId, -1, model);
     }
 
     /**
@@ -356,6 +392,14 @@ public class AddEvidenceController {
         int id = Integer.parseInt(evidenceId);
         evidenceService.deleteById(id);
         return PORTFOLIO_REDIRECT;
+    }
+
+    @GetMapping(value="/evidenceCommitFilterBox")
+    public String getUpdatedCommitFilterBox(@AuthenticationPrincipal AuthState principal, @RequestParam(name="groupId") int groupId, Model model) {
+        User user = userService.getUserAccountByPrincipal(principal);
+        int projectId = portfolioUserService.getUserById(user.getId()).getCurrentProject();
+        addRepositoryInfoToModel(projectId, user.getId(), groupId, model);
+        return "templatesEvidence/commitFilterBox";
     }
 }
 

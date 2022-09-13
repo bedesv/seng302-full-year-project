@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import nz.ac.canterbury.seng302.portfolio.model.group.GroupRepositorySettings;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.models.Branch;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Member;
 import org.gitlab4j.api.models.User;
@@ -54,9 +55,15 @@ public class GitlabConnectionService {
 
     /**
      * Attempts to create a connection to the gitlab repository in the group settings
-     * then fetch a list of commits from that repository.
+     * then fetch a list of commits from that repository. Filters the fetched commits
+     * so that they meet the given filter requirements
      * @param groupId The group id to get commits from
-     * @return A list of all commits from the repository
+     * @param startDate The start date of the filter range
+     * @param endDate The end date of the filter range
+     * @param branch A branch name in string form
+     * @param userId A gitlab user id
+     * @param commitId The id of the requested commit
+     * @return A list of all commits from the repository that meet the filter requirements
      */
     public List<Commit> getFilteredCommits(int groupId, Date startDate, Date endDate, String branch, int userId, String commitId) {
         try {
@@ -106,7 +113,7 @@ public class GitlabConnectionService {
     /**
      * Attempts to fetch a list of all users in the repository. If it fails to connect, it
      * returns an empty list
-     * @param groupId The group id to get commits from
+     * @param groupId The group id to get users from
      * @return A list of all users in the repository
      */
     public List<Member> getAllMembers(int groupId) {
@@ -114,6 +121,23 @@ public class GitlabConnectionService {
             GitLabApi gitLabApiConnection = getGitLabApiConnection(groupId);
             GroupRepositorySettings repositorySettings = getGroupRepositorySettings(groupId);
             return gitLabApiConnection.getProjectApi().getAllMembers(repositorySettings.getGitlabProjectId());
+        } catch (GitLabApiException | NoSuchFieldException exception) {
+            PORTFOLIO_LOGGER.error(exception.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Attempts to fetch a list of all branches in the repository. If it fails to connect, it
+     * returns an empty list
+     * @param groupId The group id to get branches from
+     * @return A list of all branches in the repository
+     */
+    public List<Branch> getAllBranches(int groupId) {
+        try {
+            GitLabApi gitLabApiConnection = getGitLabApiConnection(groupId);
+            GroupRepositorySettings repositorySettings = getGroupRepositorySettings(groupId);
+            return gitLabApiConnection.getRepositoryApi().getBranches(repositorySettings.getGitlabProjectId());
         } catch (GitLabApiException | NoSuchFieldException exception) {
             PORTFOLIO_LOGGER.error(exception.getMessage());
             return new ArrayList<>();

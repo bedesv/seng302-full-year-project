@@ -739,3 +739,67 @@ document.getElementById("evidence-form__description-field").addEventListener("in
 });
 
 updateCommitsInDOM(commitList);
+
+async function updateCommitModal() {
+    let url;
+    url = new URL (`${CONTEXT}/evidenceCommitFilterBox`)
+    url.searchParams.append("groupId", document.getElementById("commit-filter__group-selection").value)
+    document.getElementById("commit-filter-box").innerHTML = await fetch(url, {
+        method: "GET"
+    }).then(res => {
+        return res.text()
+    });
+    searchCommits()
+}
+
+function searchCommits() {
+
+}
+
+/**
+ * Updates the soonest end date which the commit filter may be
+ */
+function updateMinEndDate() {
+    let startDate = document.getElementById("commit-filter__start-date").value;
+    document.getElementById("commit-filter__end-date").setAttribute('min', startDate);
+    document.getElementById("commit-filter__sprint-selection").value = '-1';
+}
+
+/**
+ * Updates the latest start date which the commit filter may be
+ */
+function updateMaxStartDate() {
+    let endDate = document.getElementById("commit-filter__end-date").value;
+    document.getElementById("commit-filter__start-date").setAttribute('max', endDate);
+    document.getElementById("commit-filter__sprint-selection").value = '-1';
+}
+
+/**
+ * Finds the selected sprint and sets the start and end date of the commit search date range to be the start and
+ * end date of the selected sprint. Also updates the min and max dates for the date pickers.
+ */
+function updateCommitSearchDates() {
+    const requiredSprintId = Number.parseInt(document.getElementById("commit-filter__sprint-selection").value, 10);
+    if (requiredSprintId !== -1) {
+        for (let sprint of sprints) {
+            if (sprint.id === requiredSprintId) {
+                const startDate = sprint.startDate.slice(0, 10);
+                const endDate = sprint.endDate.slice(0, 10);
+                document.getElementById("commit-filter__start-date").value = startDate;
+                document.getElementById("commit-filter__start-date").setAttribute('max', endDate);
+                document.getElementById("commit-filter__end-date").value = endDate;
+                document.getElementById("commit-filter__end-date").setAttribute('min', startDate);
+            }
+        }
+    }
+}
+
+// Event listeners for the search start and end dates to let the user know if the dates they have selected are valid or not
+// when they click off them.
+document.getElementById("commit-filter__start-date").addEventListener("focusout", (event) => {
+    event.target.reportValidity();
+});
+
+document.getElementById("commit-filter__end-date").addEventListener("focusout", (event) => {
+    event.target.reportValidity();
+});

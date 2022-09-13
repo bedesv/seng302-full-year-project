@@ -180,6 +180,22 @@ public class GroupsClientService {
     }
 
     /**
+     * Returns a list of all groups a user is a member of in the given project
+     * @param projectId the parent project id
+     * @param userId the id of the user
+     * @return a list of groups that the user is in
+     */
+    public List<Group> getAllGroupsUserIn(int projectId, int userId) {
+        List<Group> groups = new ArrayList<>();
+        for (Group group : getAllGroupsInProject(projectId)) {
+            if (userInGroup(group.getGroupId(), userId)) {
+                groups.add(group);
+            }
+        }
+        return groups;
+    }
+
+    /**
      * Only for mocking purposes
      * Updates the current stub with a new one
      * @param newStub the new (mocked) GroupsServiceBlockingStub
