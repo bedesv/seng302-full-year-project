@@ -194,7 +194,7 @@ public class EvidenceService {
                 copiedEvidence.addWebLink(new WebLink(webLink.getLink(), webLink.getName()));
             }
             for (Commit commit : evidence.getCommits()) {
-                copiedEvidence.addCommit(new Commit(commit.getAuthor(), commit.getDate(), commit.getAuthor(), commit.getDescription()));
+                copiedEvidence.addCommit(new Commit(commit.getId(), commit.getAuthor(), commit.getDate(), commit.getLink(), commit.getDescription()));
             }
             copiedEvidence.setLinkedUsers(new HashSet<>(userIds));
 
