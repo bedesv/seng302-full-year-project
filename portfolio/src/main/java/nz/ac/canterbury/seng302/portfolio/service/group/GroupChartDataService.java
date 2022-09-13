@@ -108,7 +108,7 @@ public class GroupChartDataService {
      * @param group the group object that the data is wanted for
      * @return A map of group members (ID, First name and Last name) and the number of evidence
      */
-    public Map<String, Integer> getGroupEvidenceDataCompareMembers(Group group) {
+    public Map<String, Integer> getGroupEvidenceDataCompareMembers(Group group, Date startDate, Date endDate) {
         int parentProjectId = group.getParentProject();
         Map<String, Integer> evidenceCountsByMember = new HashMap<>();
 
@@ -116,7 +116,16 @@ public class GroupChartDataService {
         for (User user : group.getMembers()) {
             evidenceCountsByMember.put(user.getId() + " " + user.getFullName(), evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId).size());
         }
-        return evidenceCountsByMember;
+
+        // Sorts map by group members evidence amount and caps the new map at 10 elements.
+        return evidenceCountsByMember.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .limit(10)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
 
     /**
