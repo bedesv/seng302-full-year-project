@@ -89,7 +89,7 @@ public class ProjectEditsController {
             if(Integer.parseInt(isEditing) == -1) {
                 editString += " is creating a " + name.toLowerCase();
             } else {
-                editString += " is editing a " + name.toLowerCase();
+                editString += " is editing " + name;
             }
             projectEditsService.newEdit(projectId, userId, editString);
         }
