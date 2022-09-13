@@ -32,13 +32,13 @@ let userList = [];
 // Adds a skill to the list of skills. Makes sure it is not already present,
 // and if the user has already entered that skill on another piece of evidence, make sure the capitalization is correct.
 function addToSkills(skill) {
+
     for (const testSkill of skillList) {
         if (testSkill.toLowerCase() === skill.toLowerCase().replaceAll("_", " ")) {
             const skillsError = document.getElementById("evidence-form__skills-error");
             skillsError.innerHTML = "Skill not saved: skill already exists"
             return;
         }
-
     }
     for (const testSkill of ALL_SKILLS) {
         if (testSkill.toLowerCase() === skill.toLowerCase()) {
@@ -195,6 +195,13 @@ document.getElementById("skills-input").addEventListener("input", (event) => {
     skillsError.innerHTML = ""
     event.target.style.width = event.target.value.length > 8 ? event.target.value.length + "ch" : "80px";
     let value = event.target.value;
+
+    const oldValue = value
+    value = value.replaceAll(/[^a-zA-Z0-9\-_ ]/g, '');
+    if(oldValue !== value) {
+            const skillsError = document.getElementById("evidence-form__skills-error");
+            skillsError.innerHTML = "Skills can not contain special characters";
+    }
     value = value.replace(/_+/g, '_');
     let skills = value.split(" ");
     let lastSkill = skills.pop();
@@ -207,11 +214,6 @@ document.getElementById("skills-input").addEventListener("input", (event) => {
         }
     }
     lastSkill = lastSkill.slice(0, 50);
-    if (/[^a-zA-Z0-9\-_]/.test(lastSkill)) {
-        lastSkill = lastSkill.slice(0, -1)
-        const skillsError = document.getElementById("evidence-form__skills-error");
-        skillsError.innerHTML = "Skills can not contain special Characters"
-    }
     document.getElementById("skills-input").value = lastSkill;
     if (shouldUpdateSkills) {
         updateSkillTagsInDOM(skillList);
