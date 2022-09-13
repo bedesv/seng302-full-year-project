@@ -61,17 +61,17 @@ public class GitlabConnectionService {
      * @param startDate The start date of the filter range
      * @param endDate The end date of the filter range
      * @param branch A branch name in string form
-     * @param userId A gitlab user id
+     * @param authorName A gitlab user id
      * @param commitId The id of the requested commit
      * @return A list of all commits from the repository that meet the filter requirements
      */
-    public List<Commit> getFilteredCommits(int groupId, Date startDate, Date endDate, String branch, int userId, String commitId) {
+    public List<Commit> getFilteredCommits(int groupId, Date startDate, Date endDate, String branch, String authorName, String commitId) {
         try {
             GroupRepositorySettings repositorySettings = getGroupRepositorySettings(groupId);
             GitLabApi gitLabApiConnection = getGitLabApiConnection(groupId);
             if (!Objects.equals(commitId, "")) {
               Commit commit = gitLabApiConnection.getCommitsApi().getCommit(repositorySettings.getGitlabProjectId(), commitId);
-              if ((userId == -1 || userId == commit.getAuthor().getId()) && !commit.getCommittedDate().before(startDate)
+              if ((Objects.equals(authorName, "") || Objects.equals(authorName, commit.getAuthorName())) && !commit.getCommittedDate().before(startDate)
                       && !commit.getCommittedDate().after(endDate)) {
                   return List.of(commit);
               } else {
@@ -79,10 +79,10 @@ public class GitlabConnectionService {
               }
             } else {
                 List<Commit> commits = gitLabApiConnection.getCommitsApi().getCommits(repositorySettings.getGitlabProjectId(), branch, startDate, endDate);
-                if (userId != -1) {
+                if (!Objects.equals(authorName, "")) {
                     List<Commit> filteredCommits = new ArrayList<>();
                     for (Commit commit : commits) {
-                        if ((userId == commit.getAuthor().getId())) {
+                        if ((Objects.equals(authorName, commit.getAuthorName()))) {
                             filteredCommits.add(commit);
                         }
                     }

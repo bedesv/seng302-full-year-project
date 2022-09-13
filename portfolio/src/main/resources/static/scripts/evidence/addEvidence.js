@@ -368,7 +368,6 @@ function updateCommitsInDOM(commits) {
     for (let tag of commits) {
         commit = ALL_COMMITS[tag];
         if (!commit) {
-            console.log(ORIGINAL_COMMITS);
             commit = ORIGINAL_COMMITS[tag];
         }
         let element = createElementFromHTML(`<div class="skill-tag-con">
@@ -384,6 +383,26 @@ function updateCommitsInDOM(commits) {
                                             </div>`)
         parent.appendChild(element);
     }
+}
+
+function updateSearchCommitsInDOM(newCommits) {
+
+    let parent = document.getElementById("commit-selection-box")
+    while (parent.childNodes.length > 0) {
+        parent.removeChild(parent.firstChild);
+    }
+    for (let newCommit of newCommits) {
+        console.log(commitList.includes(newCommit.id))
+        let element = createElementFromHTML(`<div id="${sanitizeHTML(newCommit.id)}" class="row commit-tag-outside">
+                                                <div class="col-11 commit-modal-inside">
+                                                    <p class="strip-margin" >${sanitizeHTML(newCommit.description)}</p>
+                                                    <p class="commit-author strip-margin" >${sanitizeHTML(newCommit.author)} - ${sanitizeHTML(newCommit.dateString)}</p>
+                                                </div>
+                                                <input class="col-auto" id="${sanitizeHTML(newCommit.id)}" type="checkbox" ${commitList.includes(newCommit.id) ? "checked" : ""}/>
+                                            </div>`)
+        parent.appendChild(element)
+    }
+
 }
 
 // Updates the tags shown before the users input list to reflect the list of tags given.
@@ -747,28 +766,55 @@ async function updateCommitModal() {
     document.getElementById("commit-filter-box").innerHTML = await fetch(url, {
         method: "GET"
     }).then(res => {
-        return res.text()
+        return res.text();
     });
-    searchCommits()
+    await searchCommits();
+
+    // Event listeners for the search start and end dates to let the user know if the dates they have selected are valid or not
+    // when they click off them.
+    document.getElementById("commit-filter__start-date").addEventListener("focusout", (event) => {
+        event.target.reportValidity();
+    });
+
+    document.getElementById("commit-filter__end-date").addEventListener("focusout", (event) => {
+        event.target.reportValidity();
+    });
 }
 
-function searchCommits() {
-
+/**
+ * Updates the commits shown in the commit
+ */
+async function searchCommits() {
+    let url;
+    url = new URL (`${CONTEXT}/searchFilteredCommits`);
+    url.searchParams.append("groupId", document.getElementById("commit-filter__group-selection").value);
+    url.searchParams.append("startDate", document.getElementById("commit-filter__start-date").value);
+    url.searchParams.append("endDate", document.getElementById("commit-filter__end-date").value);
+    url.searchParams.append("branch", document.getElementById("commit-filter__branch-selection").value);
+    url.searchParams.append("commitAuthor", document.getElementById("commit-filter__member-selection").value);
+    url.searchParams.append("commitId", document.getElementById("commit-filter__id-search").value);
+    const newCommits = await fetch(url, {
+        method: "GET"
+    }).then(res => {
+        return res.json();
+    });
+    updateSearchCommitsInDOM(newCommits);
 }
 
 /**
  * Updates the soonest end date which the commit filter may be
  */
-function updateMinEndDate() {
+async function updateMinEndDate() {
     let startDate = document.getElementById("commit-filter__start-date").value;
     document.getElementById("commit-filter__end-date").setAttribute('min', startDate);
     document.getElementById("commit-filter__sprint-selection").value = '-1';
+    await searchCommits();
 }
 
 /**
  * Updates the latest start date which the commit filter may be
  */
-function updateMaxStartDate() {
+async function updateMaxStartDate() {
     let endDate = document.getElementById("commit-filter__end-date").value;
     document.getElementById("commit-filter__start-date").setAttribute('max', endDate);
     document.getElementById("commit-filter__sprint-selection").value = '-1';
@@ -793,13 +839,3 @@ function updateCommitSearchDates() {
         }
     }
 }
-
-// Event listeners for the search start and end dates to let the user know if the dates they have selected are valid or not
-// when they click off them.
-document.getElementById("commit-filter__start-date").addEventListener("focusout", (event) => {
-    event.target.reportValidity();
-});
-
-document.getElementById("commit-filter__end-date").addEventListener("focusout", (event) => {
-    event.target.reportValidity();
-});

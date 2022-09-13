@@ -19,7 +19,6 @@ import nz.ac.canterbury.seng302.portfolio.service.project.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.user.*;
 import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Branch;
 import org.gitlab4j.api.models.Member;
 import org.slf4j.Logger;
@@ -318,7 +317,7 @@ public class AddEvidenceController {
 
             // Retrieve commits, members and branches from the group's repository
             try {
-                commits = gitlabConnectionService.getFilteredCommits(mainGroup.getGroupId(), startDate, endDate, "", -1, "");
+                commits = gitlabConnectionService.getFilteredCommits(mainGroup.getGroupId(), startDate, endDate, "", "", "");
                 members = gitlabConnectionService.getAllMembers(mainGroup.getGroupId());
                 branches = gitlabConnectionService.getAllBranches(mainGroup.getGroupId());
             } catch (RuntimeException e) {
@@ -400,6 +399,32 @@ public class AddEvidenceController {
         int projectId = portfolioUserService.getUserById(user.getId()).getCurrentProject();
         addRepositoryInfoToModel(projectId, user.getId(), groupId, model);
         return "templatesEvidence/commitFilterBox";
+    }
+
+    @GetMapping(value="/searchFilteredCommits")
+    public @ResponseBody List<Commit> searchFilteredCommits(@AuthenticationPrincipal AuthState principal,
+                                              @RequestParam(name="groupId") int groupId,
+                                              @RequestParam(name="startDate") String startDateString,
+                                              @RequestParam(name="endDate") String endDateString,
+                                              @RequestParam(name="branch") String branch,
+                                              @RequestParam(name= "commitAuthor") String commitAuthor,
+                                              @RequestParam(name="commitId") String commitId) {
+        Date startDate = null;
+        Date endDate = null;
+        try {
+            startDate = new SimpleDateFormat(TIMEFORMAT).parse(startDateString);
+            endDate = new SimpleDateFormat(TIMEFORMAT).parse(endDateString);
+        } catch (Exception ignored) {
+            // Date parsing didn't work, must be in wrong format
+        }
+        List<Commit> commitList = new ArrayList<>();
+        List<org.gitlab4j.api.models.Commit> commits = gitlabConnectionService.getFilteredCommits(groupId, startDate, endDate, branch, commitAuthor, commitId);
+        for (org.gitlab4j.api.models.Commit commit : commits) {
+            Commit portfolioCommit = new Commit(commit.getId(), commit.getCommitterName(),
+                    commit.getCommittedDate(), commit.getWebUrl(), commit.getMessage());
+            commitList.add(portfolioCommit);
+        }
+        return commitList;
     }
 }
 
