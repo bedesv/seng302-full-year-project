@@ -139,7 +139,7 @@ public class GroupChartDataController {
      * @return A map of group member ids + first and last names and the number of evidence for each.
      */
     @GetMapping("/group-{groupId}-{timeRange}-{startDateString}-{endDateString}-dataOverTime")
-    public @ResponseBody Map<String, Integer> getEvidenceDataOverTime(@AuthenticationPrincipal AuthState principal,
+    public Map<String, Integer> getEvidenceDataOverTime(@AuthenticationPrincipal AuthState principal,
                                                                       @PathVariable int groupId,
                                                                       @PathVariable String timeRange,
                                                                       @PathVariable String startDateString,

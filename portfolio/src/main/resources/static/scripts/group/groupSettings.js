@@ -11,6 +11,7 @@ async function updateAllCharts() {
     await updateGroupMembersData();
     await updateCategoriesChart();
     await updateSkillsChart();
+    await dataOverTimeChart();
 }
 
 /**
@@ -27,6 +28,9 @@ async function fetchChartData(dataType) {
     }
     if (dataType === 'membersData') {
         url = new URL (`${CONTEXT}/group-${GROUP_ID}-membersData?`);
+    }
+    if (dataType === 'dataOverTime') {
+        url = new URL (`${CONTEXT}/group-${GROUP_ID}-day-${START_DATE}-${END_DATE}-dataOverTime?`);
     }
     return await fetch(url+new URLSearchParams({startDateString: START_DATE, endDateString: END_DATE}), {
         method: "GET",
@@ -45,21 +49,47 @@ async function updateGroupMembersData() {
 
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
-    data.addColumn('string', 'member');
-    data.addColumn('number', 'count');
+    data.addColumn('string', 'Member');
+    data.addColumn('number', 'Count');
     for (let key in chartData) {
         data.addRow([key, chartData[key]]);
     }
 
     // Specify options for the chart
     let options = {
-        title: 'Top 10 Group Members',
+        title: 'Top 10 Group Members by Evidence',
         titleTextStyle: {fontSize: 20},
         backgroundColor: { fill:'transparent' },
     }
 
     // Create the group members chart
     let chart = new google.visualization.ColumnChart(document.getElementById('group-chart__evidence-chart'));
+    chart.draw(data, options);
+}
+
+/**
+ * Fetches evidence over time data from the backend then creates a line chart
+ * with the received data
+ */
+async function dataOverTimeChart() {
+    let chartData = await fetchChartData('dataOverTime')
+
+    let data = new google.visualization.DataTable();
+    data.addColumn('string', 'word');
+    data.addColumn('number', 'count');
+    for (let key in chartData) {
+        data.addRow([key, chartData[key]]);
+    }
+
+    let options = {
+        title: 'Evidence Data Over Time',
+        curveType: 'function',
+        legend: { position: 'bottom' },
+        titleTextStyle: {fontSize: 20},
+        backgroundColor: { fill:'transparent' },
+    }
+
+    let chart = new google.visualization.LineChart(document.getElementById('group-chart__time-chart'));
     chart.draw(data, options);
 }
 
@@ -191,5 +221,6 @@ async function selectRefinement(startDate, endDate){
     await updateGroupMembersData();
     await updateCategoriesChart();
     await updateSkillsChart();
+    await dataOverTimeChart();
 }
 
