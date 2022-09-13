@@ -205,8 +205,9 @@
                     <div id="commit-selection-box">
                         <div th:each="commit: ${commits}" th:id="${commit.id}" class="row commit-tag-outside">
                             <div class="col-11 commit-modal-inside">
-                                <p class="strip-margin" th:text="${commit.description}"></p>
+                                <p class="commit-description strip-margin" th:text="${commit.description}"></p>
                                 <p class="commit-author strip-margin" th:text="${commit.author} + '  -  ' + ${commit.dateString}"></p>
+                                <a class="commit-author strip-margin" th:href="${commit.link}" th:text="${commit.id}"></a>
                             </div>
                             <input class="col-auto" th:id="${commit.id}" type="checkbox"/>
                         </div>
