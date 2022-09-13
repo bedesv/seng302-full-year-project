@@ -114,15 +114,24 @@ public class PortfolioController {
      */
     @PostMapping("/addWebLink-{evidenceId}")
     public String addWebLink(
+            @AuthenticationPrincipal AuthState principal,
             @PathVariable(name="evidenceId") String evidenceId,
             @RequestParam(name="webLink") String webLink,
             @RequestParam(name="webLinkName") String webLinkName,
             @RequestParam(name="webLinkIndex") String webLinkIndex,
             Model model
     ) {
+        User user = userService.getUserAccountByPrincipal(principal);
         int id = Integer.parseInt(evidenceId);
         int index = Integer.parseInt(webLinkIndex);
         Evidence evidence = evidenceService.getEvidenceById(id);
+        if (user.getId() != evidence.getOwnerId()) {
+            model.addAttribute("owner", false);
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Cannot modify other users' evidence");
+        } else {
+            model.addAttribute("owner", true);
+        }
 
         webLink = ValidationUtil.stripTitle(webLink);
         webLinkName = ValidationUtil.stripTitle(webLinkName);
@@ -162,11 +171,18 @@ public class PortfolioController {
      */
     @GetMapping("/getWebLinks-{evidenceId}")
     public String getWebLinks(
+            @AuthenticationPrincipal AuthState principal,
             @PathVariable(name="evidenceId") String evidenceId,
             Model model
     ) {
+        User user = userService.getUserAccountByPrincipal(principal);
         int id = Integer.parseInt(evidenceId);
         Evidence evidence = evidenceService.getEvidenceById(id);
+        if (user.getId() != evidence.getOwnerId()) {
+            model.addAttribute("owner", false);
+        } else {
+            model.addAttribute("owner", true);
+        }
         model.addAttribute("webLinks", evidence.getWebLinks());
         model.addAttribute("evidenceId", evidence.getId());
         return "fragments/webLink";
