@@ -167,8 +167,6 @@ public class AddEvidenceController {
             return ADD_EVIDENCE;
         }
 
-        List<Integer> userList = userService.getUserIdListFromString(users);
-
         try {
             if (webLinkLinks != null && webLinkNames != null) {
                 for (int i = 0; i < webLinkLinks.size(); i++) {
@@ -205,7 +203,7 @@ public class AddEvidenceController {
             return ADD_EVIDENCE; // Fail silently as client has responsibility for error checking
         }
         try {
-            evidenceService.copyEvidenceToNewUser(evidence.getId(), userList);
+            evidenceService.updateEvidenceUsers(evidence, new HashSet<>(userService.getUserIdListFromString(users)));
         } catch (IllegalArgumentException exception) {
             return ADD_EVIDENCE;
         }

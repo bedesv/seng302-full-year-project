@@ -166,6 +166,49 @@ public class EvidenceService {
     }
 
     /**
+     * Update a piece of evidence with a set of users. Copies the piece of evidence to any new users added.
+     * @param evidence The evidence to update
+     * @param userIds The users to add to the piece of evidence
+     */
+    public void updateEvidenceUsers(Evidence evidence, Set<Integer> userIds) {
+
+        Set<Integer> oldLinkedUsers = evidence.getLinkedUsers();
+        Set<Integer> usersToAdd = new HashSet<>(userIds);
+        usersToAdd.removeAll(oldLinkedUsers);
+        usersToAdd.remove(evidence.getOwnerId());
+
+        evidence.setLinkedUsers(userIds);
+
+        String skillList;
+        if (!evidence.getSkills().isEmpty()) {
+            skillList = String.join(" ", evidence.getSkills());
+        } else {
+            skillList = "";
+        }
+        Set<Categories> categoriesSet = new HashSet<>(evidence.getCategories());
+
+        for (Integer userId: usersToAdd) {
+            Evidence copiedEvidence = new Evidence(userId, evidence.getProjectId(), evidence.getTitle(), evidence.getDescription(), evidence.getDate(), skillList);
+            copiedEvidence.setCategories(categoriesSet);
+            for (WebLink webLink : evidence.getWebLinks()) {
+                copiedEvidence.addWebLink(new WebLink(webLink.getLink(), webLink.getName()));
+            }
+            for (Commit commit : evidence.getCommits()) {
+                copiedEvidence.addCommit(new Commit(commit.getAuthor(), commit.getDate(), commit.getAuthor(), commit.getDescription()));
+            }
+            copiedEvidence.setLinkedUsers(new HashSet<>(userIds));
+
+            // This is to make sure that there are no duplicate skills in the other user's portfolio
+            List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(copiedEvidence.getOwnerId(), copiedEvidence.getProjectId());
+            copiedEvidence.conformSkills(getSkillsFromEvidence(evidenceList));
+            String message = "Evidence " + evidence.getId() + " copied to " + userId + "'s portfolio";
+            PORTFOLIO_LOGGER.info(message);
+            repository.save(copiedEvidence);
+        }
+        repository.save(evidence);
+    }
+
+    /**
      * Copies an evidence from the owner to the portfolio of a new user
      * Copies the skills, categories and weblinks of the evidence across as well
      * Conforms the skills to match the existing skills in the new user's portfolio

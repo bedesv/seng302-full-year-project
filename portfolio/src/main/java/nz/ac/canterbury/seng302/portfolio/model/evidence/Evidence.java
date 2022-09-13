@@ -36,7 +36,7 @@ public class Evidence {
     @ElementCollection
     private List<Commit> commits;
     @ElementCollection
-    private final Set<Integer> linkedUsers = new HashSet<>();
+    private Set<Integer> linkedUsers = new HashSet<>();
 
 
     public Evidence() {
@@ -131,6 +131,11 @@ public class Evidence {
 
     public void addLinkedUsers(Integer userId) {
         this.linkedUsers.add(userId);
+    }
+
+    public void setLinkedUsers(Set<Integer> userIds) {
+        linkedUsers = userIds;
+        linkedUsers.add(ownerId); // The owner must always be a linked user
     }
 
     /**
