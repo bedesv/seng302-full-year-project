@@ -626,6 +626,8 @@ class GroupChartDataServiceTests {
 
         Evidence testEvidence1A = new Evidence();
         Evidence testEvidence2A = new Evidence();
+        testEvidence1A.setDate(dateInBound);
+        testEvidence2A.setDate(dateInBound);
         PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence2A, new ArrayList<>());
         List<PortfolioEvidence> testEvidenceList = new ArrayList<>();
@@ -650,6 +652,7 @@ class GroupChartDataServiceTests {
 
         Set<Categories> testCategoriesSet = new HashSet<>(Arrays.asList(Categories.QUANTITATIVE, Categories.QUALITATIVE));
         Evidence testEvidence1A = new Evidence();
+        testEvidence1A.setDate(dateInBound);
         testEvidence1A.setCategories(testCategoriesSet);
         PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         List<PortfolioEvidence> testEvidenceList = new ArrayList<>();
@@ -674,6 +677,8 @@ class GroupChartDataServiceTests {
         Set<Categories> testCategoriesSet = new HashSet<>(Arrays.asList(Categories.SERVICE, Categories.QUANTITATIVE, Categories.QUALITATIVE));
         Evidence testEvidence1A = new Evidence();
         Evidence testEvidence2A = new Evidence();
+        testEvidence1A.setDate(dateInBound);
+        testEvidence2A.setDate(dateInBound);
         testEvidence1A.setCategories(testCategoriesSet);
         testEvidence2A.setCategories(testCategoriesSet);
         PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
@@ -714,6 +719,8 @@ class GroupChartDataServiceTests {
 
         Evidence testEvidence1A = new Evidence();
         Evidence testEvidence2A = new Evidence();
+        testEvidence1A.setDate(dateInBound);
+        testEvidence2A.setDate(dateInBound);
         PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence2A, new ArrayList<>());
 
@@ -736,6 +743,8 @@ class GroupChartDataServiceTests {
         Set<Categories> testCategoriesSet2 = new HashSet<>(Arrays.asList(Categories.QUANTITATIVE, Categories.SERVICE));
         Evidence testEvidence1A = new Evidence();
         Evidence testEvidence2A = new Evidence();
+        testEvidence1A.setDate(dateInBound);
+        testEvidence2A.setDate(dateInBound);
         testEvidence1A.setCategories(testCategoriesSet1);
         testEvidence2A.setCategories(testCategoriesSet2);
         PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
@@ -761,6 +770,8 @@ class GroupChartDataServiceTests {
         Set<Categories> testCategoriesSet = new HashSet<>(Arrays.asList(Categories.QUANTITATIVE, Categories.QUALITATIVE, Categories.SERVICE));
         Evidence testEvidence1A = new Evidence();
         Evidence testEvidence2A = new Evidence();
+        testEvidence1A.setDate(dateInBound);
+        testEvidence2A.setDate(dateInBound);
         testEvidence1A.setCategories(testCategoriesSet);
         testEvidence2A.setCategories(testCategoriesSet);
         PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
@@ -788,6 +799,8 @@ class GroupChartDataServiceTests {
         Set<Categories> testCategoriesSet = new HashSet<>(Arrays.asList(Categories.QUANTITATIVE, Categories.QUALITATIVE, Categories.SERVICE));
         Evidence testEvidence1A = new Evidence();
         Evidence testEvidence2A = new Evidence();
+        testEvidence1A.setDate(dateInBound);
+        testEvidence2A.setDate(dateInBound);
         testEvidence1A.setCategories(testCategoriesSet);
         testEvidence2A.setCategories(testCategoriesSet);
         PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
