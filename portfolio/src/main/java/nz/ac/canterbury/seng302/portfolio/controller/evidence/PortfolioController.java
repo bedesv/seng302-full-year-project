@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller.evidence;
 
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
+import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
@@ -58,10 +59,10 @@ public class PortfolioController {
 
         int userId = user.getId();
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
 
         model.addAttribute("evidenceList", evidenceList);
-        model.addAttribute("skillsList", evidenceService.getSkillsFromEvidence(evidenceList));
+        model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(evidenceList));
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
         return "templatesEvidence/portfolio";
     }
@@ -85,14 +86,14 @@ public class PortfolioController {
         User pageUser = userService.getUserAccountById(userId);
         model.addAttribute("pageUser", pageUser);
 
-        int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
+        int projectId = portfolioUserService.getUserById(user.getId()).getCurrentProject();
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
 
         model.addAttribute("evidenceList", evidenceList);
 
         // Add all of the skills that the user has to the page
-        List<Evidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
-        model.addAttribute("skillsList", evidenceService.getSkillsFromEvidence(allUsersEvidenceList));
+        List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
+        model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
         if (Objects.equals(pageUser.getUsername(), "")) {
             return "redirect:/profile";
         } else if (user.getId() == pageUser.getId()) {

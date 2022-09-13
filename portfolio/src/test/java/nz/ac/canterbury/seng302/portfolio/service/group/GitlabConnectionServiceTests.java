@@ -214,6 +214,7 @@ class GitlabConnectionServiceTests {
             // Returns 404 because the project isn't found in the projects the api key has access to.
             assertTrue(e.getMessage().contains("404 Project Not Found"));
         }
+        System.out.println(commits + "This is the line I need");
         assertNull(commits);
     }
 
