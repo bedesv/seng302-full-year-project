@@ -45,15 +45,28 @@ public class GroupChartDataController {
      */
     @GetMapping("/group-{groupId}-categoriesData")
     public Map<String, Integer> getCategoriesData(@AuthenticationPrincipal AuthState principal,
-                                                  @PathVariable int groupId) {
+                                                  @PathVariable int groupId,
+                                                  @RequestParam String startDateString,
+                                                  @RequestParam String endDateString) {
         User user = userService.getUserAccountByPrincipal(principal);
         if (user.getUsername() == null) {
             return Collections.emptyMap();
         }
+
+        Date startDate;
+        Date endDate;
+        try {
+            startDate = new SimpleDateFormat(TIME_FORMAT).parse(startDateString);
+            endDate = new SimpleDateFormat(TIME_FORMAT).parse(endDateString);
+        } catch (ParseException e) {
+            PORTFOLIO_LOGGER.error(e.getMessage());
+            return Collections.emptyMap();
+        }
+
         Group group = new Group(groupsClientService.getGroupDetailsById(groupId));
         int parentProjectId = portfolioGroupService.findParentProjectIdByGroupId(group.getGroupId());
         group.setParentProject(parentProjectId);
-        return groupChartDataService.getGroupCategoryInfo(group);
+        return groupChartDataService.getGroupCategoryInfo(group, startDate, endDate);
     }
 
     /**
@@ -87,8 +100,6 @@ public class GroupChartDataController {
         group.setParentProject(parentProjectId);
         return groupChartDataService.getGroupSkillData(group, startDate, endDate);
     }
-
-
 
     /**
      * Used by the front end to fetch the number of evidence for each group member

@@ -1,9 +1,19 @@
 <!DOCTYPE html>
+
 <div class="group-statistics__flex-container">
+    <br>
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle dropdown__button" type="button" data-toggle="dropdown">Refine Graphs</button>
+        <ul class="dropdown-menu">
+            <li th:each="dateRefineOption: ${dateRefiningOptions}">
+                <a class="dropdown__link" th:text="${dateRefineOption.getTitle()}" th:attr="onclick=|selectRefinement('${dateRefineOption.getStartDate()}', '${dateRefineOption.getEndDate()}')|"></a>
+            </li>
+        </ul>
+    </div>
     <div class="skills-categories-chart__flex-container">
         <div id="group-chart__categories-chart"></div>
         <div id="group-chart__skills-chart"></div>
+        <div id="group-chart__evidence-chart"></div>
     </div>
-    <div id="group-chart__evidence-chart"></div>
 </div>
 

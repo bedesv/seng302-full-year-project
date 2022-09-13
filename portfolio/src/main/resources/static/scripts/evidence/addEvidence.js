@@ -20,6 +20,7 @@ function checkValid() {
                 &&document.getElementById("flex-check--service").checked===(originalCategories.includes("SERVICE"))
                 &&arraysMatch(originalEvidenceSkills, skillList)
                 //&&arraysMatch(originalEvidenceUsers, userList)
+                &&originalCommitList === commitList
             );
     }
 }
@@ -77,6 +78,29 @@ function removeLastUser() {
 
 function removeUser(user) {
     userList.splice(userList.indexOf(user), 1);
+}
+
+function saveCommitChanges() {
+    newCommits = [];
+    for (const commit of commitList) {
+        if (!ALL_COMMITS[commit] && ORIGINAL_COMMITS[commit]) {
+            newCommits.push(commit);
+        }
+    }
+    for (child of document.getElementById("commit-selection-box").children) {
+        checkbox = child.children[1];
+        if (checkbox.checked) {
+            newCommits.push(checkbox.id);
+        }
+    }
+    commitList = newCommits;
+    checkValid();
+    updateCommitsInDOM(commitList);
+}
+
+function removeCommit(commit) {
+    commitList.splice(commitList.indexOf(commit), 1);
+    checkValid();
 }
 
 function saveSkillEdit(oldSkill, newSkill) {
@@ -188,6 +212,34 @@ function clickUserXButton(tag) {
     }
 }
 
+// Remove a commit when the 'x' button is clicked
+function clickCommitXButton(commit) {
+    removeCommit(commit);
+    updateCommitsInDOM(commitList);
+}
+
+function submitForm() {
+    saveSkillsOnSubmit();
+    document.getElementById("evidence-form__form").requestSubmit();
+}
+
+function saveSkillsOnSubmit() {
+    let value = document.getElementById("skills-input").value;
+    document.getElementById("skills-input").value = "";
+    document.getElementById("skills-input").placeholder = '';
+    value = value.replace(/_+/g, '_');
+    let skills = value.split(" ");
+    let shouldUpdateSkills = false;
+    for (let skill of skills) {
+        let trimmedSkill = skill.replaceAll("_", " ").trim().replaceAll(" ", "_");
+        if (trimmedSkill !== "") {
+            shouldUpdateSkills = true;
+            addToSkills(trimmedSkill);
+        }
+    }
+    updateSkillTagsInDOM(skillList);
+}
+
 // Listen for input so the tags and autocomplete can be triggered
 document.getElementById("skills-input").addEventListener("input", (event) => {
     event.target.style.width = event.target.value.length > 8 ? event.target.value.length + "ch" : "80px";
@@ -272,7 +324,6 @@ function updateHiddenFields() {
         skillChanges += " ";
     }
     document.getElementById("evidence-form__hidden--change-skills-field").value = skillChanges;
-    console.log(skillChanges);
 }
 
 // Updates the tags shown before the skills input list to reflect the list of tags given.
@@ -294,6 +345,44 @@ function updateSkillTagsInDOM(tags) {
                                                           </div>
                                                         </div>`)
         parent.insertBefore(element, skillInput);
+    }
+}
+
+// Updates the list of commits the user has linked to their piece of evidence.
+function updateCommitsInDOM(commits) {
+    let commitObjects = [];
+    for (const tag of commits) {
+        commit = ALL_COMMITS[tag];
+        if (!commit) {
+            commit = ORIGINAL_COMMITS[tag];
+        }
+        commitObjects.push(commit);
+    }
+    let commitString = JSON.stringify(commitObjects);
+    document.getElementById("evidence-form__hidden-commits-field").value = commitString;
+
+    let parent = document.getElementById("commit-container");
+    while (parent.childNodes.length > 0) {
+        parent.removeChild(parent.firstChild);
+    }
+    for (let tag of commits) {
+        commit = ALL_COMMITS[tag];
+        if (!commit) {
+            console.log(ORIGINAL_COMMITS);
+            commit = ORIGINAL_COMMITS[tag];
+        }
+        let element = createElementFromHTML(`<div class="skill-tag-con">
+                                              <div class="skill-tag">
+                                                <div class="commit-tag-inside">
+                                                   <div class="commit-tag-text">
+                                                       <p class="strip-margin">${sanitizeHTML(commit.description)}</p>
+                                                       <p class="commit-author strip-margin"> ${sanitizeHTML(commit.author)}</p>
+                                                   </div>
+                                                  <i class="bi bi-x" onclick="clickCommitXButton('${sanitizeHTML(tag)}')"></i>
+                                                </div>
+                                              </div>
+                                            </div>`)
+        parent.appendChild(element);
     }
 }
 
@@ -524,6 +613,20 @@ document.getElementById("users-input").dispatchEvent(new Event('input', {
     cancelable: true,
 }))
 
+
+var commitsModal = document.getElementById('add-evidence-commits__modal')
+commitsModal.addEventListener('show.bs.modal', function (event) {
+    for (child of document.getElementById("commit-selection-box").children) {
+        id = child.children[1].id;
+        if (commitList.includes(id)) {
+            child.children[1].checked = true;
+        } else {
+            child.children[1].checked = false;
+        }
+    }
+})
+
+
 function arraysMatch(original,newList) {
     //split the original string into a list
     let originalList = original.split(" ");
@@ -625,3 +728,14 @@ function removeWebLink(webLinkIndex) {
         addWebLinkToDOM(webLinks[i], i);
     }
 }
+
+// Event listeners for the title and description fields to let the user know why the submit button is greyed out.
+document.getElementById("evidence-form__title-field").addEventListener("input", (event) => {
+    event.target.reportValidity();
+});
+
+document.getElementById("evidence-form__description-field").addEventListener("input", (event) => {
+    event.target.reportValidity();
+});
+
+updateCommitsInDOM(commitList);

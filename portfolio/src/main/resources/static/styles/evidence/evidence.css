@@ -266,3 +266,37 @@ html {
     color: red;
     margin-left: 15px;
 }
+
+.evidence-form__commits-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.evidence-form__commits-link-container {
+    font-size: 14px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 5px;
+}
+
+.evidence-form__commits-date-author-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    font-size: 14px;
+}
+
+.evidence-form__commits-author .evidence-form__commits-date .evidence-form__commits-message {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+p {
+    margin: 0 !important;
+    padding: 0 !important;
+}
