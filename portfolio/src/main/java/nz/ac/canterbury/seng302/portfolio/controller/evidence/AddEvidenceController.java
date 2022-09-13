@@ -286,7 +286,6 @@ public class AddEvidenceController {
      * @param projectId The project the user has selected
      * @param userId The id of the user
      * @return A list of all commits in repositories the user has access to
-     * @return A list of all commits in repositories the user has access to
      */
     private List<Commit> getCommitList(int projectId, int userId) {
         List<Group> groups = groupsService.getAllGroupsInProject(projectId);
