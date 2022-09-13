@@ -4,22 +4,31 @@ import com.google.common.annotations.VisibleForTesting;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
+import nz.ac.canterbury.seng302.portfolio.model.project.DateRefineOption;
+import nz.ac.canterbury.seng302.portfolio.model.project.Project;
+import nz.ac.canterbury.seng302.portfolio.model.project.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
+import nz.ac.canterbury.seng302.portfolio.service.project.SprintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupChartDataService {
+
     @Autowired
     private EvidenceService evidenceService;
 
+    @Autowired
+    private SprintService sprintService;
 
     /**
      * Iterates through all group members then the members' pieces of evidence then the skills within those evidence
@@ -45,7 +54,16 @@ public class GroupChartDataService {
                 }
             }
         }
-        return skillCounts;
+        // Sorts map by skill amount and caps the new map at 10 elements.
+        Map<String, Integer> result = skillCounts.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .limit(10)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        return result;
     }
 
 
@@ -55,7 +73,7 @@ public class GroupChartDataService {
      * @param group the group object that the data is wanted for
      * @return A map of categories to their occurrences in the group's pieces of evidence
      */
-    public Map<String, Integer> getGroupCategoryInfo(Group group) {
+    public Map<String, Integer> getGroupCategoryInfo(Group group, Date startDate, Date endDate) {
         int parentProjectId = group.getParentProject();
 
         // Initialise the hashmap to have a count of 0 for every category
@@ -67,16 +85,17 @@ public class GroupChartDataService {
         for (User user : group.getMembers()) {
             // Iterate through all of that user's evidence for the groups project
             for (PortfolioEvidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
-
-                // Increase the count of the category by 1 if the piece of evidence has that category
-                if (e.getCategories().contains(Categories.SERVICE)) {
-                    categoryCounts.merge("Service", 1, Integer::sum);
-                }
-                if (e.getCategories().contains(Categories.QUANTITATIVE)) {
-                    categoryCounts.merge("Quantitative", 1, Integer::sum);
-                }
-                if (e.getCategories().contains(Categories.QUALITATIVE)) {
-                    categoryCounts.merge("Qualitative", 1, Integer::sum);
+                if(!startDate.after(e.getDate()) && !endDate.before(e.getDate())) {
+                    // Increase the count of the category by 1 if the piece of evidence has that category
+                    if (e.getCategories().contains(Categories.SERVICE)) {
+                        categoryCounts.merge("Service", 1, Integer::sum);
+                    }
+                    if (e.getCategories().contains(Categories.QUANTITATIVE)) {
+                        categoryCounts.merge("Quantitative", 1, Integer::sum);
+                    }
+                    if (e.getCategories().contains(Categories.QUALITATIVE)) {
+                        categoryCounts.merge("Qualitative", 1, Integer::sum);
+                    }
                 }
             }
         }
@@ -224,5 +243,22 @@ public class GroupChartDataService {
     @VisibleForTesting
     protected EvidenceService getEvidenceService() {
         return evidenceService;
+    }
+
+    /**
+     * Set dropdown options for the
+     * @param model Global model
+     * @param project current project
+     */
+    public void setDateRefiningOptions (Model model, Project project) {
+        List<DateRefineOption> dateRefineOptions = new ArrayList<>();
+        dateRefineOptions.add(new DateRefineOption("Whole Project", project.getStartDate(), project.getEndDate()));
+        List<Sprint> sprints = sprintService.getSprintsByProjectInOrder(project.getId());
+        if (!sprints.isEmpty()){
+            for (Sprint sprint : sprints) {
+                dateRefineOptions.add(new DateRefineOption(sprint.getLabel(), sprint.getStartDate(), sprint.getEndDate()));
+            }
+        }
+        model.addAttribute("dateRefiningOptions", dateRefineOptions);
     }
 }

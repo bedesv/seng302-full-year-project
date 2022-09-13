@@ -9,6 +9,7 @@ window.onresize = updateAllCharts
  */
 async function updateAllCharts() {
     await updateCategoriesChart();
+    await updateSkillsChart();
 }
 
 /**
@@ -18,14 +19,16 @@ async function updateAllCharts() {
 async function fetchChartData(dataType) {
     let url;
     if (dataType === 'categories') {
-        url = new URL (`${CONTEXT}/group-${GROUP_ID}-categoriesData`);
+        url = new URL (`${CONTEXT}/group-${GROUP_ID}-categoriesData?`);
     }
-    return await fetch(url, {
-        method: "GET"
+    if (dataType === 'skills') {
+        url = new URL (`${CONTEXT}/group-${GROUP_ID}-skillsData?`);
+    }
+    return await fetch(url+new URLSearchParams({startDateString: START_DATE, endDateString: END_DATE}), {
+        method: "GET",
     }).then(res => {
         return res.json();
     });
-
 }
 
 /**
@@ -48,13 +51,41 @@ async function updateCategoriesChart() {
     let options = {
         title: 'Categories',
         pieHole: 0.2,
+        titleTextStyle: {fontSize: 20},
         backgroundColor: { fill:'transparent' },
-        pieSliceTextStyle: {color: 'black'}
-
+        pieSliceTextStyle: {color: 'black'},
     };
 
-    // Create the chart
+    // Create the categories chart
     let chart = new google.visualization.PieChart(document.getElementById('group-chart__categories-chart'));
+    chart.draw(data, options);
+}
+
+/**
+ * Fetches categories data from the backend then creates a pie chart
+ * with the received data
+ */
+async function updateSkillsChart() {
+    // Fetch updated chart data
+    let chartData = await fetchChartData('skills')
+
+    // Convert the json data to a format Google Chart can read
+    let data = new google.visualization.DataTable();
+    data.addColumn('string', 'Skills');
+    data.addColumn('number', 'Number of Skills');
+    for (let key in chartData) {
+        data.addRow([key, chartData[key]]);
+    }
+
+    // Specify options for the column chart
+    let options = {
+        title: 'Top 10 Skills',
+        titleTextStyle: {fontSize: 20},
+        backgroundColor: { fill:'transparent' },
+    };
+
+    // Create the categories chart
+    let chart = new google.visualization.ColumnChart(document.getElementById('group-chart__skills-chart'));
     chart.draw(data, options);
 }
 
@@ -114,5 +145,18 @@ async function saveGroupRepositorySettings() {
     const groupRepositoryWrapper = document.getElementById("repository_container")
     groupRepositoryWrapper.innerHTML = updatedRepositoryInformation
     return false;
+}
+
+/**
+ * Called in html file, don't remove!
+ * Updates all charts with new values
+ * @param startDate new start date
+ * @param endDate new end date
+ */
+async function selectRefinement(startDate, endDate){
+    START_DATE = startDate;
+    END_DATE = endDate;
+    await updateCategoriesChart();
+    await updateSkillsChart();
 }
 
