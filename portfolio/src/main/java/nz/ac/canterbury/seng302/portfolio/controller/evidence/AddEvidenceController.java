@@ -192,6 +192,7 @@ public class AddEvidenceController {
 
         try {
             addWebLinksToEvidence(evidence, webLinkLinks, webLinkNames);
+            System.out.println(evidence.getWebLinks());
             evidenceService.saveEvidence(evidence);
         } catch (IllegalArgumentException exception) {
             if (Objects.equals(exception.getMessage(), "Title not valid")) {
