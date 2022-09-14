@@ -113,10 +113,11 @@ public class GroupChartDataService {
 
         // Iterate through every user in the group and add the number of evidence they have produced for the given project
         for (User user : group.getMembers()) {
+            evidenceCountsByMember.put(user.getId() + " " + user.getFullName(), 0);
             // Iterate through all of that user's evidence for the groups project
             for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
                 if (!startDate.after(e.getDate()) && !endDate.before(e.getDate())) {
-                    evidenceCountsByMember.put(user.getId() + " " + user.getFullName(), evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId).size());
+                    evidenceCountsByMember.merge(user.getId() + " " + user.getFullName(), 1, Integer::sum);;
                 }
             }
         }

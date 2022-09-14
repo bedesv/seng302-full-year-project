@@ -137,6 +137,7 @@ class GroupChartDataServiceTests {
         testUserList.add(testUser1);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
         Evidence testEvidence1 = new Evidence();
+        testEvidence1.setDate(Date.valueOf("2022-01-15"));
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
@@ -156,6 +157,7 @@ class GroupChartDataServiceTests {
         testUserList.add(testUser2);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
         Evidence testEvidence1 = new Evidence();
+        testEvidence1.setDate(Date.valueOf("2022-01-15"));
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1), List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
@@ -175,14 +177,16 @@ class GroupChartDataServiceTests {
         testUser2.setLastName("Two");
         testUserList.add(testUser1);
         testUserList.add(testUser2);
+
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
         Evidence testEvidence1 = new Evidence();
+        testEvidence1.setDate(Date.valueOf("2022-01-30"));
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1), new ArrayList<>()).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
         groupChartDataService.setEvidenceService(mockedEvidenceService);
         Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataCompareMembers(testGroup, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
-
+        System.out.println(result);
         assertEquals(1, result.get(testUser1.getId() + " " + testUser1.getFirstAndLast()));
         assertEquals(0, result.get(testUser2.getId() + " " + testUser2.getFirstAndLast()));
     }
