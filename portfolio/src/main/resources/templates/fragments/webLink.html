@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <div class="web-links" th:each="web: ${webLinks}">
-  <i th:id="${webLinks.indexOf(web)}" class="bi bi-pencil-fill" data-bs-toggle="modal"
+  <i th:if="${owner}" th:id="${webLinks.indexOf(web)}" class="bi bi-pencil-fill" data-bs-toggle="modal"
      th:data-bs-target="'#addingWeblink_' + ${evidenceId}"
      th:data-web-link-name="${web.getName}"
      th:data-web-link-link="${web.getLink}"

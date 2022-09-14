@@ -31,6 +31,17 @@
         <div class="evidence__details collapse" th:id="evidence_ + ${evidence.getId}">
             <div class="evidence__details--expanded flex-column" >
                 <h4 class="evidence__description" th:text="${evidence.getDescription} "></h4>
+                <div class="user-tag-con">
+                    <div class="user-tag" th:each="user: ${evidence.getLinkedUsers()}">
+                        <div class="user-tag-inside">
+                            <img class="user-tag-image" th:src="${user.getProfileImagePath()}" alt="Profile Photo">
+                            <div class="user-tag-text" >
+                                <a class="user-tag-fullName" th:href="@{profile-{id}(id=${user.getId()})}" th:text="${user.getFullName()}"></a>
+                                <p class="user-tag-nickname" th:text="${user.getUsername()}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="evidence__categories">
                     <a th:each="category: ${evidence.getCategories}" class="category__link" th:text="${category}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-categories?category=' + ${category}"></a>
                 </div>
@@ -59,7 +70,7 @@
                       <h4 class="web-link-title">Web Links</h4>
                     </div>
                     <div class="evidence__button-wrapper flex-row">
-                      <div th:if="${evidence.getNumberWeblinks() <  maxWeblinks}">
+                      <div th:if="${(evidence.getNumberWeblinks() <  maxWeblinks) && owner}">
                         <button id="weblink-button" type="button" class="btn-fill-primary" data-bs-toggle="modal"
                                 th:data-bs-target="'#addingWeblink_' + ${evidence.getId}" th:data-evidenceId="${evidence.getId}"
                                 onclick="setIndex(-1); clearModel(this.getAttribute('data-evidenceId'))">

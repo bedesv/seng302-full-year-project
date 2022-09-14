@@ -3,11 +3,14 @@ package nz.ac.canterbury.seng302.portfolio.service.evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Commit;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
+import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
+import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
+import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +29,11 @@ public class EvidenceService {
     private EvidenceRepository repository;
 
     @Autowired
+    private UserAccountClientService userService;
+
+    @Autowired
     private ProjectService projectService;
+
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
 
     /**
@@ -64,6 +71,17 @@ public class EvidenceService {
         }
     }
 
+    public List<PortfolioEvidence> convertEvidenceForPortfolio(List<Evidence> evidenceList) {
+        List<PortfolioEvidence> portfolioEvidenceList = new ArrayList<>();
+        for (Evidence evidence: evidenceList) {
+            List<User> userList = new ArrayList<>();
+            for (int linkedUserId: evidence.getLinkedUsers()) {
+                userList.add(userService.getUserAccountById(linkedUserId));
+            }
+            portfolioEvidenceList.add(new PortfolioEvidence(evidence, userList));
+        }
+        return portfolioEvidenceList;
+    }
     /**
      * Get list of all pieces of evidence for a specific portfolio.
      * Portfolios can be identified by a user and project.
@@ -71,13 +89,14 @@ public class EvidenceService {
      * @param projectId The project for this portfolio
      * @return A list of all evidence relating to this portfolio. It is ordered chronologically.
      */
-    public List<Evidence> getEvidenceForPortfolio(int userId, int projectId) {
-        List<Evidence> evidence = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(userId, projectId);
-        evidence.sort(Comparator.comparing(Evidence::getDate));
-        Collections.reverse(evidence);
+    public List<PortfolioEvidence> getEvidenceForPortfolio(int userId, int projectId) {
+        List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(userId, projectId);
+        evidenceList.sort(Comparator.comparing(Evidence::getDate));
+        Collections.reverse(evidenceList);
+        List<PortfolioEvidence> portfolioEvidenceList =  convertEvidenceForPortfolio(evidenceList);
         String message = "Evidence for user " + userId + " and project " + projectId + " retrieved";
         PORTFOLIO_LOGGER.info(message);
-        return evidence;
+        return portfolioEvidenceList;
     }
 
     /**
@@ -114,15 +133,13 @@ public class EvidenceService {
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException(message);
         }
-        Pattern fieldPattern = Pattern.compile("[a-zA-Z]+");
-        Matcher titleMatcher = fieldPattern.matcher(evidence.getTitle());
-        if (!titleMatcher.find() || evidence.getTitle().length() < 2 || evidence.getTitle().length() > 64) {
+
+        if (!ValidationUtil.titleContainsAtleastOneLanguageCharacter(evidence.getTitle()) || evidence.getTitle().length() < 2 || evidence.getTitle().length() > 64) {
             String message = "Evidence title (" + evidence.getTitle() + ") is invalid";
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException("Title not valid");
         }
-        Matcher descriptionMatcher = fieldPattern.matcher(evidence.getDescription());
-        if (!descriptionMatcher.find() || evidence.getDescription().length() < 50 || evidence.getDescription().length() > 1024) {
+        if (!ValidationUtil.titleContainsAtleastOneLanguageCharacter(evidence.getDescription()) || evidence.getDescription().length() < 50 || evidence.getDescription().length() > 1024) {
             String message = "Evidence description (" + evidence.getDescription() + ") is invalid";
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException("Description not valid");
@@ -147,6 +164,49 @@ public class EvidenceService {
     }
 
     /**
+     * Update a piece of evidence with a set of users. Copies the piece of evidence to any new users added.
+     * @param evidence The evidence to update
+     * @param userIds The users to add to the piece of evidence
+     */
+    public void updateEvidenceUsers(Evidence evidence, Set<Integer> userIds) {
+
+        Set<Integer> oldLinkedUsers = evidence.getLinkedUsers();
+        Set<Integer> usersToAdd = new HashSet<>(userIds);
+        usersToAdd.removeAll(oldLinkedUsers);
+        usersToAdd.remove(evidence.getOwnerId());
+
+        evidence.setLinkedUsers(userIds);
+
+        String skillList;
+        if (!evidence.getSkills().isEmpty()) {
+            skillList = String.join(" ", evidence.getSkills());
+        } else {
+            skillList = "";
+        }
+        Set<Categories> categoriesSet = new HashSet<>(evidence.getCategories());
+
+        for (Integer userId: usersToAdd) {
+            Evidence copiedEvidence = new Evidence(userId, evidence.getProjectId(), evidence.getTitle(), evidence.getDescription(), evidence.getDate(), skillList);
+            copiedEvidence.setCategories(categoriesSet);
+            for (WebLink webLink : evidence.getWebLinks()) {
+                copiedEvidence.addWebLink(new WebLink(webLink.getFullLink(), webLink.getName()));
+            }
+            for (Commit commit : evidence.getCommits()) {
+                copiedEvidence.addCommit(new Commit(commit.getId(), commit.getAuthor(), commit.getDate(), commit.getLink(), commit.getDescription()));
+            }
+            copiedEvidence.setLinkedUsers(new HashSet<>(userIds));
+
+            // This is to make sure that there are no duplicate skills in the other user's portfolio
+            List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(copiedEvidence.getOwnerId(), copiedEvidence.getProjectId());
+            copiedEvidence.conformSkills(getSkillsFromEvidence(evidenceList));
+            String message = "Evidence " + evidence.getId() + " copied to " + userId + "'s portfolio";
+            PORTFOLIO_LOGGER.info(message);
+            repository.save(copiedEvidence);
+        }
+        repository.save(evidence);
+    }
+
+    /**
      * Copies an evidence from the owner to the portfolio of a new user
      * Copies the skills, categories and weblinks of the evidence across as well
      * Conforms the skills to match the existing skills in the new user's portfolio
@@ -157,15 +217,19 @@ public class EvidenceService {
     public void copyEvidenceToNewUser(Integer evidenceId, List<Integer> userIdList) {
         try {
             Evidence evidence = getEvidenceById(evidenceId);
-            String skillList = String.join(" ", evidence.getSkills());
+            String skillList;
+            if (!evidence.getSkills().isEmpty()) {
+                skillList = String.join(" ", evidence.getSkills());
+            } else {
+                skillList = "";
+            }
             Set<Categories> categoriesSet = new HashSet<>(evidence.getCategories());
             for (Integer id: userIdList) {
-                evidence.addUser(id);
+                evidence.addLinkedUsers(id);
             }
 
             for (Integer userId: userIdList) {
-                Evidence copiedEvidence = new Evidence(userId, evidence.getProjectId(), evidence.getTitle(), evidence.getDescription(), evidence.getDate());
-                copiedEvidence.addSkill(skillList);
+                Evidence copiedEvidence = new Evidence(userId, evidence.getProjectId(), evidence.getTitle(), evidence.getDescription(), evidence.getDate(), skillList);
                 copiedEvidence.setCategories(categoriesSet);
 
                 for (WebLink webLink : evidence.getWebLinks()) {
@@ -174,8 +238,8 @@ public class EvidenceService {
                 for (Commit commit : evidence.getCommits()) {
                     copiedEvidence.addCommit(commit);
                 }
-                for (Integer user: evidence.getUsers()) {
-                    copiedEvidence.addUser(user);
+                for (Integer linkedUserId: evidence.getLinkedUsers()) {
+                    copiedEvidence.addLinkedUsers(linkedUserId);
                 }
 
                 // This is to make sure that there are no duplicate skills in the other user's portfolio
@@ -188,7 +252,7 @@ public class EvidenceService {
         } catch (NoSuchElementException e) {
             String message = "Evidence " + evidenceId + " not found";
             PORTFOLIO_LOGGER.error(message);
-            throw new NoSuchElementException("Evidence does not exist");
+            throw new NoSuchElementException(e.getMessage());
         }
     }
 
@@ -200,6 +264,21 @@ public class EvidenceService {
     public List<String> getSkillsFromEvidence(List<Evidence> evidenceList) {
         Set<String> skills = new HashSet<>();
         for (Evidence userEvidence : evidenceList) {
+            skills.addAll(userEvidence.getSkills());
+        }
+        List<String> skillList = new ArrayList<>(skills);
+        skillList.sort(String::compareToIgnoreCase);
+        return skillList;
+    }
+
+    /**
+     * Gets all skills from a list of portfolio evidence. Each skill returned is unique.
+     * @param evidenceList A list of evidence to retrieve skills from.
+     * @return All the skills for that list of evidence.
+     */
+    public Collection<String> getSkillsFromPortfolioEvidence(List<PortfolioEvidence> evidenceList) {
+        Collection<String> skills = new HashSet<>();
+        for (PortfolioEvidence userEvidence : evidenceList) {
             skills.addAll(userEvidence.getSkills());
         }
         List<String> skillList = new ArrayList<>(skills);
@@ -341,7 +420,7 @@ public class EvidenceService {
     }
 
     /**
-     * Retrieve all evidence for a project where skills is null
+     * Retrieve all evidence for a project where skills are null
      * @param projectId of evidence
      * @return list of evidences with no skill
      */

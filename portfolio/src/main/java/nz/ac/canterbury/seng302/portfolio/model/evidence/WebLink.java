@@ -47,6 +47,10 @@ public class WebLink {
         return link;
     }
 
+    public String getFullLink() {
+        return this.isSafe() ? "https://" + this.link : "http://" + this.link;
+    }
+
     public boolean isSafe() {
         return this.safe;
     }

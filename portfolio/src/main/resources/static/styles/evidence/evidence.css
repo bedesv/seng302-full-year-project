@@ -112,6 +112,7 @@ html {
     border: 1px solid var(--color-accent);
     border-radius: 5px;
     background-color: transparent;
+    cursor: pointer;
 }
 
 .evidence-title--icon_container-delete {
@@ -163,7 +164,7 @@ html {
     font-size: 25px;
 }
 
-.evidence-title__child:hover, .evidence__title--icon_container:hover {
+.evidence-title__child:hover, .evidence__title--icon_container:hover, .evidence-title--icon_container-delete:hover {
     color: var(--color-accent);
 }
 
@@ -304,4 +305,46 @@ html {
 p {
     margin: 0 !important;
     padding: 0 !important;
+}
+
+.user-tag-con {
+    display: inline-flex;
+    flex-wrap: wrap;
+    margin: 4px;
+}
+
+.user-tag {
+    width: fit-content;
+    height: fit-content;
+    background-color: var(--color-primary);
+    border: 1px solid var(--color-secondary);
+    padding: 2px 4px 2px 4px;
+    display: inline-block;
+    border-radius: 5px;
+    overflow-wrap: anywhere;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.user-tag-inside {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-tag-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+}
+
+.user-tag-text {
+    flex-direction: column;
+    padding-left: 10px
+}
+
+.user-tag-nickname {
+    color: #636363;
 }
