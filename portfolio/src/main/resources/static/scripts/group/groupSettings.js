@@ -83,7 +83,6 @@ async function dataOverTimeChart() {
 
     let options = {
         title: 'Evidence Data Over Time',
-        curveType: 'function',
         legend: { position: 'right' },
         titleTextStyle: {fontSize: 20},
         backgroundColor: { fill:'transparent' },
