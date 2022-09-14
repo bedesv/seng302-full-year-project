@@ -151,7 +151,7 @@ public class GitlabConnectionService {
             GroupRepositorySettings repositorySettings = getGroupRepositorySettings(groupId);
             Pager<Commit> commitPager = gitLabApiConnection.getCommitsApi().getCommits(repositorySettings.getGitlabProjectId(), 1);
             return commitPager.getTotalItems() != 0;
-        } catch (GitLabApiException | NoSuchFieldException exception) {
+        } catch (Exception exception) {
             PORTFOLIO_LOGGER.error(exception.getMessage());
             return false;
         }

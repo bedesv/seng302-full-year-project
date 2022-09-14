@@ -362,9 +362,6 @@ function updateSkillTagsInDOM(tags) {
 
 // Updates the list of commits the user has linked to their piece of evidence.
 function updateCommitsInDOM(commits) {
-    commits.sort((a, b) => {
-        return Date.parse(ALL_COMMITS[a].date) > Date.parse(ALL_COMMITS[b].date)
-    })
     let commitObjects = [];
     for (const tag of commits) {
         commit = ALL_COMMITS[tag];
