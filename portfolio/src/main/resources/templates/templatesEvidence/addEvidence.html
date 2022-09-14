@@ -11,6 +11,7 @@
     <script th:src="@{webjars/bootstrap/5.1.3/js/bootstrap.min.js}"></script>
     <title>Add Evidence</title>
     <script th:inline="javascript">
+        const CONTEXT = [[${@environment.getProperty('PORTFOLIO_CONTEXT')}]];
         const ALL_SKILLS = [[${skillsList}]];
         let ALL_USERS = [];
         let ALL_COMMITS = {};
@@ -22,6 +23,7 @@
         let originalEvidenceSkills = [[${evidenceSkills}]];
         let originalCommits = JSON.parse([[${evidenceCommits}]]);
         let ORIGINAL_COMMITS = {};
+        let currentlyShownCommits = {};
         let commitList = [];
         let originalCommitList = [];
         for (const commit of originalCommits) {
@@ -36,6 +38,10 @@
             originalEvidenceUsers.push(userId.toString());
             userList.push(userId.toString());
         }
+
+        let repositoryUsers = [[${repositoryUsers}]];
+        let sprints = [[${sprints}]];
+        let branches = [[${branches}]];
     </script>
 
     <script type="text/javascript" th:inline="javascript" th:each="user, iterInfo: ${users}">
@@ -59,6 +65,7 @@
         }
         id = [[${commit.id}]];
         ALL_COMMITS[id] = commit;
+        currentlyShownCommits[id] = commit;
     </script>
 
 </head>
@@ -155,7 +162,7 @@
             <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="text" id="evidence-form__webLink-link" onkeyup="checkValid()" placeholder="Web Link"/>
             <P th:if="${webLinkError}" style="color: red">Incorrect Web Link Format</P>
             <div th:if="${evidenceId == -1 || evidenceId =='-1'}" class="evidence__button-wrapper flex-row">
-              <button id="weblink-button" type="button" class="btn-fill-primary" onclick="addWebLinks()">
+              <button id="weblink-button" type="button" class="btn btn-primary" onclick="addWebLinks()">
                 Add Weblink
               </button>
             </div>
@@ -198,10 +205,20 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header add-evidence-commits__header">
-                    <h5 class="modal-title" id="add-evidence-commits__modal--label">Add Commits</h5>
+                    <h4 class="modal-title" id="add-evidence-commits__modal--label">Add Commits</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div th:if="${commits.size} > 0" class="modal-body add-evidence-commits__wrapper">
+                <div th:if="${displayCommits}" class="modal-body add-evidence-commits__wrapper">
+                    <div id="commit-filter-box__wrapper">
+                        <div id="commit-filter-box">
+                            The rest of this div will be filled in by Javascript. The group id is needed to send
+                            the request for the other information
+                            <select class="form-select" id="commit-filter__group-selection" aria-label="group" onchange="updateCommitModal(); searchCommits();">
+                                <option th:value="${mainGroup.getGroupId()}" th:text="${mainGroup.getShortName()}" selected></option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="commit-filter__save-button" onclick="saveCommitChanges()" data-bs-dismiss="modal">Save Changes</button>
                     <div id="commit-selection-box">
                         <div th:each="commit: ${commits}" th:id="${commit.id}" class="row commit-tag-outside">
                             <div class="col-11 commit-modal-inside">
@@ -212,9 +229,8 @@
                             <input class="col-auto" th:id="${commit.id}" type="checkbox"/>
                         </div>
                     </div>
-                    <button class="btn btn-primary" onclick="saveCommitChanges()" data-bs-dismiss="modal">Save Changes</button>
                 </div>
-                <div th:if="${commits.size} == 0" class="modal-body add-evidence-commits__wrapper">
+                <div th:if="${!displayCommits}" class="modal-body add-evidence-commits__wrapper">
                     <div class="evidence-form__error-message">
                         No commits found! Make sure a repository is linked in a group you are in.
                     </div>
@@ -224,5 +240,8 @@
     </div>
 </div>
 <script rel="script" th:src="@{scripts/evidence/addEvidence.js}"></script>
+<script>
+    updateCommitModal();
+</script>
 </body>
 </html>

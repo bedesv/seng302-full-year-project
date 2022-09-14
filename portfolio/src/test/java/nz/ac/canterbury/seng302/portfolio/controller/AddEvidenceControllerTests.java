@@ -10,6 +10,7 @@ import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GitlabConnectionService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupRepositorySettingsService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
+import nz.ac.canterbury.seng302.portfolio.service.project.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.user.PortfolioUserService;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
@@ -70,6 +71,9 @@ class AddEvidenceControllerTests {
 
     @MockBean
     GitlabConnectionService gitlabConnectionService;
+
+    @MockBean
+    SprintService sprintService;
 
     /**
      * Helper function to create a valid AuthState given an ID

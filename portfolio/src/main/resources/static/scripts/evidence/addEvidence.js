@@ -85,9 +85,9 @@ function removeUser(user) {
 
 function saveCommitChanges() {
     newCommits = [];
-    for (const commit of commitList) {
-        if (!ALL_COMMITS[commit] && ORIGINAL_COMMITS[commit]) {
-            newCommits.push(commit);
+    for (const commitId of commitList) {
+        if (!currentlyShownCommits[commitId]) {
+            newCommits.push(commitId);
         }
     }
     for (child of document.getElementById("commit-selection-box").children) {
@@ -370,17 +370,15 @@ function updateCommitsInDOM(commits) {
         }
         commitObjects.push(commit);
     }
-    let commitString = JSON.stringify(commitObjects);
-    document.getElementById("evidence-form__hidden-commits-field").value = commitString;
+    document.getElementById("evidence-form__hidden-commits-field").value = JSON.stringify(commitObjects);
 
     let parent = document.getElementById("commit-container");
     while (parent.childNodes.length > 0) {
         parent.removeChild(parent.firstChild);
     }
     for (let tag of commits) {
-        commit = ALL_COMMITS[tag];
+        let commit = ALL_COMMITS[tag];
         if (!commit) {
-            console.log(ORIGINAL_COMMITS);
             commit = ORIGINAL_COMMITS[tag];
         }
         let element = createElementFromHTML(`<div class="skill-tag-con">
@@ -395,6 +393,44 @@ function updateCommitsInDOM(commits) {
                                               </div>
                                             </div>`)
         parent.appendChild(element);
+    }
+}
+
+// Updates the commits shown in the commit selection modal
+function updateSearchCommitsInDOM(newCommits) {
+
+    let parent = document.getElementById("commit-selection-box")
+    while (parent.childNodes.length > 0) {
+        parent.removeChild(parent.firstChild);
+    }
+    currentlyShownCommits = {}
+    if (newCommits.length === 0) {
+        let element = createElementFromHTML(`<div class="row commit-tag-outside">
+                                                <div class="col-11 commit-modal-inside">
+                                                    <p class="strip-margin" >No commits found</p>
+                                                </div>
+                                            </div>`)
+        parent.appendChild(element)
+    } else {
+        for (let newCommit of newCommits) {
+            let element = createElementFromHTML(`<div id="${sanitizeHTML(newCommit.id)}" class="row commit-tag-outside">
+                                                <div class="col-11 commit-modal-inside">
+                                                    <p class="strip-margin" >${sanitizeHTML(newCommit.description)}</p>
+                                                    <p class="commit-author strip-margin" >${sanitizeHTML(newCommit.author)} - ${sanitizeHTML(newCommit.dateString)}</p>
+                                                </div>
+                                                <input class="col-auto" id="${sanitizeHTML(newCommit.id)}" type="checkbox" ${commitList.includes(newCommit.id) ? "checked" : ""}/>
+                                            </div>`)
+            parent.appendChild(element)
+            let commit = {
+                author: newCommit.author,
+                description: newCommit.description,
+                date: newCommit.date,
+                link: newCommit.link,
+                id: newCommit.id
+            }
+            ALL_COMMITS[newCommit.id] = commit;
+            currentlyShownCommits[newCommit.id] = commit;
+        }
     }
 }
 
@@ -630,11 +666,7 @@ var commitsModal = document.getElementById('add-evidence-commits__modal')
 commitsModal.addEventListener('show.bs.modal', function (event) {
     for (child of document.getElementById("commit-selection-box").children) {
         id = child.children[1].id;
-        if (commitList.includes(id)) {
-            child.children[1].checked = true;
-        } else {
-            child.children[1].checked = false;
-        }
+        child.children[1].checked = commitList.includes(id);
     }
 })
 
@@ -753,3 +785,84 @@ document.getElementById("evidence-form__description-field").addEventListener("in
 });
 
 updateCommitsInDOM(commitList);
+
+async function updateCommitModal() {
+    let url;
+    url = new URL (`${CONTEXT}/evidenceCommitFilterBox`)
+    url.searchParams.append("groupId", document.getElementById("commit-filter__group-selection").value)
+    document.getElementById("commit-filter-box__wrapper").innerHTML = await fetch(url, {
+        method: "GET"
+    }).then(res => {
+        return res.text();
+    });
+    await searchCommits();
+
+    // Event listeners for the search start and end dates to let the user know if the dates they have selected are valid or not
+    // when they click off them.
+    document.getElementById("commit-filter__start-date").addEventListener("focusout", (event) => {
+        event.target.reportValidity();
+    });
+
+    document.getElementById("commit-filter__end-date").addEventListener("focusout", (event) => {
+        event.target.reportValidity();
+    });
+}
+
+/**
+ * Updates the commits shown in the commit
+ */
+async function searchCommits() {
+    let url;
+    url = new URL (`${CONTEXT}/searchFilteredCommits`);
+    url.searchParams.append("groupId", document.getElementById("commit-filter__group-selection").value);
+    url.searchParams.append("startDate", document.getElementById("commit-filter__start-date").value);
+    url.searchParams.append("endDate", document.getElementById("commit-filter__end-date").value);
+    url.searchParams.append("branch", document.getElementById("commit-filter__branch-selection").value);
+    url.searchParams.append("commitAuthor", document.getElementById("commit-filter__member-selection").value);
+    url.searchParams.append("commitId", document.getElementById("commit-filter__id-search").value);
+    const newCommits = await fetch(url, {
+        method: "GET"
+    }).then(res => {
+        return res.json();
+    });
+    updateSearchCommitsInDOM(newCommits);
+}
+
+/**
+ * Updates the soonest end date which the commit filter may be
+ */
+async function updateMinEndDate() {
+    let startDate = document.getElementById("commit-filter__start-date").value;
+    document.getElementById("commit-filter__end-date").setAttribute('min', startDate);
+    document.getElementById("commit-filter__sprint-selection").value = '-1';
+    await searchCommits();
+}
+
+/**
+ * Updates the latest start date which the commit filter may be
+ */
+async function updateMaxStartDate() {
+    let endDate = document.getElementById("commit-filter__end-date").value;
+    document.getElementById("commit-filter__start-date").setAttribute('max', endDate);
+    document.getElementById("commit-filter__sprint-selection").value = '-1';
+}
+
+/**
+ * Finds the selected sprint and sets the start and end date of the commit search date range to be the start and
+ * end date of the selected sprint. Also updates the min and max dates for the date pickers.
+ */
+function updateCommitSearchDates() {
+    const requiredSprintId = Number.parseInt(document.getElementById("commit-filter__sprint-selection").value, 10);
+    if (requiredSprintId !== -1) {
+        for (let sprint of sprints) {
+            if (sprint.id === requiredSprintId) {
+                const startDate = sprint.startDate.slice(0, 10);
+                const endDate = sprint.endDate.slice(0, 10);
+                document.getElementById("commit-filter__start-date").value = startDate;
+                document.getElementById("commit-filter__start-date").setAttribute('max', endDate);
+                document.getElementById("commit-filter__end-date").value = endDate;
+                document.getElementById("commit-filter__end-date").setAttribute('min', startDate);
+            }
+        }
+    }
+}

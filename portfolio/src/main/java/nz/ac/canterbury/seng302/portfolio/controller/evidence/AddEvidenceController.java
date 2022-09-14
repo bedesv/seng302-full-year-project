@@ -16,10 +16,12 @@ import nz.ac.canterbury.seng302.portfolio.service.group.GitlabConnectionService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupRepositorySettingsService;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
+import nz.ac.canterbury.seng302.portfolio.service.project.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.user.*;
 import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.models.Branch;
+import org.gitlab4j.api.models.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,9 @@ public class AddEvidenceController {
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private SprintService sprintService;
 
     @Autowired
     private UserAccountClientService userService;
@@ -282,32 +287,94 @@ public class AddEvidenceController {
     }
 
     /**
-     * Returns a list of commits for a user based on a project.
+     * Adds information to the model for the repositories of groups a user is in.
      * @param projectId The project the user has selected
      * @param userId The id of the user
-     * @return A list of all commits in repositories the user has access to
+     * @param model The model to add information to
      */
-    private List<Commit> getCommitList(int projectId, int userId) {
-        List<Group> groups = groupsService.getAllGroupsInProject(projectId);
-        Map<String, Commit> commitMap = new HashMap<>();
-        for (Group group : groups) {
-            for (User user : group.getMembers()) {
-                if (user.getId() == userId) {
-                    List<org.gitlab4j.api.models.Commit> commits = new ArrayList<>();
-                    try {
-                        commits = gitlabConnectionService.getAllCommits(group.getGroupId());
-                    } catch (GitLabApiException | NoSuchFieldException | RuntimeException e) {
-                        PORTFOLIO_LOGGER.error(e.getMessage());
-                    }
-                    for (org.gitlab4j.api.models.Commit commit : commits) {
-                        Commit portfolioCommit = new Commit(commit.getId(), commit.getCommitterName(),
-                                commit.getCommittedDate(), commit.getWebUrl(), commit.getMessage());
-                        commitMap.put(commit.getId(), portfolioCommit);
+    private void addRepositoryInfoToModel(int projectId, int userId, int groupId, Model model) {
+        List<Group> groups = groupsService.getAllGroupsUserIn(projectId, userId);
+        List<Group> groupsWithCommits = new ArrayList<>();
+        List<Commit> commitList = new ArrayList<>();
+        List<Member> members = new ArrayList<>();
+        List<Branch> branches = new ArrayList<>();
+        Branch defaultBranch = null;
+        Group mainGroup = null;
+        Date startDate = null;
+        Date actualEndDate = null;
+        boolean displayCommits = false;
+        if (!groups.isEmpty()) {
+            // Try to set the selected group to the given group id
+            for (Group g : groups) {
+                if (gitlabConnectionService.repositoryHasCommits(g.getGroupId())) {
+                    groupsWithCommits.add(g);
+                    displayCommits = true;
+                }
+                if (g.getGroupId() == groupId) {
+                    mainGroup = g;
+                }
+            }
+
+
+            // If at least one of the user's groups has a repo with commits
+            if (groupsWithCommits.size() > 0) {
+
+                // If selected group is null, set the selected group to the first group in the list
+                if (mainGroup == null) {
+                    mainGroup = groupsWithCommits.get(0);
+                }
+                List<org.gitlab4j.api.models.Commit> commits = new ArrayList<>();
+
+                // Calculate the current date and the date two weeks ago as the default date range for the search
+                Calendar calendar = Calendar.getInstance();
+                actualEndDate = calendar.getTime();
+                calendar.add(Calendar.DATE, 1); // Add one day because end date isn't inclusive
+                Date endDate = calendar.getTime();
+                calendar.add(Calendar.DATE, -15); // Take away 15 days to be two weeks before today
+                startDate = calendar.getTime();
+
+                // Retrieve commits, members and branches from the group's repository
+                try {
+                    commits = gitlabConnectionService.getFilteredCommits(mainGroup.getGroupId(), startDate, endDate, "", "", "");
+                    members = gitlabConnectionService.getAllMembers(mainGroup.getGroupId());
+                    branches = gitlabConnectionService.getAllBranches(mainGroup.getGroupId());
+                } catch (RuntimeException e) {
+                    PORTFOLIO_LOGGER.error(e.getMessage());
+                }
+
+                // Convert the retrieved commits to our own object
+                for (org.gitlab4j.api.models.Commit commit : commits) {
+                    Commit portfolioCommit = new Commit(commit.getId(), commit.getCommitterName(),
+                            commit.getCommittedDate(), commit.getWebUrl(), commit.getMessage());
+                    commitList.add(portfolioCommit);
+                }
+
+                // Figure out what the main branch of the repository is
+                for (Branch branch : branches) {
+                    if (Boolean.TRUE.equals(branch.getDefault())) {
+                        defaultBranch = branch;
                     }
                 }
             }
         }
-        return new ArrayList<>(commitMap.values());
+
+        // Sort the list of commits in reverse chronological order (newest first)
+        commitList.sort(Comparator.comparing(Commit::getDate));
+        Collections.reverse(commitList);
+
+        // Add all the relevant objects to the page model
+        model.addAttribute("commits", commitList);
+        model.addAttribute("displayCommits", displayCommits);
+        model.addAttribute("repositoryUsers", members);
+        model.addAttribute("branches", branches);
+        model.addAttribute("defaultBranch", defaultBranch);
+        model.addAttribute("groups", groupsWithCommits);
+        model.addAttribute("mainGroup", mainGroup);
+        model.addAttribute("sprints", sprintService.getByParentProjectId(projectId));
+        if (displayCommits) {
+            model.addAttribute("startDate", Project.dateToString(startDate, TIMEFORMAT));
+            model.addAttribute("endDate", Project.dateToString(actualEndDate, TIMEFORMAT));
+        }
     }
 
     /**
@@ -335,11 +402,7 @@ public class AddEvidenceController {
             PORTFOLIO_LOGGER.error(e.getMessage());
         }
         model.addAttribute("users", userService.getAllUsersExcept(userId));
-        List<Commit> commits = getCommitList(projectId, userId);
-        commits.sort(Comparator.comparing(Commit::getDate));
-        Collections.reverse(commits);
-        model.addAttribute("commits", commits);
-        model.addAttribute("displayCommits", !commits.isEmpty());
+        addRepositoryInfoToModel(projectId, userId, -1, model);
     }
 
     /**
@@ -352,6 +415,45 @@ public class AddEvidenceController {
         int id = Integer.parseInt(evidenceId);
         evidenceService.deleteById(id);
         return PORTFOLIO_REDIRECT;
+    }
+
+    @GetMapping(value="/evidenceCommitFilterBox")
+    public String getUpdatedCommitFilterBox(@AuthenticationPrincipal AuthState principal, @RequestParam(name="groupId") int groupId, Model model) {
+        User user = userService.getUserAccountByPrincipal(principal);
+        int projectId = portfolioUserService.getUserById(user.getId()).getCurrentProject();
+        addRepositoryInfoToModel(projectId, user.getId(), groupId, model);
+        return "templatesEvidence/commitFilterBox";
+    }
+
+    @GetMapping(value="/searchFilteredCommits")
+    public @ResponseBody List<Commit> searchFilteredCommits(@AuthenticationPrincipal AuthState principal,
+                                              @RequestParam(name="groupId") int groupId,
+                                              @RequestParam(name="startDate") String startDateString,
+                                              @RequestParam(name="endDate") String endDateString,
+                                              @RequestParam(name="branch") String branch,
+                                              @RequestParam(name= "commitAuthor") String commitAuthor,
+                                              @RequestParam(name="commitId") String commitId) {
+        Date startDate = null;
+        Date endDate = null;
+        try {
+            startDate = new SimpleDateFormat(TIMEFORMAT).parse(startDateString);
+            endDate = new SimpleDateFormat(TIMEFORMAT).parse(endDateString);
+            // Add one day to the end date so that both dates on the same day works properly
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(endDate);
+            cal.add(Calendar.DATE, 1);
+            endDate = cal.getTime();
+        } catch (Exception ignored) {
+            // Date parsing didn't work, must be in wrong format
+        }
+        List<Commit> commitList = new ArrayList<>();
+        List<org.gitlab4j.api.models.Commit> commits = gitlabConnectionService.getFilteredCommits(groupId, startDate, endDate, branch, commitAuthor, commitId);
+        for (org.gitlab4j.api.models.Commit commit : commits) {
+            Commit portfolioCommit = new Commit(commit.getId(), commit.getCommitterName(),
+                    commit.getCommittedDate(), commit.getWebUrl(), commit.getMessage());
+            commitList.add(portfolioCommit);
+        }
+        return commitList;
     }
 }
 
