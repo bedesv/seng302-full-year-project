@@ -1201,4 +1201,22 @@ class EvidenceServiceTests {
         assertEquals(1, testEvidence.getNumberCommits());
     }
 
+    // When skills are stripped that contain no special characters
+    @Test
+    void whenStripSkillsWithSpecialCharacters_testStripped() {
+        List<String> skills = new ArrayList<>();
+        skills.add("JUnit");
+        skills.add("C++ 9.0");
+        skills = evidenceService.stripSkills(skills);
+        assertEquals("JUnit", skills.get(0));
+        assertEquals("C 9.0", skills.get(1));
+    }
+
+    // When a weblink is modified with a bad id test that an exception is thrown
+    @Test
+    void whenWebLinkModifiedOnBadEvidence_testExceptionThrown() {
+        WebLink weblink = new WebLink();
+        assertThrows(NoSuchElementException.class, () -> evidenceService.modifyWebLink(-1, weblink, -1));
+    }
+
 }
