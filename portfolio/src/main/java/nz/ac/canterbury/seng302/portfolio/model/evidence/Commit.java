@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.model.evidence;
 
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
+
 import javax.persistence.Embeddable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -16,8 +18,8 @@ public class Commit {
     private String commitNo;
 
     public Commit(String id, String author, Date date, String link, String description) {
-        this.id = id;
-        this.author = author;
+        this.id = ValidationUtil.stripTitle(id);
+        setAuthor(author);
         this.date = date;
         this.link = link;
         setDescription(description);
@@ -36,6 +38,7 @@ public class Commit {
     }
 
     public void setAuthor(String author) {
+        author = ValidationUtil.stripTitle(author);
         this.author = author;
     }
 
@@ -74,6 +77,7 @@ public class Commit {
      * @param description A description to set.
      */
     public void setDescription(String description) {
+        description = ValidationUtil.stripTitle(description);
         if (description.length() > 150) {
             description = description.substring(0, 150) + "...";
         }
