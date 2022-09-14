@@ -301,7 +301,7 @@ public class AddEvidenceController {
         Branch defaultBranch = null;
         Group mainGroup = null;
         Date startDate = null;
-        Date endDate = null;
+        Date actualEndDate = null;
         boolean displayCommits = false;
         if (!groups.isEmpty()) {
             // Try to set the selected group to the given group id
@@ -317,15 +317,16 @@ public class AddEvidenceController {
 
             // If selected group is null, set the selected group to the first group in the list
             if (mainGroup == null) {
-                mainGroup = groups.get(0);
+                mainGroup = groupsWithCommits.get(0);
             }
 
             List<org.gitlab4j.api.models.Commit> commits = new ArrayList<>();
 
             // Calculate the current date and the date two weeks ago as the default date range for the search
             Calendar calendar = Calendar.getInstance();
+            actualEndDate = calendar.getTime();
             calendar.add(Calendar.DATE, 1); // Add one day because end date isn't inclusive
-            endDate = calendar.getTime();
+            Date endDate = calendar.getTime();
             calendar.add(Calendar.DATE, -15); // Take away 15 days to be two weeks before today
             startDate = calendar.getTime();
 
@@ -365,9 +366,11 @@ public class AddEvidenceController {
         model.addAttribute("defaultBranch", defaultBranch);
         model.addAttribute("groups", groupsWithCommits);
         model.addAttribute("mainGroup", mainGroup);
-        model.addAttribute("startDate", Project.dateToString(startDate, TIMEFORMAT));
-        model.addAttribute("endDate", Project.dateToString(endDate, TIMEFORMAT));
         model.addAttribute("sprints", sprintService.getByParentProjectId(projectId));
+        if (displayCommits) {
+            model.addAttribute("startDate", Project.dateToString(startDate, TIMEFORMAT));
+            model.addAttribute("endDate", Project.dateToString(actualEndDate, TIMEFORMAT));
+        }
     }
 
     /**
