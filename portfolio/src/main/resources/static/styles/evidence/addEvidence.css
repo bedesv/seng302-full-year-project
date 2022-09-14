@@ -269,6 +269,11 @@ p {
 .commit-author {
     color: #636363;
     font-size: small;
+    overflow-wrap: anywhere;
+}
+
+.commit-description {
+    overflow-wrap: anywhere;
 }
 
 #users-input {

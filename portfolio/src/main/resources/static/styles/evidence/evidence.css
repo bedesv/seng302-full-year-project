@@ -263,6 +263,11 @@ html {
     flex-wrap: wrap;
 }
 
+.evidence__categories {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 #weblink-incorrect {
     color: red;
     margin-left: 15px;
