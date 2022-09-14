@@ -115,7 +115,7 @@ public class GroupChartDataService {
         for (User user : group.getMembers()) {
             evidenceCountsByMember.put(user.getId() + " " + user.getFullName(), 0);
             // Iterate through all of that user's evidence for the groups project
-            for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
+            for (PortfolioEvidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
                 if (!startDate.after(e.getDate()) && !endDate.before(e.getDate())) {
                     evidenceCountsByMember.merge(user.getId() + " " + user.getFullName(), 1, Integer::sum);;
                 }
