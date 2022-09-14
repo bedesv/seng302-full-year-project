@@ -31,8 +31,10 @@
     </div>
 
     <div class="container">
-        <a class="portfolio-navigation__button" th:href="@{${owner} ? 'profile' : 'profile-' + ${pageUser.id}}">Profile</a>
-        <a class="portfolio-navigation__button" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}}">Portfolio</a>
+        <div class="portfolio-navigation__div">
+            <a class="portfolio-navigation__button" th:href="@{${owner} ? 'profile' : 'profile-' + ${pageUser.id}}">Profile</a>
+            <a class="portfolio-navigation__button" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}}">Portfolio</a>
+        </div>
         <div class="row">
             <div class="col-lg-8">
                 <div class="add-evidence__container">
