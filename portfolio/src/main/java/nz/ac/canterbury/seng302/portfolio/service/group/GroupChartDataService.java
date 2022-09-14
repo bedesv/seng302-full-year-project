@@ -10,6 +10,7 @@ import nz.ac.canterbury.seng302.portfolio.model.project.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.project.SprintService;
+import nz.ac.canterbury.seng302.portfolio.util.DateComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -140,8 +141,11 @@ public class GroupChartDataService {
      */
     public Map<String, Integer> getGroupEvidenceDataOverTime(Group group, Date startDate, Date endDate, String timeRange) {
         int parentProjectId = group.getParentProject();
-        Map<String, Integer> evidenceCountOverTime = new HashMap<>();
 
+        final TreeMap<String, Integer> evidenceCountOverTime = new TreeMap<>(new DateComparator());
+        //Map<String, Integer> evidenceCountOverTime = new HashMap<>();
+
+        //check granularity
         if (Objects.equals(timeRange, "day")) {
             getEvidenceOverTimeDay(evidenceCountOverTime, startDate, endDate, group, parentProjectId);
         } else if (Objects.equals(timeRange, "week")) {
@@ -149,6 +153,7 @@ public class GroupChartDataService {
         } else if (Objects.equals(timeRange, "month")) {
             getEvidenceOverTimeMonth(evidenceCountOverTime, startDate, endDate, group, parentProjectId);
         }
+
         return evidenceCountOverTime;
     }
 
