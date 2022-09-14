@@ -49,7 +49,7 @@
                     <a th:each="skill: ${evidence.getSkills}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-skill?skill=' + ${skill}"></a>
                 </div>
                 <!-- Commits -->
-                <h4 class="evidence-form__commits-title">Linked Commits</h4>
+                <h4 th:if="${evidence.getNumberCommits() >  0}" class="evidence-form__commits-title">Linked Commits</h4>
                 <div class="evidence-form__commit-details" th:if="${evidence.getCommits().size() >  0}" th:each="commit: ${evidence.getCommits}">
                   <div class="evidence-form__commits-details">
                     <div class="evidence-form__commits-link-container">
