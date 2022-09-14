@@ -315,41 +315,45 @@ public class AddEvidenceController {
                 }
             }
 
-            // If selected group is null, set the selected group to the first group in the list
-            if (mainGroup == null) {
-                mainGroup = groupsWithCommits.get(0);
-            }
 
-            List<org.gitlab4j.api.models.Commit> commits = new ArrayList<>();
+            // If at least one of the user's groups has a repo with commits
+            if (groupsWithCommits.size() > 0) {
 
-            // Calculate the current date and the date two weeks ago as the default date range for the search
-            Calendar calendar = Calendar.getInstance();
-            actualEndDate = calendar.getTime();
-            calendar.add(Calendar.DATE, 1); // Add one day because end date isn't inclusive
-            Date endDate = calendar.getTime();
-            calendar.add(Calendar.DATE, -15); // Take away 15 days to be two weeks before today
-            startDate = calendar.getTime();
+                // If selected group is null, set the selected group to the first group in the list
+                if (mainGroup == null) {
+                    mainGroup = groupsWithCommits.get(0);
+                }
+                List<org.gitlab4j.api.models.Commit> commits = new ArrayList<>();
 
-            // Retrieve commits, members and branches from the group's repository
-            try {
-                commits = gitlabConnectionService.getFilteredCommits(mainGroup.getGroupId(), startDate, endDate, "", "", "");
-                members = gitlabConnectionService.getAllMembers(mainGroup.getGroupId());
-                branches = gitlabConnectionService.getAllBranches(mainGroup.getGroupId());
-            } catch (RuntimeException e) {
-                PORTFOLIO_LOGGER.error(e.getMessage());
-            }
+                // Calculate the current date and the date two weeks ago as the default date range for the search
+                Calendar calendar = Calendar.getInstance();
+                actualEndDate = calendar.getTime();
+                calendar.add(Calendar.DATE, 1); // Add one day because end date isn't inclusive
+                Date endDate = calendar.getTime();
+                calendar.add(Calendar.DATE, -15); // Take away 15 days to be two weeks before today
+                startDate = calendar.getTime();
 
-            // Convert the retrieved commits to our own object
-            for (org.gitlab4j.api.models.Commit commit : commits) {
-                Commit portfolioCommit = new Commit(commit.getId(), commit.getCommitterName(),
-                        commit.getCommittedDate(), commit.getWebUrl(), commit.getMessage());
-                commitList.add(portfolioCommit);
-            }
+                // Retrieve commits, members and branches from the group's repository
+                try {
+                    commits = gitlabConnectionService.getFilteredCommits(mainGroup.getGroupId(), startDate, endDate, "", "", "");
+                    members = gitlabConnectionService.getAllMembers(mainGroup.getGroupId());
+                    branches = gitlabConnectionService.getAllBranches(mainGroup.getGroupId());
+                } catch (RuntimeException e) {
+                    PORTFOLIO_LOGGER.error(e.getMessage());
+                }
 
-            // Figure out what the main branch of the repository is
-            for (Branch branch : branches) {
-                if (Boolean.TRUE.equals(branch.getDefault())) {
-                    defaultBranch = branch;
+                // Convert the retrieved commits to our own object
+                for (org.gitlab4j.api.models.Commit commit : commits) {
+                    Commit portfolioCommit = new Commit(commit.getId(), commit.getCommitterName(),
+                            commit.getCommittedDate(), commit.getWebUrl(), commit.getMessage());
+                    commitList.add(portfolioCommit);
+                }
+
+                // Figure out what the main branch of the repository is
+                for (Branch branch : branches) {
+                    if (Boolean.TRUE.equals(branch.getDefault())) {
+                        defaultBranch = branch;
+                    }
                 }
             }
         }
