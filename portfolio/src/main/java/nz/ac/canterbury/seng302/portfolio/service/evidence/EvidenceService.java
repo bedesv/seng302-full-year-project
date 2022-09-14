@@ -133,15 +133,13 @@ public class EvidenceService {
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException(message);
         }
-        Pattern fieldPattern = Pattern.compile("[a-zA-Z]+");
-        Matcher titleMatcher = fieldPattern.matcher(evidence.getTitle());
-        if (!titleMatcher.find() || evidence.getTitle().length() < 2 || evidence.getTitle().length() > 64) {
+
+        if (!ValidationUtil.titleContainsAtleastOneLanguageCharacter(evidence.getTitle()) || evidence.getTitle().length() < 2 || evidence.getTitle().length() > 64) {
             String message = "Evidence title (" + evidence.getTitle() + ") is invalid";
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException("Title not valid");
         }
-        Matcher descriptionMatcher = fieldPattern.matcher(evidence.getDescription());
-        if (!descriptionMatcher.find() || evidence.getDescription().length() < 50 || evidence.getDescription().length() > 1024) {
+        if (!ValidationUtil.titleContainsAtleastOneLanguageCharacter(evidence.getDescription()) || evidence.getDescription().length() < 50 || evidence.getDescription().length() > 1024) {
             String message = "Evidence description (" + evidence.getDescription() + ") is invalid";
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException("Description not valid");
