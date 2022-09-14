@@ -135,15 +135,13 @@ public class GroupChartDataController {
     /**
      * Used by the front end to fetch the number of evidence per
      * @param groupId The id of the group that data is requested for
-     * @param timeRange The time range either (day, week or month)
      * @return A map of group member ids + first and last names and the number of evidence for each.
      */
-    @GetMapping("/group-{groupId}-{timeRange}-{startDateString}-{endDateString}-dataOverTime")
+    @GetMapping("/group-{groupId}-dataOverTime")
     public Map<String, Integer> getEvidenceDataOverTime(@AuthenticationPrincipal AuthState principal,
                                                                       @PathVariable int groupId,
-                                                                      @PathVariable String timeRange,
-                                                                      @PathVariable String startDateString,
-                                                                      @PathVariable String endDateString) {
+                                                                      @RequestParam String startDateString,
+                                                                      @RequestParam String endDateString) {
         User user = userService.getUserAccountByPrincipal(principal);
         if (user.getUsername() == null) {
             return Collections.emptyMap();
@@ -151,6 +149,7 @@ public class GroupChartDataController {
 
         Date startDate;
         Date endDate;
+        String timeRange = "day";
         try {
             startDate = new SimpleDateFormat(TIME_FORMAT).parse(startDateString);
             endDate = new SimpleDateFormat(TIME_FORMAT).parse(endDateString);

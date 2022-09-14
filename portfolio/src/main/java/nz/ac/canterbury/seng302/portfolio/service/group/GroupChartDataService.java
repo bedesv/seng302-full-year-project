@@ -55,7 +55,7 @@ public class GroupChartDataService {
             }
         }
         // Sorts map by skill amount and caps the new map at 10 elements.
-        Map<String, Integer> result = skillCounts.entrySet()
+        return skillCounts.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .limit(10)
@@ -63,7 +63,6 @@ public class GroupChartDataService {
                         Map.Entry::getKey,
                         Map.Entry::getValue,
                         (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-        return result;
     }
 
 
@@ -114,7 +113,12 @@ public class GroupChartDataService {
 
         // Iterate through every user in the group and add the number of evidence they have produced for the given project
         for (User user : group.getMembers()) {
-            evidenceCountsByMember.put(user.getId() + " " + user.getFullName(), evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId).size());
+            // Iterate through all of that user's evidence for the groups project
+            for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
+                if (!startDate.after(e.getDate()) && !endDate.before(e.getDate())) {
+                    evidenceCountsByMember.put(user.getId() + " " + user.getFullName(), evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId).size());
+                }
+            }
         }
 
         // Sorts map by group members evidence amount and caps the new map at 10 elements.
@@ -165,12 +169,15 @@ public class GroupChartDataService {
             evidenceCountOverTime.put(date.toString(), 0);
         }
         for (User user : group.getMembers()) {
-            // Iterate through all of that user's evidence for the groups project and if the evidence falls on one of the days
-            // mentioned above add 1 to that day
+            // Iterate through all of that user's evidence for the groups project
             for (Evidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
-                LocalDate evidenceDate = Instant.ofEpochMilli(e.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
-                if (evidenceDate.isAfter(start.minusDays(1)) && evidenceDate.isBefore(finish.plusDays(1))) {
-                    evidenceCountOverTime.merge(evidenceDate.toString(), 1, Integer::sum);
+                if (!startDate.after(e.getDate()) && !endDate.before(e.getDate())) {
+                    // Iterate through all of that user's evidence for the groups project and if the evidence falls on one of the days
+                    // mentioned above add 1 to that day
+                    LocalDate evidenceDate = Instant.ofEpochMilli(e.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+                    if (evidenceDate.isAfter(start.minusDays(1)) && evidenceDate.isBefore(finish.plusDays(1))) {
+                        evidenceCountOverTime.merge(evidenceDate.toString(), 1, Integer::sum);
+                    }
                 }
             }
         }

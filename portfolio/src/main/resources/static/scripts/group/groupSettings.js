@@ -30,7 +30,7 @@ async function fetchChartData(dataType) {
         url = new URL (`${CONTEXT}/group-${GROUP_ID}-membersData?`);
     }
     if (dataType === 'dataOverTime') {
-        url = new URL (`${CONTEXT}/group-${GROUP_ID}-day-${START_DATE}-${END_DATE}-dataOverTime?`);
+        url = new URL (`${CONTEXT}/group-${GROUP_ID}-dataOverTime?`);
     }
     return await fetch(url+new URLSearchParams({startDateString: START_DATE, endDateString: END_DATE}), {
         method: "GET",
@@ -75,8 +75,8 @@ async function dataOverTimeChart() {
     let chartData = await fetchChartData('dataOverTime')
 
     let data = new google.visualization.DataTable();
-    data.addColumn('string', 'word');
-    data.addColumn('number', 'count');
+    data.addColumn('string', 'Evidence');
+    data.addColumn('number', 'Number of Evidence');
     for (let key in chartData) {
         data.addRow([key, chartData[key]]);
     }
@@ -84,7 +84,7 @@ async function dataOverTimeChart() {
     let options = {
         title: 'Evidence Data Over Time',
         curveType: 'function',
-        legend: { position: 'bottom' },
+        legend: { position: 'right' },
         titleTextStyle: {fontSize: 20},
         backgroundColor: { fill:'transparent' },
     }
