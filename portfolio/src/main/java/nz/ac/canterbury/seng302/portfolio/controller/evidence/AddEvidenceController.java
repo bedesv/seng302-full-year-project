@@ -7,6 +7,7 @@ import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Commit;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
+import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
@@ -196,6 +197,7 @@ public class AddEvidenceController {
 
         try {
             addWebLinksToEvidence(evidence, webLinkLinks, webLinkNames);
+            System.out.println(evidence.getWebLinks());
             evidenceService.saveEvidence(evidence);
         } catch (IllegalArgumentException exception) {
             if (Objects.equals(exception.getMessage(), "Title not valid")) {
@@ -216,6 +218,11 @@ public class AddEvidenceController {
             evidence.setSkills(evidenceService.stripSkills(evidence.getSkills()));
             addEvidenceToModel(model, projectId, userId, evidence);
             return ADD_EVIDENCE; // Fail silently as client has responsibility for error checking
+        }
+        try {
+            evidenceService.updateEvidenceUsers(evidence, new HashSet<>(userService.getUserIdListFromString(users)));
+        } catch (IllegalArgumentException exception) {
+            return ADD_EVIDENCE;
         }
         return PORTFOLIO_REDIRECT;
     }
@@ -365,13 +372,16 @@ public class AddEvidenceController {
      * @param evidence The evidence that is being viewed.
      */
     private void addEvidenceToModel(Model model, int projectId, int userId, Evidence evidence) {
-        List<Evidence> evidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
         model.addAttribute("categories", evidence.getCategories());
-        model.addAttribute("skillsList", evidenceService.getSkillsFromEvidence(evidenceList));
+        model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(evidenceList));
         model.addAttribute("evidenceTitle", evidence.getTitle());
         model.addAttribute("evidenceDescription", evidence.getDescription());
         model.addAttribute("evidenceDate", Project.dateToString(evidence.getDate(), TIMEFORMAT));
         model.addAttribute("evidenceSkills", String.join(" ", evidence.getSkills()) + " ");
+        Set<Integer> linkedUsers = evidence.getLinkedUsers();
+        linkedUsers.remove(userId);
+        model.addAttribute("evidenceUsers", linkedUsers);
         try {
             model.addAttribute("evidenceCommits", mapper.writeValueAsString(evidence.getCommits()));
         } catch (JsonProcessingException e) { // Should never happen if application is set up correctly, but log an error just in case

@@ -19,7 +19,7 @@ function checkValid() {
                 &&document.getElementById("flex-check--qualitative").checked===(originalCategories.includes("QUALITATIVE"))
                 &&document.getElementById("flex-check--service").checked===(originalCategories.includes("SERVICE"))
                 &&arraysMatch(originalEvidenceSkills, skillList)
-                //&&arraysMatch(originalEvidenceUsers, userList)
+                &&originalEvidenceUsers === userList
                 &&originalCommitList === commitList
             );
     }
@@ -28,11 +28,11 @@ function checkValid() {
 let skillList = [];
 let changedSkills = {};
 let editedSkillTag = null;
-let userList = [];
 
 // Adds a skill to the list of skills. Makes sure it is not already present,
 // and if the user has already entered that skill on another piece of evidence, make sure the capitalization is correct.
 function addToSkills(skill) {
+
     for (const testSkill of skillList) {
         if (testSkill.toLowerCase() === skill.toLowerCase().replaceAll("_", " ")) {
             const skillsError = document.getElementById("evidence-form__skills-error");
@@ -70,14 +70,17 @@ function addToUsers(user) {
         }
     }
     userList.push(user);
+    checkValid();
 }
 
 function removeLastUser() {
     userList.pop();
+    checkValid();
 }
 
 function removeUser(user) {
     userList.splice(userList.indexOf(user), 1);
+    checkValid();
 }
 
 function saveCommitChanges() {
@@ -242,8 +245,17 @@ function saveSkillsOnSubmit() {
 
 // Listen for input so the tags and autocomplete can be triggered
 document.getElementById("skills-input").addEventListener("input", (event) => {
+    const skillsError = document.getElementById("evidence-form__skills-error");
+    skillsError.innerHTML = ""
     event.target.style.width = event.target.value.length > 8 ? event.target.value.length + "ch" : "80px";
     let value = event.target.value;
+
+    const oldValue = value
+    value = value.replaceAll(/[^a-zA-Z0-9\-_ ]/g, '');
+    if(oldValue !== value) {
+            const skillsError = document.getElementById("evidence-form__skills-error");
+            skillsError.innerHTML = "Skills can not contain special characters";
+    }
     value = value.replace(/_+/g, '_');
     let skills = value.split(" ");
     let lastSkill = skills.pop();
@@ -767,6 +779,8 @@ function removeWebLink(webLinkIndex) {
         addWebLinkToDOM(webLinks[i], i);
     }
 }
+
+updateUserTagsInDOM(userList);
 
 // Event listeners for the title and description fields to let the user know why the submit button is greyed out.
 document.getElementById("evidence-form__title-field").addEventListener("input", (event) => {

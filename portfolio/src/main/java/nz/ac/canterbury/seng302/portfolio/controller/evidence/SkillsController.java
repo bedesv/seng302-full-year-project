@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller.evidence;
 
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
+import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.user.PortfolioUserService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -53,13 +55,13 @@ public class SkillsController {
 
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
 
-        List<Evidence> evidenceWithSkillList = getEvidenceBySkill(skill, userId, projectId);
+        List<PortfolioEvidence> evidenceWithSkillList = getEvidenceBySkill(skill, userId, projectId);
 
         model.addAttribute("evidenceList", evidenceWithSkillList);
 
-        // Add all of the skills that the user has to the page
-        List<Evidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
-        model.addAttribute("skillsList", evidenceService.getSkillsFromEvidence(allUsersEvidenceList));
+        // Add all the skills that the user has to the page
+        List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
+        model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
         String skillName = skill.replace("_", " ");
         model.addAttribute("skillName", skillName);
@@ -87,11 +89,11 @@ public class SkillsController {
 
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
 
-        List<Evidence> evidenceWithSkillList = getEvidenceBySkill(skill, userId, projectId);
+        List<PortfolioEvidence> evidenceWithSkillList = getEvidenceBySkill(skill, userId, projectId);
 
-        // Add all of the skills that the user has to the page
-        List<Evidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
-        model.addAttribute("skillsList", evidenceService.getSkillsFromEvidence(allUsersEvidenceList));
+        // Add all the skills that the user has to the page
+        List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
+        model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
 
         String skillName = skill.replace("_", " ");
         model.addAttribute("skillName", skillName);
@@ -108,11 +110,14 @@ public class SkillsController {
         }
     }
 
-    public List<Evidence> getEvidenceBySkill(String skill, int userId, int projectId){
-        if (skill.length()==0){
-            return evidenceService.retrieveEvidenceWithNoSkill(userId, projectId);
+    public List<PortfolioEvidence> getEvidenceBySkill(String skill, int userId, int projectId){
+        List<Evidence> evidenceList;
+        if (skill.length() == 0){
+            evidenceList = evidenceService.retrieveEvidenceWithNoSkill(userId, projectId);
         } else {
-           return evidenceService.retrieveEvidenceBySkillAndUser(skill, userId, projectId);
+           evidenceList = evidenceService.retrieveEvidenceBySkillAndUser(skill, userId, projectId);
         }
+        List<PortfolioEvidence> portfolioEvidenceList =  evidenceService.convertEvidenceForPortfolio(evidenceList);
+        return portfolioEvidenceList;
     }
 }

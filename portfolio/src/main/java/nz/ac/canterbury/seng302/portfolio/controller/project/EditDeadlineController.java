@@ -72,7 +72,7 @@ public class EditDeadlineController {
         if (Integer.parseInt(deadlineId) != -1) {
             deadline = deadlineService.getDeadlineById(Integer.parseInt(deadlineId));
         } else {
-            deadline = new Deadline(projectId, "Deadline name", deadlineDate);
+            deadline = new Deadline(projectId, "New Deadline", deadlineDate);
         }
         updateModel(model, project ,deadline);
         return EDIT_DEADLINE;
