@@ -7,13 +7,11 @@
 
 <div class="group-statistics__flex-container">
     <br>
-    <div class="dropdown graph__dropdown">
-        <button class="btn btn-primary dropdown-toggle graphs-dropdown__button" type="button" data-toggle="dropdown">Refine Graphs</button>
     <div class="dropdown">
-        <button type="button" class="btn btn-primary dropdown-toggle dropdown__button" data-bs-toggle="dropdown">Refine Graphs</button>
+        <button type="button" class="btn btn-primary dropdown-toggle graphs-dropdown__button" data-bs-toggle="dropdown">Refine Graphs</button>
         <ul class="dropdown-menu">
             <li th:each="dateRefineOption: ${dateRefiningOptions}">
-                <a class="dropdown-item" th:text="${dateRefineOption.getTitle()}" th:attr="onclick=|selectRefinement('${dateRefineOption.getStartDate()}', '${dateRefineOption.getEndDate()}')|"></a>
+                <a class="dropdown-item chart__dropdown_item" th:text="${dateRefineOption.getTitle()}" th:attr="onclick=|selectRefinement('${dateRefineOption.getStartDate()}', '${dateRefineOption.getEndDate()}')|"></a>
             </li>
         </ul>
     </div>
