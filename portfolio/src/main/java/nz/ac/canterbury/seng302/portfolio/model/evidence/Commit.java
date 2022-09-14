@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.model.evidence;
 
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
+
 import javax.persistence.Embeddable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -16,11 +18,11 @@ public class Commit {
     private String commitNo;
 
     public Commit(String id, String author, Date date, String link, String description) {
-        this.id = id;
-        this.author = author;
+        this.id = ValidationUtil.stripTitle(id);
+        setAuthor(author);
         this.date = date;
         this.link = link;
-        this.description = description;
+        setDescription(description);
         parseCommit(this.link);
     }
 
@@ -36,6 +38,7 @@ public class Commit {
     }
 
     public void setAuthor(String author) {
+        author = ValidationUtil.stripTitle(author);
         this.author = author;
     }
 
@@ -69,7 +72,15 @@ public class Commit {
         return description;
     }
 
+    /**
+     * Sets the description to a string, and truncates it to a maximum of 150 characters.
+     * @param description A description to set.
+     */
     public void setDescription(String description) {
+        description = ValidationUtil.stripTitle(description);
+        if (description.length() > 150) {
+            description = description.substring(0, 150) + "...";
+        }
         this.description = description;
     }
 
@@ -77,10 +88,10 @@ public class Commit {
      * Truncates the full commit link into a new variable commitNum which is just the commit's number.
      * If it fails to find the substring 'commit/,' which should be just before th number, commitNo becomes
      * the same string as link.
-     * @param link
-     * @throws IndexOutOfBoundsException
+     * @param link The link to parse
+     * @throws IndexOutOfBoundsException Throws if the link is too small
      */
-    private void parseCommit(String link) throws IndexOutOfBoundsException{
+    private void parseCommit(String link) throws IndexOutOfBoundsException {
         int index = link.indexOf("commit/") + 7;
         if (index > -1) {
             this.commitNo = link.substring(index);
