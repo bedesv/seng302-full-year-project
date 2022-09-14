@@ -29,6 +29,16 @@ public class ValidationUtil {
         return result.length() == title.length();
     }
 
+    public static boolean titleContainsAtleastOneLanguageCharacter(String title) {
+        String regex = "[^\\p{L}]";
+        Pattern pattern = Pattern.compile(
+                regex,
+                Pattern.UNICODE_CHARACTER_CLASS);
+        Matcher matcher = pattern.matcher(title);
+        String result = matcher.replaceAll("");
+        return !result.isEmpty();
+    }
+
     public static String stripTitle(String title){
         String regex = "[^\\p{L}\\p{N}\\p{P}\\p{Z}]";
         Pattern pattern = Pattern.compile(
@@ -56,7 +66,8 @@ public class ValidationUtil {
      * @return true if valid, else false
      */
     public static boolean validAttribute(Model model, String attribute, String title, String value) {
-        if (attribute.contains("Name") && !ValidationUtil.nameValid(value)){
+        //check if value includes first, middle, last
+        if ((attribute.contains("first")||attribute.contains("middle")||attribute.contains("last")) && !ValidationUtil.nameValid(value)){
             model.addAttribute(attribute + "Error", title +  " cannot contain special characters, or numbers");
             return false;
         } else if (!ValidationUtil.titleValid(value)){
