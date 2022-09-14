@@ -80,7 +80,7 @@ public class EditMilestoneController {
         if (milestoneId != -1) {
             milestone = milestoneService.getMilestoneById(milestoneId);
         } else {
-            milestone = new Milestone(projectId, "Milestone name", milestoneDate);
+            milestone = new Milestone(projectId, "New Milestone", milestoneDate);
         }
         updateModel(model, project, milestone);
         return EDIT_MILESTONE;
