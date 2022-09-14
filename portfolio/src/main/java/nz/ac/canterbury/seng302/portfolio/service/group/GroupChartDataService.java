@@ -150,8 +150,6 @@ public class GroupChartDataService {
             getEvidenceOverTimeDay(evidenceCountOverTime, startDate, endDate, group, parentProjectId);
         } else if (Objects.equals(timeRange, "week")) {
             getEvidenceOverTimeWeek(evidenceCountOverTime, startDate, endDate, group, parentProjectId);
-        } else if (Objects.equals(timeRange, "month")) {
-            getEvidenceOverTimeMonth(evidenceCountOverTime, startDate, endDate, group, parentProjectId);
         }
 
         return evidenceCountOverTime;
@@ -214,35 +212,6 @@ public class GroupChartDataService {
                 LocalDate evidenceDate = Instant.ofEpochMilli(e.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
                 if (evidenceDate.isAfter(start.minusDays(1)) && evidenceDate.isBefore(finish.plusDays(1))) {
                     evidenceCountOverTime.merge(evidenceDate.with(DayOfWeek.SUNDAY).toString(), 1, Integer::sum);
-                }
-            }
-        }
-    }
-
-    /**
-     * Helper function for getGroupEvidenceOverTime which creates a map of the total evidence produced by all group members
-     * over time for each month within the start and end dates
-     * @param evidenceCountOverTime the Map of all date strings in form ("yyyy-mm") and the integer value of evidence
-     * @param startDate The start date
-     * @param endDate The end date
-     * @param group the group object that the data is wanted for
-     * @param parentProjectId The parent project of the group so the correct evidence is used
-     */
-    public void getEvidenceOverTimeMonth(Map<String, Integer> evidenceCountOverTime, Date startDate, Date endDate, Group group, int parentProjectId) {
-        LocalDate start = Instant.ofEpochMilli(startDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate finish = Instant.ofEpochMilli(endDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
-
-        //Populate the map with all month values inclusive from the start date to the end date
-        for(LocalDate date = start; date.getMonthValue() < finish.getMonthValue() + 1; date = date.plusMonths(1)) {
-            evidenceCountOverTime.put(date.toString().substring(0, 7), 0);
-        }
-        for (User user : group.getMembers()) {
-            // Iterate through all of that user's evidence for the groups project and if the evidence falls in one of the months
-            // mentioned above add 1 to the value for that month
-            for (PortfolioEvidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
-                LocalDate evidenceDate = Instant.ofEpochMilli(e.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
-                if (evidenceDate.isAfter(start.minusDays(1)) && evidenceDate.isBefore(finish.plusDays(1))) {
-                    evidenceCountOverTime.merge(evidenceDate.toString().substring(0, 7), 1, Integer::sum);
                 }
             }
         }
