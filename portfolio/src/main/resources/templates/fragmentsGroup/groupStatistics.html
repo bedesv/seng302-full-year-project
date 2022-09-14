@@ -8,18 +8,22 @@
 <div class="group-statistics__flex-container">
     <br>
     <div class="dropdown">
-        <button type="button" class="btn btn-primary dropdown-toggle dropdown__button" data-bs-toggle="dropdown">Refine Graphs</button>
+        <button type="button" class="btn btn-primary dropdown-toggle graphs-dropdown__button" data-bs-toggle="dropdown">Refine Graphs</button>
         <ul class="dropdown-menu">
             <li th:each="dateRefineOption: ${dateRefiningOptions}">
-                <a class="dropdown-item" th:text="${dateRefineOption.getTitle()}" th:attr="onclick=|selectRefinement('${dateRefineOption.getStartDate()}', '${dateRefineOption.getEndDate()}')|"></a>
+                <a class="dropdown-item chart__dropdown_item" th:text="${dateRefineOption.getTitle()}" th:attr="onclick=|selectRefinement('${dateRefineOption.getStartDate()}', '${dateRefineOption.getEndDate()}')|"></a>
             </li>
         </ul>
     </div>
-
-    <div class="skills-categories-chart__flex-container">
-        <div id="group-chart__categories-chart"></div>
-        <div id="group-chart__skills-chart"></div>
-        <div id="group-chart__evidence-chart"></div>
+    <div class="data-charts__flex-container">
+        <div class="evidence-time-chart__flex-container">
+            <div id="group-chart__evidence-chart"></div>
+            <div id="group-chart__time-chart"></div>
+        </div>
+        <div class="skills-categories-chart__flex-container">
+            <div id="group-chart__categories-chart"></div>
+            <div id="group-chart__skills-chart"></div>
+        </div>
     </div>
 </div>
 

@@ -114,7 +114,7 @@ class GroupChartDataServiceTests {
     @Test
     void whenNoUsersInGroup_testGetGroupEvidenceDataCompareMembers() {
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, new ArrayList<>());
-        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataCompareMembers(testGroup);
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataCompareMembers(testGroup, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
         assertEquals(0, result.size());
     }
 
@@ -129,7 +129,7 @@ class GroupChartDataServiceTests {
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(new ArrayList<>()).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
         groupChartDataService.setEvidenceService(mockedEvidenceService);
-       Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataCompareMembers(testGroup);
+       Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataCompareMembers(testGroup, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
        assertEquals(0, result.get(testUser1.getId() + " " + testUser1.getFirstAndLast()));
     }
 
@@ -141,12 +141,13 @@ class GroupChartDataServiceTests {
         testUserList.add(testUser1);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
         Evidence testEvidence1A = new Evidence();
+        testEvidence1A.setDate(Date.valueOf("2022-01-15"));
         PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(testUser1.getId(), testParentProjectId);
         groupChartDataService.setEvidenceService(mockedEvidenceService);
-        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataCompareMembers(testGroup);
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataCompareMembers(testGroup, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
         assertEquals(1, result.get(testUser1.getId() + " " + testUser1.getFirstAndLast()));
     }
 
@@ -161,12 +162,13 @@ class GroupChartDataServiceTests {
         testUserList.add(testUser2);
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
         Evidence testEvidence1A = new Evidence();
+        testEvidence1A.setDate(Date.valueOf("2022-01-15"));
         PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1), List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
         groupChartDataService.setEvidenceService(mockedEvidenceService);
-        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataCompareMembers(testGroup);
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataCompareMembers(testGroup, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
 
         assertEquals(1, result.get(testUser1.getId() + " " + testUser1.getFirstAndLast()));
         assertEquals(1, result.get(testUser2.getId() + " " + testUser2.getFirstAndLast()));
@@ -181,14 +183,16 @@ class GroupChartDataServiceTests {
         testUser2.setLastName("Two");
         testUserList.add(testUser1);
         testUserList.add(testUser2);
+
         Group testGroup = new Group(testGroupId, "Short Name", "Long Name", testParentProjectId, testUserList);
-        Evidence testEvidence1 = new Evidence();
+        Evidence testEvidence1A = new Evidence();
+        testEvidence1A.setDate(Date.valueOf("2022-01-30"));
+        PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1), new ArrayList<>()).when(mockedEvidenceService).getEvidenceForPortfolio(any(int.class), any(int.class));
         groupChartDataService.setEvidenceService(mockedEvidenceService);
-        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataCompareMembers(testGroup);
-
+        Map<String, Integer> result = groupChartDataService.getGroupEvidenceDataCompareMembers(testGroup, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
         assertEquals(1, result.get(testUser1.getId() + " " + testUser1.getFirstAndLast()));
         assertEquals(0, result.get(testUser2.getId() + " " + testUser2.getFirstAndLast()));
     }

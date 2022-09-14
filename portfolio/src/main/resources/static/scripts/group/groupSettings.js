@@ -8,8 +8,10 @@ window.onresize = updateAllCharts
  * Updates all the charts
  */
 async function updateAllCharts() {
+    await updateGroupMembersData();
     await updateCategoriesChart();
     await updateSkillsChart();
+    await dataOverTimeChart();
 }
 
 /**
@@ -24,11 +26,70 @@ async function fetchChartData(dataType) {
     if (dataType === 'skills') {
         url = new URL (`${CONTEXT}/group-${GROUP_ID}-skillsData?`);
     }
+    if (dataType === 'membersData') {
+        url = new URL (`${CONTEXT}/group-${GROUP_ID}-membersData?`);
+    }
+    if (dataType === 'dataOverTime') {
+        url = new URL (`${CONTEXT}/group-${GROUP_ID}-dataOverTime?`);
+    }
     return await fetch(url+new URLSearchParams({startDateString: START_DATE, endDateString: END_DATE}), {
         method: "GET",
     }).then(res => {
         return res.json();
     });
+}
+
+/**
+ * Fetches group members evidence count data from the backend, then creates a column chart
+ * with the received data.
+ */
+async function updateGroupMembersData() {
+    // Fetch updated chart data
+    let chartData = await fetchChartData('membersData')
+
+    // Convert the json data to a format Google Chart can read
+    let data = new google.visualization.DataTable();
+    data.addColumn('string', 'Member');
+    data.addColumn('number', 'Count');
+    for (let key in chartData) {
+        data.addRow([key, chartData[key]]);
+    }
+
+    // Specify options for the chart
+    let options = {
+        title: 'Top 10 Group Members by Evidence',
+        titleTextStyle: {fontSize: 20},
+        backgroundColor: { fill:'transparent' },
+    }
+
+    // Create the group members chart
+    let chart = new google.visualization.ColumnChart(document.getElementById('group-chart__evidence-chart'));
+    chart.draw(data, options);
+}
+
+/**
+ * Fetches evidence over time data from the backend then creates a line chart
+ * with the received data
+ */
+async function dataOverTimeChart() {
+    let chartData = await fetchChartData('dataOverTime')
+
+    let data = new google.visualization.DataTable();
+    data.addColumn('string', 'Evidence');
+    data.addColumn('number', 'Number of Evidence');
+    for (let key in chartData) {
+        data.addRow([key, chartData[key]]);
+    }
+
+    let options = {
+        title: 'Evidence Data Over Time',
+        legend: { position: 'right' },
+        titleTextStyle: {fontSize: 20},
+        backgroundColor: { fill:'transparent' },
+    }
+
+    let chart = new google.visualization.LineChart(document.getElementById('group-chart__time-chart'));
+    chart.draw(data, options);
 }
 
 /**
@@ -62,7 +123,7 @@ async function updateCategoriesChart() {
 }
 
 /**
- * Fetches categories data from the backend then creates a pie chart
+ * Fetches skills data from the backend then creates a column chart
  * with the received data
  */
 async function updateSkillsChart() {
@@ -156,7 +217,9 @@ async function saveGroupRepositorySettings() {
 async function selectRefinement(startDate, endDate){
     START_DATE = startDate;
     END_DATE = endDate;
+    await updateGroupMembersData();
     await updateCategoriesChart();
     await updateSkillsChart();
+    await dataOverTimeChart();
 }
 

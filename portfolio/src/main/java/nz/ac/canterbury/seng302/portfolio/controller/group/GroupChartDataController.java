@@ -107,32 +107,41 @@ public class GroupChartDataController {
      * @return A map of group member ids + first and last names and the number of evidence for each.
      */
     @GetMapping("/group-{groupId}-membersData")
-    public @ResponseBody Map<String, Integer> getEvidenceDataCompareGroupMembers(@AuthenticationPrincipal AuthState principal,
-                                                                                 @PathVariable int groupId) {
+    public Map<String, Integer> getEvidenceDataCompareGroupMembers(@AuthenticationPrincipal AuthState principal,
+                                                                                 @PathVariable int groupId,
+                                                                                 @RequestParam String startDateString,
+                                                                                 @RequestParam String endDateString) {
         User user = userService.getUserAccountByPrincipal(principal);
         if (user.getUsername() == null) {
+            return Collections.emptyMap();
+        }
+        Date startDate;
+        Date endDate;
+        try {
+            startDate = new SimpleDateFormat(TIME_FORMAT).parse(startDateString);
+            endDate = new SimpleDateFormat(TIME_FORMAT).parse(endDateString);
+        } catch (ParseException e) {
+            PORTFOLIO_LOGGER.error(e.getMessage());
             return Collections.emptyMap();
         }
 
         Group group = new Group(groupsClientService.getGroupDetailsById(groupId));
         int parentProjectId = portfolioGroupService.findParentProjectIdByGroupId(group.getGroupId());
         group.setParentProject(parentProjectId);
-        return groupChartDataService.getGroupEvidenceDataCompareMembers(group);
+        return groupChartDataService.getGroupEvidenceDataCompareMembers(group, startDate, endDate);
     }
 
 
     /**
      * Used by the front end to fetch the number of evidence per
      * @param groupId The id of the group that data is requested for
-     * @param timeRange The time range either (day, week or month)
      * @return A map of group member ids + first and last names and the number of evidence for each.
      */
-    @GetMapping("/group-{groupId}-{timeRange}-{startDateString}-{endDateString}-dataOverTime")
-    public @ResponseBody Map<String, Integer> getEvidenceDataOverTime(@AuthenticationPrincipal AuthState principal,
+    @GetMapping("/group-{groupId}-dataOverTime")
+    public Map<String, Integer> getEvidenceDataOverTime(@AuthenticationPrincipal AuthState principal,
                                                                       @PathVariable int groupId,
-                                                                      @PathVariable String timeRange,
-                                                                      @PathVariable String startDateString,
-                                                                      @PathVariable String endDateString) {
+                                                                      @RequestParam String startDateString,
+                                                                      @RequestParam String endDateString) {
         User user = userService.getUserAccountByPrincipal(principal);
         if (user.getUsername() == null) {
             return Collections.emptyMap();
@@ -140,6 +149,7 @@ public class GroupChartDataController {
 
         Date startDate;
         Date endDate;
+        String timeRange = "day";
         try {
             startDate = new SimpleDateFormat(TIME_FORMAT).parse(startDateString);
             endDate = new SimpleDateFormat(TIME_FORMAT).parse(endDateString);

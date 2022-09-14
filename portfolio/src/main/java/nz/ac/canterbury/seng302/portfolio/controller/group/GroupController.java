@@ -63,6 +63,7 @@ public class GroupController {
         model.addAttribute("userInGroup", groupsClientService.userInGroup(group.getGroupId(), userId));
         model.addAttribute("graphStartDate", project.getStartDate());
         model.addAttribute("graphEndDate", project.getEndDate());
+        model.addAttribute("timeRange", "day");
         groupChartDataService.setDateRefiningOptions(model, project);
         return GROUP_PAGE;
     }
