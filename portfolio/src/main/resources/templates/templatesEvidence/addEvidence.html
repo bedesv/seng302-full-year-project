@@ -24,6 +24,7 @@
         let originalEvidenceUsers = [[${evidenceUsers}]];
         let originalCommits = JSON.parse([[${evidenceCommits}]]);
         let ORIGINAL_COMMITS = {};
+        let currentlyShownCommits = {};
         let commitList = [];
         let originalCommitList = [];
         for (const commit of originalCommits) {
@@ -58,6 +59,7 @@
         }
         id = [[${commit.id}]];
         ALL_COMMITS[id] = commit;
+        currentlyShownCommits[id] = commit;
     </script>
 
 </head>
@@ -197,19 +199,20 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header add-evidence-commits__header">
-                    <h5 class="modal-title" id="add-evidence-commits__modal--label">Add Commits</h5>
+                    <h4 class="modal-title" id="add-evidence-commits__modal--label">Add Commits</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div th:if="${commits.size} > 0" class="modal-body add-evidence-commits__wrapper">
-                    <div id="commit-filter-box">
-                        The rest of this div will be filled in by Javascript. The group id is needed to send
-                        the request for the other information
-                        <select class="form-select" id="commit-filter__group-selection" aria-label="group" onchange="updateCommitModal(); searchCommits();">
-                            <option th:value="${mainGroup.getGroupId()}" th:text="${mainGroup.getShortName()}" selected></option>
-                        </select>
-
+                    <div id="commit-filter-box__wrapper">
+                        <div id="commit-filter-box">
+                            The rest of this div will be filled in by Javascript. The group id is needed to send
+                            the request for the other information
+                            <select class="form-select" id="commit-filter__group-selection" aria-label="group" onchange="updateCommitModal(); searchCommits();">
+                                <option th:value="${mainGroup.getGroupId()}" th:text="${mainGroup.getShortName()}" selected></option>
+                            </select>
+                        </div>
                     </div>
-                    <button class="btn btn-primary" onclick="saveCommitChanges()" data-bs-dismiss="modal">Save Changes</button>
+                    <button class="btn btn-primary" id="commit-filter__save-button" onclick="saveCommitChanges()" data-bs-dismiss="modal">Save Changes</button>
                     <div id="commit-selection-box">
                         <div th:each="commit: ${commits}" th:id="${commit.id}" class="row commit-tag-outside">
                             <div class="col-11 commit-modal-inside">

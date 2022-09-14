@@ -308,3 +308,39 @@ p {
 #weblink-button {
     margin-bottom: 10px;
 }
+
+#commit-filter__date-box {
+    display: flex;
+    flex-direction: row;
+}
+
+#commit-filter__start-date {
+    min-width: 125px;
+}
+
+#commit-filter__end-date {
+    min-width: 125px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#commit-filter-box {
+    padding: 5px;
+    border: 1px solid rgb(222, 226, 230);
+    margin-bottom: 5px;
+    border-radius: 5px;
+}
+
+#commit-filter__group-selection,
+#commit-filter__branch-selection,
+#commit-filter__member-selection,
+#commit-filter__id-search,
+#commit-filter__save-button {
+    margin-bottom: 5px;
+}
+
+#commit-filter__label {
+    font-size: 20px;
+    margin-left: 2px;
+    margin-bottom: 5px;
+}

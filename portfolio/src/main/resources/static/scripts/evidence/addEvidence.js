@@ -82,9 +82,9 @@ function removeUser(user) {
 
 function saveCommitChanges() {
     newCommits = [];
-    for (const commit of commitList) {
-        if (!ALL_COMMITS[commit] && ORIGINAL_COMMITS[commit]) {
-            newCommits.push(commit);
+    for (const commitId of commitList) {
+        if (!currentlyShownCommits[commitId]) {
+            newCommits.push(commitId);
         }
     }
     for (child of document.getElementById("commit-selection-box").children) {
@@ -350,6 +350,9 @@ function updateSkillTagsInDOM(tags) {
 
 // Updates the list of commits the user has linked to their piece of evidence.
 function updateCommitsInDOM(commits) {
+    commits.sort((a, b) => {
+        return Date.parse(ALL_COMMITS[a].date) > Date.parse(ALL_COMMITS[b].date)
+    })
     let commitObjects = [];
     for (const tag of commits) {
         commit = ALL_COMMITS[tag];
@@ -358,15 +361,14 @@ function updateCommitsInDOM(commits) {
         }
         commitObjects.push(commit);
     }
-    let commitString = JSON.stringify(commitObjects);
-    document.getElementById("evidence-form__hidden-commits-field").value = commitString;
+    document.getElementById("evidence-form__hidden-commits-field").value = JSON.stringify(commitObjects);
 
     let parent = document.getElementById("commit-container");
     while (parent.childNodes.length > 0) {
         parent.removeChild(parent.firstChild);
     }
     for (let tag of commits) {
-        commit = ALL_COMMITS[tag];
+        let commit = ALL_COMMITS[tag];
         if (!commit) {
             commit = ORIGINAL_COMMITS[tag];
         }
@@ -385,24 +387,42 @@ function updateCommitsInDOM(commits) {
     }
 }
 
+// Updates the commits shown in the commit selection modal
 function updateSearchCommitsInDOM(newCommits) {
 
     let parent = document.getElementById("commit-selection-box")
     while (parent.childNodes.length > 0) {
         parent.removeChild(parent.firstChild);
     }
-    for (let newCommit of newCommits) {
-        console.log(commitList.includes(newCommit.id))
-        let element = createElementFromHTML(`<div id="${sanitizeHTML(newCommit.id)}" class="row commit-tag-outside">
+    currentlyShownCommits = {}
+    if (newCommits.length === 0) {
+        let element = createElementFromHTML(`<div class="row commit-tag-outside">
+                                                <div class="col-11 commit-modal-inside">
+                                                    <p class="strip-margin" >No commits found</p>
+                                                </div>
+                                            </div>`)
+        parent.appendChild(element)
+    } else {
+        for (let newCommit of newCommits) {
+            let element = createElementFromHTML(`<div id="${sanitizeHTML(newCommit.id)}" class="row commit-tag-outside">
                                                 <div class="col-11 commit-modal-inside">
                                                     <p class="strip-margin" >${sanitizeHTML(newCommit.description)}</p>
                                                     <p class="commit-author strip-margin" >${sanitizeHTML(newCommit.author)} - ${sanitizeHTML(newCommit.dateString)}</p>
                                                 </div>
                                                 <input class="col-auto" id="${sanitizeHTML(newCommit.id)}" type="checkbox" ${commitList.includes(newCommit.id) ? "checked" : ""}/>
                                             </div>`)
-        parent.appendChild(element)
+            parent.appendChild(element)
+            let commit = {
+                author: newCommit.author,
+                description: newCommit.description,
+                date: newCommit.date,
+                link: newCommit.link,
+                id: newCommit.id
+            }
+            ALL_COMMITS[newCommit.id] = commit;
+            currentlyShownCommits[newCommit.id] = commit;
+        }
     }
-
 }
 
 // Updates the tags shown before the users input list to reflect the list of tags given.
@@ -763,7 +783,7 @@ async function updateCommitModal() {
     let url;
     url = new URL (`${CONTEXT}/evidenceCommitFilterBox`)
     url.searchParams.append("groupId", document.getElementById("commit-filter__group-selection").value)
-    document.getElementById("commit-filter-box").innerHTML = await fetch(url, {
+    document.getElementById("commit-filter-box__wrapper").innerHTML = await fetch(url, {
         method: "GET"
     }).then(res => {
         return res.text();

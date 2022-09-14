@@ -1,4 +1,5 @@
 <div id="commit-filter-box">
+    <label id="commit-filter__label">Filter Results</label>
     <select class="form-select" id="commit-filter__group-selection" aria-label="group" onchange="updateCommitModal(); searchCommits();">
         <option th:each="group: ${groups}" th:value="${group.getGroupId()}" th:text="${group.getShortName()}" th:selected="${group.getGroupId()} == ${mainGroup.getGroupId()}"></option>
     </select>
@@ -10,10 +11,12 @@
         <option th:each="user: ${repositoryUsers}" th:value="${user.getName()}" th:text="${user.getName()}"></option>
     </select>
     <input type="search" id="commit-filter__id-search" class="form-control" placeholder="Commit ID" oninput="searchCommits()"/>
-    <input type="date" th:value="${startDate}" th:max="${endDate}" id="commit-filter__start-date" onchange="updateMinEndDate(); searchCommits();">
-    <input type="date" th:value="${endDate}" th:min="${startDate}" id="commit-filter__end-date" onchange="updateMaxStartDate(); searchCommits();">
-    <select class="form-select" id="commit-filter__sprint-selection" aria-label="member" onchange="updateCommitSearchDates(); searchCommits();">
-        <option value="-1" selected>--No sprint selected--</option>
-        <option th:each="sprint: ${sprints}" th:value="${sprint.getId()}" th:text="${sprint.getLabel()}"></option>
-    </select>
+    <div id="commit-filter__date-box">
+        <input type="date" th:value="${startDate}" th:max="${endDate}" id="commit-filter__start-date" onchange="updateMinEndDate(); searchCommits();">
+        <input type="date" th:value="${endDate}" th:min="${startDate}" id="commit-filter__end-date" onchange="updateMaxStartDate(); searchCommits();">
+        <select class="form-select" id="commit-filter__sprint-selection" aria-label="member" onchange="updateCommitSearchDates(); searchCommits();">
+            <option value="-1" selected>--No sprint selected--</option>
+            <option th:each="sprint: ${sprints}" th:value="${sprint.getId()}" th:text="${sprint.getLabel()}"></option>
+        </select>
+    </div>
 </div>
