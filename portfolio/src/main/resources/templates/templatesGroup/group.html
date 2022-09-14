@@ -36,7 +36,7 @@
         <h1 class="group-short_name" th:text="${currentProject.getName} + ': ' + ${group.getShortName()}"></h1>
         <h2 class="group-long_name" th:text="${group.getLongName()}"></h2>
     </header>
-    <div class="group__button-wrapper flex-row">
+    <div th:if="${authUserIsTeacher || #lists.contains(group.getMembers, user)}" class="group__button-wrapper flex-row">
       <form th:action="@{editGroup-{id}(id=${group.getGroupId})}" th:method="get" th:if="${group.getGroupId} >= 0")>
         <button type="submit">Edit</button>
       </form>
