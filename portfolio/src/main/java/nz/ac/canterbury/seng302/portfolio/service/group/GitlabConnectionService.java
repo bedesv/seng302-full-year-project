@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import nz.ac.canterbury.seng302.portfolio.model.group.GroupRepositorySettings;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.Pager;
 import org.gitlab4j.api.models.Branch;
 import org.gitlab4j.api.models.Commit;
 import org.gitlab4j.api.models.Member;
@@ -141,6 +142,18 @@ public class GitlabConnectionService {
         } catch (GitLabApiException | NoSuchFieldException exception) {
             PORTFOLIO_LOGGER.error(exception.getMessage());
             return new ArrayList<>();
+        }
+    }
+
+    public boolean repositoryHasCommits(int groupId) {
+        try {
+            GitLabApi gitLabApiConnection = getGitLabApiConnection(groupId);
+            GroupRepositorySettings repositorySettings = getGroupRepositorySettings(groupId);
+            Pager<Commit> commitPager = gitLabApiConnection.getCommitsApi().getCommits(repositorySettings.getGitlabProjectId(), 1);
+            return commitPager.getTotalItems() != 0;
+        } catch (GitLabApiException | NoSuchFieldException exception) {
+            PORTFOLIO_LOGGER.error(exception.getMessage());
+            return false;
         }
     }
 }

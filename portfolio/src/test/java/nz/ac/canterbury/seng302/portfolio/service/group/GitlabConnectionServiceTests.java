@@ -30,7 +30,9 @@ class GitlabConnectionServiceTests {
 
     // These details are for a test project I opened on gitlab. It only has read access so should be safe.
     private static final String TEST_ACCESS_TOKEN = "2VCAxY2H2VDVsuor8qeq";
+    private static final String TEST_EMPTY_ACCESS_TOKEN = "YPusypuxNNVxRph58wac";
     private static final String TEST_PROJECT_ID = "13642";
+    private static final String TEST_EMPTY_PROJECT_ID = "14054";
     private static final String TEST_PROJECT_URL = "https://eng-git.canterbury.ac.nz";
 
     @BeforeEach
@@ -216,6 +218,20 @@ class GitlabConnectionServiceTests {
         }
         System.out.println(commits + "This is the line I need");
         assertNull(commits);
+    }
+
+    @Test
+    void whenGroupRepoHasCommits_testHasCommits() {
+        repositorySettingsService.getGroupRepositorySettingsByGroupId(1);
+        repositorySettingsService.updateRepositoryInformation(1, "REPO NAME", TEST_ACCESS_TOKEN, TEST_PROJECT_ID, TEST_PROJECT_URL);
+        assertTrue(gitlabConnectionService.repositoryHasCommits(1));
+    }
+
+    @Test
+    void whenGroupRepoHasNoCommits_testHasCommits() {
+        repositorySettingsService.getGroupRepositorySettingsByGroupId(1);
+        repositorySettingsService.updateRepositoryInformation(1, "REPO NAME", TEST_EMPTY_ACCESS_TOKEN, TEST_EMPTY_PROJECT_ID, TEST_PROJECT_URL);
+        assertFalse(gitlabConnectionService.repositoryHasCommits(1));
     }
 
 

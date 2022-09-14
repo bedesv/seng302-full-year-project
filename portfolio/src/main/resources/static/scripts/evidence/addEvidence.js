@@ -669,11 +669,7 @@ var commitsModal = document.getElementById('add-evidence-commits__modal')
 commitsModal.addEventListener('show.bs.modal', function (event) {
     for (child of document.getElementById("commit-selection-box").children) {
         id = child.children[1].id;
-        if (commitList.includes(id)) {
-            child.children[1].checked = true;
-        } else {
-            child.children[1].checked = false;
-        }
+        child.children[1].checked = commitList.includes(id);
     }
 })
 

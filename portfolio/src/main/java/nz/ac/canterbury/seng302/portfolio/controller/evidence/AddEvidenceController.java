@@ -294,6 +294,7 @@ public class AddEvidenceController {
      */
     private void addRepositoryInfoToModel(int projectId, int userId, int groupId, Model model) {
         List<Group> groups = groupsService.getAllGroupsUserIn(projectId, userId);
+        List<Group> groupsWithCommits = new ArrayList<>();
         List<Commit> commitList = new ArrayList<>();
         List<Member> members = new ArrayList<>();
         List<Branch> branches = new ArrayList<>();
@@ -301,9 +302,14 @@ public class AddEvidenceController {
         Group mainGroup = null;
         Date startDate = null;
         Date endDate = null;
+        boolean displayCommits = false;
         if (!groups.isEmpty()) {
             // Try to set the selected group to the given group id
             for (Group g : groups) {
+                if (gitlabConnectionService.repositoryHasCommits(g.getGroupId())) {
+                    groupsWithCommits.add(g);
+                    displayCommits = true;
+                }
                 if (g.getGroupId() == groupId) {
                     mainGroup = g;
                 }
@@ -318,8 +324,9 @@ public class AddEvidenceController {
 
             // Calculate the current date and the date two weeks ago as the default date range for the search
             Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DATE, 1); // Add one day because end date isn't inclusive
             endDate = calendar.getTime();
-            calendar.add(Calendar.DATE, -14);
+            calendar.add(Calendar.DATE, -15); // Take away 15 days to be two weeks before today
             startDate = calendar.getTime();
 
             // Retrieve commits, members and branches from the group's repository
@@ -352,11 +359,11 @@ public class AddEvidenceController {
 
         // Add all the relevant objects to the page model
         model.addAttribute("commits", commitList);
-        model.addAttribute("displayCommits", !branches.isEmpty());
+        model.addAttribute("displayCommits", displayCommits);
         model.addAttribute("repositoryUsers", members);
         model.addAttribute("branches", branches);
         model.addAttribute("defaultBranch", defaultBranch);
-        model.addAttribute("groups", groups);
+        model.addAttribute("groups", groupsWithCommits);
         model.addAttribute("mainGroup", mainGroup);
         model.addAttribute("startDate", Project.dateToString(startDate, TIMEFORMAT));
         model.addAttribute("endDate", Project.dateToString(endDate, TIMEFORMAT));
@@ -424,6 +431,11 @@ public class AddEvidenceController {
         try {
             startDate = new SimpleDateFormat(TIMEFORMAT).parse(startDateString);
             endDate = new SimpleDateFormat(TIMEFORMAT).parse(endDateString);
+            // Add one day to the end date so that both dates on the same day works properly
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(endDate);
+            cal.add(Calendar.DATE, 1);
+            endDate = cal.getTime();
         } catch (Exception ignored) {
             // Date parsing didn't work, must be in wrong format
         }
