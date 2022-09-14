@@ -11,6 +11,8 @@ import nz.ac.canterbury.seng302.shared.identityprovider.UserAccountServiceGrpc.U
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StreamUtils;
@@ -54,6 +56,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
 
     @Autowired
     private UserRepository repository;
+    private static final Logger IDENTITY_LOGGER = LoggerFactory.getLogger("com.identity");
 
     /**
      * Checks if the requesting user is authenticated.
@@ -101,6 +104,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
         } else {
             reply = PaginatedUsersResponse.newBuilder().build();
         }
+        IDENTITY_LOGGER.info("Paginated users requested. " + reply.getUsersList().size() + " users returned");
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
     }
@@ -307,8 +311,8 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
      */
     @Override
     public void deleteUserProfilePhoto(DeleteUserProfilePhotoRequest request, StreamObserver<DeleteUserProfilePhotoResponse> responseObserver) {
+        IDENTITY_LOGGER.info("Attempting to delete user " + request.getUserId() + "'s profile picture.");
         DeleteUserProfilePhotoResponse response;
-
         if (isAuthenticatedAsUser(request.getUserId())) {
             response = deleteUserProfilePhotoHandler(request);
         } else {
@@ -317,6 +321,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
                     .setMessage("Delete profile picture failed: Not authenticated")
                     .build();
         }
+        IDENTITY_LOGGER.info(response.getMessage());
         responseObserver.onNext(response);
         responseObserver.onCompleted();
 
@@ -359,6 +364,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
      */
     @Override
     public void changeUserPassword(ChangePasswordRequest request, StreamObserver<ChangePasswordResponse> responseObserver) {
+        IDENTITY_LOGGER.info("Attempting to change user " + request.getUserId() + "'s password.");
         ChangePasswordResponse reply;
         if (isAuthenticatedAsUser(request.getUserId())) {
             reply = changeUserPasswordHandler(request);
@@ -368,6 +374,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
                     .setMessage("Password change failed: Not authenticated")
                     .build();
         }
+        IDENTITY_LOGGER.info(reply.getMessage());
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
     }
@@ -416,6 +423,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
      */
     @Override
     public void editUser(EditUserRequest request, StreamObserver<EditUserResponse> responseObserver) {
+        IDENTITY_LOGGER.info("Attempting to edit user " + request.getUserId());
         EditUserResponse reply;
         if (isAuthenticatedAsUser(request.getUserId())) {
             reply = editUserHandler(request);
@@ -425,6 +433,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
                     .setMessage("Edit user failed: Not authenticated")
                     .build();
         }
+        IDENTITY_LOGGER.info(reply.getMessage());
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
     }
@@ -493,12 +502,16 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
      */
     @Override
     public void getUserAccountById(GetUserByIdRequest request, StreamObserver<UserResponse> responseObserver) {
+        IDENTITY_LOGGER.info("Attempting to find user " + request.getId());
         UserResponse reply;
         if (isAuthenticated()) {
             reply = getUserAccountByIdHandler(request);
+            IDENTITY_LOGGER.info("User " + request.getId() + " requested: User found.");
         } else {
             reply = UserResponse.newBuilder().build();
+            IDENTITY_LOGGER.info("User " + request.getId() + " requested: User not found.");
         }
+
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
     }
@@ -542,11 +555,15 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
      */
     @Override
     public void register(UserRegisterRequest request, StreamObserver<UserRegisterResponse> responseObserver) {
-
+        IDENTITY_LOGGER.info("Attempting to create new user.");
         UserRegisterResponse reply = registerHandler(request);
+        if (reply.getIsSuccess()) {
+            IDENTITY_LOGGER.info("User " + reply.getNewUserId() + " created.");
+        } else {
+            IDENTITY_LOGGER.info("Could not create user: " + reply.getValidationErrorsList());
+        }
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
-
     }
 
     /**
@@ -620,7 +637,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
         } else if (username.isBlank()) {
             ValidationError validationError = ValidationError.newBuilder().setErrorText("Username must not contain only whitespace").setFieldName(USERNAME_FIELD).build();
             validationErrors.add(validationError);
-        } else if (isBadUserName(username)) {
+        } else if (!titleValid(username)) {
             ValidationError validationError = ValidationError.newBuilder().setErrorText("Username must not contain special characters").setFieldName(USERNAME_FIELD).build();
             validationErrors.add(validationError);
         }
@@ -632,27 +649,6 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
         return validationErrors;
     }
 
-    /**
-     * Checks if a name is valid. Checks against a list of reasonable characters that could appear in names.
-     * @param name The name to check
-     * @return True if the name is valid
-     */
-    public boolean isBadName(String name) {
-        Pattern namePattern = Pattern.compile("[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆŠŽ∂ð ,.'\\-]+");
-        Matcher nameMatcher = namePattern.matcher(name);
-        return !nameMatcher.matches();
-    }
-
-    /**
-     * Checks if a name is valid. Checks against a list of reasonable characters that could appear in names.
-     * @param name The name to check
-     * @return True if the name is valid
-     */
-    public boolean isBadUserName(String name) {
-        Pattern namePattern = Pattern.compile("[a-zA-Z1-9àáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆŠŽ∂ð ,.'\\-]+");
-        Matcher nameMatcher = namePattern.matcher(name);
-        return !nameMatcher.matches();
-    }
 
     /**
      * Checks that the first name is within the length requirements
@@ -669,8 +665,8 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
             ValidationError validationError = ValidationError.newBuilder().setErrorText("First name must not contain only whitespace").setFieldName(FIRST_NAME_FIELD).build();
             validationErrors.add(validationError);
         }
-        else if (isBadName(firstName)) {
-            ValidationError validationError = ValidationError.newBuilder().setErrorText("First name must not contain special characters").setFieldName(FIRST_NAME_FIELD).build();
+        else if (!nameValid(firstName)) {
+            ValidationError validationError = ValidationError.newBuilder().setErrorText("First name must not contain special characters, or numbers").setFieldName(FIRST_NAME_FIELD).build();
             validationErrors.add(validationError);
         }
         if (firstName.length() > 64) {
@@ -688,9 +684,8 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
      */
     private List<ValidationError> checkMiddleName(String middleName) {
         List<ValidationError> validationErrors = new ArrayList<>();
-
-        if (!Objects.equals(middleName, "") && isBadName(middleName)) {
-            ValidationError validationError = ValidationError.newBuilder().setErrorText("Middle name must not contain special characters").setFieldName(MIDDLE_NAME_FIELD).build();
+        if (!nameValid(middleName)){
+            ValidationError validationError = ValidationError.newBuilder().setErrorText("Middle name must not contain special characters, or numbers").setFieldName(MIDDLE_NAME_FIELD).build();
             validationErrors.add(validationError);
         }
         if (middleName.length() > 64) {
@@ -714,8 +709,8 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
         } else if (lastName.isBlank()) {
             ValidationError validationError = ValidationError.newBuilder().setErrorText("Last name must not contain only whitespace").setFieldName(LAST_NAME_FIELD).build();
             validationErrors.add(validationError);
-        } else if (isBadName(lastName)) {
-            ValidationError validationError = ValidationError.newBuilder().setErrorText("Last name must not contain special characters").setFieldName(LAST_NAME_FIELD).build();
+        } else if (!nameValid(lastName)) {
+            ValidationError validationError = ValidationError.newBuilder().setErrorText("Last name must not contain special characters, or numbers").setFieldName(LAST_NAME_FIELD).build();
             validationErrors.add(validationError);
         }
         if (lastName.length() > 64) {
@@ -868,6 +863,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
     @Override
     public void addRoleToUser(ModifyRoleOfUserRequest request, StreamObserver<UserRoleChangeResponse> responseObserver) {
         UserRoleChangeResponse reply;
+        IDENTITY_LOGGER.info("Attempting to add " + request.getRole() + " role to user " + request.getUserId());
         if (isAuthenticated() && isValidatedForRole(getAuthStateUserId(), request.getRole())) {
             reply = addRoleToUserHandler(request);
         } else {
@@ -876,6 +872,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
                     .setMessage("Unable to add role: Not authenticated")
                     .build();
         }
+        IDENTITY_LOGGER.info(reply.getMessage());
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
     }
@@ -914,6 +911,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
      */
     @Override
     public void removeRoleFromUser(ModifyRoleOfUserRequest request, StreamObserver<UserRoleChangeResponse> responseObserver) {
+        IDENTITY_LOGGER.info("Attempting to remove " + request.getRole() + " role from user " + request.getUserId());
         UserRoleChangeResponse reply;
         if (isAuthenticated() && isValidatedForRole(getAuthStateUserId(), request.getRole())) {
             reply = removeRoleFromUserHandler(request);
@@ -923,6 +921,7 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
                     .setMessage("Unable to remove role: Not authenticated")
                     .build();
         }
+        IDENTITY_LOGGER.info(reply.getMessage());
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
     }
@@ -1055,6 +1054,39 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
             }
         }
         return false;
+    }
+
+    /**
+     * Checks for a valid title,
+     * can be used in all children (e.g., deadline, milestone, events, evidence, groups)
+     * Allows all Characters from and Language (L), Numbers(N), Punctuation (P), Whitespace (Z)
+     * (title).isBlank(); will need to be tested elsewhere
+     * @param title being validated
+     * @return true if valid, false if not
+     */
+    public static boolean titleValid(String title) {
+        String regex = "[^\\p{L}\\p{N}\\p{P}\\p{Z}]";
+        Pattern pattern = Pattern.compile(
+                regex,
+                Pattern.UNICODE_CHARACTER_CLASS);
+        Matcher matcher = pattern.matcher(title);
+        String result = matcher.replaceAll("");
+        return result.length() == title.length();
+    }
+
+    /**
+     * Allows all Characters from and Language (L), Punctuation (P), Whitespace (Z)
+     * @param name being validated
+     * @return true if valid, else false.
+     */
+    public static boolean nameValid(String name) {
+        String regex = "[^\\p{L}\\p{P}\\p{Z}]";
+        Pattern pattern = Pattern.compile(
+                regex,
+                Pattern.UNICODE_CHARACTER_CLASS);
+        Matcher matcher = pattern.matcher(name);
+        String result = matcher.replaceAll("");
+        return result.length() == name.length();
     }
 
 }
