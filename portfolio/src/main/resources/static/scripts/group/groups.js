@@ -235,14 +235,22 @@ function rowClick(currRow) {
         lastRow = null
     }
 
-    if (ctrlPressed) { // Toggle the clicked on row if Control is pressed
-        toggleRow(currRow)
-        removeButtonVisible(currentTable, countSelectedRows(currentTable) !== 0);
-    } else if (shiftPressed) { // Select all rows between (inclusive) the current and last clicked on rows
+    if (shiftPressed && ctrlPressed) {  // Select all rows between (inclusive) the current and last clicked on rows
         // Just select the current row if no other rows have been clicked on
         if (!lastRow) {
             toggleRow(currRow)
         } else {
+            selectRowsBetween([lastRow.rowIndex, currRow.rowIndex])
+        }
+        removeButtonVisible(currentTable, true);
+    } else if (ctrlPressed) { // Toggle the clicked on row if Control is pressed
+        toggleRow(currRow)
+        removeButtonVisible(currentTable, countSelectedRows(currentTable) !== 0);
+    } else if (shiftPressed) { // Select all rows (inclusive) between current and last pressed, update when last pressed changes
+        if (!lastRow) {
+            toggleRow(currRow)
+        } else {
+            clearTableSelection(currentTable)
             selectRowsBetween([lastRow.rowIndex, currRow.rowIndex])
         }
         removeButtonVisible(currentTable, true);
@@ -280,6 +288,7 @@ function selectRowsBetween(indexes) {
         }
     }
 }
+
 
 /**
  * Selects the given rows
