@@ -352,7 +352,7 @@ public class AddEvidenceController {
 
         // Add all the relevant objects to the page model
         model.addAttribute("commits", commitList);
-        model.addAttribute("displayCommits", !commitList.isEmpty());
+        model.addAttribute("displayCommits", !branches.isEmpty());
         model.addAttribute("repositoryUsers", members);
         model.addAttribute("branches", branches);
         model.addAttribute("defaultBranch", defaultBranch);

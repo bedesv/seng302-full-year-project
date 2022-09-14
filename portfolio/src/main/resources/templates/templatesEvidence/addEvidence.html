@@ -208,7 +208,7 @@
                     <h4 class="modal-title" id="add-evidence-commits__modal--label">Add Commits</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div th:if="${commits.size} > 0" class="modal-body add-evidence-commits__wrapper">
+                <div th:if="${displayCommits}" class="modal-body add-evidence-commits__wrapper">
                     <div id="commit-filter-box__wrapper">
                         <div id="commit-filter-box">
                             The rest of this div will be filled in by Javascript. The group id is needed to send
@@ -229,7 +229,7 @@
                         </div>
                     </div>
                 </div>
-                <div th:if="${commits.size} == 0" class="modal-body add-evidence-commits__wrapper">
+                <div th:if="${!displayCommits}" class="modal-body add-evidence-commits__wrapper">
                     <div class="evidence-form__error-message">
                         No commits found! Make sure a repository is linked in a group you are in.
                     </div>
