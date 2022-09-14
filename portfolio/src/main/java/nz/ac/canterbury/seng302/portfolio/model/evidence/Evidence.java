@@ -35,8 +35,8 @@ public class Evidence {
     private List<String> skills; //skills related to this piece of evidence
     @ElementCollection
     private List<Commit> commits;
-    @Transient
-    private Set<Integer> users = new HashSet<>(Set.of(ownerId));
+    @ElementCollection
+    private Set<Integer> linkedUsers = new HashSet<>();
 
 
     public Evidence() {
@@ -63,6 +63,7 @@ public class Evidence {
             this.skills.remove(0);
         }
         this.skills = this.skills.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
+        this.linkedUsers.add(ownerId);
     }
 
 
@@ -124,12 +125,17 @@ public class Evidence {
 
     public void addSkill (String skill) {this.skills.add(skill);}
 
-    public Set<Integer> getUsers() {
-        return users;
+    public Set<Integer> getLinkedUsers() {
+        return linkedUsers;
     }
 
-    public void addUser(Integer userId) {
-        this.users.add(userId);
+    public void addLinkedUsers(Integer userId) {
+        this.linkedUsers.add(userId);
+    }
+
+    public void setLinkedUsers(Set<Integer> userIds) {
+        linkedUsers = userIds;
+        linkedUsers.add(ownerId); // The owner must always be a linked user
     }
 
     /**

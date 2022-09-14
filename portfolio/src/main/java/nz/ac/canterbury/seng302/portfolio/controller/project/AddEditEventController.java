@@ -63,7 +63,7 @@ public class AddEditEventController {
         } else {
             //Create new event
             event = new Event();
-            event.setEventName("EventName");
+            event.setEventName("New Event");
 
             Date currentDate = new Date();
             Calendar calendar = Calendar.getInstance();

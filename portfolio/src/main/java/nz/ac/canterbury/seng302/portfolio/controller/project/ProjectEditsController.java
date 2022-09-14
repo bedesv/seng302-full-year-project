@@ -73,7 +73,8 @@ public class ProjectEditsController {
     @PostMapping("/projects-editing")
     public void isEditingProject(@AuthenticationPrincipal AuthState principal,
                                  @RequestParam String id,
-                                 @RequestParam String name) {
+                                 @RequestParam String name,
+                                 @RequestParam String isEditing) {
         boolean isTeacher = userAccountClientService.isTeacher(principal) && authenticateClientService.checkAuthState().getIsAuthenticated();
         int userId = userAccountClientService.getUserId(principal);
         int projectId;
@@ -84,8 +85,12 @@ public class ProjectEditsController {
             // If project id is not an integer or does not correspond to a project, the request was invalid so we return
         }
         if (isTeacher && userId != -100) {
-            String editString = userAccountClientService.getUserAccountById(userId).getFirstName() +
-                    " is editing " + name;
+            String editString = userAccountClientService.getUserAccountById(userId).getFirstName();
+            if(Integer.parseInt(isEditing) == -1) {
+                editString += " is creating a " + name.toLowerCase();
+            } else {
+                editString += " is editing " + name;
+            }
             projectEditsService.newEdit(projectId, userId, editString);
         }
     }
