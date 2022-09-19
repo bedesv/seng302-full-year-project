@@ -65,7 +65,7 @@ function clearModel(id) {
 //update display based on number of weblinks
 function updateWeblinks(id) {
     const divs = document.querySelectorAll(`.web-links_${id}`);
-    if (divs.length >= 5) {
+    if (divs.length >= MAX_WEBLINKS) {
         document.getElementById("add-weblink-button__div").hidden = true;
     }
 }
