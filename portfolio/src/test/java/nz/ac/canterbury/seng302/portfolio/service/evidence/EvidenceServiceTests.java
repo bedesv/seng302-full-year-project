@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.service.evidence;
 
 import nz.ac.canterbury.seng302.portfolio.model.evidence.*;
+import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
@@ -44,6 +45,8 @@ class EvidenceServiceTests {
 
     static List<Project> projects;
 
+    Group testGroup;
+
     //Initialise the database with projects before each test.
     @BeforeEach
     void storeProjects() {
@@ -51,6 +54,8 @@ class EvidenceServiceTests {
         projectService.saveProject(new Project("Project Name", "Test Project", Date.valueOf("2022-05-9"), Date.valueOf("2022-05-16")));
         projects = projectService.getAllProjects();
         Mockito.doReturn(new User(UserResponse.newBuilder().setId(0).build())).when(userService).getUserAccountById(0);
+        List<User> emptyList = new ArrayList<>();
+        testGroup = new Group(0, "shortname", "longname", 0, emptyList);
     }
 
     //Refresh the database after each test.
@@ -1217,6 +1222,60 @@ class EvidenceServiceTests {
     void whenWebLinkModifiedOnBadEvidence_testExceptionThrown() {
         WebLink weblink = new WebLink();
         assertThrows(NoSuchElementException.class, () -> evidenceService.modifyWebLink(-1, weblink, -1));
+    }
+
+    //////GET GORUPS EVIDENCE//////////
+
+    @Test
+    void givenGroupExists_withoutMembers_getEvidence() {
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(1).getId());
+        assertThat(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    void givenGroupExists_withOneMember_withoutEvidence_getEvidence() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(1).getId());
+        assertThat(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withOneMember_withEvidence_getEvidence() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        Evidence evidence = new Evidence(0, projects.get(1).getId(), "title1", TEST_DESCRIPTION, Date.valueOf("2022-05-14"));
+        evidenceService.saveEvidence(evidence);
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(1).getId());
+        assertEquals(1, groupsEvidence.size());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withMultipleMembers_allWithoutEvidence_getEvidence() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(1).getId());
+        assertThat(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withMultipleMembers_allWithEvidence_getEvidence() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+        Evidence evidence1 = new Evidence(0, projects.get(1).getId(), "title1", TEST_DESCRIPTION, Date.valueOf("2022-05-14"));
+        Evidence evidence2 = new Evidence(0, projects.get(1).getId(), "title2", TEST_DESCRIPTION, Date.valueOf("2022-05-14"));
+        Evidence evidence3 = new Evidence(0, projects.get(1).getId(), "title3", TEST_DESCRIPTION, Date.valueOf("2022-05-14"));
+        evidenceService.saveEvidence(evidence1);
+        evidenceService.saveEvidence(evidence2);
+        evidenceService.saveEvidence(evidence3);
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(1).getId());
+        assertEquals(3, groupsEvidence.size());
     }
 
 }
