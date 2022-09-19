@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.evidence.Commit;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
+import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
@@ -97,6 +98,20 @@ public class EvidenceService {
         String message = "Evidence for user " + userId + " and project " + projectId + " retrieved";
         PORTFOLIO_LOGGER.info(message);
         return portfolioEvidenceList;
+    }
+
+    /**
+     * Get all evidence for members within group
+     * @param group Group retrieving evidence for
+     * @param projectId currently selected project
+     * @return list of all evidences for user in group
+     */
+    public List<PortfolioEvidence> getEvidenceForPortfolioByGroup(Group group, int projectId){
+        List<PortfolioEvidence> groupsEvidence = new ArrayList<>();
+        for (User user: group.getMembers()){
+            groupsEvidence.addAll(getEvidenceForPortfolio(user.getId(), projectId));
+        }
+        return groupsEvidence;
     }
 
     /**

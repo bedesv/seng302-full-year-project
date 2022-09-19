@@ -1,8 +1,10 @@
 package nz.ac.canterbury.seng302.portfolio.controller.group;
 
+import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.group.GroupRepositorySettings;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
+import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.group.*;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
@@ -42,6 +44,8 @@ public class GroupController {
     private PortfolioGroupService portfolioGroupService;
     @Autowired
     private GroupChartDataService groupChartDataService;
+    @Autowired
+    private EvidenceService evidenceService;
 
     /**
      * Get mapping to fetch group settings page
@@ -59,6 +63,9 @@ public class GroupController {
         }
         Group group = new Group(response);
         Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolioByGroup(group, group.getParentProject());
+
+        model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("group", group);
         model.addAttribute("userInGroup", groupsClientService.userInGroup(group.getGroupId(), userId));
         model.addAttribute("graphStartDate", project.getStartDate());
