@@ -11,6 +11,12 @@ label.helper, p.helper, .helper-inline{
     padding: 20px;
 }
 
+.profile-pic__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 h1 {
     text-align: center;
     font-weight: normal;
@@ -24,6 +30,15 @@ h4 {
     width:150px;
     height:150px;
     object-fit:cover;
+}
+
+.profile-image__container {
+    display: flex;
+}
+
+.profile-pic__save-button {
+    display: block;
+    margin: auto;
 }
 
 #root, .helper-inline {
