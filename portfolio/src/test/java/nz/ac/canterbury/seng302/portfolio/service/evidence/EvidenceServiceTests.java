@@ -17,6 +17,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ConcurrentModel;
+import org.springframework.ui.Model;
 
 import java.sql.Date;
 import java.util.*;
@@ -1278,4 +1280,44 @@ class EvidenceServiceTests {
         assertEquals(3, groupsEvidence.size());
     }
 
+    /////////VALIDATE EVIDENCE////////
+    @Test
+    void givenValidDetails_validateEvidence() {
+        List<String> skills = new ArrayList<>();
+        skills.add("Unit Testing");
+        Model model = new ConcurrentModel();
+        List<Boolean> response = evidenceService.validateEvidence(model, "title", "description", skills);
+        //list should all be true, true = valid attribute
+        assertFalse(response.contains(false));
+    }
+
+    @Test
+    void givenInvalidTitle_validateEvidence() {
+        List<String> skills = new ArrayList<>();
+        skills.add("Unit Testing");
+        Model model = new ConcurrentModel();
+        List<Boolean> response = evidenceService.validateEvidence(model, "title♥❤", "description", skills);
+        //list should contain false, false = invalid attribute
+        assertTrue(response.contains(false));
+    }
+
+    @Test
+    void givenInvalidDescription_validateEvidence() {
+        List<String> skills = new ArrayList<>();
+        skills.add("Unit Testing");
+        Model model = new ConcurrentModel();
+        List<Boolean> response = evidenceService.validateEvidence(model, "title", "description♥❤", skills);
+        //list should contain false, false = invalid attribute
+        assertTrue(response.contains(false));
+    }
+
+    @Test
+    void givenInvalidSkills_validateEvidence() {
+        List<String> skills = new ArrayList<>();
+        skills.add("Unit Testing♥❤");
+        Model model = new ConcurrentModel();
+        List<Boolean> response = evidenceService.validateEvidence(model, "title", "description", skills);
+        //list should contain false, false = invalid attribute
+        assertTrue(response.contains(false));
+    }
 }
