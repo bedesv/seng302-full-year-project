@@ -12,6 +12,7 @@ import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
+import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 
 @Service
 public class EvidenceService {
@@ -111,7 +117,23 @@ public class EvidenceService {
         for (User user: group.getMembers()){
             groupsEvidence.addAll(getEvidenceForPortfolio(user.getId(), projectId));
         }
-        return groupsEvidence;
+        return getRecentEvidence(groupsEvidence);
+    }
+
+    /**
+     * Refine evidence to previous 2 weeks
+     * @param evidences input all evidence
+     * @return remove evidence earlier than two weeks prior than now
+     */
+    private List<PortfolioEvidence> getRecentEvidence(List<PortfolioEvidence> evidences) {
+        List<PortfolioEvidence> refinedEvidence = new ArrayList<>();
+        Instant now = Instant.now(); //current date
+        for (PortfolioEvidence portfolioEvidence : evidences) {
+            if ((portfolioEvidence.getDate()).after(Date.from(now.minus(Duration.ofDays(14))))) {
+                refinedEvidence.add(portfolioEvidence);
+            }
+        }
+        return refinedEvidence;
     }
 
     /**
