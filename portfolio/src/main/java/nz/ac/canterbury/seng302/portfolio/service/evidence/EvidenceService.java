@@ -12,7 +12,6 @@ import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
-import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +21,9 @@ import org.springframework.ui.Model;
 import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 
 @Service
 public class EvidenceService {
