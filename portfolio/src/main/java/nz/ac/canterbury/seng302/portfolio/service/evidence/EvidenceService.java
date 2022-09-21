@@ -125,12 +125,18 @@ public class EvidenceService {
      * @param evidences input all evidence
      * @return remove evidence earlier than two weeks prior than now
      */
-    private List<PortfolioEvidence> getRecentEvidence(List<PortfolioEvidence> evidences) {
+    public List<PortfolioEvidence> getRecentEvidence(List<PortfolioEvidence> evidences) {
         List<PortfolioEvidence> refinedEvidence = new ArrayList<>();
         Instant now = Instant.now(); //current date
         for (PortfolioEvidence portfolioEvidence : evidences) {
+            System.out.println("Date now: " + Date.from(now));
+            System.out.println("Date -14:" + Date.from(now.minus(Duration.ofDays(14))));
+            System.out.println("Date evidence:" + portfolioEvidence.getDate());
             if ((portfolioEvidence.getDate()).after(Date.from(now.minus(Duration.ofDays(14))))) {
                 refinedEvidence.add(portfolioEvidence);
+                System.out.println("YES");
+            } else {
+                System.out.println("NO");
             }
         }
         return refinedEvidence;
