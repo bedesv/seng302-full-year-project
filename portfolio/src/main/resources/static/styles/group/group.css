@@ -294,10 +294,18 @@ html {
     justify-content: center;
 }
 
+.evidence-chart__flex-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
 #group-chart__categories-chart, #group-chart__skills-chart, #group-chart__evidence-chart, #group-chart__time-chart {
-    flex-grow: 1;
-    overflow: hidden;
+    /*flex-grow: 1;*/
+    /*overflow: hidden;*/
     height: 500px;
+    min-width: 800px;
 }
 
 .graph__dropdown {
