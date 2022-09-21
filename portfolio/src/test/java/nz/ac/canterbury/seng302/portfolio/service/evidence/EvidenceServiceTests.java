@@ -7,13 +7,12 @@ import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
-import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -1366,8 +1365,7 @@ class EvidenceServiceTests {
     }
 
     @ParameterizedTest
-    @ValueSource(
-            strings = {"title🎁, description, skill", "title, description🎁, skill", "title, description, Unit Testing♥❤"})
+    @CsvSource({"title🎁, description, skill", "title, description🎁, skill", "title, description, Unit Testing♥❤"})
     void givenInvalid_testEvidenceValid(String title, String description, String skill){
         List<String> skills = new ArrayList<>();
         skills.add(skill);
