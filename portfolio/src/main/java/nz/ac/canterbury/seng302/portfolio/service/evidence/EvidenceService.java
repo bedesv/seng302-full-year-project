@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import java.net.URL;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -108,28 +106,12 @@ public class EvidenceService {
      * @param projectId currently selected project
      * @return list of all evidences for user in group
      */
-    public List<PortfolioEvidence> getEvidenceForPortfolioByGroup(Group group, int projectId){
+    public List<PortfolioEvidence> getEvidenceForPortfolioByGroup(Group group, int projectId, int limit){
         List<PortfolioEvidence> groupsEvidence = new ArrayList<>();
         for (User user: group.getMembers()){
             groupsEvidence.addAll(getEvidenceForPortfolio(user.getId(), projectId));
         }
-        return getRecentEvidence(groupsEvidence);
-    }
-
-    /**
-     * Refine evidence to previous 2 weeks
-     * @param evidences input all evidence
-     * @return remove evidence earlier than two weeks prior than now
-     */
-    public List<PortfolioEvidence> getRecentEvidence(List<PortfolioEvidence> evidences) {
-        List<PortfolioEvidence> refinedEvidence = new ArrayList<>();
-        Instant now = Instant.now(); //current date
-        for (PortfolioEvidence portfolioEvidence : evidences) {
-            if ((portfolioEvidence.getDate()).after(Date.from(now.minus(Duration.ofDays(14))))) {
-                refinedEvidence.add(portfolioEvidence);
-            }
-        }
-        return refinedEvidence;
+        return groupsEvidence.stream().limit(limit).toList();
     }
 
     /**

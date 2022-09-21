@@ -47,6 +47,8 @@ public class GroupController {
     @Autowired
     private EvidenceService evidenceService;
 
+    private static final int GROUP_HOME_EVIDENCE_LIMIT = 10;
+
     /**
      * Get mapping to fetch group settings page
      * @param principal Authentication principal storing current user information
@@ -63,7 +65,7 @@ public class GroupController {
         }
         Group group = new Group(response);
         Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
-        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolioByGroup(group, project.getId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolioByGroup(group, project.getId(), GROUP_HOME_EVIDENCE_LIMIT);
         model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("group", group);
         model.addAttribute("userInGroup", groupsClientService.userInGroup(group.getGroupId(), userId));
@@ -101,7 +103,6 @@ public class GroupController {
 
     /**
      * A post mapping to update the given groups repository
-     * @param principal Authentication principal storing current user information
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @param repositoryName The new repository name
      * @param gitlabAccessToken The new repository api key
@@ -111,8 +112,7 @@ public class GroupController {
      * @return A html fragment that contains the updated repository information
      */
     @PostMapping("/group-{id}-repository")
-    public String updateGroupRepository(@AuthenticationPrincipal AuthState principal,
-                                        Model model,
+    public String updateGroupRepository(Model model,
                                         @RequestParam("repositoryName") String repositoryName,
                                         @RequestParam("gitlabAccessToken") String gitlabAccessToken,
                                         @RequestParam("gitlabProjectId") String gitlabProjectId,

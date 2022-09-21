@@ -52,6 +52,7 @@ class EvidenceServiceTests {
     static List<Project> projects;
 
     Group testGroup;
+    int smallLimit;
 
     //Initialise the database with projects before each test.
     @BeforeEach
@@ -64,6 +65,7 @@ class EvidenceServiceTests {
         Mockito.doReturn(new User(UserResponse.newBuilder().setId(0).build())).when(userService).getUserAccountById(0);
         List<User> emptyList = new ArrayList<>();
         testGroup = new Group(0, "shortname", "longname", 0, emptyList);
+        smallLimit = 2;
     }
 
     //Refresh the database after each test.
@@ -1234,26 +1236,26 @@ class EvidenceServiceTests {
 
     @Test
     void givenGroupExists_withoutMembers_getEvidence() {
-        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId());
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId(), smallLimit);
         assertTrue(groupsEvidence.isEmpty());
     }
 
     @Test
     void givenGroupExists_withOneMember_withoutEvidence_getEvidence() {
         testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
-        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId());
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId(), smallLimit);
         assertTrue(groupsEvidence.isEmpty());
     }
 
     @Test
     @Transactional
-    void givenGroupExists_withOneMember_withEvidence_getEvidence() {
+    void givenGroupExists_withOneMember_withOneEvidence_getEvidence() {
         testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
         Instant now = Instant.now(); //current date
         Evidence evidence = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(10))));
         evidenceService.saveEvidence(evidence);
 
-        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId());
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId(), smallLimit);
         assertEquals(1, groupsEvidence.size());
     }
 
@@ -1264,13 +1266,13 @@ class EvidenceServiceTests {
         testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
         testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
 
-        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId());
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId(), smallLimit);
         assertTrue(groupsEvidence.isEmpty());
     }
 
     @Test
     @Transactional
-    void givenGroupExists_withMultipleMembers_allWithEvidence_getEvidence() {
+    void givenGroupExists_withMultipleMembers_allWithOneEvidence_getEvidence() {
         testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
         testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
         testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
@@ -1282,75 +1284,8 @@ class EvidenceServiceTests {
         evidenceService.saveEvidence(evidence2);
         evidenceService.saveEvidence(evidence3);
 
-        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId());
-        assertEquals(3, groupsEvidence.size());
-    }
-
-    @Test
-    @Transactional
-    void givenGroupExists_withMultipleMembers_allWithEvidence_getEvidence_oneDateOutOfRange() {
-        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
-        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
-        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
-        Instant now = Instant.now(); //current date
-        Evidence evidence1 = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(14))));
-        Evidence evidence2 = new Evidence(0, projects.get(2).getId(), "title2", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(13))));
-        Evidence evidence3 = new Evidence(0, projects.get(2).getId(), "title3", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(0))));
-        evidenceService.saveEvidence(evidence1);
-        evidenceService.saveEvidence(evidence2);
-        evidenceService.saveEvidence(evidence3);
-
-        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId());
-        assertEquals(2, groupsEvidence.size());
-    }
-
-    @Test
-    @Transactional
-    void givenGroupExists_withMultipleMembers_allWithEvidence_getEvidence_allDatesOutOfRange() {
-        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
-        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
-        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
-        Instant now = Instant.now(); //current date
-        Evidence evidence1 = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(14))));
-        Evidence evidence2 = new Evidence(0, projects.get(2).getId(), "title2", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(20))));
-        Evidence evidence3 = new Evidence(0, projects.get(2).getId(), "title3", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(100))));
-        evidenceService.saveEvidence(evidence1);
-        evidenceService.saveEvidence(evidence2);
-        evidenceService.saveEvidence(evidence3);
-
-        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId());
-        assertTrue(groupsEvidence.isEmpty());
-    }
-
-    /////////REFINE GROUPS EVIDENCE////////
-    @Test
-    void givenOneEvidenceInDate_refineEvidence() {
-        List<User> users = new ArrayList<>();
-        users.add(new User(UserResponse.newBuilder().setId(0).build()));
-
-        Instant now = Instant.now(); //current date
-        Evidence evidence1 = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(13))));
-        PortfolioEvidence portfolioEvidence = new PortfolioEvidence(evidence1, users);
-
-        List<PortfolioEvidence> allEvidence = new ArrayList<>();
-        allEvidence.add(portfolioEvidence);
-
-        assertEquals(1, evidenceService.getRecentEvidence(allEvidence).size());
-    }
-
-    @Test
-    void givenOneEvidenceOutOfDate_refineEvidence() {
-        List<User> users = new ArrayList<>();
-        users.add(new User(UserResponse.newBuilder().setId(0).build()));
-
-        Instant now = Instant.now(); //current date
-        Evidence evidence1 = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(15))));
-        PortfolioEvidence portfolioEvidence = new PortfolioEvidence(evidence1, users);
-
-        List<PortfolioEvidence> allEvidence = new ArrayList<>();
-        allEvidence.add(portfolioEvidence);
-
-        assertTrue(evidenceService.getRecentEvidence(allEvidence).isEmpty());
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId(), smallLimit);
+        assertEquals(smallLimit, groupsEvidence.size());
     }
 
     /////////VALIDATE EVIDENCE////////
