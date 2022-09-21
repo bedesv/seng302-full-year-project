@@ -64,7 +64,6 @@ public class GroupController {
         Group group = new Group(response);
         Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
         List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolioByGroup(group, project.getId());
-        System.out.println("Evidence list: " + evidenceList);
         model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("group", group);
         model.addAttribute("userInGroup", groupsClientService.userInGroup(group.getGroupId(), userId));
@@ -74,7 +73,6 @@ public class GroupController {
         model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("pageUser", userAccountClientService.getUserAccountByPrincipal(principal));
         groupChartDataService.setDateRefiningOptions(model, project);
-        System.out.println("Evidence list: " + evidenceList);
         return GROUP_PAGE;
     }
 

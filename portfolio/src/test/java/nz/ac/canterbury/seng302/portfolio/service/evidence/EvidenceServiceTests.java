@@ -7,10 +7,13 @@ import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -1320,6 +1323,37 @@ class EvidenceServiceTests {
         assertTrue(groupsEvidence.isEmpty());
     }
 
+    /////////REFINE GROUPS EVIDENCE////////
+    @Test
+    void givenOneEvidenceInDate_refineEvidence() {
+        List<User> users = new ArrayList<>();
+        users.add(new User(UserResponse.newBuilder().setId(0).build()));
+
+        Instant now = Instant.now(); //current date
+        Evidence evidence1 = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(13))));
+        PortfolioEvidence portfolioEvidence = new PortfolioEvidence(evidence1, users);
+
+        List<PortfolioEvidence> allEvidence = new ArrayList<>();
+        allEvidence.add(portfolioEvidence);
+
+        assertEquals(1, evidenceService.getRecentEvidence(allEvidence).size());
+    }
+
+    @Test
+    void givenOneEvidenceOutOfDate_refineEvidence() {
+        List<User> users = new ArrayList<>();
+        users.add(new User(UserResponse.newBuilder().setId(0).build()));
+
+        Instant now = Instant.now(); //current date
+        Evidence evidence1 = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(15))));
+        PortfolioEvidence portfolioEvidence = new PortfolioEvidence(evidence1, users);
+
+        List<PortfolioEvidence> allEvidence = new ArrayList<>();
+        allEvidence.add(portfolioEvidence);
+
+        assertTrue(evidenceService.getRecentEvidence(allEvidence).isEmpty());
+    }
+
     /////////VALIDATE EVIDENCE////////
     @Test
     void givenValidDetails_validateEvidence() {
@@ -1331,32 +1365,14 @@ class EvidenceServiceTests {
         assertFalse(response.contains(false));
     }
 
-    @Test
-    void givenInvalidTitle_validateEvidence() {
+    @ParameterizedTest
+    @ValueSource(
+            strings = {"title🎁, description, skill", "title, description🎁, skill", "title, description, Unit Testing♥❤"})
+    void givenInvalid_testEvidenceValid(String title, String description, String skill){
         List<String> skills = new ArrayList<>();
-        skills.add("Unit Testing");
+        skills.add(skill);
         Model model = new ConcurrentModel();
-        List<Boolean> response = evidenceService.validateEvidence(model, "title♥❤", "description", skills);
-        //list should contain false, false = invalid attribute
-        assertTrue(response.contains(false));
-    }
-
-    @Test
-    void givenInvalidDescription_validateEvidence() {
-        List<String> skills = new ArrayList<>();
-        skills.add("Unit Testing");
-        Model model = new ConcurrentModel();
-        List<Boolean> response = evidenceService.validateEvidence(model, "title", "description♥❤", skills);
-        //list should contain false, false = invalid attribute
-        assertTrue(response.contains(false));
-    }
-
-    @Test
-    void givenInvalidSkills_validateEvidence() {
-        List<String> skills = new ArrayList<>();
-        skills.add("Unit Testing♥❤");
-        Model model = new ConcurrentModel();
-        List<Boolean> response = evidenceService.validateEvidence(model, "title", "description", skills);
+        List<Boolean> response = evidenceService.validateEvidence(model, title, description, skills);
         //list should contain false, false = invalid attribute
         assertTrue(response.contains(false));
     }
