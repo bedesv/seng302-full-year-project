@@ -70,7 +70,7 @@
                       <h4 class="web-link-title">Web Links</h4>
                     </div>
                     <div class="evidence__button-wrapper flex-row">
-                      <div th:if="${(evidence.getNumberWeblinks() <  maxWeblinks) && owner}">
+                      <div th:if="${(evidence.getNumberWeblinks() <  maxWeblinks) && owner}" id="add-weblink-button__div">
                         <button id="weblink-button" type="button" class="btn-fill-primary" data-bs-toggle="modal"
                                 th:data-bs-target="'#addingWeblink_' + ${evidence.getId}" th:data-evidenceId="${evidence.getId}"
                                 onclick="setIndex(-1); clearModel(this.getAttribute('data-evidenceId'))">

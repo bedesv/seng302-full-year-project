@@ -32,7 +32,7 @@ html {
     padding-top: 0;
     padding-bottom: 0;
     border: 1px solid var(--color-accent);
-    border-radius: 1.5rem;
+    border-radius: 10px;
     background-color: var(--color-complement);
 
     overflow: hidden;
@@ -95,7 +95,7 @@ html {
     position: relative;
 
     border: 1px solid var(--color-accent);
-    border-radius: 1.5rem;
+    border-radius: 10px;
     background-color: var(--color-complement);
     padding: 0 2rem 0 2rem;
     margin-top: 1rem;
@@ -106,7 +106,7 @@ html {
     position: relative;
 
     border: 1px solid var(--color-accent);
-    border-radius: 1.5rem;
+    border-radius: 10px;
     background-color: var(--color-complement);
     padding: 0 2rem 0 2rem;
 }
@@ -246,7 +246,7 @@ html {
     color: black;
     border-color: var(--color-accent);
     background-color: var(--color-complement);
-    border-radius: 2em;
+    border-radius: 10px;
     height: 3rem;
     box-shadow: none !important;
     width: 100%;

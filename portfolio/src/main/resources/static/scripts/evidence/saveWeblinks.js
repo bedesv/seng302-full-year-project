@@ -47,7 +47,9 @@ async function saveWebLink(id) {
         const evidenceWrapper = document.getElementById(`web-link__wrapper_${id}`);
         evidenceWrapper.innerHTML = updatedEvidence;
         bootstrap.Modal.getInstance(document.getElementById(`addingWeblink_${id}`)).hide();
+        updateWeblinks(id);
         return false;
+
     } else {
         document.getElementById("weblink-incorrect").hidden = false;
     }
@@ -55,10 +57,17 @@ async function saveWebLink(id) {
 
 // Clears the edit modal
 function clearModel(id) {
-    console.log(id);
     document.getElementById(`weblink-modal__name-field_${id}`).value = "";
     document.getElementById(`weblink-modal__link-field_${id}`).value = "";
     document.getElementById("weblink-incorrect").hidden = true;
+}
+
+//update display based on number of weblinks
+function updateWeblinks(id) {
+    const divs = document.querySelectorAll(`.web-links_${id}`);
+    if (divs.length >= MAX_WEBLINKS) {
+        document.getElementById("add-weblink-button__div").hidden = true;
+    }
 }
 
 // Sets index that of the web link in the modal. The index is that from the evidence web links array.
