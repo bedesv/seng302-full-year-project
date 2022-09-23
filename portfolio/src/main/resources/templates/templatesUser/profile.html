@@ -10,6 +10,7 @@
     <link rel="stylesheet" th:href="@{styles/user/profile.css}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
     <link th:rel="stylesheet" th:href="@{webjars/bootstrap/5.1.3/css/bootstrap.min.css} "/>
+    <script th:src="@{webjars/bootstrap/5.1.3/js/bootstrap.min.js}"></script>
     <script rel="script" th:src="@{scripts/user/profile.js}"></script>
 </head>
 
@@ -21,10 +22,16 @@
 
     <div id="page-content" class="constrict">
         <div class="container">
-            <div class="profile-pic__row flex-column">
-                <img th:src="${pageUser.profileImagePath}" style="z-index: 1;" class="profile-image" alt="profilePhoto">
-                <a th:if="${owner}" th:href="@{addProfilePicture}"><img th:src="@{images/cameraIcon.png}" style="z-index: 2;" class="icon" alt="cameraIcon"></a>
-                <h3> <span th:text="${pageUser.fullName}" th:remove="tag">title</span></h3>
+            <div class="card profile-pic__row">
+                <div class="profile-pic__content">
+                    <img th:src="${pageUser.profileImagePath}" class="card-img-top profile-image" alt="profilePhoto">
+                    <a th:if="${owner}" th:href="@{addProfilePicture}"><img th:src="@{images/cameraIcon.png}" class="icon" alt="cameraIcon"></a>
+                    <div class="card-body">
+                        <h3 class="card-title"> <span th:text="${pageUser.fullName}" th:remove="tag">title</span></h3>
+                        <h5>Role(s)</h5>
+                        <div><span class="badge badge-pill badge-primary" th:each="role: ${pageUser.roleStrings}" th:text="${role}"></span> </div>
+                    </div>
+                </div>
             </div>
 
             <div class="profile-body__row">
