@@ -306,11 +306,14 @@ public class AddEvidenceController {
         if (!groups.isEmpty()) {
             // Try to set the selected group to the given group id
             for (Group g : groups) {
-                if (gitlabConnectionService.repositoryHasCommits(g.getGroupId())) {
+                int repoHasCommits = gitlabConnectionService.repositoryHasCommits(g.getGroupId());
+                if (repoHasCommits == 1) {
                     groupsWithCommits.add(g);
                     displayCommits = true;
+                } else if (repoHasCommits == 0) {
+                    commitsError = "You cannot add commits. There are no commits in your group repository.";
                 } else {
-                    commitsError = "There are no commits in the group. Please check the Repository connection.";
+                    commitsError = "You cannot add commits. Your group is not connected to a repository.";
                 }
                 if (g.getGroupId() == groupId) {
                     mainGroup = g;
@@ -359,7 +362,7 @@ public class AddEvidenceController {
                 }
             }
         } else {
-            commitsError = "User needs to be assigned to a group";
+            commitsError = "You cannot add commits. You're not currently assigned to a group.";
         }
 
         // Sort the list of commits in reverse chronological order (newest first)
