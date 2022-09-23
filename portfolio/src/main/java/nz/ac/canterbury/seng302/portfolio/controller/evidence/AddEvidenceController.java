@@ -197,7 +197,6 @@ public class AddEvidenceController {
 
         try {
             addWebLinksToEvidence(evidence, webLinkLinks, webLinkNames);
-            System.out.println(evidence.getWebLinks());
             evidenceService.saveEvidence(evidence);
         } catch (IllegalArgumentException exception) {
             if (Objects.equals(exception.getMessage(), "Title not valid")) {
@@ -303,12 +302,15 @@ public class AddEvidenceController {
         Date startDate = null;
         Date actualEndDate = null;
         boolean displayCommits = false;
+        String commitsError = "";
         if (!groups.isEmpty()) {
             // Try to set the selected group to the given group id
             for (Group g : groups) {
                 if (gitlabConnectionService.repositoryHasCommits(g.getGroupId())) {
                     groupsWithCommits.add(g);
                     displayCommits = true;
+                } else {
+                    commitsError = "There are no commits in the group. Please check the Repository connection.";
                 }
                 if (g.getGroupId() == groupId) {
                     mainGroup = g;
@@ -317,7 +319,7 @@ public class AddEvidenceController {
 
 
             // If at least one of the user's groups has a repo with commits
-            if (groupsWithCommits.size() > 0) {
+            if (!groupsWithCommits.isEmpty()) {
 
                 // If selected group is null, set the selected group to the first group in the list
                 if (mainGroup == null) {
@@ -356,6 +358,8 @@ public class AddEvidenceController {
                     }
                 }
             }
+        } else {
+            commitsError = "User needs to be assigned to a group";
         }
 
         // Sort the list of commits in reverse chronological order (newest first)
@@ -365,6 +369,7 @@ public class AddEvidenceController {
         // Add all the relevant objects to the page model
         model.addAttribute("commits", commitList);
         model.addAttribute("displayCommits", displayCommits);
+        model.addAttribute("commitsError", commitsError);
         model.addAttribute("repositoryUsers", members);
         model.addAttribute("branches", branches);
         model.addAttribute("defaultBranch", defaultBranch);
