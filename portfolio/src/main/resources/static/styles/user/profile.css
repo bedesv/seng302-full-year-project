@@ -29,11 +29,19 @@
     align-items: center;
 }
 
+.profile__name {
+    text-align: center;
+}
+
 .profile-pic__row img {
     max-width: 100%;
     height: auto;
     border-radius: 100%;
     width: 50%;
+}
+
+.profile-pic__row a {
+    margin: -20px;
 }
 
 .profile-pic__row .icon {
@@ -42,6 +50,14 @@
     margin: auto;
     left: 75px;
     bottom: 15px;
+}
+
+.profile-card__roles, .profile-card__groups {
+    color: black !important;
+    background-color: var(--color-primary);
+    border: 1px solid var(--color-accent);
+    margin: 2px;
+    text-decoration: none;
 }
 
 .profile-body__row {
