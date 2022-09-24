@@ -1,20 +1,35 @@
-// Load Google Charts then update charts once it's done
-google.charts.load("current", {packages:["corechart"]}).then(updateAllCharts);
+// // Load Google Charts then update charts once it's done
+// google.charts.load("current", {packages:["corechart"]}).then(updateAllCharts);
 //Contingency if first load doesn't work
 document.addEventListener('DOMContentLoaded', () => {
-    google.charts.load("current", {packages:["corechart"]}).then(updateAllCharts);
+    google.charts.load("current", {packages:["corechart"]}).then(updateChartData);
 });
 // // Update charts when the window resizes
-// window.onresize = updateAllCharts
+// window.onresize = updateCharts
 
 /**
  * Updates all the charts
  */
-async function updateAllCharts() {
-    let memberData = await fetchChartData('membersData');
-    let dataOverTime = await fetchChartData('dataOverTime');
-    let categoriesData = await fetchChartData('categories');
-    let skillsData = await fetchChartData('skills');
+let memberData;
+let dataOverTime;
+let categoriesData;
+let skillsData;
+async function updateChartData() {
+    memberData = await fetchChartData('membersData');
+    dataOverTime = await fetchChartData('dataOverTime');
+    categoriesData = await fetchChartData('categories');
+    skillsData = await fetchChartData('skills');
+    await updateGroupMembersData(memberData);
+    await dataOverTimeChart(dataOverTime);
+    await updateCategoriesChart(categoriesData);
+    await updateSkillsChart(skillsData);
+}
+
+/**
+ * Update charts without calling server
+ * @returns {Promise<void>}
+ */
+async function updateCharts() {
     await updateGroupMembersData(memberData);
     await dataOverTimeChart(dataOverTime);
     await updateCategoriesChart(categoriesData);

@@ -47,7 +47,7 @@
     <button type="button" class="btn btn-fill-tertiary group-tab-button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0">
       <span>Home</span>
     </button>
-    <button type="button" class="btn btn-fill-tertiary group-tab-button" onclick="updateAllCharts()" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1">
+    <button type="button" class="btn btn-fill-tertiary group-tab-button" onclick="updateChartData()" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1">
       <span>Statistics</span>
     </button>
     <button type="button" class="btn btn-fill-tertiary group-tab-button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2">
@@ -75,7 +75,7 @@
 <script>
   updateGroupRepositoryElement(true)
   // Contingency for charts not loading.
-  setTimeout(updateAllCharts, 3000)
+  setTimeout(updateCharts, 3000)
 </script>
 
 </html>
