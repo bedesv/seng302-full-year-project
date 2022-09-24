@@ -1,6 +1,9 @@
 // Load Google Charts then update charts once it's done
-google.charts.load("current", {packages:["corechart"]});
-document.addEventListener('DOMContentLoaded', updateAllCharts);
+google.charts.load("current", {packages:["corechart"]}).then(updateAllCharts);
+//Contingency if first load doesn't work
+document.addEventListener('DOMContentLoaded', () => {
+    google.charts.load("current", {packages:["corechart"]}).then(updateAllCharts);
+});
 // // Update charts when the window resizes
 // window.onresize = updateAllCharts
 
