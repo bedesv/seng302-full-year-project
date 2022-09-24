@@ -310,8 +310,12 @@ public class AddEvidenceController {
                 if (repoHasCommits == 1) {
                     groupsWithCommits.add(g);
                     displayCommits = true;
+                } else if (groups.size() > 1 && repoHasCommits == 0) {
+                    commitsError = "One of your groups has no commits, cannot add commits from that group.";
                 } else if (repoHasCommits == 0) {
                     commitsError = "You cannot add commits. There are no commits in your group repository.";
+                } else if (groups.size() > 1 && repoHasCommits == -1) {
+                    commitsError = "One of your groups is not connected to a repository, cannot add commits from that group.";
                 } else {
                     commitsError = "You cannot add commits. Your group is not connected to a repository.";
                 }
