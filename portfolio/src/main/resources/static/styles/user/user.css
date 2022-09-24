@@ -1,0 +1,26 @@
+
+
+.carousel-buttons {
+    gap: 10px;
+    width: 50%;
+}
+
+.user-tab__button {
+    color: white;
+    border: 1px solid var(--color-accent);
+    background-color: #e06c41 ;
+    border-radius: 3px;
+    height: 3rem;
+    box-shadow: none;
+    width: 30%;
+    font-size: 1.5rem;
+}
+
+.user-tab__button:hover {
+    color: #f78e55;
+    border-color: #f78e55;
+    background-color: #f4ebe6;
+    height: 3rem;
+    box-shadow: none;
+    font-size: 1.5rem;
+}

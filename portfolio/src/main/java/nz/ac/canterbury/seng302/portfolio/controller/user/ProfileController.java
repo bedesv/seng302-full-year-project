@@ -35,7 +35,7 @@ public class ProfileController {
         User user = userService.getUserAccountByPrincipal(principal);
         model.addAttribute("pageUser", user);
         model.addAttribute("owner", true);
-        return "templatesUser/profile";
+        return "templatesUser/user";
     }
 
     /**
@@ -58,7 +58,7 @@ public class ProfileController {
             return "redirect:/profile";
         } else {
             model.addAttribute("owner", false);
-            return "templatesUser/profile";
+            return "templatesUser/user";
         }
     }
 }
