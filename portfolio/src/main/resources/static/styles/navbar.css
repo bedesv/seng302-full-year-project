@@ -101,6 +101,9 @@ h5 {
     text-decoration: none;
 }
 
+.header__username-text {
+    margin-top: 18px;
+}
 
 
 /******************** Side Navigation bar ********************/
