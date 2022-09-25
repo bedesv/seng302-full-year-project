@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.evidence.Commit;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
+import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
@@ -99,6 +100,26 @@ public class EvidenceService {
         return portfolioEvidenceList;
     }
 
+    /**
+     * Get all pieces of evidence with the given skill for all members in the given group
+     * @param group The group to retrieve evidence for
+     * @param projectId The currently selected project id
+     * @param skill The skill to filter by
+     * @param limit The max number of pieces of evidence to return
+     * @return A list of all pieces of evidence with the given skill from users in the group
+     */
+    public List<PortfolioEvidence> getEvidenceForPortfolioByGroupFilterBySkill(Group group, int projectId, String skill, int limit) {
+        List<PortfolioEvidence> groupsEvidence = new ArrayList<>();
+        for (User user : group.getMembers()) {
+            for (PortfolioEvidence evidence : getEvidenceForPortfolio(user.getId(), projectId)) {
+                if (evidence.getSkills().contains(skill)) {
+                    groupsEvidence.add(evidence);
+                }
+            }
+        }
+        return groupsEvidence.stream().limit(limit).toList();
+    }
+    
     /**
      * Get a specific piece of evidence by ID
      */
