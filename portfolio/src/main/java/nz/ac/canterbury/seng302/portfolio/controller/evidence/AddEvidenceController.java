@@ -41,7 +41,7 @@ import java.util.*;
 public class AddEvidenceController {
 
     private static final String ADD_EVIDENCE = "templatesEvidence/addEvidence";
-    private static final String PORTFOLIO_REDIRECT = "redirect:/portfolio";
+    private static final String USER_REDIRECT = "redirect:/inPortfolio";
 
     @Autowired
     private ProjectService projectService;
@@ -92,7 +92,7 @@ public class AddEvidenceController {
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
         if (projectId == -1) {
             model.addAttribute("errorMessage", "Please select a project first");
-            return PORTFOLIO_REDIRECT;
+            return USER_REDIRECT;
         }
         Project project = projectService.getProjectById(projectId);
 
@@ -105,7 +105,7 @@ public class AddEvidenceController {
             model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
             return ADD_EVIDENCE;
         } catch (IllegalArgumentException e) {
-            return PORTFOLIO_REDIRECT;
+            return USER_REDIRECT;
         }
     }
 
@@ -149,7 +149,7 @@ public class AddEvidenceController {
         try {
             date = new SimpleDateFormat(TIMEFORMAT).parse(dateString);
         } catch (ParseException exception) {
-            return PORTFOLIO_REDIRECT; // Fail silently as client has responsibility for error checking
+            return USER_REDIRECT; // Fail silently as client has responsibility for error checking
         }
 
         Set<Categories> categories = new HashSet<>();
@@ -192,12 +192,11 @@ public class AddEvidenceController {
         } catch (JsonProcessingException e) {
             PORTFOLIO_LOGGER.info(e.getMessage());
             addEvidenceToModel(model, projectId, userId, evidence);
-            return PORTFOLIO_REDIRECT; // Fail silently as client has responsibility for error checking
+            return USER_REDIRECT; // Fail silently as client has responsibility for error checking
         }
 
         try {
             addWebLinksToEvidence(evidence, webLinkLinks, webLinkNames);
-            System.out.println(evidence.getWebLinks());
             evidenceService.saveEvidence(evidence);
         } catch (IllegalArgumentException exception) {
             if (Objects.equals(exception.getMessage(), "Title not valid")) {
@@ -224,7 +223,8 @@ public class AddEvidenceController {
         } catch (IllegalArgumentException exception) {
             return ADD_EVIDENCE;
         }
-        return PORTFOLIO_REDIRECT;
+        model.addAttribute("inPortfolio", "true");
+        return USER_REDIRECT;
     }
 
     private void addWebLinksToEvidence(Evidence evidence, List<String> webLinkLinks, List<String> webLinkNames) {
@@ -413,8 +413,9 @@ public class AddEvidenceController {
     public String deleteEvidenceById(
             @PathVariable(name="evidenceId") String evidenceId) {
         int id = Integer.parseInt(evidenceId);
+        int userId = evidenceService.getEvidenceById(id).getOwnerId();
         evidenceService.deleteById(id);
-        return PORTFOLIO_REDIRECT;
+        return USER_REDIRECT;
     }
 
     @GetMapping(value="/evidenceCommitFilterBox")

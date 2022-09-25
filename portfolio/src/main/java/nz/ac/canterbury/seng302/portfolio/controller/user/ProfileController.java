@@ -61,5 +61,17 @@ public class ProfileController {
             return "templatesUser/user";
         }
     }
+
+    @GetMapping("/inPortfolio")
+    public String inPortfolio(
+            @AuthenticationPrincipal AuthState principal,
+            Model model
+    ) {
+        User user = userService.getUserAccountByPrincipal(principal);
+        model.addAttribute("pageUser", user);
+        model.addAttribute("owner", false);
+        model.addAttribute("inPortfolio", "true");
+        return "templatesUser/user";
+    }
 }
 
