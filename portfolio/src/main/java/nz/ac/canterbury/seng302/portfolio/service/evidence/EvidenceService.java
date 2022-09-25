@@ -119,7 +119,7 @@ public class EvidenceService {
         }
         return groupsEvidence.stream().limit(limit).toList();
     }
-    
+
     /**
      * Get a specific piece of evidence by ID
      */
