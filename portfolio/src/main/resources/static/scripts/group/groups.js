@@ -56,6 +56,30 @@ document.addEventListener("dragstart", function () {
 })
 
 /**
+ * Triggered when the user drags a row
+ * Only does something when an unselected row is dragged
+ * Unselects all rows then selects the copied rows
+ * See copyMembers for more information on how copying works
+ */
+document.addEventListener("touchstart", function () {
+    console.log("DRAG");
+    clearTableSelection(lastTable)
+    lastRow = null
+    clearTableSelection(currentTable)
+    selectRows(clipboard)
+})
+
+document.addEventListener("touchend", function (event) {
+    console.log("DROP");
+    let endTarget = document.elementFromPoint(
+        event.changedTouches[0].pageX,
+        event.changedTouches[0].pageY
+    );
+    console.log(event);
+    console.log(endTarget);
+})
+
+/**
  * Overrides the allowDrop event so that users aren't allowed to be dropped
  * in groups that don't allow it (e.g. groupless group)
  * @param ev allowDrop event
@@ -148,6 +172,8 @@ function updateTable(groupId, content, selectedUserIds) {
  * @param currGroup the group that the selection was dropped on
  */
 async function pasteMembers(currGroup) {
+    console.log("YEET")
+    console.log(currGroup)
     let newTable = currGroup.getElementsByTagName("tbody")[0]
     let oldGroupId = currentTable[0].parentNode.parentNode.id;
     let newGroupId = newTable.parentNode.id;
