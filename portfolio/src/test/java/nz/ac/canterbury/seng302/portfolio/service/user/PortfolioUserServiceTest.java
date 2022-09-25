@@ -1,13 +1,16 @@
 package nz.ac.canterbury.seng302.portfolio.service.user;
 
+import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.PortfolioUser;
 import nz.ac.canterbury.seng302.portfolio.repository.user.PortfolioUserRepository;
+import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.PortfolioUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -21,6 +24,9 @@ class PortfolioUserServiceTest {
 
     @Autowired
     PortfolioUserService service;
+
+    @Autowired
+    ProjectService projectService;
 
     @Autowired
     PortfolioUserRepository repository;
@@ -80,6 +86,41 @@ class PortfolioUserServiceTest {
         assertTrue(resultSortType);
     }
 
+    //Test that when no project is selected, the default project (id 1) is selected.
+    @Test
+    void givenNoProjectSelected_getProject() {
+        service.getCurrentProject(3);
+        assertEquals(1, service.getCurrentProject(3).getId());
+    }
+
+    //Test that when a project is selected, that project is selected.
+    @Test
+    void givenProjectSelected_getProject() {
+        Project project = new Project();
+        projectService.saveProject(project);
+        service.setProject(3, project.getId());
+        assertEquals(project.getId(), service.getCurrentProject(3).getId());
+    }
+
+    //Test that when a project is selected that does not exist, the default project (id 1) is selected instead.
+    @Test
+    void givenBadProjectSelected_getProject() {
+        service.setProject(3, 9999);
+        assertEquals(1, service.getCurrentProject(3).getId());
+    }
+
+    //Test that when all projects are deleted, the default project (id 1) is created and selected
+    @Test
+    void givenAllProjectsDeleted_getProject() {
+        for (Project project : projectService.getAllProjects()) {
+            projectService.deleteProjectById(project.getId());
+        }
+        Project userProject = service.getCurrentProject(3);
+        List<Project> projects = projectService.getAllProjects();
+        assertEquals(1, projects.size());
+        assertEquals(projects.get(0).getId(), userProject.getId());
+    }
+
     //Test that setting the user list sort type works
     @Test
     void givenSortAscending_setUserListSort() {
@@ -96,7 +137,7 @@ class PortfolioUserServiceTest {
     @Transactional
     void givenPortfolioUserExists_addOneSkillToPortfolioUser(){
         PortfolioUser portfolioUser = new PortfolioUser(userId, "name", true);
-        service.savePortfolioUser(portfolioUser);
+        repository.save(portfolioUser);
 
         List<String> skills = new ArrayList<>();
         skills.add("skill");
@@ -110,7 +151,7 @@ class PortfolioUserServiceTest {
     @Transactional
     void givenPortfolioUserExists_addMultipleSkillsToPortfolioUser(){
         PortfolioUser portfolioUser = new PortfolioUser(userId, "name", true);
-        service.savePortfolioUser(portfolioUser);
+        repository.save(portfolioUser);
 
         List<String> skills = new ArrayList<>();
         skills.add("one");
@@ -150,7 +191,7 @@ class PortfolioUserServiceTest {
     @Transactional
     void givenPortfolioUserExists_andHasNoSkills_getSkills(){
         PortfolioUser portfolioUser = new PortfolioUser(userId, "name", true);
-        service.savePortfolioUser(portfolioUser);
+        repository.save(portfolioUser);
 
         assertTrue(service.getPortfolioUserSkills(userId).isEmpty());
     }
@@ -162,7 +203,7 @@ class PortfolioUserServiceTest {
         List<String> skills = new ArrayList<>();
         skills.add("skill");
         portfolioUser.addSkills(skills);
-        service.savePortfolioUser(portfolioUser);
+        repository.save(portfolioUser);
 
         assertEquals(skills, service.getPortfolioUserSkills(userId));
     }
@@ -176,7 +217,7 @@ class PortfolioUserServiceTest {
         skills.add("two");
         skills.add("three");
         portfolioUser.addSkills(skills);
-        service.savePortfolioUser(portfolioUser);
+        repository.save(portfolioUser);
 
         assertEquals(skills, service.getPortfolioUserSkills(userId));
     }
