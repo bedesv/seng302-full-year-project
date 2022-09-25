@@ -36,3 +36,21 @@ async function updateUserPortfolioWithSkill(selectedSkill) {
     const portfolioWrapper = document.getElementById("portfolio_container")
     portfolioWrapper.innerHTML = portfolio
 }
+
+async function updateUserPortfolioWithCategory(selectedCategory) {
+    // Build the url
+    let url
+    url = new URL (`${CONTEXT}/portfolio-${USER_ID}-categories?`)
+
+    // Send a get request to fetch the user portfolio
+    // Receives the updated element HTML content as a response
+    const portfolio = await fetch(url+new URLSearchParams({category: selectedCategory}), {
+        method: "GET"
+    }).then(res => {
+        return res.text()
+    })
+
+    // Update the page with the new HTML content
+    const portfolioWrapper = document.getElementById("portfolio_container")
+    portfolioWrapper.innerHTML = portfolio
+}
