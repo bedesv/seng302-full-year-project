@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     google.charts.load("current", {packages:["corechart"]}).then(updateChartData);
 });
 // // Update charts when the window resizes
-// window.onresize = updateCharts
+window.onresize = updateCharts
 
 /**
  * Updates all the charts
@@ -239,6 +239,6 @@ async function saveGroupRepositorySettings() {
 async function selectRefinement(startDate, endDate){
     START_DATE = startDate;
     END_DATE = endDate;
-    await updateAllCharts();
+    await updateChartData();
 }
 
