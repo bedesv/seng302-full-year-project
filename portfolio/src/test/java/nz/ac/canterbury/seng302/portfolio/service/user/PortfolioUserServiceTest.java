@@ -35,6 +35,9 @@ class PortfolioUserServiceTest {
     @BeforeEach
     void cleanDatabase() {
         repository.deleteAll();
+        for (Project project : projectService.getAllProjects()) {
+            projectService.deleteProjectById(project.getId());
+        }
     }
 
     int userId = 1;
@@ -86,11 +89,13 @@ class PortfolioUserServiceTest {
         assertTrue(resultSortType);
     }
 
-    //Test that when no project is selected, the default project (id 1) is selected.
+    //Test that when no project is selected, the default project is selected.
     @Test
     void givenNoProjectSelected_getProject() {
-        service.getCurrentProject(3);
-        assertEquals(1, service.getCurrentProject(3).getId());
+        Project userProject = service.getCurrentProject(3);
+        List<Project> projects = projectService.getAllProjects();
+        assertEquals(1, projects.size());
+        assertEquals(projects.get(0).getId(), userProject.getId());
     }
 
     //Test that when a project is selected, that project is selected.
@@ -106,15 +111,6 @@ class PortfolioUserServiceTest {
     @Test
     void givenBadProjectSelected_getProject() {
         service.setProject(3, 9999);
-        assertEquals(1, service.getCurrentProject(3).getId());
-    }
-
-    //Test that when all projects are deleted, the default project (id 1) is created and selected
-    @Test
-    void givenAllProjectsDeleted_getProject() {
-        for (Project project : projectService.getAllProjects()) {
-            projectService.deleteProjectById(project.getId());
-        }
         Project userProject = service.getCurrentProject(3);
         List<Project> projects = projectService.getAllProjects();
         assertEquals(1, projects.size());
