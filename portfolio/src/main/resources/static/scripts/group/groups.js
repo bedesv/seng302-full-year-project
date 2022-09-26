@@ -61,10 +61,10 @@ document.addEventListener("dragstart", function () {
  */
 function copyHere(groupId) {
     console.log("mate");
-    clearTableSelection(lastTable)
-    lastRow = null
-    clearTableSelection(currentTable)
-    selectRows(clipboard)
+    clearTableSelection(lastTable);
+    lastRow = null;
+    clearTableSelection(currentTable);
+    selectRows(clipboard);
     let group = document.getElementById(groupId).parentElement.parentElement;
     pasteMembers(group);
     hideCopyButton();
@@ -288,9 +288,16 @@ function toggleRow(row) {
 
 /**
  * Takes a row and toggles it from selected to unselected, or from unselected to selected
+ * For mobile called by touch.
  * @param row the row to have selection toggled
  */
 function toggleRowMobile(row) {
+    currentTable = row.parentNode.getElementsByTagName("tr");
+    if (lastTable !== currentTable) {
+        clearTableSelection(lastTable);
+        lastRow = null;
+        hideCopyButton();
+    }
     row.className = row.className === 'selected' ? 'unselected' : 'selected';
     lastRow = row;
     viewCopyButton(row);
