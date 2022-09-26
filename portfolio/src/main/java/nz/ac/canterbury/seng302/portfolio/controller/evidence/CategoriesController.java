@@ -105,13 +105,13 @@ public class CategoriesController {
         Categories categorySelection;
         List<Evidence> evidenceList;
 
-        if (Objects.equals(category, "Quantitative")) {
+        if (Objects.equals(category, "QUANTITATIVE")) {
             categorySelection = Categories.QUANTITATIVE;
             evidenceList = evidenceService.getEvidenceByCategoryForPortfolio(userId, projectId, categorySelection);
-        } else if (Objects.equals(category, "Qualitative")) {
+        } else if (Objects.equals(category, "QUALITATIVE")) {
             categorySelection = Categories.QUALITATIVE;
             evidenceList = evidenceService.getEvidenceByCategoryForPortfolio(userId, projectId, categorySelection);
-        } else  if (Objects.equals(category, "Service")) {
+        } else  if (Objects.equals(category, "SERVICE")) {
             categorySelection = Categories.SERVICE;
             evidenceList = evidenceService.getEvidenceByCategoryForPortfolio(userId, projectId, categorySelection);
         } else if (Objects.equals(category, "")) {
