@@ -1,17 +1,39 @@
-// Load Google Charts then update charts once it's done
-google.charts.load("current", {packages:["corechart"]}).then(updateAllCharts);
-
-// Update charts when the window resizes
-window.onresize = updateAllCharts
+// // Load Google Charts then update charts once it's done
+// google.charts.load("current", {packages:["corechart"]}).then(updateAllCharts);
+//Contingency if first load doesn't work
+document.addEventListener('DOMContentLoaded', () => {
+    google.charts.load("current", {packages:["corechart"]}).then(updateChartData);
+});
+// // Update charts when the window resizes
+window.onresize = updateCharts
 
 /**
  * Updates all the charts
  */
-async function updateAllCharts() {
-    await updateGroupMembersData();
-    await updateCategoriesChart();
-    await updateSkillsChart();
-    await dataOverTimeChart();
+let memberData;
+let dataOverTime;
+let categoriesData;
+let skillsData;
+async function updateChartData() {
+    memberData = await fetchChartData('membersData');
+    dataOverTime = await fetchChartData('dataOverTime');
+    categoriesData = await fetchChartData('categories');
+    skillsData = await fetchChartData('skills');
+    await updateGroupMembersData(memberData);
+    await dataOverTimeChart(dataOverTime);
+    await updateCategoriesChart(categoriesData);
+    await updateSkillsChart(skillsData);
+}
+
+/**
+ * Update charts without calling server
+ * @returns {Promise<void>}
+ */
+async function updateCharts() {
+    await updateGroupMembersData(memberData);
+    await dataOverTimeChart(dataOverTime);
+    await updateCategoriesChart(categoriesData);
+    await updateSkillsChart(skillsData);
 }
 
 /**
@@ -43,9 +65,9 @@ async function fetchChartData(dataType) {
  * Fetches group members evidence count data from the backend, then creates a column chart
  * with the received data.
  */
-async function updateGroupMembersData() {
+async function updateGroupMembersData(chartData) {
     // Fetch updated chart data
-    let chartData = await fetchChartData('membersData')
+    // let chartData = await fetchChartData('membersData')
 
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
@@ -71,8 +93,8 @@ async function updateGroupMembersData() {
  * Fetches evidence over time data from the backend then creates a line chart
  * with the received data
  */
-async function dataOverTimeChart() {
-    let chartData = await fetchChartData('dataOverTime')
+async function dataOverTimeChart(chartData) {
+    // let chartData = await fetchChartData('dataOverTime')
 
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'Evidence');
@@ -96,9 +118,9 @@ async function dataOverTimeChart() {
  * Fetches categories data from the backend then creates a pie chart
  * with the received data
  */
-async function updateCategoriesChart() {
+async function updateCategoriesChart(chartData) {
     // Fetch updated chart data
-    let chartData = await fetchChartData('categories')
+    // let chartData = await fetchChartData('categories')
 
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
@@ -126,9 +148,9 @@ async function updateCategoriesChart() {
  * Fetches skills data from the backend then creates a column chart
  * with the received data
  */
-async function updateSkillsChart() {
+async function updateSkillsChart(chartData) {
     // Fetch updated chart data
-    let chartData = await fetchChartData('skills')
+    // let chartData = await fetchChartData('skills')
 
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
@@ -217,9 +239,6 @@ async function saveGroupRepositorySettings() {
 async function selectRefinement(startDate, endDate){
     START_DATE = startDate;
     END_DATE = endDate;
-    await updateGroupMembersData();
-    await updateCategoriesChart();
-    await updateSkillsChart();
-    await dataOverTimeChart();
+    await updateChartData();
 }
 
