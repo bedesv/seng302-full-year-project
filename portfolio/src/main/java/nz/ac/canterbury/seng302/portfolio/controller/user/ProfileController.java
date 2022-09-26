@@ -67,7 +67,10 @@ public class ProfileController {
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
         User pageUser = userService.getUserAccountById(userId);
+        int projectId = portfolioUserService.getCurrentProject(pageUser.getId()).getId();
+        List<Group> groups = groupsClientService.getAllGroupsUserIn(projectId, pageUser.getId());
         model.addAttribute("pageUser", pageUser);
+        model.addAttribute("groups", groups);
         if (Objects.equals(pageUser.getUsername(), "") || user.getId() == pageUser.getId()) {
             return "redirect:/profile";
         } else {
