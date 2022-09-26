@@ -16,7 +16,7 @@
 body {
     font-family: Arial, sans-serif;
     font-weight: 200;
-    background-color: rgba(251, 196, 144, 0.5); /* Secondary Colour */
+    background-color: rgba(251, 196, 144, 0.5) !important; /* Secondary Colour */
 }
 
 h5 {

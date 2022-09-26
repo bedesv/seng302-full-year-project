@@ -35,7 +35,7 @@ public class ProfileController {
         User user = userService.getUserAccountByPrincipal(principal);
         model.addAttribute("pageUser", user);
         model.addAttribute("owner", true);
-        return "templatesUser/profile";
+        return "templatesUser/user";
     }
 
     /**
@@ -58,8 +58,20 @@ public class ProfileController {
             return "redirect:/profile";
         } else {
             model.addAttribute("owner", false);
-            return "templatesUser/profile";
+            return "templatesUser/user";
         }
+    }
+
+    @GetMapping("/inPortfolio")
+    public String inPortfolio(
+            @AuthenticationPrincipal AuthState principal,
+            Model model
+    ) {
+        User user = userService.getUserAccountByPrincipal(principal);
+        model.addAttribute("pageUser", user);
+        model.addAttribute("owner", false);
+        model.addAttribute("inPortfolio", "true");
+        return "templatesUser/user";
     }
 }
 
