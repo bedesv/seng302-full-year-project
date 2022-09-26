@@ -1,4 +1,30 @@
+:root {
+    /* CSS variables */
+    --color-primary: #FBAA60;
+    --color-secondary: #FADFC6FF;
+    --color-tertiary: #F67B50;
+    --color-complement: #F4EAE6;
+    --color-accent: #A82810;
+}
 
+
+/* Hide scrollbar */
+html::-webkit-scrollbar {
+    /* Chrome, Safari, Opera */
+    display: none;
+}
+
+html {
+    -ms-overflow-style: none; /* IE, Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+/* Simple class for hiding components */
+.hidden {
+    display: none !important;
+}
+
+/* User pages header */
 
 #user-header {
     padding: 15px 15px 15px 15px;
@@ -8,14 +34,7 @@
     border-radius: 10px;
 }
 
-
-.carousel-buttons {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    gap: 10px;
-    width: 50%;
-}
-
+/* User tab buttons */
 .user-tab__button {
     color: white;
     border: 1px solid var(--color-accent);
@@ -35,3 +54,32 @@
     box-shadow: none;
     font-size: 1.5rem;
 }
+
+/* Carousel buttons */
+.carousel-buttons {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    gap: 10px;
+    width: 50%;
+}
+
+/* User Statistics Tab */
+
+.data-charts__flex-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.skills-categories-chart__flex-container, .evidence-time-chart__flex-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#user-chart__categories-chart, #user-chart__skills-chart, #user-chart__evidence-chart, #user-chart__time-chart {
+    flex-grow: 1;
+    overflow: hidden;
+    height: 500px;
+}
+
