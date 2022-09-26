@@ -4,7 +4,7 @@
 
 ### CheckList
 - [ ] Has the task been correclty implemented
-- [ ] Has all code been correcly documented
+- [ ] Documentation 
 - [ ] Sonarlint/ SonarQube
 - [ ] Unit testing
 - [ ] Application build
