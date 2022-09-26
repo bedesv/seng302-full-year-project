@@ -14,3 +14,5 @@
 - [ ] Application build
 - [ ] Manaul testing
 - [ ] Check that the task meets the ACs where required
+
+# Ensure all boxes have been ticked before merging
