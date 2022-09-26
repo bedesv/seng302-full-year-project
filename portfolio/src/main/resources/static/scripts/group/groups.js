@@ -77,6 +77,11 @@ document.addEventListener("touchend", function (event) {
     );
     console.log(event);
     console.log(endTarget);
+    console.log(endTarget.id)
+    let group = endTarget.parentElement.parentElement
+    if (group.classList.contains("group")) {
+        pasteMembers(group)
+    }
 })
 
 /**
