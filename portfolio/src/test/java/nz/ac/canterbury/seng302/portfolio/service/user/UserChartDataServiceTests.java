@@ -32,6 +32,10 @@ public class UserChartDataServiceTests {
 
     @Test
     void whenUserHasNoEvidence_testGetUserSkillData() {
+        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
+        Mockito.doReturn(new ArrayList<>()).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
+        userChartDataService.setEvidenceService(mockedEvidenceService);
+
         Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), testParentProjectId, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
         assertEquals(0, result.size());
     }
@@ -65,13 +69,18 @@ public class UserChartDataServiceTests {
 
     @Test
     void whenUserHasEvidenceWithTwoSkills_testGetUserSkillData() {
-        Evidence evidence = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
-        evidence.addSkill("test");
-        evidence.addSkill("junit");
-        PortfolioEvidence portfolioEvidence = new PortfolioEvidence(evidence, new ArrayList<>());
+        Evidence evidence1 = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
+        Evidence evidence2 = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
+        evidence1.addSkill("test");
+        evidence2.addSkill("junit");
+        PortfolioEvidence portfolioEvidence1 = new PortfolioEvidence(evidence1, new ArrayList<>());
+        PortfolioEvidence portfolioEvidence2 = new PortfolioEvidence(evidence2, new ArrayList<>());
+        List<PortfolioEvidence> portfolioEvidenceList = new ArrayList<>();
+        portfolioEvidenceList.add(portfolioEvidence1);
+        portfolioEvidenceList.add(portfolioEvidence2);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
-        Mockito.doReturn(List.of(portfolioEvidence)).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
+        Mockito.doReturn(portfolioEvidenceList).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
         userChartDataService.setEvidenceService(mockedEvidenceService);
 
         Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), testParentProjectId, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
@@ -81,12 +90,17 @@ public class UserChartDataServiceTests {
 
     @Test
     void whenUserHasTwoEvidenceWithSameSkill_testGetUserSkillData() {
-        Evidence evidence = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
-        evidence.addSkill("test");
-        PortfolioEvidence portfolioEvidence = new PortfolioEvidence(evidence, new ArrayList<>());
+        Evidence evidence1 = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
+        Evidence evidence2 = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
+        evidence1.addSkill("test");
+        evidence2.addSkill("test");
+
+        PortfolioEvidence portfolioEvidence1 = new PortfolioEvidence(evidence1, new ArrayList<>());
+        PortfolioEvidence portfolioEvidence2 = new PortfolioEvidence(evidence2, new ArrayList<>());
         List<PortfolioEvidence> evidenceList = new ArrayList<>();
-        evidenceList.add(portfolioEvidence);
-        evidenceList.add(portfolioEvidence);
+        evidenceList.add(portfolioEvidence1);
+        evidenceList.add(portfolioEvidence2);
+
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(evidenceList).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
         userChartDataService.setEvidenceService(mockedEvidenceService);
@@ -122,7 +136,7 @@ public class UserChartDataServiceTests {
         evidence.addSkill("test");
         PortfolioEvidence portfolioEvidence = new PortfolioEvidence(evidence, new ArrayList<>());
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
-        Mockito.doReturn(List.of(portfolioEvidence)).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
+        Mockito.doReturn(List.of(portfolioEvidence)).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), 2);
         userChartDataService.setEvidenceService(mockedEvidenceService);
         Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), testParentProjectId, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
 
