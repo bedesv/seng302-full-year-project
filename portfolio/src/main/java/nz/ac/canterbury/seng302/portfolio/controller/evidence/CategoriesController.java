@@ -123,7 +123,8 @@ public class CategoriesController {
         List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
 
-        model.addAttribute("evidenceList", evidenceList);
+        List<PortfolioEvidence> portfolioEvidences = evidenceService.convertEvidenceForPortfolio(evidenceList);
+        model.addAttribute("evidenceList", portfolioEvidences);
         model.addAttribute("categoryName", category);
         if (Objects.equals(pageUser.getUsername(), "")) {
             return "redirect:/profile";
