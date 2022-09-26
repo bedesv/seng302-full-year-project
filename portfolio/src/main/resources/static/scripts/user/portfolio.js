@@ -1,15 +1,15 @@
-/**
- * If the user is in the portfolio and edits, adds or deletes evidence the user is returned to the portfolio tab
- * index 0 is profile
- * index 1 is portfolio
- */
-function makePortfolioActive() {
-    if(IN_PORTFOLIO === 'true') {
-        const carouselItems = document.getElementsByClassName("carousel-item")
-        carouselItems[0].className = "carousel-item"
-        carouselItems[1].classList.add("active")
-    }
-}
+// /**
+//  * If the user is in the portfolio and edits, adds or deletes evidence the user is returned to the portfolio tab
+//  * index 0 is profile
+//  * index 1 is portfolio
+//  */
+// function makePortfolioActive() {
+//     if(IN_PORTFOLIO === 'true') {
+//         const carouselItems = document.getElementsByClassName("carousel-item")
+//         carouselItems[0].className = "carousel-item"
+//         carouselItems[1].classList.add("active")
+//     }
+// }
 
 
 /**

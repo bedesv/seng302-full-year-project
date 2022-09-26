@@ -41,7 +41,7 @@ import java.util.*;
 public class AddEvidenceController {
 
     private static final String ADD_EVIDENCE = "templatesEvidence/addEvidence";
-    private static final String USER_REDIRECT = "redirect:/inPortfolio";
+    private static final String USER_REDIRECT = "redirect:/profile";
 
     @Autowired
     private ProjectService projectService;
@@ -223,8 +223,7 @@ public class AddEvidenceController {
         } catch (IllegalArgumentException exception) {
             return ADD_EVIDENCE;
         }
-        model.addAttribute("inPortfolio", "true");
-        return USER_REDIRECT;
+        return USER_REDIRECT + "?portfolioSelected=true";
     }
 
     private void addWebLinksToEvidence(Evidence evidence, List<String> webLinkLinks, List<String> webLinkNames) {
@@ -413,9 +412,8 @@ public class AddEvidenceController {
     public String deleteEvidenceById(
             @PathVariable(name="evidenceId") String evidenceId) {
         int id = Integer.parseInt(evidenceId);
-        int userId = evidenceService.getEvidenceById(id).getOwnerId();
         evidenceService.deleteById(id);
-        return USER_REDIRECT;
+        return USER_REDIRECT + "?portfolioSelected=true";
     }
 
     @GetMapping(value="/evidenceCommitFilterBox")

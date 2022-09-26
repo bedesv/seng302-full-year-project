@@ -9,8 +9,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The controller for handling backend of the profile page
@@ -30,9 +32,16 @@ public class ProfileController {
     @GetMapping("/profile")
     public String profile(
             @AuthenticationPrincipal AuthState principal,
+            @RequestParam("portfolioSelected") Optional<Boolean> portfolioSelected,
             Model model
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
+        if (portfolioSelected.isPresent()) {
+            model.addAttribute("portfolioSelected", portfolioSelected.get());
+        } else {
+            model.addAttribute("portfolioSelected", false);
+        }
+
         model.addAttribute("pageUser", user);
         model.addAttribute("owner", true);
         return "templatesUser/user";
@@ -48,30 +57,24 @@ public class ProfileController {
     @GetMapping("/profile-{userId}")
     public String viewProfile(
             @AuthenticationPrincipal AuthState principal,
+            @RequestParam("portfolioSelected") Optional<Boolean> portfolioSelected,
             @PathVariable("userId") int userId,
             Model model
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
         User pageUser = userService.getUserAccountById(userId);
         model.addAttribute("pageUser", pageUser);
+        if (portfolioSelected.isPresent()) {
+            model.addAttribute("portfolioSelected", portfolioSelected.get());
+        } else {
+            model.addAttribute("portfolioSelected", false);
+        }
         if (Objects.equals(pageUser.getUsername(), "") || user.getId() == pageUser.getId()) {
             return "redirect:/profile";
         } else {
             model.addAttribute("owner", false);
             return "templatesUser/user";
         }
-    }
-
-    @GetMapping("/inPortfolio")
-    public String inPortfolio(
-            @AuthenticationPrincipal AuthState principal,
-            Model model
-    ) {
-        User user = userService.getUserAccountByPrincipal(principal);
-        model.addAttribute("pageUser", user);
-        model.addAttribute("owner", false);
-        model.addAttribute("inPortfolio", "true");
-        return "templatesUser/user";
     }
 }
 
