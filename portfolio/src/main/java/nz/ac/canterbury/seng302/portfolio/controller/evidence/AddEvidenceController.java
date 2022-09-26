@@ -302,12 +302,22 @@ public class AddEvidenceController {
         Date startDate = null;
         Date actualEndDate = null;
         boolean displayCommits = false;
+        String commitsError = "";
         if (!groups.isEmpty()) {
             // Try to set the selected group to the given group id
             for (Group g : groups) {
-                if (gitlabConnectionService.repositoryHasCommits(g.getGroupId())) {
+                int repoHasCommits = gitlabConnectionService.repositoryHasCommits(g.getGroupId());
+                if (repoHasCommits == 1) {
                     groupsWithCommits.add(g);
                     displayCommits = true;
+                } else if (groups.size() > 1 && repoHasCommits == 0) {
+                    commitsError = "One of your groups has no commits, cannot add commits from that group.";
+                } else if (repoHasCommits == 0) {
+                    commitsError = "You cannot add commits. There are no commits in your group repository.";
+                } else if (groups.size() > 1 && repoHasCommits == -1) {
+                    commitsError = "One of your groups is not connected to a repository, cannot add commits from that group.";
+                } else {
+                    commitsError = "You cannot add commits. Your group is not connected to a repository.";
                 }
                 if (g.getGroupId() == groupId) {
                     mainGroup = g;
@@ -316,7 +326,7 @@ public class AddEvidenceController {
 
 
             // If at least one of the user's groups has a repo with commits
-            if (groupsWithCommits.size() > 0) {
+            if (!groupsWithCommits.isEmpty()) {
 
                 // If selected group is null, set the selected group to the first group in the list
                 if (mainGroup == null) {
@@ -355,6 +365,8 @@ public class AddEvidenceController {
                     }
                 }
             }
+        } else {
+            commitsError = "You cannot add commits. You're not currently assigned to a group.";
         }
 
         // Sort the list of commits in reverse chronological order (newest first)
@@ -364,6 +376,7 @@ public class AddEvidenceController {
         // Add all the relevant objects to the page model
         model.addAttribute("commits", commitList);
         model.addAttribute("displayCommits", displayCommits);
+        model.addAttribute("commitsError", commitsError);
         model.addAttribute("repositoryUsers", members);
         model.addAttribute("branches", branches);
         model.addAttribute("defaultBranch", defaultBranch);
