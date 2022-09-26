@@ -9,10 +9,10 @@
 ### CheckList
 - [ ] Has the task been correclty implemented
 - [ ] Documentation 
-- [ ] Sonarlint/ SonarQube
+- [ ] Code quality (SonarQube/lint, smells, complexity)
 - [ ] Unit testing
-- [ ] Application build
 - [ ] Manaul testing
+- [ ] Application builds
 - [ ] Check that the task meets the ACs where required
 
-# Ensure all boxes have been ticked before merging
+#### Ensure all boxes have been ticked before merging
