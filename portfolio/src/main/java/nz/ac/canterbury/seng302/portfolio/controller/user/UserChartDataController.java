@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.controller.user;
 
-import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserChartDataService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -47,8 +46,8 @@ public class UserChartDataController {
                                                   @RequestParam int parentProjectId,
                                                   @RequestParam String startDateString,
                                                   @RequestParam String endDateString) {
-        User user = userService.getUserAccountByPrincipal(principal);
-        if (user.getUsername() == null) {
+        PORTFOLIO_LOGGER.info("Getting user [" + userId +  "] skill data for user statistics");
+        if (userService.getUserAccountByPrincipal(principal).getUsername() == null) {
             return Collections.emptyMap();
         }
         Date startDate;
