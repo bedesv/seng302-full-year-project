@@ -42,7 +42,7 @@
                 <div class="profile-body__content"><strong >Email </strong>  <p th:text="${pageUser.email}" /> </div>
                 <div class="profile-body__content"><strong >Date of Registration </strong>  <p th:text="${user.memberSince}" /> </div>
                 <div class="profile-body__content" th:if="${pageUser.bio != ''}"><strong >Bio</strong><p id="profile__user-biography" th:text="${pageUser.bio}" /> </div>
-                <div class="profile-body__content">
+                <div class="profile-body__content" th:if="${groups.size != 0}">
                     <strong>Group(s)</strong>
                     <div>
                         <a
