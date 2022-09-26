@@ -55,34 +55,20 @@ document.addEventListener("dragstart", function () {
     selectRows(clipboard)
 })
 
-// /**
-//  * Triggered when the user drags a row
-//  * Only does something when an unselected row is dragged
-//  * Unselects all rows then selects the copied rows
-//  * See copyMembers for more information on how copying works
-//  */
-// document.addEventListener("touchstart", function () {
-//     console.log("DRAG");
-//     clearTableSelection(lastTable)
-//     lastRow = null
-//     clearTableSelection(currentTable)
-//     selectRows(clipboard)
-// })
-
-document.addEventListener("touchend", function (event) {
-    console.log("DROP");
-    let endTarget = document.elementFromPoint(
-        event.changedTouches[0].pageX,
-        event.changedTouches[0].pageY
-    );
-    console.log(event);
-    console.log(endTarget);
-    console.log(endTarget.id)
-    let group = endTarget.parentElement.parentElement
-    if (group.classList.contains("group")) {
-        pasteMembers(group)
-    }
-})
+/**
+ * Copies members to group specified by groupId. Function is called by copy buttons for mobile.
+ * @param groupId Group to copy to
+ */
+function copyHere(groupId) {
+    console.log("mate");
+    clearTableSelection(lastTable)
+    lastRow = null
+    clearTableSelection(currentTable)
+    selectRows(clipboard)
+    let group = document.getElementById(groupId).parentElement.parentElement;
+    pasteMembers(group);
+    hideCopyButton();
+}
 
 /**
  * Overrides the allowDrop event so that users aren't allowed to be dropped
@@ -506,24 +492,30 @@ function getTeacherIds() {
     return teacherIds
 }
 
-function copyHere(groupid) {
-    let group = document.getElementById(groupid);
-}
-
+/**
+ * Makes copy button visible for mobile users to copy members.
+ * @param row
+ */
 function viewCopyButton(row) {
-    console.log("here");
     let tableId = row.parentElement.parentElement.id;
     let copyButtons = document.getElementsByClassName("groups__copy-member-mobile");
     for (let i = 0; i < copyButtons.length; i++) {
         let groupId = copyButtons[i].id;
-        console.log("copyid = " + groupId);
-        console.log(parseInt(groupId, 10) === parseInt(tableId, 10))
-        if (parseInt(groupId, 10) === parseInt(tableId, 10)) {
+        if ((parseInt(groupId, 10) === GROUPLESS_GROUP_ID || (parseInt(groupId, 10) === TEACHER_GROUP_ID && (userIsTeacher && !userIsAdmin))) || parseInt(groupId, 10) === parseInt(tableId, 10)) {
             copyButtons[i].hidden = true;
         } else {
             copyButtons[i].hidden = false;
         }
 
     }
-    //document.getElementById(groupId +"_copy-button").hidden = true;
+}
+
+/**
+ * hides all copy buttons
+ */
+function hideCopyButton() {
+    let copyButtons = document.getElementsByClassName("groups__copy-member-mobile");
+    for (let i = 0; i < copyButtons.length; i++) {
+        copyButtons[i].hidden = true;
+    }
 }
