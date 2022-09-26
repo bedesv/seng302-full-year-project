@@ -4,7 +4,6 @@
  * index 1 is portfolio
  */
 function makePortfolioActive() {
-    console.log(IN_PORTFOLIO)
     if(IN_PORTFOLIO === 'true') {
         const carouselItems = document.getElementsByClassName("carousel-item")
         carouselItems[0].className = "carousel-item"
@@ -32,6 +31,9 @@ async function updateUserPortfolio() {
     // Update the page with the new HTML content
     const portfolioWrapper = document.getElementById("portfolio_container")
     portfolioWrapper.innerHTML = portfolio
+
+    updateEvidenceIds();
+    await updateAllWeblinks();
 }
 
 async function updateUserPortfolioWithSkill(selectedSkill) {
@@ -68,4 +70,15 @@ async function updateUserPortfolioWithCategory(selectedCategory) {
     // Update the page with the new HTML content
     const portfolioWrapper = document.getElementById("portfolio_container")
     portfolioWrapper.innerHTML = portfolio
+}
+
+/**
+ * Saves the id of all the pieces of evidence on the page
+ */
+function updateEvidenceIds() {
+    const evidenceObjects = document.getElementsByClassName("evidence__details");
+    EVIDENCE_IDS = []
+    for (let evidence of evidenceObjects) {
+        EVIDENCE_IDS.push(evidence.id.split("_")[1])
+    }
 }
