@@ -41,6 +41,9 @@
                 <button class="no-skill__link " th:onclick="updateUserPortfolioWithSkill('')">No Skill</button>
                 <button th:each="skill: ${skillsList}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:onclick="updateUserPortfolioWithSkill([[${skill}]])"></button>
             </div>
+            <div class="reset-filter">
+                <button class="reset__link"  th:text="Reset" th:onclick="updateUserPortfolio()"></button>
+            </div>
         </div>
     </div>
 </div>

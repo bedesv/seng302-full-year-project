@@ -85,6 +85,29 @@
     display: flex;
     flex-wrap: wrap;
     border-top: 1px solid var(--color-accent);
+    padding-bottom: 30px;
+}
+
+.reset-filter {
+    padding-top: 10px;
+    border-top: 1px solid var(--color-accent);
+}
+
+.reset__link {
+    border: 1px solid var(--color-primary);
+    border-radius: 5px;
+    background-color: white;
+    padding: 2px 4px 2px 4px;
+    margin: 4px;
+    display: inline;
+    text-decoration: none;
+    color: var(--color-primary);
+    text-align: center;
+}
+
+.reset__link:hover {
+    color:inherit;
+    filter: brightness(85%);
 }
 
 .web-link__container {
