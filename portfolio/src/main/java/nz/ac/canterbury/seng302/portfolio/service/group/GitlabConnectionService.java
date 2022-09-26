@@ -145,12 +145,36 @@ public class GitlabConnectionService {
         }
     }
 
+    /**
+     * Checks if the repository has any commits
+     * @param groupId the group id with the repo to check
+     * @return true if the repository has commits, false if it doesn't or if it can't connect to the repo
+     */
     public int repositoryHasCommits(int groupId) {
         try {
             GitLabApi gitLabApiConnection = getGitLabApiConnection(groupId);
             GroupRepositorySettings repositorySettings = getGroupRepositorySettings(groupId);
             Pager<Commit> commitPager = gitLabApiConnection.getCommitsApi().getCommits(repositorySettings.getGitlabProjectId(), 1);
             return commitPager.getTotalItems() != 0 ? 1 : 0;
+        } catch (Exception exception) {
+            PORTFOLIO_LOGGER.error(exception.getMessage());
+            return -1;
+        }
+    }
+
+    /**
+     * Checks if the repository has 100 or more commits
+     * @param groupId the group id with the repo to check
+     * @return 1 if the repo has >= 100 commits, 0 if < 100 commits, -1 if it can't connect to the repository
+     */
+    public int repositoryHas100OrMoreCommits(int groupId) {
+        try {
+            GitLabApi gitLabApiConnection = getGitLabApiConnection(groupId);
+            GroupRepositorySettings repositorySettings = getGroupRepositorySettings(groupId);
+            Pager<Commit> commitPager = gitLabApiConnection.getCommitsApi().getCommits(repositorySettings.getGitlabProjectId(), 100);
+            int totalCommits = commitPager.getTotalItems();
+            // Is the number of commits if the repo has 100 or fewer commits, is -1 if the repo has more than 100 commits
+            return (totalCommits >= 100 || totalCommits == -1) ? 1 : 0;
         } catch (Exception exception) {
             PORTFOLIO_LOGGER.error(exception.getMessage());
             return -1;

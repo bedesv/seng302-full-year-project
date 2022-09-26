@@ -31,8 +31,14 @@ class GitlabConnectionServiceTests {
     // These details are for a test project I opened on gitlab. It only has read access so should be safe.
     private static final String TEST_ACCESS_TOKEN = "2VCAxY2H2VDVsuor8qeq";
     private static final String TEST_EMPTY_ACCESS_TOKEN = "YPusypuxNNVxRph58wac";
+    private static final String TEST_99_COMMITS_ACCESS_TOKEN = "etMHyC6DoFC8KQ9wVRiu";
+    private static final String TEST_100_COMMITS_ACCESS_TOKEN = "Y8gewUVgZ-33oLjiVZb2";
+    private static final String TEST_101_COMMITS_ACCESS_TOKEN = "uKhoxUSCyF4nVvUqhu-i";
     private static final String TEST_PROJECT_ID = "13642";
     private static final String TEST_EMPTY_PROJECT_ID = "14054";
+    private static final String TEST_99_COMMITS_PROJECT_ID = "14158";
+    private static final String TEST_100_COMMITS_PROJECT_ID = "14159";
+    private static final String TEST_101_COMMITS_PROJECT_ID = "14160";
     private static final String TEST_PROJECT_URL = "https://eng-git.canterbury.ac.nz";
 
     @BeforeEach
@@ -232,6 +238,34 @@ class GitlabConnectionServiceTests {
         repositorySettingsService.getGroupRepositorySettingsByGroupId(1);
         repositorySettingsService.updateRepositoryInformation(1, "REPO NAME", TEST_EMPTY_ACCESS_TOKEN, TEST_EMPTY_PROJECT_ID, TEST_PROJECT_URL);
         assertEquals(0, gitlabConnectionService.repositoryHasCommits(1));
+    }
+
+    @Test
+    void whenGroupRepoHas99Commits_testHas100OrMoreCommits() {
+        repositorySettingsService.getGroupRepositorySettingsByGroupId(1);
+        repositorySettingsService.updateRepositoryInformation(1, "REPO NAME", TEST_99_COMMITS_ACCESS_TOKEN, TEST_99_COMMITS_PROJECT_ID, TEST_PROJECT_URL);
+        assertEquals(gitlabConnectionService.repositoryHas100OrMoreCommits(1), 0);
+    }
+
+    @Test
+    void whenGroupRepoHas100Commits_testHas100OrMoreCommits() {
+        repositorySettingsService.getGroupRepositorySettingsByGroupId(1);
+        repositorySettingsService.updateRepositoryInformation(1, "REPO NAME", TEST_100_COMMITS_ACCESS_TOKEN, TEST_100_COMMITS_PROJECT_ID, TEST_PROJECT_URL);
+        assertEquals(gitlabConnectionService.repositoryHas100OrMoreCommits(1), 1);
+    }
+
+    @Test
+    void whenGroupRepoHas101Commits_testHas100OrMoreCommits() {
+        repositorySettingsService.getGroupRepositorySettingsByGroupId(1);
+        repositorySettingsService.updateRepositoryInformation(1, "REPO NAME", TEST_101_COMMITS_ACCESS_TOKEN, TEST_101_COMMITS_PROJECT_ID, TEST_PROJECT_URL);
+        assertEquals(gitlabConnectionService.repositoryHas100OrMoreCommits(1), 1);
+    }
+
+    @Test
+    void whenGroupRepoIsInvalid_testHas100OrMoreCommits() {
+        repositorySettingsService.getGroupRepositorySettingsByGroupId(1);
+        repositorySettingsService.updateRepositoryInformation(1, "REPO NAME", TEST_ACCESS_TOKEN, TEST_EMPTY_PROJECT_ID, TEST_PROJECT_URL);
+        assertEquals(gitlabConnectionService.repositoryHas100OrMoreCommits(1), -1);
     }
 
 
