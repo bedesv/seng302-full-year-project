@@ -49,7 +49,7 @@ public class GroupController {
     @Autowired
     private EvidenceService evidenceService;
 
-    private static final int GROUP_HOME_EVIDENCE_LIMIT = 10;
+    private static final int GROUP_HOME_EVIDENCE_LIMIT = 20;
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
 
     /**
