@@ -111,7 +111,8 @@ public class EvidenceService {
         for (User user: group.getMembers()){
             groupsEvidence.addAll(getEvidenceForPortfolio(user.getId(), projectId));
         }
-        return groupsEvidence.stream().limit(limit).toList();
+        //sort by date asc, then reverse (so latest at top), then return only limit number of evidences
+        return groupsEvidence.stream().sorted(Collections.reverseOrder(Comparator.comparing(PortfolioEvidence::getDate))).limit(limit).toList();
     }
 
     /**
