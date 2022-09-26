@@ -55,19 +55,19 @@ document.addEventListener("dragstart", function () {
     selectRows(clipboard)
 })
 
-/**
- * Triggered when the user drags a row
- * Only does something when an unselected row is dragged
- * Unselects all rows then selects the copied rows
- * See copyMembers for more information on how copying works
- */
-document.addEventListener("touchstart", function () {
-    console.log("DRAG");
-    clearTableSelection(lastTable)
-    lastRow = null
-    clearTableSelection(currentTable)
-    selectRows(clipboard)
-})
+// /**
+//  * Triggered when the user drags a row
+//  * Only does something when an unselected row is dragged
+//  * Unselects all rows then selects the copied rows
+//  * See copyMembers for more information on how copying works
+//  */
+// document.addEventListener("touchstart", function () {
+//     console.log("DRAG");
+//     clearTableSelection(lastTable)
+//     lastRow = null
+//     clearTableSelection(currentTable)
+//     selectRows(clipboard)
+// })
 
 document.addEventListener("touchend", function (event) {
     console.log("DROP");
@@ -177,8 +177,6 @@ function updateTable(groupId, content, selectedUserIds) {
  * @param currGroup the group that the selection was dropped on
  */
 async function pasteMembers(currGroup) {
-    console.log("YEET")
-    console.log(currGroup)
     let newTable = currGroup.getElementsByTagName("tbody")[0]
     let oldGroupId = currentTable[0].parentNode.parentNode.id;
     let newGroupId = newTable.parentNode.id;
@@ -300,6 +298,16 @@ function rowClick(currRow) {
 function toggleRow(row) {
     row.className = row.className === 'selected' ? 'unselected' : 'selected';
     lastRow = row;
+}
+
+/**
+ * Takes a row and toggles it from selected to unselected, or from unselected to selected
+ * @param row the row to have selection toggled
+ */
+function toggleRowMobile(row) {
+    row.className = row.className === 'selected' ? 'unselected' : 'selected';
+    lastRow = row;
+    viewCopyButton(row);
 }
 
 /**
@@ -496,4 +504,26 @@ function getTeacherIds() {
         teacherIds.push(parseInt(teacher.innerText, 10))
     }
     return teacherIds
+}
+
+function copyHere(groupid) {
+    let group = document.getElementById(groupid);
+}
+
+function viewCopyButton(row) {
+    console.log("here");
+    let tableId = row.parentElement.parentElement.id;
+    let copyButtons = document.getElementsByClassName("groups__copy-member-mobile");
+    for (let i = 0; i < copyButtons.length; i++) {
+        let groupId = copyButtons[i].id;
+        console.log("copyid = " + groupId);
+        console.log(parseInt(groupId, 10) === parseInt(tableId, 10))
+        if (parseInt(groupId, 10) === parseInt(tableId, 10)) {
+            copyButtons[i].hidden = true;
+        } else {
+            copyButtons[i].hidden = false;
+        }
+
+    }
+    //document.getElementById(groupId +"_copy-button").hidden = true;
 }
