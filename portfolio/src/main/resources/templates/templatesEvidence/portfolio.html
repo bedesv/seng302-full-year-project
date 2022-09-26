@@ -4,6 +4,7 @@
       lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="shortcut icon" type="image/ico" th:href="@{${@environment.getProperty('PORTFOLIO_CONTEXT')} + '/favicon.ico'}"/>
     <link rel="stylesheet" th:href="@{styles/stylesheet.css}">
     <link rel="stylesheet" th:href="@{styles/evidence/portfolio.css}">
     <link rel="stylesheet" th:href="@{styles/evidence/evidence.css}">
@@ -17,6 +18,7 @@
       const CONTEXT = [[${@environment.getProperty('PORTFOLIO_CONTEXT')}]];
       let EVIDENCE_IDS = [];
       let middle_id;
+      const MAX_WEBLINKS = [[ ${maxWeblinks} ]];
     </script>
     <script rel="script" th:src="@{scripts/evidence/saveWeblinks.js}"></script>
     <title>Portfolio</title>

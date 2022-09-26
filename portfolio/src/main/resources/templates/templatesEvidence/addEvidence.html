@@ -4,6 +4,7 @@
       lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="shortcut icon" type="image/ico" th:href="@{${@environment.getProperty('PORTFOLIO_CONTEXT')} + '/favicon.ico'}"/>
     <link rel="stylesheet" th:href="@{styles/stylesheet.css}">
     <link rel="stylesheet" th:href="@{styles/evidence/addEvidence.css}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
@@ -168,6 +169,7 @@
             </div>
             <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="hidden" id="evidence-form__hidden-webLinks-names" name="evidenceWebLinkNames"/>
             <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="hidden" id="evidence-form__hidden-webLinks-links" name="evidenceWebLinks"/>
+
             <!-- Users !-->
             <label>Users
                 <span data-toggle="tooltip"
@@ -190,6 +192,7 @@
             <div th:if="${displayCommits}">
                 <button type="button" class="btn btn-primary evidence-form__add-commits-button" id="open-modal__button" data-bs-toggle="modal" data-bs-target="#add-evidence-commits__modal">Add Commits</button>
             </div>
+            <p class="evidence-form__error-message" th:text="${commitsError}" />
             <div id="commit-container"></div>
             <input type="hidden" id="evidence-form__hidden-commits-field" name="evidenceCommits"/>
 

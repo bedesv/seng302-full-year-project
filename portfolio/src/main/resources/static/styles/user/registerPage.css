@@ -1,4 +1,30 @@
 @charset "ISO-8859-1";
+:root {
+    /* CSS variables */
+    --color-primary: #FBAA60;
+    --color-secondary: #FADFC6FF;
+    --color-tertiary: #F67B50;
+    --color-complement: #F4EAE6;
+    --color-accent: #A82810;
+}
+
+/* Hide scrollbar */
+html::-webkit-scrollbar {
+    /* Chrome, Safari, Opera */
+    display: none;
+}
+
+html {
+    -ms-overflow-style: none; /* IE, Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+/* Simple class for hiding components */
+.hidden {
+    display: none !important;
+}
+
+/******************** Register Page ********************/
 
 html, body {
     height: 100%;
@@ -68,16 +94,23 @@ input:invalid {
     border-bottom: 2px solid red;
 }
 
-input.button {
-    padding: 4px 10px 4px 10px;
-    margin-left: 0;
-    border: 1px solid #16a085
+a.register-page__button, input.register-page__button {
+    display: inline-block;
+    color: black;
+    min-width: 100px;
+    text-align: center;
+    padding-top: 0;
+    padding-bottom: 0;
+    border: 1px solid var(--color-accent);
+    border-radius: 5px;
+    background-color: var(--color-complement);
+    text-decoration: none;
+    font-size: 18px;
 }
 
-button {
-    padding: 3px 10px 3px 10px;
-    margin-right: 5px;
-    margin-left: 20px;
+a.register-page__button:hover, input.register-page__button:hover {
+    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
+    cursor: pointer;
 }
 
 h1 {
@@ -106,16 +139,4 @@ h6 {
     color: red;
     margin-top: -5px;
     margin-bottom: 10px;
-}
-
-a.button {
-    font-size: medium;
-    font-weight: 500;
-    text-decoration: none;
-    background-color: lightgrey;
-    color: black;
-    padding: 4px 10px 4px 10px;
-    border: 1px solid #16a085;
-    border-radius: 3px;
-    cursor: pointer;
 }

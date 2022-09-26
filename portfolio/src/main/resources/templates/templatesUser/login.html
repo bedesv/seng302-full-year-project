@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link rel="shortcut icon" type="image/ico" th:href="@{${@environment.getProperty('PORTFOLIO_CONTEXT')} + '/favicon.ico'}"/>
     <link th:href="@{styles/user/loginPage.css}" rel="stylesheet"/>
 </head>
 <body>
@@ -28,7 +29,7 @@
                 <input type="submit" value="Login">
             </div>
         </form>
-        <form th:action="@{register}">
+        <form class="register-navigation" th:action="@{register}">
             <div class="row button">
                 <label>
                     <input type="submit" value="Register">

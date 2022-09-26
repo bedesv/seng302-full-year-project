@@ -13,6 +13,8 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.GroupDetailsResponse;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Commit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -48,6 +50,7 @@ public class GroupController {
     private EvidenceService evidenceService;
 
     private static final int GROUP_HOME_EVIDENCE_LIMIT = 10;
+    private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
 
     /**
      * Get mapping to fetch group settings page
@@ -88,15 +91,19 @@ public class GroupController {
     public String groupRepository(Model model, @PathVariable String id, @RequestParam("firstLoad") boolean firstLoad) {
         GroupRepositorySettings groupRepositorySettings = groupRepositorySettingsService.getGroupRepositorySettingsByGroupId(Integer.parseInt(id));
 
-        List<Commit> commits = null;
-        try {
-            commits = gitlabConnectionService.getAllCommits(Integer.parseInt(id));
-        } catch (Exception ignored) {
-            // Ignored because the commits variable is already null.
+        int moreThan100Commits = gitlabConnectionService.repositoryHas100OrMoreCommits(Integer.parseInt(id));
+        int numCommits = 0;
+        if (moreThan100Commits == 0) {
+            try {
+                numCommits = gitlabConnectionService.getAllCommits(Integer.parseInt(id)).size();
+            } catch (GitLabApiException | NoSuchFieldException e) {
+                PORTFOLIO_LOGGER.error(e.getMessage());
+            }
         }
         model.addAttribute("firstLoad", firstLoad);
         model.addAttribute("changesSaved", false);
-        model.addAttribute("commits", commits);
+        model.addAttribute("moreThan100Commits", moreThan100Commits);
+        model.addAttribute("numCommits", numCommits);
         model.addAttribute("groupRepositorySettings", groupRepositorySettings);
         return GROUP_REPOSITORY;
     }
@@ -124,17 +131,19 @@ public class GroupController {
 
         // Return the updated repository information
         GroupRepositorySettings groupRepositorySettings = groupRepositorySettingsService.getGroupRepositorySettingsByGroupId(groupId);
-        List<Commit> commits = null;
-        try {
-            commits = gitlabConnectionService.getAllCommits(groupId);
-        } catch (GitLabApiException | NoSuchFieldException ignored) {
-            // Ignoring GitLabApiException because the commits variable is already null.
-            // Ignoring NoSuchFieldException because this only occurs if the group doesn't have any repository settings,
-            // but we've just added them, so it must have settings.
+        int moreThan100Commits = gitlabConnectionService.repositoryHas100OrMoreCommits(groupId);
+        int numCommits = 0;
+        if (moreThan100Commits == 0) {
+            try {
+                numCommits = gitlabConnectionService.getAllCommits(groupId).size();
+            } catch (GitLabApiException | NoSuchFieldException e) {
+                PORTFOLIO_LOGGER.error(e.getMessage());
+            }
         }
         model.addAttribute("firstLoad", false);
         model.addAttribute("changesSaved", true);
-        model.addAttribute("commits", commits);
+        model.addAttribute("moreThan100Commits", moreThan100Commits);
+        model.addAttribute("numCommits", numCommits);
         model.addAttribute("groupRepositorySettings", groupRepositorySettings);
         return GROUP_REPOSITORY;
     }
