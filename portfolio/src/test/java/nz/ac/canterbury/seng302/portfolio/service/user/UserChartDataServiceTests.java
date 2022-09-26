@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.portfolio.service.user;
 
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
-import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
@@ -32,13 +31,13 @@ public class UserChartDataServiceTests {
     private final String TEST_DESCRIPTION = "According to all known laws of aviation, there is no way a bee should be able to fly.";
 
     @Test
-    whenUserHasNoEvidence_testGetUserSkillData() {
-        Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
+    void whenUserHasNoEvidence_testGetUserSkillData() {
+        Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), testParentProjectId, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
         assertEquals(0, result.size());
     }
 
     @Test
-    whenUserHasEvidenceWithNoSkills_testGetUserSkillData() {
+     void whenUserHasEvidenceWithNoSkills_testGetUserSkillData() {
         Evidence evidence = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
         PortfolioEvidence portfolioEvidence = new PortfolioEvidence(evidence, new ArrayList<>());
 
@@ -46,12 +45,12 @@ public class UserChartDataServiceTests {
         Mockito.doReturn(List.of(portfolioEvidence)).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
         userChartDataService.setEvidenceService(mockedEvidenceService);
 
-        Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
+        Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), testParentProjectId, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
         assertEquals(0, result.size());
     }
 
     @Test
-    whenUserHasEvidenceWithOneSkill_testGetUserSkillData() {
+    void whenUserHasEvidenceWithOneSkill_testGetUserSkillData() {
         Evidence evidence = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
         evidence.addSkill("test");
         PortfolioEvidence portfolioEvidence = new PortfolioEvidence(evidence, new ArrayList<>());
@@ -60,12 +59,12 @@ public class UserChartDataServiceTests {
         Mockito.doReturn(List.of(portfolioEvidence)).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
         userChartDataService.setEvidenceService(mockedEvidenceService);
 
-        Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
+        Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), testParentProjectId, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
         assertEquals(1, result.get("TEST"));
     }
 
     @Test
-    whenUserHasEvidenceWithTwoSkills_testGetUserSkillData() {
+    void whenUserHasEvidenceWithTwoSkills_testGetUserSkillData() {
         Evidence evidence = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
         evidence.addSkill("test");
         evidence.addSkill("junit");
@@ -75,13 +74,13 @@ public class UserChartDataServiceTests {
         Mockito.doReturn(List.of(portfolioEvidence)).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
         userChartDataService.setEvidenceService(mockedEvidenceService);
 
-        Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
+        Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), testParentProjectId, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
         assertEquals(1, result.get("TEST"));
         assertEquals(1, result.get("JUNIT"));
     }
 
     @Test
-    whenUserHasTwoEvidenceWithSameSkill_testGetUserSkillData() {
+    void whenUserHasTwoEvidenceWithSameSkill_testGetUserSkillData() {
         Evidence evidence = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
         evidence.addSkill("test");
         PortfolioEvidence portfolioEvidence = new PortfolioEvidence(evidence, new ArrayList<>());
@@ -92,12 +91,12 @@ public class UserChartDataServiceTests {
         Mockito.doReturn(evidenceList).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
         userChartDataService.setEvidenceService(mockedEvidenceService);
 
-        Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
+        Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), testParentProjectId, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
         assertEquals(2, result.get("TEST"));
     }
 
     @Test
-    whenUserHasTwoEvidenceWithDifferentSkills_testGetUserSkillData() {
+     void whenUserHasTwoEvidenceWithDifferentSkills_testGetUserSkillData() {
         Evidence evidence1 = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
         Evidence evidence2 = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
         evidence1.addSkill("test");
@@ -112,9 +111,22 @@ public class UserChartDataServiceTests {
         Mockito.doReturn(evidenceList).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
         userChartDataService.setEvidenceService(mockedEvidenceService);
 
-        Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
+        Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), testParentProjectId, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
         assertEquals(1, result.get("TEST"));
         assertEquals(1, result.get("JUNIT"));
+    }
+
+    @Test
+    void whenUserHasEvidenceWithSkillInWrongProject_testGetUserSkillData() {
+        Evidence evidence = new Evidence(user.getId(), 2, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-01-11"));
+        evidence.addSkill("test");
+        PortfolioEvidence portfolioEvidence = new PortfolioEvidence(evidence, new ArrayList<>());
+        EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
+        Mockito.doReturn(List.of(portfolioEvidence)).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
+        userChartDataService.setEvidenceService(mockedEvidenceService);
+        Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), testParentProjectId, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
+
+        assertEquals(0, result.size());
     }
 
     @ParameterizedTest
@@ -127,7 +139,7 @@ public class UserChartDataServiceTests {
         Mockito.doReturn(List.of(portfolioEvidence)).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
         userChartDataService.setEvidenceService(mockedEvidenceService);
 
-        Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
+        Map<String, Integer> result = userChartDataService.getUserSkillData(user.getId(), testParentProjectId, Date.valueOf("2022-01-10"), Date.valueOf("2022-02-10"));
         assertEquals(expectedResult, result.size());
     }
 }
