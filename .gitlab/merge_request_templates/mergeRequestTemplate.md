@@ -1,10 +1,8 @@
-### Description
+#### Description
 
-### Manual Tests
+#### Manual Tests
 
-### Relevant ACs
-
-### Comments
+#### Relevant ACs
 
 ### CheckList
 - [ ] Has the task been correclty implemented
@@ -14,5 +12,7 @@
 - [ ] Manaul testing
 - [ ] Application builds
 - [ ] Check that the task meets the ACs where required
+
+#### Comments
 
 #### Ensure all boxes have been ticked before merging
