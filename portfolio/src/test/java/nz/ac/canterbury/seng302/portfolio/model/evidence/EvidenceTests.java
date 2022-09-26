@@ -67,23 +67,15 @@ class EvidenceTests {
 
     @Test
     void whenUserHighFives_testAddHighFive() {
-        evidence.addHighFive(1, "Thomas Brown");
-        assertEquals(1, evidence.getHighFives);
+        testEvidence.toggleHighFive(1, "Thomas Brown");
+        assertEquals(1, testEvidence.getNumberOfHighFives());
+        assertEquals("Thomas Brown", testEvidence.getHighFives().get(1));
     }
 
     @Test
     void whenUserHasAlreadyHighFived_testAddHighFive() {
-        evidence.addHighFive(1, "Thomas Brown");
-        evidence.addHighFive(1, "Thomas Brown");
-        assertEquals(1, evidence.getHighFives);
+        testEvidence.toggleHighFive(1, "Thomas Brown");
+        testEvidence.toggleHighFive(1, "Thomas Brown");
+        assertEquals(0, testEvidence.getNumberOfHighFives());
     }
-
-    @Test
-    void whenUserHasAlreadyHighFived_testRemoveHighFive() {
-        evidence.addHighFive(1, "Thomas Brown");
-        evidence.removeHighFive(1);
-        assertEquals(0, evidence.getHighFives);
-    }
-
-
 }
