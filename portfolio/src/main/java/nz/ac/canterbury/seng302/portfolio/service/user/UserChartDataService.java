@@ -89,12 +89,13 @@ public class UserChartDataService {
         getEvidenceOverTimeDay(evidenceCountOverTime, startDate, endDate, user, parentProjectId);
         String message = ("Retrieved user [" + user.getId() +  "] evidence data for user statistics");
         PORTFOLIO_LOGGER.info(message);
+
         return evidenceCountOverTime;
     }
 
 
     /**
-     * Helper function for which creates a map of the total evidence produced by all group members
+     * Helper function for which creates a map of the total evidence produced by a user within a project
      * over time for each day within the start and end dates
      * @param evidenceCountOverTime the Map of all date strings in form ("yyyy-mm-dd") and the integer value of evidence
      * @param startDate The start date
@@ -111,10 +112,10 @@ public class UserChartDataService {
             evidenceCountOverTime.put(date.toString(), 0);
         }
 
-        // Iterate through all of that user's evidence for the groups project
+        // Iterate through all of that user's evidence for the  project
         for (PortfolioEvidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
             if (!startDate.after(e.getDate()) && !endDate.before(e.getDate())) {
-                // Iterate through all of that user's evidence for the groups project and if the evidence falls on one of the days
+                // Iterate through all of that user's evidence for the project and if the evidence falls on one of the days
                 // mentioned above add 1 to that day
                 LocalDate evidenceDate = Instant.ofEpochMilli(e.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
                 if (evidenceDate.isAfter(start.minusDays(1)) && evidenceDate.isBefore(finish.plusDays(1))) {

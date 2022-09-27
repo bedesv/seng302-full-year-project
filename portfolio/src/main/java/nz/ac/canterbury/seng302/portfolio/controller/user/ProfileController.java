@@ -1,8 +1,10 @@
 package nz.ac.canterbury.seng302.portfolio.controller.user;
 
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
+import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
+import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.PortfolioUserService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -31,6 +33,9 @@ public class ProfileController {
     private GroupsClientService groupsClientService;
 
     @Autowired
+    private ProjectService projectService;
+
+    @Autowired
     private PortfolioUserService portfolioUserService;
     private static final String PORTFOLIO_SELECTED = "portfolioSelected";
 
@@ -55,10 +60,12 @@ public class ProfileController {
 
         int projectId = portfolioUserService.getCurrentProject(user.getId()).getId();
         List<Group> groups = groupsClientService.getAllGroupsUserIn(projectId, user.getId());
-
+        Project project = projectService.getProjectById(projectId);
         model.addAttribute("pageUser", user);
         model.addAttribute("groups", groups);
         model.addAttribute("owner", true);
+        model.addAttribute("graphStartDate", project.getStartDate());
+        model.addAttribute("graphEndDate", project.getEndDate());
         return "templatesUser/user";
     }
 

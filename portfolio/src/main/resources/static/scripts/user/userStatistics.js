@@ -39,7 +39,7 @@ async function fetchChartData(dataType) {
         url = new URL (`${CONTEXT}/user-${USER_ID}-skillsData?`);
     }
     if (dataType === 'dataOverTime') {
-        url = new URL (`${CONTEXT}/user-${GROUP_ID}-dataOverTime?`);
+        url = new URL (`${CONTEXT}/user-${USER_ID}-dataOverTime?`);
     }
     return await fetch(url+new URLSearchParams({parentProjectId: PROJECT_ID, startDateString: START_DATE, endDateString: END_DATE}), {
         method: "GET",
