@@ -127,7 +127,7 @@ public class EvidenceService {
         List<PortfolioEvidence> groupsEvidence = new ArrayList<>();
         for (User user : group.getMembers()) {
             for (PortfolioEvidence evidence : getEvidenceForPortfolio(user.getId(), projectId)) {
-                if (evidence.getSkills().contains(skill)) {
+                if ((skill.equals("#no_skill") && evidence.getSkills().isEmpty()) || evidence.getSkills().contains(skill)) {
                     groupsEvidence.add(evidence);
                 }
             }

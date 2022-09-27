@@ -1380,6 +1380,24 @@ class EvidenceServiceTests {
 
     @Test
     @Transactional
+    void givenGroupExists_withMultipleMembers_allWithOneEvidence_withoutSkill_getEvidenceWithNoSkill() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+        Instant now = Instant.now(); //current date
+        Evidence evidence1 = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(1))), "");
+        Evidence evidence2 = new Evidence(0, projects.get(2).getId(), "title2", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(5))), "");
+        Evidence evidence3 = new Evidence(0, projects.get(2).getId(), "title3", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(13))), "");
+        evidenceService.saveEvidence(evidence1);
+        evidenceService.saveEvidence(evidence2);
+        evidenceService.saveEvidence(evidence3);
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(testGroup, projects.get(2).getId(), "#no_skill", 5);
+        assertEquals(3, groupsEvidence.size());
+    }
+
+    @Test
+    @Transactional
     void givenGroupExists_withMultipleMembers_allWithOneEvidence_withSkill_getEvidenceBySkill() {
         testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
         testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
