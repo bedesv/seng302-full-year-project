@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
+import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.PortfolioUserService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -46,6 +47,9 @@ class ProfileControllerTests {
     @MockBean
     GlobalControllerAdvice globalControllerAdvice;
 
+    @MockBean
+    ProjectService projectService;
+
 
     /**
      * Helper function to create a valid AuthState given an ID
@@ -86,6 +90,7 @@ class ProfileControllerTests {
         Mockito.when(groupsClientService.getAllGroupsUserIn(any(Integer.class), any(Integer.class))).thenReturn(List.of(new Group()));
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
+        Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
 
         mockMvc.perform(get("/profile"))
                 .andExpect(status().isOk())
@@ -105,6 +110,7 @@ class ProfileControllerTests {
         Mockito.when(groupsClientService.getAllGroupsUserIn(any(Integer.class), any(Integer.class))).thenReturn(List.of(new Group()));
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
+        Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
 
         mockMvc.perform(get("/profile-2"))
                 .andExpect(status().is3xxRedirection())
@@ -124,6 +130,7 @@ class ProfileControllerTests {
         Mockito.when(groupsClientService.getAllGroupsUserIn(any(Integer.class), any(Integer.class))).thenReturn(List.of(new Group()));
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
+        Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
 
         mockMvc.perform(get("/profile-2"))
                 .andExpect(status().isOk())
@@ -143,6 +150,7 @@ class ProfileControllerTests {
         Mockito.when(groupsClientService.getAllGroupsUserIn(any(Integer.class), any(Integer.class))).thenReturn(List.of(new Group()));
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
+        Mockito.when(projectService.getProjectById(any(Integer.class))).thenReturn(new Project());
 
         mockMvc.perform(get("/profile-1"))
                 .andExpect(status().is3xxRedirection())
