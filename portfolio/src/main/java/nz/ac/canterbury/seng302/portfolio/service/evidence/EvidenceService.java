@@ -142,13 +142,13 @@ public class EvidenceService {
      * @return A list of all skills from users in the group
      */
     public List<String> getAllGroupsSkills(Group group, int projectId) {
-        List<String> groupsSkills = new ArrayList<>();
+        Set<String> groupsSkills = new HashSet<>();
         for (User user : group.getMembers()) {
             for (PortfolioEvidence evidence : getEvidenceForPortfolio(user.getId(), projectId)) {
                 groupsSkills.addAll(evidence.getSkills());
             }
         }
-        return groupsSkills;
+        return new ArrayList<>(groupsSkills);
     }
 
     /**
