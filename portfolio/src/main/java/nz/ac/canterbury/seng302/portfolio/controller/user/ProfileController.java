@@ -12,9 +12,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The controller for handling backend of the profile page
@@ -30,6 +32,7 @@ public class ProfileController {
 
     @Autowired
     private PortfolioUserService portfolioUserService;
+    private static final String PORTFOLIO_SELECTED = "portfolioSelected";
 
     /**
      * Display the user's profile page.
@@ -40,16 +43,23 @@ public class ProfileController {
     @GetMapping("/profile")
     public String profile(
             @AuthenticationPrincipal AuthState principal,
+            @RequestParam(PORTFOLIO_SELECTED) Optional<Boolean> portfolioSelected,
             Model model
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
+        if (portfolioSelected.isPresent()) {
+            model.addAttribute(PORTFOLIO_SELECTED, portfolioSelected.get());
+        } else {
+            model.addAttribute(PORTFOLIO_SELECTED, false);
+        }
+
         int projectId = portfolioUserService.getCurrentProject(user.getId()).getId();
         List<Group> groups = groupsClientService.getAllGroupsUserIn(projectId, user.getId());
 
         model.addAttribute("pageUser", user);
         model.addAttribute("groups", groups);
         model.addAttribute("owner", true);
-        return "templatesUser/profile";
+        return "templatesUser/user";
     }
 
     /**
@@ -62,6 +72,7 @@ public class ProfileController {
     @GetMapping("/profile-{userId}")
     public String viewProfile(
             @AuthenticationPrincipal AuthState principal,
+            @RequestParam(PORTFOLIO_SELECTED) Optional<Boolean> portfolioSelected,
             @PathVariable("userId") int userId,
             Model model
     ) {
@@ -70,12 +81,17 @@ public class ProfileController {
         int projectId = portfolioUserService.getCurrentProject(pageUser.getId()).getId();
         List<Group> groups = groupsClientService.getAllGroupsUserIn(projectId, pageUser.getId());
         model.addAttribute("pageUser", pageUser);
+        if (portfolioSelected.isPresent()) {
+            model.addAttribute(PORTFOLIO_SELECTED, portfolioSelected.get());
+        } else {
+            model.addAttribute(PORTFOLIO_SELECTED, false);
+        }
         model.addAttribute("groups", groups);
         if (Objects.equals(pageUser.getUsername(), "") || user.getId() == pageUser.getId()) {
             return "redirect:/profile";
         } else {
             model.addAttribute("owner", false);
-            return "templatesUser/profile";
+            return "templatesUser/user";
         }
     }
 }

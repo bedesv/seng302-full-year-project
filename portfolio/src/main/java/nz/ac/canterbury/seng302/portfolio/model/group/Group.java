@@ -90,4 +90,8 @@ public class Group {
         return members;
     }
 
+    public void addMember(User user) {
+        this.members.add(user);
+    }
+
 }

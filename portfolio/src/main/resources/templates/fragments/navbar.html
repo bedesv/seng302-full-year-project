@@ -13,9 +13,8 @@
     <!-- The application's navigation bar. -->
     <nav th:fragment="navbar" id="site-navigation">
         <link rel="stylesheet" th:href="@{styles/navbar.css}">
-        <script rel="text/javascript" th:src="@{scripts/navbar.js}"></script>
         <div class="nav-head">
-            <h2 id="nav-head__title">LENSfolio</h2>
+            <h2 id="nav-head__title">PoFo</h2>
             <hr id="nav-head__line">
         </div>
             <ul class="site-navigation__list">
@@ -24,14 +23,6 @@
                         <a th:href="@{profile}" class="site-navigation__link" th:classappend="${#httpServletRequest.getRequestURI() == '/profile' ? 'active':''}">
                             <span class="bi bi-person-circle navigation_icon" ></span>
                             Profile
-                        </a>
-                    </h5>
-                </li>
-                <li class="site-navigation__item">
-                    <h5 class="site-navigation__label">
-                        <a th:href="@{portfolio}" class="site-navigation__link" th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(), '/portfolio') ? 'active':''}">
-                            <span class="bi bi-briefcase navigation_icon" ></span>
-                            Portfolio
                         </a>
                     </h5>
                 </li>
