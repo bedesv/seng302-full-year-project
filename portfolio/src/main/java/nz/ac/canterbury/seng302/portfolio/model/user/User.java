@@ -115,10 +115,6 @@ public class User {
 
     public int getId(){return id;}
 
-    public Collection<UserRole> getRolesList() {
-        return roles;
-    }
-
 
     /**
      * Gets roles in string form. Useful for display on the website.
@@ -136,7 +132,7 @@ public class User {
                 case UNRECOGNIZED -> roleStrings.add("Unrecognised Role"); // This case should never occur
             }
         }
-        roleStrings.sort(Comparator.naturalOrder()); // Ensure the roles are always returned in the same order
+        roleStrings.sort(Comparator.naturalOrder()); // Ensure the roles are always returned to the same order
         return roleStrings;
     }
 

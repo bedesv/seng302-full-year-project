@@ -82,7 +82,7 @@ public class ProjectEditsController {
             projectId = Integer.parseInt(id);
         } catch (NumberFormatException | NoSuchElementException e) {
             return;
-            // If project id is not an integer or does not correspond to a project, the request was invalid so we return
+            // If project id is not an integer or does not correspond to a project, the request was invalid, so we return
         }
         if (isTeacher && userId != -100) {
             String editString = userAccountClientService.getUserAccountById(userId).getFirstName();

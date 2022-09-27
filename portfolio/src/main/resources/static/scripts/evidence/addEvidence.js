@@ -1,4 +1,4 @@
-// If the evidence title/description are not valid, set the save button to disabled.
+// If the evidence title/description are not valid, set the save button to disable.
 function checkValid() {
     if (evidenceId === -1) {
         document.getElementById('evidence-form__save').disabled =
@@ -84,14 +84,14 @@ function removeUser(user) {
 }
 
 function saveCommitChanges() {
-    newCommits = [];
+    let newCommits = [];
     for (const commitId of commitList) {
         if (!currentlyShownCommits[commitId]) {
             newCommits.push(commitId);
         }
     }
-    for (child of document.getElementById("commit-selection-box").children) {
-        checkbox = child.children[1];
+    for (let child of document.getElementById("commit-selection-box").children) {
+        let checkbox = child.children[1];
         if (checkbox.checked) {
             newCommits.push(checkbox.id);
         }
@@ -636,10 +636,10 @@ skillsDiv.addEventListener('click', (event) => {
         skillsInput.focus();
     }
 });
-skillsInput.addEventListener('focus', (event) => {
+skillsInput.addEventListener('focus', () => {
     skillsDiv.style.outline = 'black solid 2px';
 });
-skillsInput.addEventListener('blur', (event) => {
+skillsInput.addEventListener('blur', () => {
     skillsDiv.style.outline = '';
 });
 
@@ -647,13 +647,13 @@ skillsInput.addEventListener('blur', (event) => {
 /**
  * allows clicking skills container to select the input and puts outline on div
  */
-usersDiv.addEventListener('click', (event) => {
+usersDiv.addEventListener('click', () => {
     usersInput.focus();
 });
-usersInput.addEventListener('focus', (event) => {
+usersInput.addEventListener('focus', () => {
     usersDiv.style.outline = 'black solid 2px';
 });
-usersInput.addEventListener('blur', (event) => {
+usersInput.addEventListener('blur', () => {
     usersDiv.style.outline = '';
 });
 
@@ -671,9 +671,9 @@ document.getElementById("users-input").dispatchEvent(new Event('input', {
 
 
 var commitsModal = document.getElementById('add-evidence-commits__modal')
-commitsModal.addEventListener('show.bs.modal', function (event) {
-    for (child of document.getElementById("commit-selection-box").children) {
-        id = child.children[1].id;
+commitsModal.addEventListener('show.bs.modal', function () {
+    for (let child of document.getElementById("commit-selection-box").children) {
+        let id = child.children[1].id;
         child.children[1].checked = commitList.includes(id);
     }
 })

@@ -67,7 +67,6 @@ async function fetchChartData(dataType) {
  */
 async function updateGroupMembersData(chartData) {
     // Fetch updated chart data
-    // let chartData = await fetchChartData('membersData')
 
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
@@ -94,7 +93,6 @@ async function updateGroupMembersData(chartData) {
  * with the received data
  */
 async function dataOverTimeChart(chartData) {
-    // let chartData = await fetchChartData('dataOverTime')
 
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'Evidence');
@@ -120,7 +118,6 @@ async function dataOverTimeChart(chartData) {
  */
 async function updateCategoriesChart(chartData) {
     // Fetch updated chart data
-    // let chartData = await fetchChartData('categories')
 
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
@@ -150,7 +147,6 @@ async function updateCategoriesChart(chartData) {
  */
 async function updateSkillsChart(chartData) {
     // Fetch updated chart data
-    // let chartData = await fetchChartData('skills')
 
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();

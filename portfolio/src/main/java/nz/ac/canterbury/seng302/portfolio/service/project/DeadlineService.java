@@ -26,7 +26,6 @@ public class DeadlineService {
     private ProjectEditsService projectEditsService;
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
 
-    private static final String DEADLINE_DATE_ERROR = "Deadline date must be within the project dates";
 
 
     /**

@@ -1153,7 +1153,8 @@ class EvidenceServiceTests {
     void whenNoCommits_testRemoveCommit() {
         Evidence testEvidence = new Evidence();
         evidenceRepository.save(testEvidence);
-        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> evidenceService.removeCommit(testEvidence.getId(), 0));
+        int evidenceId = testEvidence.getId();
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> evidenceService.removeCommit(evidenceId, 0));
         assertEquals("Evidence " + testEvidence.getId() + " has less than 1 commits. Commit not deleted.", exception.getMessage());
     }
 
@@ -1162,7 +1163,8 @@ class EvidenceServiceTests {
     void whenNoCommits_testRemoveCommitWithIndexTooLow() {
         Evidence testEvidence = new Evidence();
         evidenceRepository.save(testEvidence);
-        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> evidenceService.removeCommit(testEvidence.getId(), -1));
+        int evidenceId = testEvidence.getId();
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> evidenceService.removeCommit(evidenceId, -1));
         assertEquals("Evidence " + testEvidence.getId() + " has less than 0 commits. Commit not deleted.", exception.getMessage());
     }
 
@@ -1183,8 +1185,9 @@ class EvidenceServiceTests {
         Evidence testEvidence = new Evidence();
         evidenceRepository.save(testEvidence);
         testEvidence.addCommit(new Commit());
+        int evidenceId = testEvidence.getId();
         assertEquals(1, testEvidence.getNumberCommits());
-        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> evidenceService.removeCommit(testEvidence.getId(), 1));
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> evidenceService.removeCommit(evidenceId, 1));
         assertEquals("Evidence " + testEvidence.getId() + " has less than 2 commits. Commit not deleted.", exception.getMessage());
         assertEquals(1, testEvidence.getNumberCommits());
     }
@@ -1195,8 +1198,9 @@ class EvidenceServiceTests {
         Evidence testEvidence = new Evidence();
         evidenceRepository.save(testEvidence);
         testEvidence.addCommit(new Commit());
+        int evidenceId = testEvidence.getId();
         assertEquals(1, testEvidence.getNumberCommits());
-        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> evidenceService.removeCommit(testEvidence.getId(), -1));
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> evidenceService.removeCommit(evidenceId, -1));
         assertEquals("Evidence " + testEvidence.getId() + " has less than 0 commits. Commit not deleted.", exception.getMessage());
         assertEquals(1, testEvidence.getNumberCommits());
     }

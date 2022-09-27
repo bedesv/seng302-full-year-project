@@ -132,9 +132,6 @@ html {
     border-top: 1px solid var(--color-accent);
 }
 
-.group-member__container {
-}
-
 .group-member__link {
     text-decoration: none;
     color: black;

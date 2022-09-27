@@ -4,7 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- * Embeddable class to allow weblinks to be stored in evidence without creating a weblinks entity.
+ * Embeddable class to allow weblinks to be stored in evidence without creating a weblinks' entity.
  * Easiest way to store name and weblink together.
  */
 @Embeddable
@@ -14,13 +14,16 @@ public class WebLink {
     @Column(columnDefinition = "LONGTEXT")
     String link;
 
+    private static final String HTTP = "http://";
+    private static final String HTTPS = "https://";
+
     public WebLink(String webLink, String name) {
         this.name = name;
         if (webLink.matches("http://.*")) {
-            this.link = webLink.replaceFirst("http://", "");
+            this.link = webLink.replaceFirst(HTTP, "");
             this.safe = false;
         } else if (webLink.matches("https://.*")) {
-            this.link = webLink.replaceFirst("https://", "");
+            this.link = webLink.replaceFirst(HTTPS, "");
             this.safe = true;
         }
 
@@ -28,10 +31,10 @@ public class WebLink {
 
     public WebLink(String webLink) {
         if (webLink.matches("http://.*")) {
-            this.link = webLink.replaceFirst("http://", "");
+            this.link = webLink.replaceFirst(HTTP, "");
             this.safe = false;
         } else if (webLink.matches("https://.*")) {
-            this.link = webLink.replaceFirst("https://", "");
+            this.link = webLink.replaceFirst(HTTPS, "");
             this.safe = true;
         }
     }
@@ -48,7 +51,7 @@ public class WebLink {
     }
 
     public String getFullLink() {
-        return this.isSafe() ? "https://" + this.link : "http://" + this.link;
+        return this.isSafe() ? HTTPS + this.link : HTTP + this.link;
     }
 
     public boolean isSafe() {
