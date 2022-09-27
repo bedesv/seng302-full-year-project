@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller.user;
 
+import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserChartDataService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -62,5 +63,30 @@ public class UserChartDataController {
         }
 
         return userChartDataService.getUserSkillData(userId, parentProjectId, startDate, endDate);
+    }
+
+    @GetMapping("/user-{userId}-evidenceData")
+    public Map<String, Integer> getEvidenceDataForUser(@AuthenticationPrincipal AuthState principal,
+                                                       @PathVariable int userId,
+                                                       @RequestParam int parentProjectId,
+                                                       @RequestParam String startDateString,
+                                                       @RequestParam String endDateString) {
+        String message = ("Getting user [" + userId +  "] evidence data for user statistics");
+        PORTFOLIO_LOGGER.info(message);
+        User user = userService.getUserAccountByPrincipal(principal);
+        if (user.getUsername() == null) {
+            return Collections.emptyMap();
+        }
+        Date startDate;
+        Date endDate;
+        try {
+            startDate = new SimpleDateFormat(TIME_FORMAT).parse(startDateString);
+            endDate = new SimpleDateFormat(TIME_FORMAT).parse(endDateString);
+        } catch (ParseException e) {
+            PORTFOLIO_LOGGER.error(e.getMessage());
+            return Collections.emptyMap();
+        }
+
+        return userChartDataService.getUserEvidenceData(userId, parentProjectId, startDate, endDate);
     }
 }
