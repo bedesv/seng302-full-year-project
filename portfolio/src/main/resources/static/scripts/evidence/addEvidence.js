@@ -363,10 +363,18 @@ function updateSkillTagsInDOM(tags) {
 // Updates the list of commits the user has linked to their piece of evidence.
 function updateCommitsInDOM(commits) {
     let commitObjects = [];
+    let commit;
     for (const tag of commits) {
         commit = ALL_COMMITS[tag];
         if (!commit) {
             commit = ORIGINAL_COMMITS[tag];
+        }
+        commit = {
+            author: commit.author,
+            description: commit.description,
+            date: commit.date,
+            link: commit.link,
+            id: commit.id
         }
         commitObjects.push(commit);
     }

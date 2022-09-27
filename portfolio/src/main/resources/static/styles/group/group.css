@@ -132,6 +132,15 @@ html {
     border-top: 1px solid var(--color-accent);
 }
 
+.evidence__container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 15px 0 0;
+    max-height: 30rem;
+    overflow-y: auto;
+    border-top: 1px solid var(--color-accent);
+}
+
 .group-member__container {
 }
 
@@ -288,16 +297,18 @@ html {
     justify-content: center;
 }
 
-.skills-categories-chart__flex-container, .evidence-time-chart__flex-container {
+.evidence-chart__flex-container {
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
 }
 
 #group-chart__categories-chart, #group-chart__skills-chart, #group-chart__evidence-chart, #group-chart__time-chart {
-    flex-grow: 1;
-    overflow: hidden;
-    height: 500px;
+    min-height: 25em;
+    min-width: 35em;
+    max-width: 60em;
+    flex: 1 1 0px;
 }
 
 .graph__dropdown {
@@ -347,6 +358,10 @@ a {
 
 a.hover {
     text-decoration: none;
+}
+
+.groupsEvidence {
+    margin-top: -4rem;
 }
 
 

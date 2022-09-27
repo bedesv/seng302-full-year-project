@@ -101,6 +101,21 @@ public class EvidenceService {
     }
 
     /**
+     * Get all evidence for members within group
+     * @param group Group retrieving evidence for
+     * @param projectId currently selected project
+     * @return list of all evidences for user in group
+     */
+    public List<PortfolioEvidence> getEvidenceForPortfolioByGroup(Group group, int projectId, int limit){
+        List<PortfolioEvidence> groupsEvidence = new ArrayList<>();
+        for (User user: group.getMembers()){
+            groupsEvidence.addAll(getEvidenceForPortfolio(user.getId(), projectId));
+        }
+        //sort by date asc, then reverse (so latest at top), then return only limit number of evidences
+        return groupsEvidence.stream().sorted(Collections.reverseOrder(Comparator.comparing(PortfolioEvidence::getDate).thenComparing(PortfolioEvidence::getId))).limit(limit).toList();
+    }
+
+    /**
      * Get all pieces of evidence with the given skill for all members in the given group
      * @param group The group to retrieve evidence for
      * @param projectId The currently selected project id

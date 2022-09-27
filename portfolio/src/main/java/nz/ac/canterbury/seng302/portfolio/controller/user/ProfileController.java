@@ -1,6 +1,9 @@
 package nz.ac.canterbury.seng302.portfolio.controller.user;
 
+import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
+import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
+import nz.ac.canterbury.seng302.portfolio.service.user.PortfolioUserService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -20,6 +24,12 @@ public class ProfileController {
 
     @Autowired
     private UserAccountClientService userService;
+
+    @Autowired
+    private GroupsClientService groupsClientService;
+
+    @Autowired
+    private PortfolioUserService portfolioUserService;
 
     /**
      * Display the user's profile page.
@@ -33,7 +43,11 @@ public class ProfileController {
             Model model
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
+        int projectId = portfolioUserService.getCurrentProject(user.getId()).getId();
+        List<Group> groups = groupsClientService.getAllGroupsUserIn(projectId, user.getId());
+
         model.addAttribute("pageUser", user);
+        model.addAttribute("groups", groups);
         model.addAttribute("owner", true);
         return "templatesUser/profile";
     }
@@ -53,7 +67,10 @@ public class ProfileController {
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
         User pageUser = userService.getUserAccountById(userId);
+        int projectId = portfolioUserService.getCurrentProject(pageUser.getId()).getId();
+        List<Group> groups = groupsClientService.getAllGroupsUserIn(projectId, pageUser.getId());
         model.addAttribute("pageUser", pageUser);
+        model.addAttribute("groups", groups);
         if (Objects.equals(pageUser.getUsername(), "") || user.getId() == pageUser.getId()) {
             return "redirect:/profile";
         } else {
