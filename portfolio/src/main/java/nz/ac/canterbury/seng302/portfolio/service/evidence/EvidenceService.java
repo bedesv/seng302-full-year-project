@@ -136,6 +136,22 @@ public class EvidenceService {
     }
 
     /**
+     * Get all skills for all members in the given group
+     * @param group The group to retrieve skills for
+     * @param projectId The currently selected project id
+     * @return A list of all skills from users in the group
+     */
+    public List<String> getAllGroupsSkills(Group group, int projectId) {
+        List<String> groupsSkills = new ArrayList<>();
+        for (User user : group.getMembers()) {
+            for (PortfolioEvidence evidence : getEvidenceForPortfolio(user.getId(), projectId)) {
+                groupsSkills.addAll(evidence.getSkills());
+            }
+        }
+        return groupsSkills;
+    }
+
+    /**
      * Get a specific piece of evidence by ID
      */
     public Evidence getEvidenceById(Integer id) throws NoSuchElementException {
