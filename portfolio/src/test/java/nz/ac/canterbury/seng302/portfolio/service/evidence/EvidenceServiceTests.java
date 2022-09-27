@@ -51,6 +51,8 @@ class EvidenceServiceTests {
         projectService.saveProject(new Project("Project Name", "Test Project", Date.valueOf("2022-05-9"), Date.valueOf("2022-05-16")));
         projects = projectService.getAllProjects();
         Mockito.doReturn(new User(UserResponse.newBuilder().setId(0).build())).when(userService).getUserAccountById(0);
+        Mockito.doReturn(new User(UserResponse.newBuilder().setId(1).build())).when(userService).getUserAccountById(1);
+        Mockito.doReturn(new User(UserResponse.newBuilder().setId(2).build())).when(userService).getUserAccountById(2);
     }
 
     //Refresh the database after each test.
@@ -1219,4 +1221,51 @@ class EvidenceServiceTests {
         assertThrows(NoSuchElementException.class, () -> evidenceService.modifyWebLink(-1, weblink, -1));
     }
 
+    @Test
+    void whenUserHighFivesEvidence_testHighFiveAdded() {
+        evidenceService.toggleHighFive(1, 1);
+        assertEquals(1, evidenceService.getNumberOfHighFives(1));
+    }
+
+    @Test
+    void whenUserAlreadyHighFivedEvidence_andUserUnHighFivesEvidence_testHighFiveRemoved() {
+        evidenceService.toggleHighFive(1, 1);
+        evidenceService.toggleHighFive(1, 1);
+        assertEquals(0, evidenceService.getNumberOfHighFives(1));
+    }
+
+    @Test
+    void whenTwoUsersHighFived_andOneUserUnHighFivesEvidence_testHighFiveRemoved() {
+        evidenceService.toggleHighFive(1, 1);
+        evidenceService.toggleHighFive(1, 2);
+        evidenceService.toggleHighFive(1, 1);
+        assertEquals(1, evidenceService.getNumberOfHighFives(1));
+    }
+
+    @Test
+    void whenNoUsersHaveHighFivedEvidence_testGetUsersWhoHaveHighFivedEvidence() {
+        assertEquals(0, evidenceService.getHighFives(1).size());
+    }
+
+    @Test
+    void whenOneuserHasHighFivedEvidence_testGetUsersWhoHaveHighFivedEvidence() {
+        evidenceService.toggleHighFive(1, 1);
+        assertEquals(1, evidenceService.getHighFives(1).size());
+    }
+
+    @Test
+    void whenTwoUsersHaveHighFivedEvidence_testGetUsersWhoHaveHighFivedEvidence() {
+        evidenceService.toggleHighFive(1, 1);
+        evidenceService.toggleHighFive(1, 2);
+        assertEquals(2, evidenceService.getHighFives(1).size());
+    }
+
+    @Test
+    void whenTwoUsersHaveHighFivedEvidence_andOneUserUnHighFivesEvidence_testGetUsersWhoHaveHighFivedEvidence() {
+        evidenceService.toggleHighFive(1, 1);
+        evidenceService.toggleHighFive(1, 2);
+        evidenceService.toggleHighFive(1, 1);
+        assertEquals(1, evidenceService.getHighFives(1).size());
+        assertEquals(2, evidenceService.getHighFives(1).get(0).getId());
+    }
 }
