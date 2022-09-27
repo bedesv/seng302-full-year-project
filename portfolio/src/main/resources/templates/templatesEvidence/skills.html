@@ -17,8 +17,11 @@
 </head>
 
 <div class="row">
-    <div class="flex-row">
-        <h2 th:text="('Evidence with skill ' + ${skillName})"></h2>
+    <div class="flex-row" th:if="${skillName!=''}">
+        <h2 th:text="('Evidence with skill: ' + ${skillName})"></h2>
+    </div>
+    <div class="flex-row" th:if="${skillName==''}">
+        <h2>Evidence with no skill</h2>
     </div>
     <div class="col-lg-8">
         <div class="add-evidence__container">

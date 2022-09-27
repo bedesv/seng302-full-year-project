@@ -18,8 +18,11 @@
 </head>
 
 <div class="row">
-    <div class="flex-row">
-        <h2 th:text="('Evidence with category ' + ${categoryName})"></h2>
+    <div class="flex-row" th:if="${categoryName!=''}">
+        <h2 th:text="('Evidence with category: ' + ${categoryName})"></h2>
+    </div>
+    <div class="flex-row" th:if="${categoryName==''}">
+        <h2>Evidence with no category</h2>
     </div>
     <div class="col-lg-8">
         <div class="add-evidence__container">
