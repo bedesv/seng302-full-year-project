@@ -223,6 +223,7 @@ public class AddEvidenceController {
         } catch (IllegalArgumentException exception) {
             return ADD_EVIDENCE;
         }
+        // Return to the user page but open the portfolio tab
         return USER_REDIRECT + "?portfolioSelected=true";
     }
 

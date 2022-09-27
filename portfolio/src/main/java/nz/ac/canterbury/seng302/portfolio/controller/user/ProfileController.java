@@ -32,6 +32,7 @@ public class ProfileController {
 
     @Autowired
     private PortfolioUserService portfolioUserService;
+    private static final String PORTFOLIO_SELECTED = "portfolioSelected";
 
     /**
      * Display the user's profile page.
@@ -42,14 +43,14 @@ public class ProfileController {
     @GetMapping("/profile")
     public String profile(
             @AuthenticationPrincipal AuthState principal,
-            @RequestParam("portfolioSelected") Optional<Boolean> portfolioSelected,
+            @RequestParam(PORTFOLIO_SELECTED) Optional<Boolean> portfolioSelected,
             Model model
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
         if (portfolioSelected.isPresent()) {
-            model.addAttribute("portfolioSelected", portfolioSelected.get());
+            model.addAttribute(PORTFOLIO_SELECTED, portfolioSelected.get());
         } else {
-            model.addAttribute("portfolioSelected", false);
+            model.addAttribute(PORTFOLIO_SELECTED, false);
         }
 
         int projectId = portfolioUserService.getCurrentProject(user.getId()).getId();
@@ -71,7 +72,7 @@ public class ProfileController {
     @GetMapping("/profile-{userId}")
     public String viewProfile(
             @AuthenticationPrincipal AuthState principal,
-            @RequestParam("portfolioSelected") Optional<Boolean> portfolioSelected,
+            @RequestParam(PORTFOLIO_SELECTED) Optional<Boolean> portfolioSelected,
             @PathVariable("userId") int userId,
             Model model
     ) {
@@ -81,9 +82,9 @@ public class ProfileController {
         List<Group> groups = groupsClientService.getAllGroupsUserIn(projectId, pageUser.getId());
         model.addAttribute("pageUser", pageUser);
         if (portfolioSelected.isPresent()) {
-            model.addAttribute("portfolioSelected", portfolioSelected.get());
+            model.addAttribute(PORTFOLIO_SELECTED, portfolioSelected.get());
         } else {
-            model.addAttribute("portfolioSelected", false);
+            model.addAttribute(PORTFOLIO_SELECTED, false);
         }
         model.addAttribute("groups", groups);
         if (Objects.equals(pageUser.getUsername(), "") || user.getId() == pageUser.getId()) {

@@ -84,12 +84,14 @@ function removeUser(user) {
 }
 
 function saveCommitChanges() {
-    newCommits = [];
+    let newCommits = [];
     for (const commitId of commitList) {
         if (!currentlyShownCommits[commitId]) {
             newCommits.push(commitId);
         }
     }
+    let child;
+    let checkbox;
     for (child of document.getElementById("commit-selection-box").children) {
         checkbox = child.children[1];
         if (checkbox.checked) {
@@ -232,11 +234,9 @@ function saveSkillsOnSubmit() {
     document.getElementById("skills-input").placeholder = '';
     value = value.replace(/_+/g, '_');
     let skills = value.split(" ");
-    let shouldUpdateSkills = false;
     for (let skill of skills) {
         let trimmedSkill = skill.replaceAll("_", " ").trim().replaceAll(" ", "_");
         if (trimmedSkill !== "") {
-            shouldUpdateSkills = true;
             addToSkills(trimmedSkill);
         }
     }
@@ -245,15 +245,15 @@ function saveSkillsOnSubmit() {
 
 // Listen for input so the tags and autocomplete can be triggered
 document.getElementById("skills-input").addEventListener("input", (event) => {
-    const skillsError = document.getElementById("evidence-form__skills-error");
+    let skillsError = document.getElementById("evidence-form__skills-error");
     skillsError.innerHTML = ""
     event.target.style.width = event.target.value.length > 8 ? event.target.value.length + "ch" : "80px";
     let value = event.target.value;
 
     const oldValue = value
     value = value.replaceAll(/[^a-zA-Z0-9\-_ ]/g, '');
-    if(oldValue !== value) {
-            const skillsError = document.getElementById("evidence-form__skills-error");
+    if (oldValue !== value) {
+            skillsError = document.getElementById("evidence-form__skills-error");
             skillsError.innerHTML = "Skills can not contain special characters";
     }
     value = value.replace(/_+/g, '_');
@@ -385,7 +385,7 @@ function updateCommitsInDOM(commits) {
         parent.removeChild(parent.firstChild);
     }
     for (let tag of commits) {
-        let commit = ALL_COMMITS[tag];
+        commit = ALL_COMMITS[tag];
         if (!commit) {
             commit = ORIGINAL_COMMITS[tag];
         }
@@ -457,7 +457,7 @@ function updateUserTagsInDOM(tags) {
     }
     let userInput = parent.firstChild
     for (let tag of tags) {
-        for (user of ALL_USERS) {
+        for (let user of ALL_USERS) {
             if (tag === user.id) {
                 let element = createElementFromHTML(`
                             <div class="user-tag-con">
@@ -672,7 +672,8 @@ document.getElementById("users-input").dispatchEvent(new Event('input', {
 
 var commitsModal = document.getElementById('add-evidence-commits__modal')
 commitsModal.addEventListener('show.bs.modal', function (event) {
-    for (child of document.getElementById("commit-selection-box").children) {
+    let id
+    for (let child of document.getElementById("commit-selection-box").children) {
         id = child.children[1].id;
         child.children[1].checked = commitList.includes(id);
     }
