@@ -20,6 +20,9 @@
 </head>
 
 <div class="row">
+    <div class="flex-row">
+        <h2 th:text="('All Evidence')"></h2>
+    </div>
     <div class="col-lg-8">
         <div class="add-evidence__container">
             <a th:if="${owner}" class="add-evidence__button" th:href="@{editEvidence-{evidenceId}(evidenceId=-1)}"> Add Evidence</a>
@@ -28,16 +31,13 @@
     </div>
 
     <div class="col-lg">
-        <div class="categories">
+        <div class="filter-div">
             <!-- Categories Tab -->
             <h2>Categories</h2>
             <div class="categories__details">
                 <button class="no-category__link" th:onclick="updateUserPortfolioWithCategory('')">No Category</button>
                 <button class="category__link" th:each="category: ${categoryList}" th:text="${category}" th:onclick="updateUserPortfolioWithCategory([[${category}]])"></button>
             </div>
-        </div>
-        <div class="skills">
-            <!-- Skill list -->
             <h2 th:text="Skills"></h2>
             <div class="skill__details">
                 <button class="no-skill__link " th:onclick="updateUserPortfolioWithSkill('')">No Skill</button>
