@@ -1271,6 +1271,10 @@ class EvidenceServiceTests {
         int testEvidenceId = evidence.getId();;
         evidenceService.toggleHighFive(testEvidenceId, 1);
         assertEquals(1, evidenceService.getHighFives(testEvidenceId).size());
+
+        List<User> result = evidenceService.getHighFives(testEvidenceId);
+        assertEquals(1, result.size());
+        assertEquals(1, result.get(0).getId());
     }
 
     @Test
@@ -1281,7 +1285,11 @@ class EvidenceServiceTests {
         int testEvidenceId = evidence.getId();;
         evidenceService.toggleHighFive(testEvidenceId, 1);
         evidenceService.toggleHighFive(testEvidenceId, 2);
-        assertEquals(2, evidenceService.getHighFives(testEvidenceId).size());
+
+        List<User> result = evidenceService.getHighFives(testEvidenceId);
+        assertEquals(2, result.size());
+        assertEquals(1, result.get(0).getId());
+        assertEquals(2, result.get(1).getId());
     }
 
     @Test
