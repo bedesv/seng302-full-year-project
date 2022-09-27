@@ -60,7 +60,6 @@ document.addEventListener("dragstart", function () {
  * @param groupId Group to copy to
  */
 function copyHere(groupId) {
-    console.log("mate");
     clearTableSelection(lastTable);
     lastRow = null;
     clearTableSelection(currentTable);
@@ -97,7 +96,7 @@ function copyMembers(currRow) {
     } else {
         for (let row of currentTable) {
             if (row.className === "selected") {
-                clipboard.push(row)
+                clipboard.push(row);
             }
         }
     }
@@ -292,6 +291,7 @@ function toggleRow(row) {
  * @param row the row to have selection toggled
  */
 function toggleRowMobile(row) {
+    lastTable = currentTable
     currentTable = row.parentNode.getElementsByTagName("tr");
     if (lastTable !== currentTable) {
         clearTableSelection(lastTable);
@@ -302,7 +302,6 @@ function toggleRowMobile(row) {
     lastRow = row;
     viewCopyButton(row);
     row.addEventListener("mouseup", (event) => {
-        console.log(event);
         event.preventDefault()
     }, false);
 }
@@ -531,17 +530,11 @@ function hideCopyButton() {
     }
 }
 
+/**
+ * Event listener stops mouse up/down from triggering on mobile click of member row.
+ */
 document.addEventListener("touchend", (event) => {
-    console.log(event);
-    if (event.target.classList.contains("group-row") || event.target.parentElement.classList.contains("group-row")) {
+    if (event.target.classList.contains("group-row")) {
         event.preventDefault();
     }
-
-    // do something
 }, false);
-//
-// document.addEventListener("mouseup", (event) => {
-//     console.log(event);
-//
-//     // do something
-// }, false);

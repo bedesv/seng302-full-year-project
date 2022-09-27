@@ -62,9 +62,9 @@
                                     <tr th:each="member : ${group.getMembers}"
                                         th:with="rowDraggable=${authUserIsTeacher}"
                                         th:draggable="${rowDraggable}"
-                                        th:ontouchstart="${rowDraggable} ? 'copyMembers(this)' : ''"
+                                        th:ontouchstart="${rowDraggable} ? 'toggleRowMobile(this)' : ''"
                                         th:onmousedown="${rowDraggable} ? 'copyMembers(this)' : ''"
-                                        th:ontouchend="${rowDraggable} ? 'toggleRowMobile(this)' : ''"
+                                        th:ontouchend="${rowDraggable} ? 'copyMembers(this)' : ''"
                                         th:onmouseup="${rowDraggable} ? 'rowClick(this)' : ''"
                                         class="unselected group-row">
                                         <th scope="row" class="user_id group-row" th:text="${member.getId}"></th>
