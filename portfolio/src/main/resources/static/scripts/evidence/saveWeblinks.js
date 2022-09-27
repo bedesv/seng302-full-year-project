@@ -2,7 +2,7 @@ let index;
 
 /**
  * Gets web links from backend and updates DOM
- * @param id
+ * @param id id of piece of evidence
  * @returns {Promise<void>}
  */
 async function getWebLinks(id) {
@@ -16,6 +16,16 @@ async function getWebLinks(id) {
     // Update the page with the new HTML content
     const evidenceWrapper = document.getElementById(`web-link__wrapper_${id}`)
     evidenceWrapper.innerHTML = updatedEvidence
+}
+
+/**
+ * Goes through all pieces of evidence on the page and
+ * fetches the weblinks for that piece of evidence
+ */
+async function updateAllWeblinks() {
+    for (let evidenceId of EVIDENCE_IDS) {
+        await getWebLinks(evidenceId);
+    }
 }
 
 /**

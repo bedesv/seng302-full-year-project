@@ -39,10 +39,8 @@ public class PortfolioController {
     private PortfolioUserService portfolioUserService;
 
     private static final String PORTFOLIO_REDIRECT = "redirect:/portfolio";
-
-    private static final int MAX_WEBLINKS_PER_EVIDENCE = 5;
-
     private static final String OWNER = "owner";
+    private static final int MAX_WEBLINKS_PER_EVIDENCE = 5;
 
     /**
      * Display the user's portfolio page.
@@ -180,11 +178,7 @@ public class PortfolioController {
         User user = userService.getUserAccountByPrincipal(principal);
         int id = Integer.parseInt(evidenceId);
         Evidence evidence = evidenceService.getEvidenceById(id);
-        if (user.getId() != evidence.getOwnerId()) {
-            model.addAttribute(OWNER, false);
-        } else {
-            model.addAttribute(OWNER, true);
-        }
+        model.addAttribute(OWNER, user.getId() == evidence.getOwnerId());
         model.addAttribute("webLinks", evidence.getWebLinks());
         model.addAttribute("evidenceId", evidence.getId());
         return "fragments/webLink";
