@@ -57,8 +57,9 @@ public class GroupsController {
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
 
         List<Group> groups = groupsClientService.getAllGroupsInProject(projectId);
-        groups.add(getTeacherGroup());
-        groups.add(getGrouplessGroup(groups));
+        List<User> users = getAllUsers();
+        groups.add(getTeacherGroup(users));
+        groups.add(getGrouplessGroup(groups, users));
         List<Integer> allGroupIds = new ArrayList<>();
         for (Group g : groups) {
             allGroupIds.add(g.getGroupId());
@@ -75,8 +76,7 @@ public class GroupsController {
      * Create groupless group by removing users that are in a group
      * @return groupless group
      */
-    protected Group getGrouplessGroup(List<Group> groups){
-        Set<User> allUsers = getAllUsers();
+    protected Group getGrouplessGroup(List<Group> groups, List<User> allUsers){
         List<User> groupless = new ArrayList<>();
         boolean userIsInGroup;
         for(User userInAllUsers: allUsers){
@@ -100,8 +100,7 @@ public class GroupsController {
      * Create teacher group from user roles
      * @return teacher group
      */
-    protected Group getTeacherGroup(){
-        Set<User> allUsers = getAllUsers();
+    protected Group getTeacherGroup(List<User> allUsers){
         List<User> teachers = new ArrayList<>();
         for (User user: allUsers){
             if (isTeacher(user)){
@@ -112,26 +111,12 @@ public class GroupsController {
     }
 
     /**
-     * Retrieve all users
-     * @return set of all Users
+     * Retrieve all users.
+     * @return Set of all users
      */
-    protected Set<User> getAllUsers() {
-        Set<User> users = new HashSet<>();
-        int offset = 0;
-        boolean endOfUsersReached = false;
-
-        while (!endOfUsersReached) {
-            UserListResponse userListResponse = userAccountClientService.getPaginatedUsers(offset, 500, "userId", true);
-            List<User> returnedUsers = userListResponse.getUsers();
-
-            if (!returnedUsers.isEmpty()){
-                users.addAll(returnedUsers);
-                offset += 500;
-            } else {
-                endOfUsersReached = true;
-            }
-        }
-        return users;
+    protected List<User> getAllUsers() {
+        UserListResponse userListResponse = userAccountClientService.getPaginatedUsers(0, Integer.MAX_VALUE, "userId", true);
+        return userListResponse.getUsers();
     }
 
     protected boolean isTeacher(User user) {
@@ -184,9 +169,9 @@ public class GroupsController {
      */
     private Group getGroup(int groupId, int projectId) {
         if (groupId == GROUPLESS_GROUP_ID){
-            return getGrouplessGroup(groupsClientService.getAllGroupsInProject(projectId));
+            return getGrouplessGroup(groupsClientService.getAllGroupsInProject(projectId), getAllUsers());
         } else if (groupId == TEACHER_GROUP_ID) {
-            return getTeacherGroup();
+            return getTeacherGroup(getAllUsers());
         } else {
             return new Group(groupsClientService.getGroupDetailsById(groupId));
         }
@@ -205,7 +190,7 @@ public class GroupsController {
                 userAccountClientService.addRole(member, UserRole.TEACHER);
             }
         }
-        return getTeacherGroup();
+        return getTeacherGroup(getAllUsers());
     }
 
     /**
@@ -226,7 +211,7 @@ public class GroupsController {
                 userAccountClientService.removeRole(memberId, UserRole.TEACHER);
             }
         }
-        return getGrouplessGroup(groupsClientService.getAllGroupsInProject(projectId));
+        return getGrouplessGroup(groupsClientService.getAllGroupsInProject(projectId), getAllUsers());
     }
 
     /**
@@ -271,9 +256,9 @@ public class GroupsController {
         Group group;
 
         if (groupId == TEACHER_GROUP_ID) { // teacher group
-            group = getTeacherGroup();
+            group = getTeacherGroup(getAllUsers());
         } else if (groupId == GROUPLESS_GROUP_ID) { // groupless group
-            group = getGrouplessGroup(groupsClientService.getAllGroupsInProject(projectId));
+            group = getGrouplessGroup(groupsClientService.getAllGroupsInProject(projectId), getAllUsers());
         } else {
             group = new Group(groupsClientService.getGroupDetailsById(groupId));
         }
@@ -314,7 +299,7 @@ public class GroupsController {
                     userAccountClientService.removeRole(member, UserRole.TEACHER);
                 }
             }
-            group = getTeacherGroup();
+            group = getTeacherGroup(getAllUsers());
         } else if (groupId != GROUPLESS_GROUP_ID) { // Not the groupless group
             // Figure out what users to remove from the group
             List<Integer> usersToRemove = new ArrayList<>();

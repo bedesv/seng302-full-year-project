@@ -131,8 +131,7 @@ public class GroupsClientService {
     }
 
     /**
-     * Gets all groups in a list of group responses. Uses the getPaginatedGroups method twice, first to get the number of
-     * groups in the database, then to get all groups
+     * Gets all groups in a list of group responses.
      * @return A list of group responses, ordered by short name, in ascending order
      */
     public List<Group> getAllGroupsInProject(int projectId) {
