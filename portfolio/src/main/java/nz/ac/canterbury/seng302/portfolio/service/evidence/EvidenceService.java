@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.evidence.Commit;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
+import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
@@ -509,5 +510,25 @@ public class EvidenceService {
             validationResponses.add(ValidationUtil.validAttribute(model, "skills", "Skills", invalidSkill));
         }
         return validationResponses;
+    }
+
+    /**
+     * Get the pieces of evidence for a group filtered by the selected category
+     * @param group is the group for which the pieces of evidence are fetched
+     * @param projectId is the id of the current project selected
+     * @param category is the category by which to filter
+     * @param limit is the max number of pieces of evidence to fetch
+     * @return a list of evidence filtered by the selected category
+     */
+    public List<PortfolioEvidence> getEvidenceForPortfolioByGroupFilterByCategory(Group group, int projectId, Categories category, int limit) {
+        List<PortfolioEvidence> evidenceListByCategory = new ArrayList<>();
+        for (User user: group.getMembers()) {
+            for (PortfolioEvidence portfolioEvidence: getEvidenceForPortfolio(user.getId(), projectId)) {
+                if (portfolioEvidence.getCategories().contains(category)) {
+                    evidenceListByCategory.add(portfolioEvidence);
+                }
+            }
+        }
+        return evidenceListByCategory.stream().limit(limit).toList();
     }
 }

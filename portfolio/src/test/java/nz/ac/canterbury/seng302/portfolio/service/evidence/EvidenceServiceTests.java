@@ -1219,4 +1219,12 @@ class EvidenceServiceTests {
         assertThrows(NoSuchElementException.class, () -> evidenceService.modifyWebLink(-1, weblink, -1));
     }
 
+//    ///////////////////////////////////////////////////////////////
+//    //////////////Evidence for Group by Category///////////////////
+//    ///////////////////////////////////////////////////////////////
+//    @Test
+//    void whenEvidenceInGroupFilteredByCategory_testGetFilteredEvidence() {
+//
+//    }
+
 }
