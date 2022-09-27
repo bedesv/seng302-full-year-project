@@ -87,6 +87,6 @@ public class UserChartDataController {
             return Collections.emptyMap();
         }
 
-        return userChartDataService.getUserEvidenceData(userId, parentProjectId, startDate, endDate);
+        return userChartDataService.getUserEvidenceData(user, parentProjectId, startDate, endDate);
     }
 }
