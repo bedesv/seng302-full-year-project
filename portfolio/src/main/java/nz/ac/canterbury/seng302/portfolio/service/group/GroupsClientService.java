@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.group.GroupListResponse;
+import nz.ac.canterbury.seng302.portfolio.model.group.PortfolioGroup;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,15 +123,11 @@ public class GroupsClientService {
     }
 
     /**
-     * Gets all groups in a list of group responses. Uses the getPaginatedGroups method twice, first to get the number of
-     * groups in the database, then to get all groups
+     * Gets all groups in a list of group responses.
      * @return A list of group responses, ordered by short name, in ascending order
      */
     public GroupListResponse getAllGroups() {
-        GroupListResponse response = getPaginatedGroups(0, 0, "short", true);
-        int numGroupsInDb = response.getResultSetSize();
-        return getPaginatedGroups(0, numGroupsInDb, "short", true);
-
+        return getPaginatedGroups(0, Integer.MAX_VALUE, "short", true);
     }
 
     /**
@@ -141,9 +138,12 @@ public class GroupsClientService {
     public List<Group> getAllGroupsInProject(int projectId) {
         GroupListResponse response = getAllGroups();
         List<Group> groups = new ArrayList<>();
-        for (Group g : response.getGroups()) {
-            if (portfolioGroupService.findParentProjectIdByGroupId(g.getGroupId()) == projectId) {
-                groups.add(g);
+        List<PortfolioGroup> portfolioGroups = portfolioGroupService.findPortfolioGroupsByParentProjectId(projectId);
+        for (Group group : response.getGroups()) {
+            for (PortfolioGroup portfolioGroup : portfolioGroups) {
+                if (portfolioGroup.getGroupId() == group.getGroupId()) {
+                    groups.add(group);
+                }
             }
         }
         return groups;

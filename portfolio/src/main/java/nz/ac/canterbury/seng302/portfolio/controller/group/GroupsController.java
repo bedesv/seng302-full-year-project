@@ -49,7 +49,7 @@ public class GroupsController {
      * Get mapping to fetch groups page
      * @param principal Authentication principal storing current user information
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
-     * @return The  groups html page
+     * @return The groups html page
      */
     @GetMapping("/groups")
     public String groups(@AuthenticationPrincipal AuthState principal, Model model){
@@ -58,7 +58,7 @@ public class GroupsController {
 
         List<Group> groups = groupsClientService.getAllGroupsInProject(projectId);
         groups.add(getTeacherGroup());
-        groups.add(getGrouplessGroup(projectId));
+        groups.add(getGrouplessGroup(groups));
         List<Integer> allGroupIds = new ArrayList<>();
         for (Group g : groups) {
             allGroupIds.add(g.getGroupId());
@@ -75,10 +75,7 @@ public class GroupsController {
      * Create groupless group by removing users that are in a group
      * @return groupless group
      */
-    protected Group getGrouplessGroup(int projectId){
-        List<Group> groups = groupsClientService.getAllGroupsInProject(projectId);
-        groups.add(getTeacherGroup());
-
+    protected Group getGrouplessGroup(List<Group> groups){
         Set<User> allUsers = getAllUsers();
         List<User> groupless = new ArrayList<>();
         boolean userIsInGroup;
@@ -187,7 +184,7 @@ public class GroupsController {
      */
     private Group getGroup(int groupId, int projectId) {
         if (groupId == GROUPLESS_GROUP_ID){
-            return getGrouplessGroup(projectId);
+            return getGrouplessGroup(groupsClientService.getAllGroupsInProject(projectId));
         } else if (groupId == TEACHER_GROUP_ID) {
             return getTeacherGroup();
         } else {
@@ -229,7 +226,7 @@ public class GroupsController {
                 userAccountClientService.removeRole(memberId, UserRole.TEACHER);
             }
         }
-        return getGrouplessGroup(projectId);
+        return getGrouplessGroup(groupsClientService.getAllGroupsInProject(projectId));
     }
 
     /**
@@ -276,7 +273,7 @@ public class GroupsController {
         if (groupId == TEACHER_GROUP_ID) { // teacher group
             group = getTeacherGroup();
         } else if (groupId == GROUPLESS_GROUP_ID) { // groupless group
-            group = getGrouplessGroup(projectId);
+            group = getGrouplessGroup(groupsClientService.getAllGroupsInProject(projectId));
         } else {
             group = new Group(groupsClientService.getGroupDetailsById(groupId));
         }
