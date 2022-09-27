@@ -65,7 +65,7 @@ public class UserChartDataController {
         return userChartDataService.getUserSkillData(userId, parentProjectId, startDate, endDate);
     }
 
-    @GetMapping("/user-{userId}-evidenceData")
+    @GetMapping("/user-{userId}-dataOverTime")
     public Map<String, Integer> getEvidenceDataForUser(@AuthenticationPrincipal AuthState principal,
                                                        @PathVariable int userId,
                                                        @RequestParam int parentProjectId,
