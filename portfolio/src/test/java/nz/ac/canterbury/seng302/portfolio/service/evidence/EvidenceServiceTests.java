@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.service.evidence;
 
 import nz.ac.canterbury.seng302.portfolio.model.evidence.*;
+import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
@@ -10,14 +11,20 @@ import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ConcurrentModel;
+import org.springframework.ui.Model;
 
 import java.sql.Date;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -44,13 +51,21 @@ class EvidenceServiceTests {
 
     static List<Project> projects;
 
+    Group testGroup;
+    int smallLimit;
+
     //Initialise the database with projects before each test.
     @BeforeEach
     void storeProjects() {
         projectService.saveProject(new Project("Project Name", "Test Project", Date.valueOf("2022-04-9"), Date.valueOf("2022-06-16")));
         projectService.saveProject(new Project("Project Name", "Test Project", Date.valueOf("2022-05-9"), Date.valueOf("2022-05-16")));
+        Instant now = Instant.now(); //current date
+        projectService.saveProject(new Project("Project name", "With fancy dates", Date.from(now.minus(Duration.ofDays(100))), Date.from(now.plus(Duration.ofDays(100)))));
         projects = projectService.getAllProjects();
         Mockito.doReturn(new User(UserResponse.newBuilder().setId(0).build())).when(userService).getUserAccountById(0);
+        List<User> emptyList = new ArrayList<>();
+        testGroup = new Group(0, "shortname", "longname", 0, emptyList);
+        smallLimit = 2;
     }
 
     //Refresh the database after each test.
@@ -1081,7 +1096,6 @@ class EvidenceServiceTests {
         evidenceService.updateEvidenceSkills(1, projects.get(1).getId(), "skill1 SKILL2");
         List<Evidence> evidenceList = evidenceService.retrieveEvidenceBySkill("skill1", projects.get(1).getId());
         List<String> skills = evidenceList.get(0).getSkills();
-        System.out.println(skills);
         assertTrue(skills.contains("skill1"));
         assertTrue(skills.contains("skill2"));
     }
@@ -1095,7 +1109,6 @@ class EvidenceServiceTests {
         evidenceService.updateEvidenceSkills(1, projects.get(1).getId(), "non-existent_skill another_non-existent_skill");
         List<Evidence> evidenceList = evidenceService.retrieveEvidenceBySkill("skill1", projects.get(1).getId());
         List<String> skills = evidenceList.get(0).getSkills();
-        System.out.println(skills);
         assertTrue(skills.contains("skill1"));
         assertTrue(skills.contains("skill2"));
     }
@@ -1219,4 +1232,81 @@ class EvidenceServiceTests {
         assertThrows(NoSuchElementException.class, () -> evidenceService.modifyWebLink(-1, weblink, -1));
     }
 
+    //////GET GROUPS EVIDENCE//////////
+
+    @Test
+    void givenGroupExists_withoutMembers_getEvidence() {
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId(), smallLimit);
+        assertTrue(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    void givenGroupExists_withOneMember_withoutEvidence_getEvidence() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId(), smallLimit);
+        assertTrue(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withOneMember_withOneEvidence_getEvidence() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        Instant now = Instant.now(); //current date
+        Evidence evidence = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(10))));
+        evidenceService.saveEvidence(evidence);
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId(), smallLimit);
+        assertEquals(1, groupsEvidence.size());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withMultipleMembers_allWithoutEvidence_getEvidence() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId(), smallLimit);
+        assertTrue(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withMultipleMembers_allWithOneEvidence_getEvidence() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+        Instant now = Instant.now(); //current date
+        Evidence evidence1 = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(1))));
+        Evidence evidence2 = new Evidence(0, projects.get(2).getId(), "title2", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(5))));
+        Evidence evidence3 = new Evidence(0, projects.get(2).getId(), "title3", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(13))));
+        evidenceService.saveEvidence(evidence1);
+        evidenceService.saveEvidence(evidence2);
+        evidenceService.saveEvidence(evidence3);
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroup(testGroup, projects.get(2).getId(), smallLimit);
+        assertEquals(smallLimit, groupsEvidence.size());
+    }
+
+    /////////VALIDATE EVIDENCE////////
+    @Test
+    void givenValidDetails_validateEvidence() {
+        List<String> skills = new ArrayList<>();
+        skills.add("Unit Testing");
+        Model model = new ConcurrentModel();
+        List<Boolean> response = evidenceService.validateEvidence(model, "title", "description", skills);
+        //list should all be true, true = valid attribute
+        assertFalse(response.contains(false));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"title🎁, description, skill", "title, description🎁, skill", "title, description, Unit Testing♥❤"})
+    void givenInvalid_testEvidenceValid(String title, String description, String skill){
+        List<String> skills = new ArrayList<>();
+        skills.add(skill);
+        Model model = new ConcurrentModel();
+        List<Boolean> response = evidenceService.validateEvidence(model, title, description, skills);
+        //list should contain false, false = invalid attribute
+        assertTrue(response.contains(false));
+    }
 }
