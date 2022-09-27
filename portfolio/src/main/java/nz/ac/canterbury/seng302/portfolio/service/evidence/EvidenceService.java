@@ -92,12 +92,10 @@ public class EvidenceService {
      */
     public List<PortfolioEvidence> getEvidenceForPortfolio(int userId, int projectId) {
         List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(userId, projectId);
-        evidenceList.sort(Comparator.comparing(Evidence::getDate));
-        Collections.reverse(evidenceList);
         List<PortfolioEvidence> portfolioEvidenceList =  convertEvidenceForPortfolio(evidenceList);
         String message = "Evidence for user " + userId + " and project " + projectId + " retrieved";
         PORTFOLIO_LOGGER.info(message);
-        return portfolioEvidenceList;
+        return portfolioEvidenceList.stream().sorted(Collections.reverseOrder(Comparator.comparing(PortfolioEvidence::getDate).thenComparing(PortfolioEvidence::getId))).toList();
     }
 
     /**

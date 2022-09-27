@@ -39,7 +39,7 @@ public class PortfolioController {
     private PortfolioUserService portfolioUserService;
 
     private static final String PORTFOLIO_REDIRECT = "redirect:/portfolio";
-
+    private static final String OWNER = "owner";
     private static final int MAX_WEBLINKS_PER_EVIDENCE = 5;
 
     /**
@@ -55,7 +55,7 @@ public class PortfolioController {
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
         model.addAttribute("pageUser", user);
-        model.addAttribute("owner", true);
+        model.addAttribute(OWNER, true);
 
         int userId = user.getId();
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
@@ -99,7 +99,7 @@ public class PortfolioController {
         } else if (user.getId() == pageUser.getId()) {
             return PORTFOLIO_REDIRECT; // Take user to their own portfolio if they try to view it
         } else {
-            model.addAttribute("owner", false);
+            model.addAttribute(OWNER, false);
             return "templatesEvidence/portfolio";
         }
     }
@@ -126,11 +126,11 @@ public class PortfolioController {
         int index = Integer.parseInt(webLinkIndex);
         Evidence evidence = evidenceService.getEvidenceById(id);
         if (user.getId() != evidence.getOwnerId()) {
-            model.addAttribute("owner", false);
+            model.addAttribute(OWNER, false);
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Cannot modify other users' evidence");
         } else {
-            model.addAttribute("owner", true);
+            model.addAttribute(OWNER, true);
         }
 
         webLink = ValidationUtil.stripTitle(webLink);
@@ -178,11 +178,7 @@ public class PortfolioController {
         User user = userService.getUserAccountByPrincipal(principal);
         int id = Integer.parseInt(evidenceId);
         Evidence evidence = evidenceService.getEvidenceById(id);
-        if (user.getId() != evidence.getOwnerId()) {
-            model.addAttribute("owner", false);
-        } else {
-            model.addAttribute("owner", true);
-        }
+        model.addAttribute(OWNER, user.getId() == evidence.getOwnerId());
         model.addAttribute("webLinks", evidence.getWebLinks());
         model.addAttribute("evidenceId", evidence.getId());
         return "fragments/webLink";
