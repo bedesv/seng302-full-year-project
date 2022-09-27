@@ -24,9 +24,9 @@ public class DeadlineService {
 
     @Autowired
     private ProjectEditsService projectEditsService;
+
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
-
-
+    private static final String DEADLINE = "Deadline ";
 
     /**
      * Gets a list of all deadlines
@@ -48,14 +48,14 @@ public class DeadlineService {
         if (deadline.isPresent()) {
             return deadline.get();
         } else {
-            String message = "Deadline " + deadlineId + " not found.";
+            String message = DEADLINE + deadlineId + " not found.";
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException(message);
         }
     }
 
     /**
-     * Get the list of deadlines by providing thier parent project id
+     * Get the list of deadlines by providing their parent project id
      *
      * @param deadlineProjectId the id of the project the deadline belongs to
      * @return the list of deadlines of the project
@@ -75,7 +75,7 @@ public class DeadlineService {
         }
         projectEditsService.refreshProject(deadlineRepository.findById(deadlineId).getDeadlineParentProjectId());
         deadlineRepository.deleteById(deadlineId);
-        String message = "Deadline " + deadlineId + " deleted successfully";
+        String message = DEADLINE + deadlineId + " deleted successfully";
         PORTFOLIO_LOGGER.info(message);
     }
 
@@ -88,7 +88,7 @@ public class DeadlineService {
         } else {
             projectEditsService.refreshProject(deadline.getDeadlineParentProjectId());
             deadlineRepository.save(deadline);
-            String message = "Deadline " + deadline.getDeadlineId() + " saved";
+            String message = DEADLINE + deadline.getDeadlineId() + " saved";
             PORTFOLIO_LOGGER.info(message);
         }
     }
@@ -104,13 +104,13 @@ public class DeadlineService {
         Date projectStartDate = projectService.getProjectById(newDeadline.getDeadlineParentProjectId()).getStartDate();
         Date projectEndDate = projectService.getProjectById(newDeadline.getDeadlineParentProjectId()).getEndDate();
         if (newDeadlineDate.compareTo(projectEndDate) > 0 || newDeadlineDate.compareTo(projectStartDate) < 0) {
-            String message = "Deadline date (" + newDeadlineDate + ") must be within the project dates (" + projectStartDate + " - " + projectEndDate + ")";
+            String message = "Deadline date: " + newDeadlineDate + " must be within the project dates (" + projectStartDate + " - " + projectEndDate + ")";
             PORTFOLIO_LOGGER.error(message);
             throw new UnsupportedOperationException(message);
         } else {
             newDeadline.setDeadlineDate(newDeadlineDate);
             saveDeadline(newDeadline);
-            String message = "Deadline " + deadlineId + " date changed to " + newDeadlineDate;
+            String message = DEADLINE + deadlineId + " date changed to " + newDeadlineDate;
             PORTFOLIO_LOGGER.info(message);
         }
     }

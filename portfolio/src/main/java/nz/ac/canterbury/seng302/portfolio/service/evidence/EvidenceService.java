@@ -35,6 +35,9 @@ public class EvidenceService {
     private ProjectService projectService;
 
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
+    private static final String EVIDENCE = "Evidence ";
+    private static final String NOT_FOUND = " not found";
+    private static final String SAVED_SUCCESSFULLY = " saved successfully";
 
     /**
      * Updates a user's evidence with new skills.
@@ -108,7 +111,7 @@ public class EvidenceService {
             return evidence.get();
         }
         else {
-            String message = "Evidence " + id + " not found";
+            String message = EVIDENCE + id + NOT_FOUND;
             PORTFOLIO_LOGGER.error(message);
             throw new NoSuchElementException(message);
         }
@@ -129,7 +132,7 @@ public class EvidenceService {
         try {
             project = projectService.getProjectById(evidence.getProjectId());
         } catch (NoSuchElementException exception) {
-            String message = "Evidence parent project " + evidence.getProjectId() + " not found";
+            String message = "Evidence parent project " + evidence.getProjectId() + NOT_FOUND;
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException(message);
         }
@@ -137,14 +140,14 @@ public class EvidenceService {
         if (!ValidationUtil.titleContainsAtleastOneLanguageCharacter(evidence.getTitle()) || evidence.getTitle().length() < 2 || evidence.getTitle().length() > 64) {
             // Replaces pattern-breaking characters
             String parsedTitle = evidence.getTitle().replaceAll("[\n\r\t]", "_");
-            String message = "Evidence title (" + parsedTitle + ") is invalid";
+            String message = "Evidence (" + parsedTitle + ") title is invalid";
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException("Title not valid");
         }
         if (!ValidationUtil.titleContainsAtleastOneLanguageCharacter(evidence.getDescription()) || evidence.getDescription().length() < 50 || evidence.getDescription().length() > 1024) {
             // Replaces pattern-breaking characters
             String parsedDescription = evidence.getDescription().replaceAll("[\n\r\t]", "_");
-            String message = "Evidence description (" + parsedDescription + ") is invalid";
+            String message = "Evidence (" + parsedDescription + ") description is invalid";
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException("Description not valid");
         }
@@ -163,7 +166,7 @@ public class EvidenceService {
         List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(evidence.getOwnerId(), evidence.getProjectId());
         evidence.conformSkills(getSkillsFromEvidence(evidenceList));
         repository.save(evidence);
-        String message = "Evidence " + evidence.getId() + " saved successfully";
+        String message = EVIDENCE + evidence.getId() + SAVED_SUCCESSFULLY;
         PORTFOLIO_LOGGER.info(message);
     }
 
@@ -203,7 +206,7 @@ public class EvidenceService {
             // This is to make sure that there are no duplicate skills in the other user's portfolio
             List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(copiedEvidence.getOwnerId(), copiedEvidence.getProjectId());
             copiedEvidence.conformSkills(getSkillsFromEvidence(evidenceList));
-            String message = "Evidence " + evidence.getId() + " copied to " + userId + "'s portfolio";
+            String message = EVIDENCE + evidence.getId() + " copied to " + userId + "'s portfolio";
             PORTFOLIO_LOGGER.info(message);
             repository.save(copiedEvidence);
         }
@@ -249,12 +252,12 @@ public class EvidenceService {
                 // This is to make sure that there are no duplicate skills in the other user's portfolio
                 List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(copiedEvidence.getOwnerId(), copiedEvidence.getProjectId());
                 copiedEvidence.conformSkills(getSkillsFromEvidence(evidenceList));
-                String message = "Evidence " + evidenceId + " copied to " + userId + "'s portfolio";
+                String message = EVIDENCE + evidenceId + " copied to " + userId + "'s portfolio";
                 PORTFOLIO_LOGGER.info(message);
                 repository.save(copiedEvidence);
             }
         } catch (NoSuchElementException e) {
-            String message = "Evidence " + evidenceId + " not found";
+            String message = EVIDENCE + evidenceId + NOT_FOUND;
             PORTFOLIO_LOGGER.error(message);
             throw new NoSuchElementException(e.getMessage());
         }
@@ -300,7 +303,7 @@ public class EvidenceService {
             String message = "Deleted evidence: " + id;
             PORTFOLIO_LOGGER.info(message);
         } catch(Exception exception) {
-            String message = "Evidence " + id + " not found";
+            String message = EVIDENCE + id + NOT_FOUND;
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException(message);
         }
@@ -319,10 +322,10 @@ public class EvidenceService {
                 Evidence evidence = getEvidenceById(evidenceId);
                 evidence.addWebLink(weblink);
                 saveEvidence(evidence);
-                String message = "Evidence web link " + weblink.getName() + " saved successfully";
+                String message = "Evidence web link " + weblink.getName() + SAVED_SUCCESSFULLY;
                 PORTFOLIO_LOGGER.info(message);
             } catch (NoSuchElementException e) {
-                String message = "Evidence " + evidenceId + " not found. Weblink not saved";
+                String message = EVIDENCE + evidenceId + " not found. Weblink not saved";
                 PORTFOLIO_LOGGER.error(message);
                 throw new NoSuchElementException("Evidence not found: web link not saved");
             }
@@ -341,10 +344,10 @@ public class EvidenceService {
             Evidence evidence = getEvidenceById(evidenceId);
             evidence.addWebLinkWithIndex(weblink, index);
             saveEvidence(evidence);
-            String message = "Evidence weblink" + weblink.getName() + " saved successfully";
+            String message = "Evidence weblink" + weblink.getName() + SAVED_SUCCESSFULLY;
             PORTFOLIO_LOGGER.info(message);
         } catch (NoSuchElementException e) {
-            String message = "Evidence " + evidenceId + " not found. Weblink not saved";
+            String message = EVIDENCE + evidenceId + " not found. Weblink not saved";
             PORTFOLIO_LOGGER.error(message);
             throw new NoSuchElementException(message);
         }
@@ -365,7 +368,7 @@ public class EvidenceService {
             String message = "Evidence commit saved successfully";
             PORTFOLIO_LOGGER.info(message);
         } catch (NoSuchElementException e) {
-            String message = "Evidence " + evidenceId + " not found. Commit not saved";
+            String message = EVIDENCE + evidenceId + " not found. Commit not saved";
             PORTFOLIO_LOGGER.error(message);
             throw new NoSuchElementException(message);
         }
@@ -385,9 +388,9 @@ public class EvidenceService {
         } catch (NoSuchElementException e) {
             String message;
             if (e.getMessage().contains("Commit")) {
-                message = "Evidence " + evidenceId + " has less than " + (commitIndex + 1) + " commits. Commit not deleted.";
+                message = EVIDENCE + evidenceId + " has less than " + (commitIndex + 1) + " commits. Commit not deleted.";
             } else {
-                message = "Evidence " + evidenceId + " not found. Commit not deleted";
+                message = EVIDENCE + evidenceId + " not found. Commit not deleted";
             }
             PORTFOLIO_LOGGER.error(message);
             throw new NoSuchElementException(message);
@@ -433,7 +436,7 @@ public class EvidenceService {
     }
 
     /**
-     * Retrieves all evidence owned by the given user user and with the given skill
+     * Retrieves all evidence owned by the given user and with the given skill
      * @param skill The skill being searched for
      * @param userId The owner of the Evidence
      * @return A list of evidence owned by the user and containing the skill

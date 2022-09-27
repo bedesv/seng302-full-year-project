@@ -289,7 +289,7 @@ class DeadlineServiceTest {
 
         Exception exception = assertThrows(Exception.class, () ->
                 deadlineService.updateDeadlineDate(deadlineId, Date.valueOf("2022-07-02")));
-        String expectedMessage = "Deadline date (2022-07-02) must be within the project dates (2022-05-01 00:00:00.0 - 2022-06-30 00:00:00.0)";
+        String expectedMessage = "Deadline date: 2022-07-02 must be within the project dates (2022-05-01 00:00:00.0 - 2022-06-30 00:00:00.0)";
         String actualMessage = exception.getMessage();
         assertThat(actualMessage).isEqualTo(expectedMessage);
     }

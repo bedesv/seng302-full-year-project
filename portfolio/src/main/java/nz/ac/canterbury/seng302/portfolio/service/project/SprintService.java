@@ -23,7 +23,9 @@ public class SprintService {
 
     @Autowired
     private ProjectEditsService projectEditsService;
+
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
+    private static final String SPRINT = "Sprint ";
 
     /**
      * Get list of all sprints
@@ -102,7 +104,7 @@ public class SprintService {
     public void deleteById(int sprintId) {
         projectEditsService.refreshProject(repository.findById(sprintId).getParentProjectId());
         repository.deleteById(sprintId);
-        String message = "Sprint "+ sprintId + " deleted successfully";
+        String message = SPRINT+ sprintId + " deleted successfully";
         PORTFOLIO_LOGGER.info(message);
     }
 
@@ -131,7 +133,7 @@ public class SprintService {
         sprint.setEndDate(sprintEndDate);
         saveSprint(sprint);
         updateSprintNumbers(projectId);
-        String message = "Sprint "+ sprintId + " details updated successfully";
+        String message = SPRINT+ sprintId + " details updated successfully";
         PORTFOLIO_LOGGER.info(message);
     }
 
@@ -146,7 +148,10 @@ public class SprintService {
     public void createNewSprint(int projectId, String sprintName, String sprintDescription, Date sprintStartDate, Date sprintEndDate) {
         saveSprint(new Sprint(projectId, sprintName, sprintDescription, sprintStartDate, sprintEndDate));
         updateSprintNumbers(projectId);
-        String message = "New sprint created with name " + sprintName + " and description " + sprintDescription;
+
+        // Replaces pattern-breaking characters
+        String parsedSprintName = sprintName.replaceAll("[\n\r\t]", "_");
+        String message = "New sprint created with name " + parsedSprintName + " and description " + sprintDescription;
         PORTFOLIO_LOGGER.info(message);
     }
 
@@ -249,7 +254,7 @@ public class SprintService {
      * @param sprintId The sprint ID of the sprint being checked
      * @param projectId THe parent project ID
      * @param startDate The selected start date
-     * @return String "" if it fine or "An error message if it's not
+     * @return an empty string if it's fine or an error message if it's not
      */
     public String checkSprintStartDate(int sprintId, int projectId, Date  startDate) {
         List<Sprint> sprints = getByParentProjectId(projectId);
@@ -267,7 +272,7 @@ public class SprintService {
      * @param sprintId The sprint ID of the sprint being checked
      * @param projectId The parent project ID
      * @param endDate The selected end date
-     * @return String "" if it fine or "An error message if it's not
+     * @return an empty string if it's fine or an error message if it's not
      */
     public String checkSprintEndDate(int sprintId, int projectId, Date endDate) {
         List<Sprint> sprints = getByParentProjectId(projectId);
@@ -286,7 +291,7 @@ public class SprintService {
      * @param projectId The parent project ID
      * @param startDate The selected start date
      * @param endDate The selected end date
-     * @return String "" if it fine or "An error message if it's not
+     * @return an empty string if it's fine or an error message if it's not
      */
     public String checkSprintDates(int sprintId, int projectId, Date startDate, Date endDate) {
         List<Sprint> sprints = getByParentProjectId(projectId);
@@ -300,7 +305,7 @@ public class SprintService {
         }
 
         StringBuilder resultString;
-        // If only one sprint is encased, give it's details
+        // If only one sprint is encased, give its details
         if (encasedSprints.size() == 1) {
             Sprint sprint = encasedSprints.get(0);
             resultString = new StringBuilder("Sprint currently encases '");
@@ -397,23 +402,23 @@ public class SprintService {
         String startError = checkSprintStartDate(sprintId, sprintToChange.getParentProjectId(), newDate);
         String encaseError = checkSprintDates(sprintId, sprintToChange.getParentProjectId(), newDate, sprintToChange.getEndDate());
         if (!Objects.equals(startError, "") || !Objects.equals(encaseError, "")) {
-            String message = "Sprint " + sprintId + " must not be within another sprint";
+            String message = SPRINT + sprintId + " must not be within another sprint";
             PORTFOLIO_LOGGER.error(message);
             throw new UnsupportedOperationException(("Sprint must not be within another sprint"));
             }
         if (newDate.compareTo(sprintToChange.getEndDate()) > 0) {
-            String message = "Sprint " + sprintId + " start date (" + newDate + ") must be before the sprint end date (" + sprintToChange.getEndDate() + ")";
+            String message = SPRINT + sprintId + " start date (" + newDate + ") must be before the sprint end date (" + sprintToChange.getEndDate() + ")";
             PORTFOLIO_LOGGER.error(message);
             throw new UnsupportedOperationException("Sprint start date must not be after end date");
         } else if (newDate.compareTo(projectStartDate) < 0 || newDate.compareTo(projectEndDate) > 0) {
-            String message = "Sprint " + sprintId + " start date (" + newDate + ") must be within the project dates (" + projectStartDate + " - " + projectEndDate + ")";
+            String message = SPRINT + sprintId + " start date (" + newDate + ") must be within the project dates (" + projectStartDate + " - " + projectEndDate + ")";
             PORTFOLIO_LOGGER.error(message);
             throw new UnsupportedOperationException(("Sprint start date must be within project dates"));
         } else {
             sprintToChange.setStartDate(newDate);
             saveSprint(sprintToChange);
 
-            String message = "Sprint " + sprintId + " start date changed to " + newDate;
+            String message = SPRINT + sprintId + " start date changed to " + newDate;
             PORTFOLIO_LOGGER.info(message);
         }
     }
@@ -430,22 +435,22 @@ public class SprintService {
         String endError = checkSprintEndDate(sprintId, sprintToChange.getParentProjectId(), newDate);
         String encaseError = checkSprintDates(sprintId, sprintToChange.getParentProjectId(), sprintToChange.getStartDate(), newDate);
         if (!Objects.equals(endError, "") || !Objects.equals(encaseError, "")) {
-            String message = "Sprint " + sprintId + " must not be within another sprint";
+            String message = SPRINT + sprintId + " must not be within another sprint";
             PORTFOLIO_LOGGER.error(message);
             throw new UnsupportedOperationException(("Sprint must not be within another sprint"));
         }
         if (newDate.compareTo(sprintToChange.getStartDate()) < 0) {
-            String message = "Sprint " + sprintId + " end date (" + newDate + ") must be after the sprint start date (" + sprintToChange.getStartDate() + ")";
+            String message = SPRINT + sprintId + " end date (" + newDate + ") must be after the sprint start date (" + sprintToChange.getStartDate() + ")";
             PORTFOLIO_LOGGER.error(message);
             throw new UnsupportedOperationException("Sprint end date must not be before start date");
         } else if (newDate.compareTo(projectStartDate) < 0 || newDate.compareTo(projectEndDate) > 0) {
-            String message = "Sprint " + sprintId + " end date (" + newDate + ") must be within the project dates (" + projectStartDate + " - " + projectEndDate + ")";
+            String message = SPRINT + sprintId + " end date (" + newDate + ") must be within the project dates (" + projectStartDate + " - " + projectEndDate + ")";
             PORTFOLIO_LOGGER.error(message);
             throw new UnsupportedOperationException(("Sprint end date must be within project dates"));
         } else {
             sprintToChange.setEndDate(newDate);
             saveSprint(sprintToChange);
-            String message = "Sprint " + sprintId + " end date changed to " + newDate;
+            String message = SPRINT + sprintId + " end date changed to " + newDate;
             PORTFOLIO_LOGGER.info(message);
         }
     }
