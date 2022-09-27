@@ -714,25 +714,30 @@ let numWebLinks = 0;
 function addWebLinks() {
     let webLinkNameElement = document.getElementById("evidence-form__webLink-name");
     let webLinkElement = document.getElementById("evidence-form__webLink-link");
-    let webLink = {name: webLinkNameElement.value, link: webLinkElement.value}
-    if (numWebLinks < 5) {
-        if (webLink.link) {
-            addWebLinkToDOM(webLink, numWebLinks);
-            webLinks.push(webLink);
-            webLinkNames.push(webLink.name);
-            webLinkLinks.push(webLink.link);
-            numWebLinks++;
-            webLinkNameElement.value = "";
-            webLinkElement.value = "";
-            document.getElementById("evidence-form__hidden-webLinks-names").value = webLinkNames;
-            document.getElementById("evidence-form__hidden-webLinks-links").value = webLinkLinks;
+    webLinkElement.reportValidity();
+    webLinkNameElement.reportValidity();
+    if (webLinkElement.checkValidity() && webLinkNameElement.checkValidity()) {
+        let webLink = {name: webLinkNameElement.value, link: webLinkElement.value}
+        if (numWebLinks < 5) {
+            if (webLink.link) {
+                addWebLinkToDOM(webLink, numWebLinks);
+                webLinks.push(webLink);
+                webLinkNames.push(webLink.name);
+                webLinkLinks.push(webLink.link);
+                numWebLinks++;
+                webLinkNameElement.value = "";
+                webLinkElement.value = "";
+                document.getElementById("evidence-form__hidden-webLinks-names").value = webLinkNames;
+                document.getElementById("evidence-form__hidden-webLinks-links").value = webLinkLinks;
+            }
+        }
+        if (numWebLinks === 5) {
+            webLinkNameElement.hidden = true;
+            webLinkElement.hidden = true;
+            document.getElementById("weblink-button").hidden = true;
         }
     }
-    if (numWebLinks === 5) {
-        webLinkNameElement.hidden = true;
-        webLinkElement.hidden = true;
-        document.getElementById("weblink-button").hidden = true;
-    }
+
 }
 
 /**
