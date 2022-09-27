@@ -16,7 +16,7 @@
     const CONTEXT = [[${@environment.getProperty('PORTFOLIO_CONTEXT')}]];
     const GROUP_ID = [[${group.getGroupId}]];
     const userInGroup = [[${userInGroup}]];
-    const authUserIsTeacher = [[${authUserIsTeacher}]];
+    const authUserIsTeacher = [[${user.isTeacher}]];
     let START_DATE = [[${graphStartDate}]];
     let END_DATE  = [[${graphEndDate}]];
     let DAY = [[${timeRange}]];
@@ -37,7 +37,7 @@
         <h1 class="group-short_name" th:text="${currentProject.getName} + ': ' + ${group.getShortName()}"></h1>
         <h2 class="group-long_name" th:text="${group.getLongName()}"></h2>
     </header>
-    <div th:if="${authUserIsTeacher || #lists.contains(group.getMembers, user)}" class="group__button-wrapper flex-row">
+    <div th:if="${user.isTeacher || #lists.contains(group.getMembers, user)}" class="group__button-wrapper flex-row">
       <form th:action="@{editGroup-{id}(id=${group.getGroupId})}" th:method="get" th:if="${group.getGroupId} >= 0")>
         <button type="submit">Edit</button>
       </form>
