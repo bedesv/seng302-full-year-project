@@ -37,7 +37,8 @@ public class Evidence {
     private List<Commit> commits;
     @ElementCollection
     private Set<Integer> linkedUsers = new HashSet<>();
-
+    @ElementCollection
+    private Map<Integer, String> highFives = new HashMap<>();
 
     public Evidence() {
         webLinks = new ArrayList<>();
@@ -235,4 +236,30 @@ public class Evidence {
     public void setCategories(Set<Categories> categories) {
         this.categories = categories;
     }
+
+    /**
+     * When a user high-fives a piece of evidence there ID is used as a key in a hash map linking to their name
+     * if they have already high-fives the evidence then they are removed
+     * @param userId The user ID
+     * @param name The first and last name of the user
+     */
+    public void toggleHighFive(int userId, String name) {
+        if(highFives.containsKey(userId)) {
+            highFives.remove(userId, name);
+        } else {
+            highFives.put(userId, name);
+        }
+    }
+
+    /**
+     * Returns the number of users that have currently high-fived the piece of evidence
+     */
+    public int getNumberOfHighFives() {
+        return highFives.size();
+    }
+
+    public Map<Integer, String> getHighFives(){
+        return this.highFives;
+    }
+
 }
