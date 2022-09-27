@@ -96,6 +96,6 @@ async function dataOverTimeChart(chartData) {
         backgroundColor: { fill:'transparent' },
     }
 
-    let chart = new google.visualization.LineChart(document.getElementById('group-chart__time-chart'));
+    let chart = new google.visualization.LineChart(document.getElementById('user-chart__time-chart'));
     chart.draw(data, options);
 }
