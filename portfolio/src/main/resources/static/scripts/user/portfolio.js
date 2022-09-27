@@ -52,6 +52,8 @@ async function updateUserPortfolioWithSkill(selectedSkill) {
     // Update the page with the new HTML content
     const portfolioWrapper = document.getElementById("portfolio_container")
     portfolioWrapper.innerHTML = portfolio
+    updateEvidenceIds();
+    await updateAllWeblinks();
 }
 
 async function updateUserPortfolioWithCategory(selectedCategory) {
@@ -70,6 +72,8 @@ async function updateUserPortfolioWithCategory(selectedCategory) {
     // Update the page with the new HTML content
     const portfolioWrapper = document.getElementById("portfolio_container")
     portfolioWrapper.innerHTML = portfolio
+    updateEvidenceIds();
+    await updateAllWeblinks();
 }
 
 /**
