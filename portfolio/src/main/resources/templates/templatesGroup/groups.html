@@ -15,8 +15,8 @@
         const CURRENT_USER_ID = [[${user.getId}]];
         const GROUPLESS_GROUP_ID = [[${GROUPLESS_GROUP_ID}]];
         const TEACHER_GROUP_ID = [[${TEACHER_GROUP_ID}]];
-        const userIsTeacher = [[${userIsTeacher}]];
-        const userIsAdmin = [[${userIsAdmin}]];
+        const userIsTeacher = [[${authUserIsTeacher}]];
+        const userIsAdmin = [[${authUserIsAdmin}]];
         const userIsMember = [[${userIsMember}]];
         const allGroupIds = [[${allGroupIds}]];
 
@@ -43,7 +43,7 @@
         <div class="flex-column">
             <!-- New Group Button -->
             <a id="new-group-button" th:if="${authUserIsTeacher}" th:href="@{editGroup-{id}(id=-1)}">New Group</a>
-            <div class="group" th:each="group : *{groups}" th:with="tableDropable=${authUserIsTeacher && !(group.getGroupId == TEACHER_GROUP_ID && !userIsAdmin)}" th:ondragover="${tableDropable} ? 'allowDrop(event)' : ''" th:ondrop="${tableDropable} ? 'pasteMembers(this)' : ''">
+            <div class="group" th:each="group : *{groups}" th:with="tableDropable=${authUserIsTeacher && !(group.getGroupId == TEACHER_GROUP_ID && !authUserIsTeacher)}" th:ondragover="${tableDropable} ? 'allowDrop(event)' : ''" th:ondrop="${tableDropable} ? 'pasteMembers(this)' : ''">
                 <div class="group__details-wrapper">
                     <h2 class="group__name" th:text="${group.getShortName} + ' - ' + ${group.getLongName}" type="button" data-bs-toggle="collapse" th:data-bs-target="'#group_' + ${group.getGroupId}" aria-expanded="false" th:aria-controls="group_ + ${group.getGroupId}"></h2>
                     <div class="group__details collapse" th:id="group_ + ${group.getGroupId}">
