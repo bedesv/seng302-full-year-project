@@ -1,8 +1,10 @@
 package nz.ac.canterbury.seng302.portfolio.controller.group;
 
+import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.group.GroupRepositorySettings;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
+import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.group.*;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
@@ -42,6 +44,10 @@ public class GroupController {
     private PortfolioGroupService portfolioGroupService;
     @Autowired
     private GroupChartDataService groupChartDataService;
+    @Autowired
+    private EvidenceService evidenceService;
+
+    private static final int GROUP_HOME_EVIDENCE_LIMIT = 20;
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
 
     /**
@@ -60,11 +66,15 @@ public class GroupController {
         }
         Group group = new Group(response);
         Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolioByGroup(group, project.getId(), GROUP_HOME_EVIDENCE_LIMIT);
+        model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("group", group);
         model.addAttribute("userInGroup", groupsClientService.userInGroup(group.getGroupId(), userId));
         model.addAttribute("graphStartDate", project.getStartDate());
         model.addAttribute("graphEndDate", project.getEndDate());
         model.addAttribute("timeRange", "day");
+        model.addAttribute("evidenceList", evidenceList);
+        model.addAttribute("pageUser", userAccountClientService.getUserAccountByPrincipal(principal));
         groupChartDataService.setDateRefiningOptions(model, project);
         return GROUP_PAGE;
     }
@@ -98,7 +108,6 @@ public class GroupController {
 
     /**
      * A post mapping to update the given groups repository
-     * @param principal Authentication principal storing current user information
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @param repositoryName The new repository name
      * @param gitlabAccessToken The new repository api key
@@ -108,8 +117,7 @@ public class GroupController {
      * @return A html fragment that contains the updated repository information
      */
     @PostMapping("/group-{id}-repository")
-    public String updateGroupRepository(@AuthenticationPrincipal AuthState principal,
-                                        Model model,
+    public String updateGroupRepository(Model model,
                                         @RequestParam("repositoryName") String repositoryName,
                                         @RequestParam("gitlabAccessToken") String gitlabAccessToken,
                                         @RequestParam("gitlabProjectId") String gitlabProjectId,

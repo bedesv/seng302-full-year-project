@@ -43,10 +43,10 @@
                     </div>
                 </div>
                 <div class="evidence__categories">
-                    <a th:each="category: ${evidence.getCategories}" class="category__link" th:text="${category}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-categories?category=' + ${category}"></a>
+                    <a th:each="category: ${evidence.getCategories}" class="category__link" th:text="${category}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${evidence.getOwnerId}} + '-categories?category=' + ${category}"></a>
                 </div>
                 <div class="evidence__skills">
-                    <a th:each="skill: ${evidence.getSkills}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-skill?skill=' + ${skill}"></a>
+                    <a th:each="skill: ${evidence.getSkills}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${evidence.getOwnerId}} + '-skill?skill=' + ${skill}"></a>
                 </div>
                 <!-- Commits -->
                 <h4 th:if="${evidence.getNumberCommits() >  0}" class="evidence-form__commits-title">Linked Commits</h4>
