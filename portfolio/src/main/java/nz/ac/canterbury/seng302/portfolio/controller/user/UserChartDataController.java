@@ -46,7 +46,8 @@ public class UserChartDataController {
                                                   @RequestParam int parentProjectId,
                                                   @RequestParam String startDateString,
                                                   @RequestParam String endDateString) {
-        PORTFOLIO_LOGGER.info("Getting user [" + userId +  "] skill data for user statistics");
+        String message = ("Getting user [" + userId +  "] skill data for user statistics");
+        PORTFOLIO_LOGGER.info(message);
         if (userService.getUserAccountByPrincipal(principal).getUsername() == null) {
             return Collections.emptyMap();
         }
@@ -59,6 +60,7 @@ public class UserChartDataController {
             PORTFOLIO_LOGGER.error(e.getMessage());
             return Collections.emptyMap();
         }
+
         return userChartDataService.getUserSkillData(userId, parentProjectId, startDate, endDate);
     }
 }

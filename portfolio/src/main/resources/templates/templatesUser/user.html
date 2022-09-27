@@ -72,10 +72,11 @@
 
 <script>
     updateUserPortfolio()
-
     // Removes the portfolioSelected search param from the url
     const url = new URL(location);
     url.searchParams.delete('portfolioSelected');
     history.replaceState(null, null, url)
+    // Contingency for charts not loading.
+    setTimeout(updateCharts, 3000)
 </script>
 </html>

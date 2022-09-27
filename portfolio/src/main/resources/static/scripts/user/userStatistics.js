@@ -1,14 +1,27 @@
-// Load Google Charts then update charts once it's done
-google.charts.load("current", {packages:["corechart"]}).then(updateAllCharts);
-
-// Update charts when the window resizes
-window.onresize = updateAllCharts
+// // Load Google Charts then update charts once it's done
+// google.charts.load("current", {packages:["corechart"]}).then(updateAllCharts);
+//Contingency if first load doesn't work
+document.addEventListener('DOMContentLoaded', () => {
+    google.charts.load("current", {packages:["corechart"]}).then(updateChartData);
+});
+// // Update charts when the window resizes
+window.onresize = updateCharts
 
 /**
  * Updates all the charts
  */
-async function updateAllCharts() {
-    await updateSkillsChart();
+let skillsData;
+async function updateChartData() {
+    skillsData = await fetchChartData('skills');
+    await updateSkillsChart(skillsData);
+}
+
+/**
+ * Update charts without calling server
+ * @returns {Promise<void>}
+ */
+async function updateCharts() {
+    await updateSkillsChart(skillsData);
 }
 
 
@@ -51,7 +64,7 @@ async function updateSkillsChart() {
         backgroundColor: { fill:'transparent' },
     };
 
-    // Create the categories chart
+    // Create the Skills chart
     let chart = new google.visualization.ColumnChart(document.getElementById('user-chart__skills-chart'));
     chart.draw(data, options);
 }
