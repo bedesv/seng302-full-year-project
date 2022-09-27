@@ -294,17 +294,20 @@ public class UserAccountClientService {
     public List<Integer> getUserIdListFromString(String idString) {
         // Split the string where it has any spaces
         List<String> stringIdList = List.of(idString.split(" "));
-
-        // Try to convert the strings into integers
         Set<Integer> userIds = new HashSet<>();
-        for (String stringId : stringIdList) {
-            try {
-                userIds.add(Integer.parseInt(stringId));
-            } catch (NumberFormatException e) {
-                String errorMessage = "Could not parse " + stringId + " to an integer";
-                PORTFOLIO_LOGGER.error(errorMessage);
+        // Only try to convert strings to integers if the string of ids is not empty
+        if (!idString.equals("")) {
+            // Try to convert the strings into integers
+            for (String stringId : stringIdList) {
+                try {
+                    userIds.add(Integer.parseInt(stringId));
+                } catch (NumberFormatException e) {
+                    String errorMessage = "Could not parse " + stringId + " to an integer";
+                    PORTFOLIO_LOGGER.error(errorMessage);
+                }
             }
         }
+
         return new ArrayList<>(userIds);
     }
 
