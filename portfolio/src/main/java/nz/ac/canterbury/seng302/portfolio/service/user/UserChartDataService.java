@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.portfolio.service.user;
 
 import com.google.common.annotations.VisibleForTesting;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
-import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.util.DateComparator;
@@ -86,8 +85,10 @@ public class UserChartDataService {
      * @return a map of values.
      */
     public Map<String, Integer> getUserEvidenceData(User user, int parentProjectId, Date startDate, Date endDate) {
-        TreeMap<String, Integer> evidenceCountOverTime = new TreeMap<>(new DateComparator());
-        evidenceCountOverTime = getEvidenceOverTimeDay(evidenceCountOverTime, startDate, endDate, user, parentProjectId);
+        final TreeMap<String, Integer> evidenceCountOverTime = new TreeMap<>(new DateComparator());
+        getEvidenceOverTimeDay(evidenceCountOverTime, startDate, endDate, user, parentProjectId);
+        String message = ("Retrieved user [" + user.getId() +  "] evidence data for user statistics");
+        PORTFOLIO_LOGGER.info(message);
         return evidenceCountOverTime;
     }
 
@@ -101,7 +102,7 @@ public class UserChartDataService {
      * @param user the user object that the data is wanted for
      * @param parentProjectId The project id of the current project so the correct evidence is used
      */
-    public TreeMap<String, Integer> getEvidenceOverTimeDay(TreeMap<String, Integer> evidenceCountOverTime, Date startDate, Date endDate, User user, int parentProjectId) {
+    public void getEvidenceOverTimeDay(Map<String, Integer> evidenceCountOverTime, Date startDate, Date endDate, User user, int parentProjectId) {
         LocalDate start = Instant.ofEpochMilli(startDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate finish = Instant.ofEpochMilli(endDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 
@@ -121,8 +122,6 @@ public class UserChartDataService {
                 }
             }
         }
-
-        return evidenceCountOverTime;
     }
 }
 
