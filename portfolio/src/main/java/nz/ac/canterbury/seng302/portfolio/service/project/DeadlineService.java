@@ -136,7 +136,9 @@ public class DeadlineService {
         deadline.setDeadlineDate(deadlineDate);
         deadline.setDeadlineName(deadlineName);
         saveDeadline(deadline);
-        String message = "Deadline updated to have name " + deadlineName + " and date " + deadlineDate;
+        // Replaces pattern-breaking characters
+        String parsedDeadlineName = deadlineName.replaceAll("[\n\r\t]", "_");
+        String message = "Deadline updated to have name " + parsedDeadlineName + " and date " + deadlineDate;
         PORTFOLIO_LOGGER.info(message);
     }
 
@@ -157,7 +159,9 @@ public class DeadlineService {
             throw new IllegalArgumentException(message);
         } else {
             saveDeadline(new Deadline(parentProjectId, deadlineName, deadlineDate));
-            String message = "New deadline created with name " + deadlineName + " and date " + deadlineDate;
+            // Replaces pattern-breaking characters
+            String parsedDeadlineName = deadlineName.replaceAll("[\n\r\t]", "_");
+            String message = "New deadline created with name " + parsedDeadlineName + " and date " + deadlineDate;
             PORTFOLIO_LOGGER.info(message);
         }
     }

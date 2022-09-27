@@ -135,12 +135,16 @@ public class EvidenceService {
         }
 
         if (!ValidationUtil.titleContainsAtleastOneLanguageCharacter(evidence.getTitle()) || evidence.getTitle().length() < 2 || evidence.getTitle().length() > 64) {
-            String message = "Evidence title (" + evidence.getTitle() + ") is invalid";
+            // Replaces pattern-breaking characters
+            String parsedTitle = evidence.getTitle().replaceAll("[\n\r\t]", "_");
+            String message = "Evidence title (" + parsedTitle + ") is invalid";
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException("Title not valid");
         }
         if (!ValidationUtil.titleContainsAtleastOneLanguageCharacter(evidence.getDescription()) || evidence.getDescription().length() < 50 || evidence.getDescription().length() > 1024) {
-            String message = "Evidence description (" + evidence.getDescription() + ") is invalid";
+            // Replaces pattern-breaking characters
+            String parsedDescription = evidence.getDescription().replaceAll("[\n\r\t]", "_");
+            String message = "Evidence description (" + parsedDescription + ") is invalid";
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException("Description not valid");
         }
