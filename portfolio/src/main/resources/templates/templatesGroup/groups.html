@@ -59,16 +59,17 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr th:each="member : ${group.getMembers}" th:with="rowDraggable=${authUserIsTeacher}"
+                                    <tr th:each="member : ${group.getMembers}"
+                                        th:with="rowDraggable=${authUserIsTeacher}"
                                         th:draggable="${rowDraggable}"
                                         th:ontouchstart="${rowDraggable} ? 'copyMembers(this)' : ''"
                                         th:onmousedown="${rowDraggable} ? 'copyMembers(this)' : ''"
                                         th:ontouchend="${rowDraggable} ? 'toggleRowMobile(this)' : ''"
                                         th:onmouseup="${rowDraggable} ? 'rowClick(this)' : ''"
-                                        class="unselected">
-                                        <th scope="row" class="user_id" th:text="${member.getId}"></th>
-                                        <td th:text="${member.getFirstName}"></td>
-                                        <td th:text="${member.getLastName}"></td>
+                                        class="unselected group-row">
+                                        <th scope="row" class="user_id group-row" th:text="${member.getId}"></th>
+                                        <td class="group-row" th:text="${member.getFirstName}"></td>
+                                        <td class="group-row" th:text="${member.getLastName}"></td>
                                     </tr>
                                     </tbody>
                                 </table>

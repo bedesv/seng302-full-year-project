@@ -11,10 +11,10 @@
       th:with="rowDraggable=${userIsTeacher}" th:id="${!rowDraggable} ? 'no-hover' : ''"
       th:draggable="${rowDraggable}" th:onmousedown="${rowDraggable} ? 'copyMembers(this)' : ''"
       th:onmouseup="${rowDraggable} ? 'rowClick(this)' : ''"
-      th:ontouchend="${rowDraggable} ? 'toggleRowMobile(this)' : ''" class="unselected">
-    <th scope="row" class="user_id" th:text="${member.getId}"></th>
-    <td th:text="${member.getFirstName}"></td>
-    <td th:text="${member.getLastName}"></td>
+      th:ontouchend="${rowDraggable} ? 'toggleRowMobile(this)' : ''" class="unselected group-row">
+    <th class="group-row" scope="row" class="user_id" th:text="${member.getId}"></th>
+    <td class="group-row" th:text="${member.getFirstName}"></td>
+    <td class="group-row" th:text="${member.getLastName}"></td>
   </tr>
   </tbody>
 </table>

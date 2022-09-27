@@ -301,6 +301,10 @@ function toggleRowMobile(row) {
     row.className = row.className === 'selected' ? 'unselected' : 'selected';
     lastRow = row;
     viewCopyButton(row);
+    row.addEventListener("mouseup", (event) => {
+        console.log(event);
+        event.preventDefault()
+    }, false);
 }
 
 /**
@@ -526,3 +530,18 @@ function hideCopyButton() {
         copyButtons[i].hidden = true;
     }
 }
+
+document.addEventListener("touchend", (event) => {
+    console.log(event);
+    if (event.target.classList.contains("group-row") || event.target.parentElement.classList.contains("group-row")) {
+        event.preventDefault();
+    }
+
+    // do something
+}, false);
+//
+// document.addEventListener("mouseup", (event) => {
+//     console.log(event);
+//
+//     // do something
+// }, false);
