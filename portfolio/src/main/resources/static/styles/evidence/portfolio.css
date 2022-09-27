@@ -68,18 +68,10 @@
 }
 
 .col-lg {
-    padding-top: 70px;
+    padding-top: 62px;
 }
 
 /* Evidence Card */
-
-.skills {
-    background-color: var(--color-secondary);
-    margin: 5px;
-    padding: 10px;
-    border-radius: 5px;
-}
-
 
 .skill__details {
     padding-top: 10px;
@@ -91,13 +83,12 @@
 
 .reset-filter {
     padding-top: 10px;
-    margin-left: 15px
 }
 
 .reset__link {
     border: 1px solid var(--color-primary);
     border-radius: 5px;
-    background-color: white;
+    background-color: var(--color-complement);
     padding: 2px 4px 2px 4px;
     margin: 4px;
     display: inline;
@@ -139,7 +130,7 @@
     width: fit-content;
 }
 
-.categories {
+.filter-div {
     background-color: var(--color-secondary);
     margin: 5px;
     padding: 10px;
@@ -148,9 +139,10 @@
 
 .categories__details {
     padding-top: 10px;
+    padding-bottom: 30px;
     display: flex;
     flex-wrap: wrap;
-    border-top: 1px solid var(--color-accent);
+    border-bottom: 1px solid var(--color-accent);
 }
 
 .all-evidence-link {
