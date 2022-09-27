@@ -73,6 +73,7 @@
 
 .profile-body__content p {
     font-size: 1rem;
+    margin-bottom: 1rem !important;
 }
 
 .UserProfile {
