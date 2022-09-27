@@ -23,7 +23,6 @@
         const END_DATE = [[${currentProject.getStartDate}]];
         const IN_PORTFOLIO = [[${inPortfolio}]];
         let EVIDENCE_IDS = [];
-        let middle_id;
         const MAX_WEBLINKS = [[ ${maxWeblinks} ]];
     </script>
 </head>
@@ -56,10 +55,10 @@
 
     <div id="carouselExampleIndicators" class="carousel slide" data-bs-interval="false" data-bs-ride="true">
         <div class="carousel-inner">
-            <div class="carousel-item active">
+            <div class="carousel-item" th:classappend="${!portfolioSelected} ? active">
                 <div th:replace="fragmentsUser/profile"></div>
             </div>
-            <div id="portfolio" class="carousel-item">
+            <div id="portfolio" class="carousel-item" th:classappend="${portfolioSelected} ? active">
                 <div th:replace="fragmentsUser/portfolioMain"></div>
             </div>
             <div class="carousel-item">
@@ -73,6 +72,10 @@
 
 <script>
     updateUserPortfolio()
-    makePortfolioActive()
+
+    // Removes the portfolioSelected search param from the url
+    const url = new URL(location);
+    url.searchParams.delete('portfolioSelected');
+    history.replaceState(null, null, url)
 </script>
 </html>

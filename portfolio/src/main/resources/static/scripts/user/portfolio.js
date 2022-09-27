@@ -1,19 +1,4 @@
 /**
- * If the user is in the portfolio and edits, adds or deletes evidence the user is returned to the portfolio tab
- * index 0 is profile
- * index 1 is portfolio
- */
-function makePortfolioActive() {
-    console.log(IN_PORTFOLIO)
-    if(IN_PORTFOLIO === 'true') {
-        const carouselItems = document.getElementsByClassName("carousel-item")
-        carouselItems[0].className = "carousel-item"
-        carouselItems[1].classList.add("active")
-    }
-}
-
-
-/**
  * Upon entering user page uses the Javascript fetch API to fetch user portfolio and display it in the portfolio tab
  */
 async function updateUserPortfolio() {
@@ -32,6 +17,9 @@ async function updateUserPortfolio() {
     // Update the page with the new HTML content
     const portfolioWrapper = document.getElementById("portfolio_container")
     portfolioWrapper.innerHTML = portfolio
+
+    updateEvidenceIds();
+    await updateAllWeblinks();
 }
 
 async function updateUserPortfolioWithSkill(selectedSkill) {
@@ -50,6 +38,8 @@ async function updateUserPortfolioWithSkill(selectedSkill) {
     // Update the page with the new HTML content
     const portfolioWrapper = document.getElementById("portfolio_container")
     portfolioWrapper.innerHTML = portfolio
+    updateEvidenceIds();
+    await updateAllWeblinks();
 }
 
 async function updateUserPortfolioWithCategory(selectedCategory) {
@@ -68,4 +58,17 @@ async function updateUserPortfolioWithCategory(selectedCategory) {
     // Update the page with the new HTML content
     const portfolioWrapper = document.getElementById("portfolio_container")
     portfolioWrapper.innerHTML = portfolio
+    updateEvidenceIds();
+    await updateAllWeblinks();
+}
+
+/**
+ * Saves the id of all the pieces of evidence on the page
+ */
+function updateEvidenceIds() {
+    const evidenceObjects = document.getElementsByClassName("evidence__details");
+    EVIDENCE_IDS = []
+    for (let evidence of evidenceObjects) {
+        EVIDENCE_IDS.push(evidence.id.split("_")[1])
+    }
 }

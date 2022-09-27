@@ -160,7 +160,7 @@
             <label th:if="${evidenceId == -1 || evidenceId =='-1'}">Web Links</label>
             <div th:if="${evidenceId == -1 || evidenceId =='-1'}" id="evidence-form__webLink-container"></div>
             <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="text" id="evidence-form__webLink-name" onkeyup="checkValid()" placeholder="Web Link Name"/>
-            <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="text" id="evidence-form__webLink-link" onkeyup="checkValid()" placeholder="Web Link"/>
+            <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="url" id="evidence-form__webLink-link" onkeyup="checkValid()" placeholder="Web Link" oninvalid="this.setCustomValidity('Incorrect Web Link Format. Example: \'http(s)://example.com\'')" oninput="this.setCustomValidity('')"/>
             <P th:if="${webLinkError}" style="color: red">Incorrect Web Link Format</P>
             <div th:if="${evidenceId == -1 || evidenceId =='-1'}" class="evidence__button-wrapper flex-row">
               <button id="weblink-button" type="button" class="btn btn-primary" onclick="addWebLinks()">
@@ -169,6 +169,7 @@
             </div>
             <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="hidden" id="evidence-form__hidden-webLinks-names" name="evidenceWebLinkNames"/>
             <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="hidden" id="evidence-form__hidden-webLinks-links" name="evidenceWebLinks"/>
+
             <!-- Users !-->
             <label>Users
                 <span data-toggle="tooltip"
@@ -191,12 +192,13 @@
             <div th:if="${displayCommits}">
                 <button type="button" class="btn btn-primary evidence-form__add-commits-button" id="open-modal__button" data-bs-toggle="modal" data-bs-target="#add-evidence-commits__modal">Add Commits</button>
             </div>
+            <p class="evidence-form__error-message" th:text="${commitsError}" />
             <div id="commit-container"></div>
             <input type="hidden" id="evidence-form__hidden-commits-field" name="evidenceCommits"/>
 
             <!-- Submit form !-->
             <button type="button" class="evidence-form__control-button" onclick="submitForm()" id="evidence-form__save" disabled>Save Changes</button>
-            <a class="evidence-form__control-button" id="evidence-form__discard" th:href="@{profile}">Discard</a>
+            <a class="evidence-form__control-button" id="evidence-form__discard" th:href="@{profile?portfolioSelected=true}">Discard</a>
             <p class="evidence-form__error-message" th:text="${generalError}" />
         </form>
     </div>

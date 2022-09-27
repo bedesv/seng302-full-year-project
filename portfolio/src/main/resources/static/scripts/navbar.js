@@ -1,4 +1,4 @@
-let toggle = 0;
+let toggle1 = 0;
 
 function expandNav() {
     document.getElementById("site-navigation").classList.remove("collapsed");
@@ -33,12 +33,12 @@ function toggleNavbarVisibility() {
  */
 function dropDown() {
     let dropdown = document.getElementById("js-dropdown__list");
-    if (toggle === 0) {
+    if (toggle1 === 0) {
         dropdown.style.display = 'block';
-        toggle = 1;
+        toggle1 = 1;
     } else {
         dropdown.style.display = 'none';
-        toggle = 0;
+        toggle1 = 0;
     }
 }
 
@@ -54,7 +54,7 @@ function eventHandle(e) {
         || classList.contains("dropdown__container") || classList.contains("dropdown-content")
         || classList.contains("site-navigation__sublabel") || classList.contains("site-navigation__sublink"))) {
         dropdown.style.display = 'none';
-        toggle = 0;
+        toggle1 = 0;
     }
 }
 
@@ -68,7 +68,7 @@ document.addEventListener("mouseover", (e) => {
         || classList.contains("dropdown__container") || classList.contains("dropdown-content")
         || classList.contains("site-navigation__sublabel") || classList.contains("site-navigation__sublink")) {
         dropdown.style.display = 'block';
-    } else if (toggle === 0) {
+    } else if (toggle1 === 0) {
         dropdown.style.display = 'none';
     }
 })

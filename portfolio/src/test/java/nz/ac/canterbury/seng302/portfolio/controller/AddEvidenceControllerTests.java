@@ -154,7 +154,7 @@ class AddEvidenceControllerTests {
                         .param("evidenceWebLinks", "")
                         .param("evidenceWebLinkNames", ""))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/inPortfolio"));
+                .andExpect(redirectedUrl("/profile?portfolioSelected=true"));
     }
 
     // Check that saving a piece of evidence properly redirects to the portfolio page.
@@ -208,7 +208,7 @@ class AddEvidenceControllerTests {
                         .param("evidenceUsers", "")
                         .param("skillsToChange", ""))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/inPortfolio"));
+                .andExpect(redirectedUrl("/profile"));
     }
 
     // Check that sending malformed commit data results in a redirect to the portfolio
@@ -235,7 +235,7 @@ class AddEvidenceControllerTests {
                         .param("evidenceUsers", "")
                         .param("skillsToChange", ""))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/inPortfolio"));
+                .andExpect(redirectedUrl("/profile"));
     }
 
     // Check that trying to edit evidence with a mangled evidence id fails.
@@ -253,7 +253,7 @@ class AddEvidenceControllerTests {
 
         mockMvc.perform(get("/editEvidence-bad"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/inPortfolio"));
+                .andExpect(redirectedUrl("/profile"));
     }
 
     // Check that trying to edit evidence with a nonexistent evidence id fails.
@@ -275,7 +275,7 @@ class AddEvidenceControllerTests {
 
         mockMvc.perform(get("/editEvidence-1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/inPortfolio"));
+                .andExpect(redirectedUrl("/profile"));
     }
 
     // Check that trying to edit evidence with a real evidence but the wrong user fails.
@@ -295,7 +295,7 @@ class AddEvidenceControllerTests {
 
         mockMvc.perform(get("/editEvidence-1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/inPortfolio"));
+                .andExpect(redirectedUrl("/profile"));
     }
 
     // Check that trying to edit evidence with a real evidence succeeds.
@@ -332,7 +332,7 @@ class AddEvidenceControllerTests {
 
         mockMvc.perform(get("/editEvidence-1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/inPortfolio"));
+                .andExpect(redirectedUrl("/profile"));
     }
 
 }

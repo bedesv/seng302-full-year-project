@@ -1,11 +1,26 @@
 <!DOCTYPE html>
+<head>
 
+    <link rel="stylesheet" th:href="@{styles/evidence/portfolio.css}">
+    <link rel="stylesheet" th:href="@{styles/evidence/evidence.css}">
+    <link rel="stylesheet" th:href="@{styles/evidence/categories.css}">
+    <link rel="stylesheet" th:href="@{styles/evidence/skills.css}">
+    <title>Home</title>
+    <script th:inline="javascript">
+        let EVIDENCE_IDS = [];
+        let middle_id;
+    </script>
+    <script rel="script" th:src="@{scripts/evidence/saveWeblinks.js}"></script>
+</head>
 
 <div class="group-home">
     <div class="row">
 
-        <div class="col-12 col-lg">
-            <h2>Recent Activity</h2>
+        <div class="col-12 col-lg groupsEvidence">
+            <h2>Recent Evidence</h2>
+            <div class="evidence__container">
+                <div th:replace="fragments/evidence"></div>
+            </div>
         </div>
 
         <div class="col-12 col-lg-5">
@@ -27,3 +42,9 @@
 
     </div>
 </div>
+
+<script th:inline="javascript">
+    for (let i = 0; i < EVIDENCE_IDS.length; i++) {
+        getWebLinks(EVIDENCE_IDS[i])
+    }
+</script>

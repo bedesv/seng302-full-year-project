@@ -230,14 +230,14 @@ class GitlabConnectionServiceTests {
     void whenGroupRepoHasCommits_testHasCommits() {
         repositorySettingsService.getGroupRepositorySettingsByGroupId(1);
         repositorySettingsService.updateRepositoryInformation(1, "REPO NAME", TEST_ACCESS_TOKEN, TEST_PROJECT_ID, TEST_PROJECT_URL);
-        assertTrue(gitlabConnectionService.repositoryHasCommits(1));
+        assertEquals(1, gitlabConnectionService.repositoryHasCommits(1));
     }
 
     @Test
     void whenGroupRepoHasNoCommits_testHasCommits() {
         repositorySettingsService.getGroupRepositorySettingsByGroupId(1);
         repositorySettingsService.updateRepositoryInformation(1, "REPO NAME", TEST_EMPTY_ACCESS_TOKEN, TEST_EMPTY_PROJECT_ID, TEST_PROJECT_URL);
-        assertFalse(gitlabConnectionService.repositoryHasCommits(1));
+        assertEquals(0, gitlabConnectionService.repositoryHasCommits(1));
     }
 
     @Test

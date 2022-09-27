@@ -1,30 +1,4 @@
-:root {
-    /* CSS variables */
-    --color-primary: #FBAA60;
-    --color-secondary: #FADFC6FF;
-    --color-tertiary: #F67B50;
-    --color-complement: #F4EAE6;
-    --color-accent: #A82810;
-}
 
-
-/* Hide scrollbar */
-html::-webkit-scrollbar {
-    /* Chrome, Safari, Opera */
-    display: none;
-}
-
-html {
-    -ms-overflow-style: none; /* IE, Edge */
-    scrollbar-width: none; /* Firefox */
-}
-
-/* Simple class for hiding components */
-.hidden {
-    display: none !important;
-}
-
-/* User pages header */
 
 #user-header {
     padding: 15px 15px 15px 15px;
@@ -32,6 +6,14 @@ html {
     background-image: linear-gradient(180deg, var(--color-primary), var(--color-tertiary) 90%);
     color: var(--color-complement);
     border-radius: 10px;
+}
+
+
+.carousel-buttons {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    gap: 15px;
+    justify-content: space-between;
 }
 
 /* User tab buttons */
@@ -42,7 +24,7 @@ html {
     border-radius: 3px;
     height: 3rem;
     box-shadow: none;
-    width: 30%;
+    width: 100%;
     font-size: 1.5rem;
 }
 
@@ -53,14 +35,6 @@ html {
     height: 3rem;
     box-shadow: none;
     font-size: 1.5rem;
-}
-
-/* Carousel buttons */
-.carousel-buttons {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    gap: 10px;
-    width: 50%;
 }
 
 /* User Statistics Tab */
