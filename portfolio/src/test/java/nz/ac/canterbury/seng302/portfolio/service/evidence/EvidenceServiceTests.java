@@ -1222,50 +1222,78 @@ class EvidenceServiceTests {
     }
 
     @Test
+    @Transactional
     void whenUserHighFivesEvidence_testHighFiveAdded() {
-        evidenceService.toggleHighFive(1, 1);
-        assertEquals(1, evidenceService.getNumberOfHighFives(1));
+        Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
+        evidenceService.saveEvidence(evidence);
+        int testEvidenceId = evidence.getId();;
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        assertEquals(1, evidenceService.getNumberOfHighFives(testEvidenceId));
     }
 
     @Test
+    @Transactional
     void whenUserAlreadyHighFivedEvidence_andUserUnHighFivesEvidence_testHighFiveRemoved() {
-        evidenceService.toggleHighFive(1, 1);
-        evidenceService.toggleHighFive(1, 1);
-        assertEquals(0, evidenceService.getNumberOfHighFives(1));
+        Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
+        evidenceService.saveEvidence(evidence);
+        int testEvidenceId = evidence.getId();;
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        assertEquals(0, evidenceService.getNumberOfHighFives(testEvidenceId));
     }
 
     @Test
+    @Transactional
     void whenTwoUsersHighFived_andOneUserUnHighFivesEvidence_testHighFiveRemoved() {
-        evidenceService.toggleHighFive(1, 1);
-        evidenceService.toggleHighFive(1, 2);
-        evidenceService.toggleHighFive(1, 1);
-        assertEquals(1, evidenceService.getNumberOfHighFives(1));
+        Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
+        evidenceService.saveEvidence(evidence);
+        int testEvidenceId = evidence.getId();;
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        evidenceService.toggleHighFive(testEvidenceId, 2);
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        assertEquals(1, evidenceService.getNumberOfHighFives(testEvidenceId));
     }
 
     @Test
+    @Transactional
     void whenNoUsersHaveHighFivedEvidence_testGetUsersWhoHaveHighFivedEvidence() {
-        assertEquals(0, evidenceService.getHighFives(1).size());
+        Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
+        evidenceService.saveEvidence(evidence);
+        int testEvidenceId = evidence.getId();;
+        assertEquals(0, evidenceService.getHighFives(testEvidenceId).size());
     }
 
     @Test
+    @Transactional
     void whenOneuserHasHighFivedEvidence_testGetUsersWhoHaveHighFivedEvidence() {
-        evidenceService.toggleHighFive(1, 1);
-        assertEquals(1, evidenceService.getHighFives(1).size());
+        Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
+        evidenceService.saveEvidence(evidence);
+        int testEvidenceId = evidence.getId();;
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        assertEquals(1, evidenceService.getHighFives(testEvidenceId).size());
     }
 
     @Test
+    @Transactional
     void whenTwoUsersHaveHighFivedEvidence_testGetUsersWhoHaveHighFivedEvidence() {
-        evidenceService.toggleHighFive(1, 1);
-        evidenceService.toggleHighFive(1, 2);
-        assertEquals(2, evidenceService.getHighFives(1).size());
+        Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
+        evidenceService.saveEvidence(evidence);
+        int testEvidenceId = evidence.getId();;
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        evidenceService.toggleHighFive(testEvidenceId, 2);
+        assertEquals(2, evidenceService.getHighFives(testEvidenceId).size());
     }
 
     @Test
+    @Transactional
     void whenTwoUsersHaveHighFivedEvidence_andOneUserUnHighFivesEvidence_testGetUsersWhoHaveHighFivedEvidence() {
-        evidenceService.toggleHighFive(1, 1);
-        evidenceService.toggleHighFive(1, 2);
-        evidenceService.toggleHighFive(1, 1);
-        assertEquals(1, evidenceService.getHighFives(1).size());
-        assertEquals(2, evidenceService.getHighFives(1).get(0).getId());
+        Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
+        evidenceService.saveEvidence(evidence);
+        int testEvidenceId = evidence.getId();;
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        evidenceService.toggleHighFive(testEvidenceId, 2);
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        assertEquals(1, evidenceService.getHighFives(testEvidenceId).size());
+        assertEquals(2, evidenceService.getHighFives(testEvidenceId).get(0).getId());
     }
 }
