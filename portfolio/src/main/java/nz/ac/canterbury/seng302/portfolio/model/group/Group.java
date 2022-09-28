@@ -93,5 +93,4 @@ public class Group {
     public void addMember(User user) {
         this.members.add(user);
     }
-
 }

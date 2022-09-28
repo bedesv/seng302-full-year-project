@@ -155,6 +155,42 @@ public class EvidenceService {
     }
 
     /**
+     * Get all pieces of evidence with the given skill for all members in the given group
+     * @param group The group to retrieve evidence for
+     * @param projectId The currently selected project id
+     * @param skill The skill to filter by
+     * @param limit The max number of pieces of evidence to return
+     * @return A list of all pieces of evidence with the given skill from users in the group
+     */
+    public List<PortfolioEvidence> getEvidenceForPortfolioByGroupFilterBySkill(Group group, int projectId, String skill, int limit) {
+        List<PortfolioEvidence> groupsEvidence = new ArrayList<>();
+        for (User user : group.getMembers()) {
+            for (PortfolioEvidence evidence : getEvidenceForPortfolio(user.getId(), projectId)) {
+                if ((skill.equals("#no_skill") && evidence.getSkills().isEmpty()) || evidence.getSkills().contains(skill)) {
+                    groupsEvidence.add(evidence);
+                }
+            }
+        }
+        return groupsEvidence.stream().limit(limit).toList();
+    }
+
+    /**
+     * Get all skills for all members in the given group
+     * @param group The group to retrieve skills for
+     * @param projectId The currently selected project id
+     * @return A list of all skills from users in the group
+     */
+    public List<String> getAllGroupsSkills(Group group, int projectId) {
+        Set<String> groupsSkills = new HashSet<>();
+        for (User user : group.getMembers()) {
+            for (PortfolioEvidence evidence : getEvidenceForPortfolio(user.getId(), projectId)) {
+                groupsSkills.addAll(evidence.getSkills());
+            }
+        }
+        return new ArrayList<>(groupsSkills);
+    }
+
+    /**
      * Get a specific piece of evidence by ID
      */
     public Evidence getEvidenceById(Integer id) throws NoSuchElementException {
