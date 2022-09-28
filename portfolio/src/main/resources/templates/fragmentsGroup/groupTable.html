@@ -8,7 +8,7 @@
   </thead>
   <tbody>
   <tr th:each="member : ${group.getMembers}"
-      th:with="rowDraggable=${userIsTeacher}"
+      th:with="rowDraggable=${user.isTeacher}"
       th:id="${!rowDraggable} ? 'no-hover' : ''"
       th:draggable="${rowDraggable}"
       th:ontouchstart="${rowDraggable} ? 'toggleRowMobile(this)' : ''"
