@@ -216,11 +216,11 @@ public class GroupChartDataService {
         }
     }
 
-        /**
-         * Only for mocking purposes
-         * Updates the current EvidenceService with a new one
-         * @param newEvidenceService the new (mocked) EvidenceService
-         */
+    /**
+     * Only for mocking purposes
+     * Updates the current EvidenceService with a new one
+     * @param newEvidenceService the new (mocked) EvidenceService
+     */
     @VisibleForTesting
     protected void setEvidenceService(EvidenceService newEvidenceService) {
         evidenceService = newEvidenceService;
