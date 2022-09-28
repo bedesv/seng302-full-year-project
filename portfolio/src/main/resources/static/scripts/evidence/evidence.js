@@ -5,7 +5,7 @@
  * @returns {Promise<void>}
  */
 async function toggleEvidence(evidenceId) {
-
+    console.log(evidenceId);
     let url;
     url = new URL (`${CONTEXT}/evidence-${evidenceId}-highfive`);
 
