@@ -6,8 +6,8 @@
 .container {
     display: flex;
     flex-direction: row;
-    border: 1px solid var(--primary-highlight);
-    border-radius: 1.5rem;
+    /*border: 1px solid var(--primary-highlight);*/
+    border-radius: 8px;
     background-color: var(--surface);
     padding: 20px;
     margin: 100px auto;
