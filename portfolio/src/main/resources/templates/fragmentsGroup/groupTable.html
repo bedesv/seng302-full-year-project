@@ -13,7 +13,6 @@
       th:draggable="${rowDraggable}"
       th:ontouchstart="${rowDraggable} ? 'toggleRowMobile(this)' : ''"
       th:onmousedown="${rowDraggable} ? 'copyMembers(this)' : ''"
-      th:ontouchend="${rowDraggable} ? 'copyMembers(this)' : ''"
       th:onmouseup="${rowDraggable} ? 'rowClick(this)' : ''"
       class="unselected">
     <th scope="row" class="user_id group-row" th:text="${member.getId}"></th>
