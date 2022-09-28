@@ -99,6 +99,8 @@ public class ProfileController {
             model.addAttribute(PORTFOLIO_SELECTED, false);
         }
         model.addAttribute("groups", groups);
+        Project project = projectService.getProjectById(projectId);
+        sprintService.getDateRefiningOptions(model, project);
         if (Objects.equals(pageUser.getUsername(), "") || user.getId() == pageUser.getId()) {
             return "redirect:/profile";
         } else {
