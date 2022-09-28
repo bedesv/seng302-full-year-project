@@ -6,9 +6,9 @@
 .container {
     display: flex;
     flex-direction: row;
-    border: 1px solid var(--color-accent);
+    border: 1px solid var(--primary-highlight);
     border-radius: 1.5rem;
-    background-color: var(--color-complement);
+    background-color: var(--surface);
     padding: 20px;
     margin: 100px auto;
     box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
@@ -52,9 +52,9 @@
 }
 
 .profile-card__roles, .profile-card__groups {
-    color: black !important;
-    background-color: var(--color-primary);
-    border: 1px solid var(--color-accent);
+    color: var(--text-surface) !important;
+    background-color: var(--surface);
+    border: 1px solid var(--primary-highlight);
     margin: 2px;
     text-decoration: none;
 }

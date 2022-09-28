@@ -1,28 +1,4 @@
-:root {
-    font-size: 16px;
-
-    /* CSS variables */
-    --site-navigation-width: 200px;
-    --color-primary: #FBAA60;
-    --color-secondary: #FBC490;
-    --color-tertiary: #F67B50;
-    --color-complement: #F4EAE6;
-    --color-accent: #A82810;
-}
-
-
 /******************** Elements ********************/
-
-body {
-    font-family: Arial, sans-serif;
-    font-weight: 200;margin: 0;
-    background-color: rgba(251, 196, 144, 0.5); /* Secondary Colour */
-}
-
-h5 {
-    font-size: 1.5rem;
-}
-
 .flex-column {
     display: flex;
     flex-direction: column;
@@ -39,8 +15,8 @@ h5 {
     margin: 0 0 0 var(--site-navigation-width);
     padding: 0;
     overflow: hidden;
-    background-color: black;
-    color: var(--color-complement);
+    background-color: var(--primary-highlight);
+    color: var(--text-surface);
     list-style-type: none;
 }
 
@@ -58,14 +34,14 @@ h5 {
 
 .header__item a, .header__dropdown_button {
     display: inline-block;
-    color: var(--color-complement);
+    color: var(--text-surface);
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
 }
 
 .header__item a:hover, .header__dropdown:hover .header__dropdown_button {
-    background-color: var(--color-complement);
+    background-color: var(--surface);
 }
 
 .header__dropdown {
@@ -76,14 +52,14 @@ h5 {
 .header__dropdown--content {
     display: none;
     position: absolute;
-    background-color: var(--color-secondary);
+    background-color: var(--surface);
     min-width: 200px;
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
     z-index: 1;
 }
 
 .header__dropdown--content a {
-    color: black;
+    color: var(--text-surface);
     padding: 12px 16px;
     text-decoration: none;
     display: block;
@@ -91,7 +67,7 @@ h5 {
 }
 
 .header__dropdown--content a:hover {
-    background-color: #F67B50;
+    background-color: var(--surface-highlight);
     text-decoration: none;
 }
 
@@ -120,10 +96,10 @@ h5 {
 
     /* Behaviour */
     overflow-x: hidden;
-    background-image: linear-gradient(180deg, var(--color-primary) 0%, var(--color-tertiary) 70%);
-
+    /*background-image: linear-gradient(180deg, var(--color-primary) 0%, var(--color-tertiary) 70%);*/
+    background-color: var(--surface);
     /* Text */
-    color: var(--color-complement);
+    color: var(--text-surface);
 }
 
 #site-navigation.expanded {
@@ -170,18 +146,19 @@ h5 {
     /* Text */
     text-decoration: none;
     font-weight: 200;
-    color: var(--color-complement);
+    color: var(--text-surface);
     text-align: left;
     text-indent: 1rem;
 }
 
 .site-navigation__link.active {
-    background-color: rgba(168, 40, 16, 0.5); /* Accent Colour */
+    background-color: var(--primary-highlight); /* Accent Colour */
+    color: var(--background) !important;
 }
 
 .site-navigation__link:hover {
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
-    color: white;
+    background-color: var(--primary-highlight); /* Accent Colour */
+    color: var(--background) !important;
     text-decoration: none;
 }
 
@@ -224,17 +201,19 @@ h5 {
     /* Text */
     text-decoration: none;
     font-weight: 200;
-    color: var(--color-complement);
+    color: var(--text-surface);
     text-align: left;
     text-indent: 1rem;
 }
 
 #projects-button.active {
-    background-color: rgba(168, 40, 16, 0.5); /* Accent Colour */
+    background-color: var(--primary-highlight);
+    color: var(--background) !important;
 }
 
 #projects-button:hover {
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
+    background-color: var(--primary-highlight);
+    color: var(--background) !important;
     text-decoration: none;
 }
 
@@ -243,11 +222,11 @@ h5 {
     position: absolute;
     width: 100%;
     overflow: auto;
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px 0 var(--background);
 }
 
 .navbar__dropdown-content.active {
-    background-color: rgba(168, 40, 16, 0.5); /* Accent Colour */
+    background-color: var(--primary-highlight); /* Accent Colour */
 }
 
 /*.dropdown:hover .dropdown-content {*/
@@ -257,18 +236,18 @@ h5 {
 .site-navigation__sublink {
     /* Position & size */
     display: block;
-    color: #FFFFFF;
+    color: var(--text-surface);
     text-decoration: none;
     padding: 5px;
 }
 
 .site-navigation__sublink.active {
-    background-color: rgba(168, 40, 16, 0.5); /* Accent Colour */
+    background-color: var(--background); /* Accent Colour */
 }
 
 .site-navigation__sublink:hover {
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
-    color: white;
+    background-color: var(--surface-highlight); /* Accent Colour */
+    color: var(--background);
     text-decoration: none;
 }
 
@@ -284,6 +263,6 @@ h5 {
 
 .clear-decoration {
     text-decoration: none !important;
-    color: var(--color-complement) !important;
+    color: var(--text-surface);
     font-weight: 200;
 }
