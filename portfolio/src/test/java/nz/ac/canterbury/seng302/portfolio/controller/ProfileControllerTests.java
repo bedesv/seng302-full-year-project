@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
+import nz.ac.canterbury.seng302.portfolio.service.project.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.user.PortfolioUserService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -49,6 +50,9 @@ class ProfileControllerTests {
 
     @MockBean
     ProjectService projectService;
+
+    @MockBean
+    SprintService sprintService;
 
 
     /**
@@ -121,7 +125,6 @@ class ProfileControllerTests {
     // when viewing another user
     @Test
     void getOtherProfile_withOtherUser_returnsProfile() throws Exception {
-
         AuthState validAuthState = setupSecurity();
         Mockito.when(userService.getUserAccountByPrincipal(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
         Mockito.when(userService.getUserAccountById(2)).thenReturn(new User(UserResponse.newBuilder().setId(2).setUsername("test").build()));
