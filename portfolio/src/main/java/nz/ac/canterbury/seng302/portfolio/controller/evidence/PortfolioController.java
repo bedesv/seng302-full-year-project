@@ -203,6 +203,10 @@ public class PortfolioController {
         return "fragments/highfive";
     }
 
+    /**
+     * Calls the toggle high five method where a user is added to an evidence's high-fives
+     * @param evidenceIdString ID of evidence being high-fived
+     */
     @PostMapping("/evidence-{evidenceId}-highfive")
     @ResponseStatus(value = HttpStatus.OK)
     public void toggleHighFive(
@@ -212,7 +216,6 @@ public class PortfolioController {
         int userId = userService.getUserAccountByPrincipal(principal).getId();
         int evidenceId = Integer.parseInt(evidenceIdString);
         evidenceService.toggleHighFive(evidenceId, userId);
-        System.out.println(evidenceService.getHighFives(evidenceId));
     }
 
 }
