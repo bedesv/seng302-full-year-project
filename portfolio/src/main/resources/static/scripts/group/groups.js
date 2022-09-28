@@ -291,21 +291,22 @@ function toggleRow(row) {
  * @param row the row to have selection toggled
  */
 function toggleRowMobile(row) {
+    console.log("Toggle start")
     lastTable = currentTable
     currentTable = row.parentNode.getElementsByTagName("tr");
     let current = row.parentElement;
     let tableIdRows = current.getElementsByClassName("selected");
     if (lastTable !== currentTable) {
+        console.log("cleared old table");
         clearTableSelection(lastTable);
         lastRow = null;
         hideCopyButton();
     }
+    console.log("selected");
     row.className = row.className === 'selected' ? 'unselected' : 'selected';
     lastRow = row;
     viewCopyButton(row);
-    row.addEventListener("mouseup", (event) => {
-        event.preventDefault()
-    }, false);
+
     if (tableIdRows.length === 0) {
         hideCopyButton();
     }
@@ -541,6 +542,7 @@ function hideCopyButton() {
 document.addEventListener("touchend", (event) => {
     console.log("CLICK");
     if (event.target.classList.contains("group-row")) {
+        console.log("prevented defaults");
         event.preventDefault();
     }
 }, false);
