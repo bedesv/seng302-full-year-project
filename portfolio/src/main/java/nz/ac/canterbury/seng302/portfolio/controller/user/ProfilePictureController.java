@@ -28,13 +28,15 @@ public class ProfilePictureController {
 
     private static final String NAME_ID_CLAIM_TYPE = "nameid";
 
+    private static final String PROFILE_PICTURE_REDIRECT = "templatesUser/addProfilePicture";
+
     /**
      * Get mapping to open addProfilePicture page
      * @return the addProfilePicture page
      */
     @GetMapping("/addProfilePicture")
     public String addProfilePicture() {
-        return "templatesUser/addProfilePicture";
+        return PROFILE_PICTURE_REDIRECT;
     }
 
 
@@ -54,7 +56,7 @@ public class ProfilePictureController {
 
         if (fileType == null) {
             model.addAttribute("errorMessage", "Please select a profile before saving changes");
-            return "templatesUser/addProfilePicture";
+            return PROFILE_PICTURE_REDIRECT;
         }
 
         //get userId using the Authentication Principal
@@ -66,19 +68,13 @@ public class ProfilePictureController {
             userAccountClientService.uploadUserProfilePhoto(decodedByte, id, fileType);
             // Generic attributes that need to be set for the profile page
             User user = userAccountClientService.getUserAccountById(id);
-            model.addAttribute("name", user.getFirstName() + " " + user.getLastName());
-            Timestamp ts = user.getCreated();
-            Instant timeCreated = Instant.ofEpochSecond( ts.getSeconds() , ts.getNanos() );
-            LocalDate dateCreated = timeCreated.atZone( ZoneId.systemDefault() ).toLocalDate();
-            long months = ChronoUnit.MONTHS.between(dateCreated, LocalDate.now());
-            String formattedDate = "Member Since: " + dateCreated + " (" + months + " months)";
-            model.addAttribute("date", formattedDate);
+            addProfilePictureToModel(model, user);
             return "redirect:/profile";
         } catch (Exception e) {
             model.addAttribute("errorMessage", e);
         }
 
-        return "templatesUser/addProfilePicture";
+        return PROFILE_PICTURE_REDIRECT;
     }
 
     /**
@@ -110,21 +106,30 @@ public class ProfilePictureController {
         //if remove profile picture was successful return to profile
         if (deleteUserProfilePhotoResponse.getIsSuccess()){
             //generic model attribute that need to be set for the profile page
-            model.addAttribute("name", user.getFirstName() + " " + user.getLastName());
-            Timestamp ts = user.getCreated();
-            Instant timeCreated = Instant.ofEpochSecond( ts.getSeconds() , ts.getNanos() );
-            LocalDate dateCreated = timeCreated.atZone( ZoneId.systemDefault() ).toLocalDate();
-            long months = ChronoUnit.MONTHS.between(dateCreated, LocalDate.now());
-            String formattedDate = "Member Since: " + dateCreated + " (" + months + " months)";
-            model.addAttribute("date", formattedDate);
+            addProfilePictureToModel(model, user);
             model.addAttribute("successMessage", "Your profile picture has been successfully been removed");
             return "redirect:/profile";
         } else {
             //if edit user was unsuccessful
             model.addAttribute("deleteMessage", "");
             model.addAttribute("deleteMessage", deleteUserProfilePhotoResponse.getMessage());
-            return "templatesUser/addProfilePicture";
+            return PROFILE_PICTURE_REDIRECT;
         }
+    }
+
+    /**
+     * Generic model attribute that need to be set for the profile page
+     * @param model is the model that needs to be set
+     * @param user is the user that the model belongs to
+     */
+    private void addProfilePictureToModel(Model model, User user) {
+        model.addAttribute("name", user.getFirstName() + " " + user.getLastName());
+        Timestamp ts = user.getCreated();
+        Instant timeCreated = Instant.ofEpochSecond( ts.getSeconds() , ts.getNanos() );
+        LocalDate dateCreated = timeCreated.atZone( ZoneId.systemDefault() ).toLocalDate();
+        long months = ChronoUnit.MONTHS.between(dateCreated, LocalDate.now());
+        String formattedDate = "Member Since: " + dateCreated + " (" + months + " months)";
+        model.addAttribute("date", formattedDate);
     }
 
 }

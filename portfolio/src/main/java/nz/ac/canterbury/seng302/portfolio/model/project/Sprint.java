@@ -24,6 +24,8 @@ public class Sprint {
     @Transient
     private String colour;
 
+    private static final String DATE_STRING = "yyyy-MM-dd";
+
     public Sprint() {}
 
     public Sprint(int parentProjectId, String sprintName, String sprintDescription, Date sprintStartDate, Date sprintEndDate) {
@@ -48,7 +50,7 @@ public class Sprint {
      * @return the given date, as a string in format 01/Jan/2000
      */
     static String dateToCalenderString(Date date) {
-        return new SimpleDateFormat("yyyy-MM-dd").format(date);
+        return new SimpleDateFormat(DATE_STRING).format(date);
     }
 
 
@@ -112,7 +114,7 @@ public class Sprint {
         this.sprintEndDate = Project.stringToDate(date);
     }
 
-    public String getStartDateCalendarString() {return  Project.dateToString(this.sprintStartDate, "yyyy-MM-dd"); }
+    public String getStartDateCalendarString() {return  Project.dateToString(this.sprintStartDate, DATE_STRING); }
 
     /**
      * Calculates the day after the end date as a calendar string
@@ -123,7 +125,7 @@ public class Sprint {
         Calendar tempEndDate = Calendar.getInstance();
         tempEndDate.setTime(this.getEndDate());
         tempEndDate.add(Calendar.DATE, 1);
-        return  Project.dateToString(tempEndDate.getTime(), "yyyy-MM-dd"); }
+        return  Project.dateToString(tempEndDate.getTime(), DATE_STRING); }
 
     public void setEndDateCalendar(Date newEndDate) {
         Calendar tempEndDate = Calendar.getInstance();

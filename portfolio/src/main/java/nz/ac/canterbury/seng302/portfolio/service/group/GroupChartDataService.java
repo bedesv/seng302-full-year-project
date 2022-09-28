@@ -143,7 +143,6 @@ public class GroupChartDataService {
         int parentProjectId = group.getParentProject();
 
         final TreeMap<String, Integer> evidenceCountOverTime = new TreeMap<>(new DateComparator());
-        //Map<String, Integer> evidenceCountOverTime = new HashMap<>();
 
         //check granularity
         if (Objects.equals(timeRange, "day")) {
