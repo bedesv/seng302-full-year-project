@@ -22,7 +22,9 @@ public class EventService {
 
     @Autowired
     private ProjectEditsService projectEditsService;
+
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
+    private static final String EVENT = "Event ";
 
     /**
      * Get a list of all events
@@ -43,7 +45,7 @@ public class EventService {
         if (event.isPresent()) {
             return event.get();
         } else {
-            String message = "Event " + eventId + " not found.";
+            String message = EVENT + eventId + " not found.";
             PORTFOLIO_LOGGER.error(message);
             throw new NoSuchElementException(message);
         }
@@ -67,7 +69,7 @@ public class EventService {
         } else {
             projectEditsService.refreshProject(event.getEventParentProjectId());
             eventRepository.save(event);
-            String message = "Event " + event.getEventId() + " saved";
+            String message = EVENT + event.getEventId() + " saved";
             PORTFOLIO_LOGGER.info(message);
         }
     }
@@ -82,7 +84,7 @@ public class EventService {
         }
         projectEditsService.refreshProject(eventRepository.findById(eventId).getEventParentProjectId());
         eventRepository.deleteById(eventId);
-        String message = "Event " + eventId + " deleted";
+        String message = EVENT + eventId + " deleted";
         PORTFOLIO_LOGGER.info(message);
     }
 
@@ -100,22 +102,22 @@ public class EventService {
         Date projectStartDate = eventProjectService.getProjectById(eventToChange.getEventParentProjectId()).getStartDate();
         Date projectEndDate = eventProjectService.getProjectById(eventToChange.getEventParentProjectId()).getEndDate();
         if (newStartDate.compareTo(newEndDate) > 0) {
-            String message = "Event " + eventId + " start date (" + newStartDate + ") must not proceed the end date (" + newEndDate + ")";
+            String message = EVENT + eventId + " start date (" + newStartDate + ") must not proceed the end date (" + newEndDate + ")";
             PORTFOLIO_LOGGER.error(message);
             throw new UnsupportedOperationException(message);
         } else if (newStartDate.compareTo(projectStartDate) < 0 || newStartDate.compareTo(projectEndDate) > 0) {
-            String message = "Event " + eventId + " start date (" + newStartDate + ") must be within the project dates (" + projectStartDate + " - " + projectEndDate + ")";
+            String message = EVENT + eventId + " start date (" + newStartDate + ") must be within the project dates (" + projectStartDate + " - " + projectEndDate + ")";
             PORTFOLIO_LOGGER.error(message);
             throw new UnsupportedOperationException(message);
         } else if (newEndDate.compareTo(projectStartDate) < 0 || newEndDate.compareTo(projectEndDate) > 0) {
-            String message = "Event " + eventId + " end date (" + newEndDate + ") must be within the project dates (" + projectStartDate + " - " + projectEndDate + ")";
+            String message = EVENT + eventId + " end date (" + newEndDate + ") must be within the project dates (" + projectStartDate + " - " + projectEndDate + ")";
             PORTFOLIO_LOGGER.error(message);
             throw new UnsupportedOperationException(message);
         } else {
             eventToChange.setEventStartDate(newStartDate);
             eventToChange.setEventEndDate(newEndDate);
             saveEvent(eventToChange);
-            String message = "Event " + eventId + " dates changed to " + newStartDate + " - " + newEndDate;
+            String message = EVENT + eventId + " dates changed to " + newStartDate + " - " + newEndDate;
             PORTFOLIO_LOGGER.info(message);
         }
     }

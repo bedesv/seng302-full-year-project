@@ -47,13 +47,13 @@ async function saveWebLink(id) {
         method: "POST"
     }).then(res => {
         if (res.status === 400) {
-            return false
+            return ""
         } else {
             return res.text();
         }
     })
     // Update the page with the new HTML content
-    if (updatedEvidence) {
+    if (updatedEvidence !== "") {
         const evidenceWrapper = document.getElementById(`web-link__wrapper_${id}`);
         evidenceWrapper.innerHTML = updatedEvidence;
         bootstrap.Modal.getInstance(document.getElementById(`addingWeblink_${id}`)).hide();

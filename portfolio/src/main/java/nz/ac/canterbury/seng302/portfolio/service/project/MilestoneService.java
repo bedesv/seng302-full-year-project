@@ -103,7 +103,10 @@ public class MilestoneService {
         milestone.setMilestoneDate(milestoneDate);
         milestone.setMilestoneName(milestoneName);
         saveMilestone(milestone);
-        String message = "Milestone updated to have name " + milestoneName + " and date " + milestoneDate;
+
+        // Replaces pattern-breaking characters
+        String parsedMilestoneName = milestoneName.replaceAll("[\n\r\t]", "_");
+        String message = "Milestone updated to have name " + parsedMilestoneName + " and date " + milestoneDate;
         PORTFOLIO_LOGGER.info(message);
     }
 
@@ -124,7 +127,10 @@ public class MilestoneService {
             throw new IllegalArgumentException(message);
         } else {
             saveMilestone(new Milestone(parentProjectId, milestoneName, milestoneDate));
-            String message = "New milestone created with name " + milestoneName + " and date " + milestoneDate;
+
+            // Replaces pattern-breaking characters
+            String parsedMilestoneName = milestoneName.replaceAll("[\n\r\t]", "_");
+            String message = "New milestone created with name " + parsedMilestoneName + " and date " + milestoneDate;
             PORTFOLIO_LOGGER.info(message);
         }
     }
