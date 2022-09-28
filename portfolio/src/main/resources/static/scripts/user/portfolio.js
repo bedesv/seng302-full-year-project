@@ -67,7 +67,7 @@ async function updateUserPortfolioWithCategory(selectedCategory) {
  */
 function updateEvidenceIds() {
     const evidenceObjects = document.getElementsByClassName("evidence__details");
-    EVIDENCE_IDS = []
+    let EVIDENCE_IDS = []
     for (let evidence of evidenceObjects) {
         EVIDENCE_IDS.push(evidence.id.split("_")[1])
     }
