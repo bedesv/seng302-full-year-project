@@ -1398,4 +1398,212 @@ class EvidenceServiceTests {
         assertEquals(1, evidenceService.getHighFives(testEvidenceId).size());
         assertEquals(2, evidenceService.getHighFives(testEvidenceId).get(0).getId());
     }
+    //////GET GROUPS EVIDENCE//////////
+    //////FILTER BY SKILL//////////////
+
+    @Test
+    void givenGroupExists_withoutMembers_getEvidenceBySkill() {
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(testGroup, projects.get(2).getId(), "", smallLimit);
+        assertTrue(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    void givenGroupExists_withOneMember_withoutEvidence_getEvidenceBySkill() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(testGroup, projects.get(2).getId(), "", smallLimit);
+        assertTrue(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withOneMember_withOneEvidence_withoutSkill_getEvidenceBySkill() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        Instant now = Instant.now(); //current date
+        Evidence evidence = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(10))), "skill1");
+        evidenceService.saveEvidence(evidence);
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(testGroup, projects.get(2).getId(), "skill2", smallLimit);
+        assertTrue(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withOneMember_withOneEvidence_withSkill_getEvidenceBySkill() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        Instant now = Instant.now(); //current date
+        Evidence evidence = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(10))), "skill1");
+        evidenceService.saveEvidence(evidence);
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(testGroup, projects.get(2).getId(), "skill1", smallLimit);
+        assertEquals(1, groupsEvidence.size());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withMultipleMembers_allWithoutEvidence_getEvidenceBySkill() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(testGroup, projects.get(2).getId(), "", smallLimit);
+        assertTrue(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withMultipleMembers_allWithOneEvidence_withoutSkill_getEvidenceBySkill() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+        Instant now = Instant.now(); //current date
+        Evidence evidence1 = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(1))), "skill1");
+        Evidence evidence2 = new Evidence(0, projects.get(2).getId(), "title2", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(5))), "skill1");
+        Evidence evidence3 = new Evidence(0, projects.get(2).getId(), "title3", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(13))), "skill1");
+        evidenceService.saveEvidence(evidence1);
+        evidenceService.saveEvidence(evidence2);
+        evidenceService.saveEvidence(evidence3);
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(testGroup, projects.get(2).getId(), "skill2", smallLimit);
+        assertTrue(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withMultipleMembers_allWithOneEvidence_withoutSkill_getEvidenceWithNoSkill() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+        Instant now = Instant.now(); //current date
+        Evidence evidence1 = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(1))), "");
+        Evidence evidence2 = new Evidence(0, projects.get(2).getId(), "title2", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(5))), "");
+        Evidence evidence3 = new Evidence(0, projects.get(2).getId(), "title3", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(13))), "");
+        evidenceService.saveEvidence(evidence1);
+        evidenceService.saveEvidence(evidence2);
+        evidenceService.saveEvidence(evidence3);
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(testGroup, projects.get(2).getId(), "#no_skill", 5);
+        assertEquals(3, groupsEvidence.size());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withMultipleMembers_allWithOneEvidence_withSkill_getEvidenceBySkill() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+        Instant now = Instant.now(); //current date
+        Evidence evidence1 = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(1))), "skill1");
+        Evidence evidence2 = new Evidence(0, projects.get(2).getId(), "title2", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(5))), "skill1");
+        Evidence evidence3 = new Evidence(0, projects.get(2).getId(), "title3", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(13))), "skill1");
+        evidenceService.saveEvidence(evidence1);
+        evidenceService.saveEvidence(evidence2);
+        evidenceService.saveEvidence(evidence3);
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(testGroup, projects.get(2).getId(), "skill1", smallLimit);
+        assertEquals(smallLimit, groupsEvidence.size());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withMultipleMembers_allWithOneEvidence_allWithDifferentSkills_getEvidenceBySkill() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+        Instant now = Instant.now(); //current date
+        Evidence evidence1 = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(1))), "skill1");
+        Evidence evidence2 = new Evidence(0, projects.get(2).getId(), "title2", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(5))), "skill2");
+        Evidence evidence3 = new Evidence(0, projects.get(2).getId(), "title3", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(13))), "skill3");
+        evidenceService.saveEvidence(evidence1);
+        evidenceService.saveEvidence(evidence2);
+        evidenceService.saveEvidence(evidence3);
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(testGroup, projects.get(2).getId(), "skill1", smallLimit);
+        assertEquals(1, groupsEvidence.size());
+    }
+
+    /////GET ALL SKILLS IN  A GROUP/////////////
+    @Test
+    void givenGroupExists_withoutMembers_getAllSkills() {
+        List<String> groupsSkills = evidenceService.getAllGroupsSkills(testGroup, projects.get(2).getId());
+        assertTrue(groupsSkills.isEmpty());
+    }
+
+    @Test
+    void givenGroupExists_withOneMember_withoutEvidence_getAllSkills() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        List<String> groupsSkills = evidenceService.getAllGroupsSkills(testGroup, projects.get(2).getId());
+        assertTrue(groupsSkills.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withOneMember_withOneEvidence_withoutSkill_getAllSkills() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        Instant now = Instant.now(); //current date
+        Evidence evidence = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(10))));
+        evidenceService.saveEvidence(evidence);
+
+        List<String> groupsSkills = evidenceService.getAllGroupsSkills(testGroup, projects.get(2).getId());
+        assertTrue(groupsSkills.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withOneMember_withOneEvidence_withSkill_getAllSkills() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        Instant now = Instant.now(); //current date
+        Evidence evidence = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(10))), "skill1");
+        evidenceService.saveEvidence(evidence);
+
+        List<String> groupsSkills = evidenceService.getAllGroupsSkills(testGroup, projects.get(2).getId());
+        assertEquals(1, groupsSkills.size());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withMultipleMembers_allWithoutEvidence_getAllSkills() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+
+        List<String> groupsSkills = evidenceService.getAllGroupsSkills(testGroup, projects.get(2).getId());
+        assertTrue(groupsSkills.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withMultipleMembers_allWithOneEvidence_withSameSkill_getAllSkills() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+        Instant now = Instant.now(); //current date
+        Evidence evidence1 = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(1))), "skill1");
+        Evidence evidence2 = new Evidence(0, projects.get(2).getId(), "title2", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(5))), "skill1");
+        Evidence evidence3 = new Evidence(0, projects.get(2).getId(), "title3", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(13))), "skill1");
+        evidenceService.saveEvidence(evidence1);
+        evidenceService.saveEvidence(evidence2);
+        evidenceService.saveEvidence(evidence3);
+
+        List<String> groupsSkills = evidenceService.getAllGroupsSkills(testGroup, projects.get(2).getId());
+        assertEquals(1, groupsSkills.size());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withMultipleMembers_allWithOneEvidence_allWithDifferentSkills_getAllSkills() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+        Instant now = Instant.now(); //current date
+        Evidence evidence1 = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(1))), "skill1");
+        Evidence evidence2 = new Evidence(0, projects.get(2).getId(), "title2", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(5))), "skill2");
+        Evidence evidence3 = new Evidence(0, projects.get(2).getId(), "title3", TEST_DESCRIPTION, java.util.Date.from(now.minus(Duration.ofDays(13))), "skill3");
+        evidenceService.saveEvidence(evidence1);
+        evidenceService.saveEvidence(evidence2);
+        evidenceService.saveEvidence(evidence3);
+
+        List<String> groupsSkills = evidenceService.getAllGroupsSkills(testGroup, projects.get(2).getId());
+        assertEquals(3, groupsSkills.size());
+    }
+
 }

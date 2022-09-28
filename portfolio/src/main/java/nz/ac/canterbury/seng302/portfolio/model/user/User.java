@@ -206,6 +206,14 @@ public class User {
 
     }
 
+    public boolean isTeacher() {
+        return roles.contains(UserRole.TEACHER) || roles.contains(UserRole.COURSE_ADMINISTRATOR);
+    }
+
+    public boolean isAdmin() {
+        return roles.contains(UserRole.COURSE_ADMINISTRATOR);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(username, firstName, middleName, lastName, nickname, bio, personalPronouns, email, roles, created, profileImagePath, id, userObject);
