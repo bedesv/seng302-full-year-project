@@ -34,11 +34,11 @@ public class SkillsController {
 
 
     /**
-     * Finds the logged in user's id and then loads the evidence page using the more generic endpoint
+     * Finds the logged-in user's id and then loads the evidence page using the more generic endpoint
      * @param principal Authentication state of client
      * @param skill The skill to search for
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
-     * @return A page with all of the user's evidence with the given skill
+     * @return A page with all the user's evidence with the given skill
      */
     @GetMapping("/portfolio-skill")
     public String getEvidenceWithSkill(
@@ -73,7 +73,7 @@ public class SkillsController {
      * @param userId The id of the user whose evidence needs to be searched
      * @param skill The skill to search for
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
-     * @return A page with all of the user's evidence with the given skill
+     * @return A page with all the user's evidence with the given skill
      */
     @GetMapping("/portfolio-{userId}-skill")
     public String getOtherUsersEvidenceWithSkill(

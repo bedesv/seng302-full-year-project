@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.model.user;
 
-import nz.ac.canterbury.seng302.portfolio.model.user.User;
+
 import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 

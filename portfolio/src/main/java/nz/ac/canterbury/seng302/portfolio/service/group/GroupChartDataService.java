@@ -118,7 +118,7 @@ public class GroupChartDataService {
             // Iterate through all of that user's evidence for the groups project
             for (PortfolioEvidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
                 if (!startDate.after(e.getDate()) && !endDate.before(e.getDate())) {
-                    evidenceCountsByMember.merge(user.getId() + " " + user.getFullName(), 1, Integer::sum);;
+                    evidenceCountsByMember.merge(user.getId() + " " + user.getFullName(), 1, Integer::sum);
                 }
             }
         }
@@ -143,7 +143,6 @@ public class GroupChartDataService {
         int parentProjectId = group.getParentProject();
 
         final TreeMap<String, Integer> evidenceCountOverTime = new TreeMap<>(new DateComparator());
-        //Map<String, Integer> evidenceCountOverTime = new HashMap<>();
 
         //check granularity
         if (Objects.equals(timeRange, "day")) {

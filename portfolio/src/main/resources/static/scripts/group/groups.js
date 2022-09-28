@@ -356,8 +356,8 @@ function selectRows(rows) {
  */
 function clearTableSelection(table) {
     if (table && table.length > 0) {
-        for (let i = 0; i < table.length; i++) {
-            table[i].className = 'unselected';
+        for (let row of table) {
+            row.className = 'unselected';
         }
         removeButtonVisible(table, false);
     }
@@ -367,9 +367,9 @@ function clearTableSelection(table) {
  * Selects all items in the current table
  */
 function selectAllInTable() {
-    for (let i = 0; i < currentTable.length; i++) {
-        if (currentTable[i].id !== "no-hover") {
-            currentTable[i].className = 'selected';
+    for (let row of currentTable) {
+        if (row.id !== "no-hover") {
+            row.className = 'selected';
         }
     }
     removeButtonVisible(currentTable, true);

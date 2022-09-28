@@ -10,12 +10,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
     <link th:rel="stylesheet" th:href="@{webjars/bootstrap/5.1.3/css/bootstrap.min.css} "/>
     <script th:src="@{webjars/bootstrap/5.1.3/js/bootstrap.min.js}"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script rel="script" th:src="@{scripts/user/profile.js}"></script>
     <script rel="script" th:src="@{scripts/user/portfolio.js}"></script>
     <script rel="script" th:src="@{scripts/evidence/saveWeblinks.js}"></script>
+    <script rel="script" th:src="@{scripts/user/userStatistics.js}"></script>
     <script th:inline="javascript">
         const CONTEXT = [[${@environment.getProperty('PORTFOLIO_CONTEXT')}]];
         const USER_ID = [[${pageUser.id}]];
+        const PROJECT_ID = [[${currentProject.getId}]];
+        const START_DATE = [[${currentProject.getStartDate}]];
+        const END_DATE = [[${currentProject.getStartDate}]];
+        const IN_PORTFOLIO = [[${inPortfolio}]];
         let EVIDENCE_IDS = [];
         const MAX_WEBLINKS = [[ ${maxWeblinks} ]];
     </script>
@@ -66,10 +72,11 @@
 
 <script>
     updateUserPortfolio()
-
     // Removes the portfolioSelected search param from the url
     const url = new URL(location);
     url.searchParams.delete('portfolioSelected');
     history.replaceState(null, null, url)
+    // Contingency for charts not loading.
+    setTimeout(updateCharts, 3000)
 </script>
 </html>
