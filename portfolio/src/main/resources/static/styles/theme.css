@@ -21,6 +21,7 @@
     --text-faded: var(--lightgrey);
     --text-background: var(--cloud);
     --text-surface: var(--cloud);
+    --text-surface-inverse: var(--charcoal);
 }
 
 .light {
@@ -32,6 +33,7 @@
     --text-faded: hsl(240, 1%, 40%);
     --text-backround: hsl(0, 0%, 7%);
     --text-surface: hsl(0, 0%, 7%);
+    --text-surface-inverse: hsl(0, 0%, 100%);
 }
 
 .berry {

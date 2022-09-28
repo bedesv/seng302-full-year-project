@@ -18,7 +18,7 @@ h1 {
     margin-top: 1rem;
     margin-bottom: 1rem;
     gap: 15px;
-    justify-content: space-between;
+    justify-content: center;
 }
 
 /* User tab buttons */
@@ -29,22 +29,23 @@ h1 {
     background-color: var(--surface);
     border-radius: 8px;
     height: 3rem;
-    box-shadow: none;
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
     width: 100%;
     font-size: 1.5rem;
 }
 
 .user-tab__button:hover {
-    color: var(--background);
+    color: var(--text-surface-inverse);
     background-color: var(--primary-highlight);
     height: 3rem;
-    box-shadow: none;
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
     font-size: 1.5rem;
 }
 
 .active-carousel-tab {
-    color: var(--background);
+    color: var(--text-surface-inverse);
     background-color: var(--primary-highlight);
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
 }
 
 /* User Statistics Tab */
