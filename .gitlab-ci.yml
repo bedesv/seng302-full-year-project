@@ -13,23 +13,23 @@ tag-checker:
   only:
     - tags
 
-#junit-identityprovider:
-#  stage: test
-#  script:
-#    - cd identityprovider
-#    - ./gradlew test
-#  artifacts:
-#    paths:
-#      - identityprovider/build/jacoco/test-report.xml
+junit-identityprovider:
+  stage: test
+  script:
+    - cd identityprovider
+    - ./gradlew test
+  artifacts:
+    paths:
+      - identityprovider/build/jacoco/test-report.xml
 
-#junit-portfolio:
-#  stage: test
-#  script:
-#    - cd portfolio
-#    - ./gradlew test
-#  artifacts:
-#    paths:
-#      - portfolio/build/jacoco/test-report.xml
+junit-portfolio:
+  stage: test
+  script:
+    - cd portfolio
+    - ./gradlew test
+  artifacts:
+    paths:
+      - portfolio/build/jacoco/test-report.xml
 
 publish-protos-to-maven-local:
   stage: publishProtosToLocalMavenRepo
@@ -98,7 +98,7 @@ deploy-staging-portfolio:
     name: staging
     url: https://csse-s302g4.canterbury.ac.nz/test/portfolio
   only:
-    - Fix_Story-fix-drag-and-drop-for-groups-mobile
+    - dev
 
 deploy-production-identityprovider:
   stage: deploy
@@ -147,19 +147,19 @@ deploy-production-portfolio:
     - tags
     - master
 
-#
-#sonarqube-report:
-#  stage: sonarqube
-#  variables:
-#    GIT_DEPTH: 0
-#  script:
-#    - set JAVA_OPTS="-Xms2048m -Xmx4096m"
-#    - cd identityprovider
-#    - touch ./.env
-#    - echo -e "SONARQUBE_API_KEY=$SONARQUBE_API_KEY" > ./.env
-#    - ./gradlew sonarqube
-#    - cd ../portfolio
-#    - touch ./.env
-#    - echo -e "SONARQUBE_API_KEY=$SONARQUBE_API_KEY" > ./.env
-#    - ./gradlew sonarqube
-#  retry: 2
+
+sonarqube-report:
+  stage: sonarqube
+  variables:
+    GIT_DEPTH: 0
+  script:
+    - set JAVA_OPTS="-Xms2048m -Xmx4096m"
+    - cd identityprovider
+    - touch ./.env
+    - echo -e "SONARQUBE_API_KEY=$SONARQUBE_API_KEY" > ./.env
+    - ./gradlew sonarqube
+    - cd ../portfolio
+    - touch ./.env
+    - echo -e "SONARQUBE_API_KEY=$SONARQUBE_API_KEY" > ./.env
+    - ./gradlew sonarqube
+  retry: 2
