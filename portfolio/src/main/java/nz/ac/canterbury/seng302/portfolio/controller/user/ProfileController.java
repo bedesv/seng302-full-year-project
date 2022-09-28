@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
+import nz.ac.canterbury.seng302.portfolio.service.project.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.user.PortfolioUserService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -34,6 +35,9 @@ public class ProfileController {
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private SprintService sprintService;
 
     @Autowired
     private PortfolioUserService portfolioUserService;
@@ -66,6 +70,7 @@ public class ProfileController {
         model.addAttribute("owner", true);
         model.addAttribute("graphStartDate", project.getStartDate());
         model.addAttribute("graphEndDate", project.getEndDate());
+        sprintService.getDateRefiningOptions(model, project);
         return "templatesUser/user";
     }
 
