@@ -293,6 +293,8 @@ function toggleRow(row) {
 function toggleRowMobile(row) {
     lastTable = currentTable
     currentTable = row.parentNode.getElementsByTagName("tr");
+    let current = row.parentElement;
+    let tableIdRows = current.getElementsByClassName("selected");
     if (lastTable !== currentTable) {
         clearTableSelection(lastTable);
         lastRow = null;
@@ -304,6 +306,9 @@ function toggleRowMobile(row) {
     row.addEventListener("mouseup", (event) => {
         event.preventDefault()
     }, false);
+    if (tableIdRows.length === 0) {
+        hideCopyButton();
+    }
 }
 
 /**
@@ -534,6 +539,7 @@ function hideCopyButton() {
  * Event listener stops mouse up/down from triggering on mobile click of member row.
  */
 document.addEventListener("touchend", (event) => {
+    console.log("CLICK");
     if (event.target.classList.contains("group-row")) {
         event.preventDefault();
     }
