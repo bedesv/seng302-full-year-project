@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller.group;
 
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
-import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.group.GroupRepositorySettings;
@@ -30,8 +29,6 @@ import java.util.Objects;
 
 @Controller
 public class GroupController {
-    private static final String GROUP_PAGE = "templatesGroup/group";
-    private static final String GROUP_REPOSITORY = "fragmentsGroup/groupRepositorySettings";
 
     @Autowired
     private UserAccountClientService userAccountClientService;
@@ -54,6 +51,11 @@ public class GroupController {
 
     private static final int GROUP_HOME_EVIDENCE_LIMIT = 20;
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
+    private static final String GROUP_PAGE = "templatesGroup/group";
+    private static final String GROUP_REPOSITORY = "fragmentsGroup/groupRepositorySettings";
+    private static final String GROUPS_REDIRECT = "redirect:/groups";
+    private static final String EVIDENCE_FRAGMENT = "fragments/evidence";
+    private static final String EVIDENCE_LIST = "evidenceList";
 
     /**
      * Get mapping to fetch group settings page
@@ -67,19 +69,18 @@ public class GroupController {
         int groupId = Integer.parseInt(id);
         GroupDetailsResponse response = groupsClientService.getGroupDetailsById(groupId);
         if (response.getGroupId() == 0) {
-            return "redirect:/groups";
+            return GROUPS_REDIRECT;
         }
         Group group = new Group(response);
         Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
         List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolioByGroup(group, project.getId(), GROUP_HOME_EVIDENCE_LIMIT);
-        model.addAttribute("evidenceList", evidenceList);
+        model.addAttribute(EVIDENCE_LIST, evidenceList);
         model.addAttribute("skillsList", evidenceService.getAllGroupsSkills(group, project.getId()));
         model.addAttribute("group", group);
         model.addAttribute("userInGroup", groupsClientService.userInGroup(group.getGroupId(), userId));
         model.addAttribute("graphStartDate", project.getStartDate());
         model.addAttribute("graphEndDate", project.getEndDate());
         model.addAttribute("timeRange", "day");
-        model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("pageUser", userAccountClientService.getUserAccountByPrincipal(principal));
         groupChartDataService.setDateRefiningOptions(model, project);
         return GROUP_PAGE;
@@ -167,12 +168,12 @@ public class GroupController {
         int groupId = Integer.parseInt(id);
         GroupDetailsResponse response = groupsClientService.getGroupDetailsById(groupId);
         if (response.getGroupId() == 0) {
-            return "redirect:/groups";
+            return GROUPS_REDIRECT;
         }
         Group group = new Group(response);
         Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
-        model.addAttribute("evidenceList", evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(group, project.getId(), skill, GROUP_HOME_EVIDENCE_LIMIT));
-        return "fragments/evidence";
+        model.addAttribute(EVIDENCE_LIST, evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(group, project.getId(), skill, GROUP_HOME_EVIDENCE_LIMIT));
+        return EVIDENCE_FRAGMENT;
     }
 
     /**
@@ -190,7 +191,7 @@ public class GroupController {
         int groupId = Integer.parseInt(id);
         GroupDetailsResponse response = groupsClientService.getGroupDetailsById(groupId);
         if (response.getGroupId() == 0) {
-            return "redirect:/groups";
+            return GROUPS_REDIRECT;
         }
 
         Group group = new Group(response);
@@ -208,13 +209,13 @@ public class GroupController {
         } else if (Objects.equals(category, "#no_categories")) {
             categorySelection = null;
         } else {
-            return "redirect:/groups";
+            return GROUPS_REDIRECT;
         }
 
         evidenceList = evidenceService.getEvidenceForPortfolioByGroupFilterByCategory(group, project.getId(), categorySelection, GROUP_HOME_EVIDENCE_LIMIT);
 
-        model.addAttribute("evidenceList", evidenceList);
-        return "fragments/evidence";
+        model.addAttribute(EVIDENCE_LIST, evidenceList);
+        return EVIDENCE_FRAGMENT;
     }
 
     /**
@@ -229,12 +230,12 @@ public class GroupController {
         int groupId = Integer.parseInt(id);
         GroupDetailsResponse response = groupsClientService.getGroupDetailsById(groupId);
         if (response.getGroupId() == 0) {
-            return "redirect:/groups";
+            return GROUPS_REDIRECT;
         }
         Group group = new Group(response);
         Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
-        model.addAttribute("evidenceList", evidenceService.getEvidenceForPortfolioByGroup(group, project.getId(), GROUP_HOME_EVIDENCE_LIMIT));
-        return "fragments/evidence";
+        model.addAttribute(EVIDENCE_LIST, evidenceService.getEvidenceForPortfolioByGroup(group, project.getId(), GROUP_HOME_EVIDENCE_LIMIT));
+        return EVIDENCE_FRAGMENT;
     }
 
 
