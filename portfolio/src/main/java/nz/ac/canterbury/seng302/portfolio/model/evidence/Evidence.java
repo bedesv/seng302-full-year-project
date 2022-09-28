@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.model.evidence;
 
+import nz.ac.canterbury.seng302.portfolio.model.user.User;
+
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -37,7 +39,8 @@ public class Evidence {
     private List<Commit> commits;
     @ElementCollection
     private Set<Integer> linkedUsers = new HashSet<>();
-
+    @ElementCollection
+    private List<Integer> highFives = new ArrayList<>();
 
     public Evidence() {
         webLinks = new ArrayList<>();
@@ -235,4 +238,29 @@ public class Evidence {
     public void setCategories(Set<Categories> categories) {
         this.categories = categories;
     }
+
+    /**
+     * When a user high-fives a piece of evidence there ID is used as a key in a hash map linking to their name
+     * if they have already high-fives the evidence then they are removed
+     * @param userId The user ID
+     */
+    public void toggleHighFive(int userId) {
+        if(highFives.contains(userId)) {
+            highFives.remove((Integer) userId);
+        } else {
+            highFives.add(userId);
+        }
+    }
+
+    /**
+     * Returns the number of users that have currently high-fived the piece of evidence
+     */
+    public int getNumberOfHighFives() {
+        return highFives.size();
+    }
+
+    public List<Integer> getHighFives(){
+        return this.highFives;
+    }
+
 }

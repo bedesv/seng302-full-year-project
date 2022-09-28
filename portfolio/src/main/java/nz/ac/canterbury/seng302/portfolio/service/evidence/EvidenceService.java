@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.evidence.Commit;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
+import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
@@ -35,6 +36,47 @@ public class EvidenceService {
     private ProjectService projectService;
 
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
+
+    /**
+     * Toggles a high-five on the given piece of evidence for the given user
+     * @param evidenceId The id of the evidence to be high-fived
+     * @param userId The id of the user to add a high-five
+     */
+    public void toggleHighFive(int evidenceId, int userId) {
+        Evidence evidence = getEvidenceById(evidenceId);
+        evidence.toggleHighFive(userId);
+        String message = ("User: " + userId + " high-fived evidence: " + evidenceId);
+        PORTFOLIO_LOGGER.info(message);
+    }
+
+    /**
+     * Gets the user objects of the users who have high fived the given piece of evidence
+     * @param evidenceId The id of the evidence to fetch the users who have high-fived
+     * @return A list of user objects who have high-fived the piece of evidence
+     */
+    public List<User> getHighFives(int evidenceId) {
+        Evidence evidence = getEvidenceById(evidenceId);
+        List<Integer> userIdList = evidence.getHighFives();
+        List<User> userList = new ArrayList<>();
+        for(int userId: userIdList) {
+            userList.add(userService.getUserAccountById(userId));
+        }
+        String message = ("Getting list of users who have high-fived evidence: " + evidenceId);
+        PORTFOLIO_LOGGER.info(message);
+        return userList;
+    }
+
+    /**
+     * Gets the number of high-fives on the given piece of evidence
+     * @param evidenceId The id of the evidence to fetch the number of high-fives
+     * @return The number of high-fives on the piece of evidence
+     */
+    public int getNumberOfHighFives(int evidenceId) {
+        Evidence evidence = getEvidenceById(evidenceId);
+        String message = ("Getting number of high-fives on evidence: " + evidenceId);
+        PORTFOLIO_LOGGER.info(message);
+        return (evidence.getNumberOfHighFives());
+    }
 
     /**
      * Updates a user's evidence with new skills.
@@ -91,12 +133,25 @@ public class EvidenceService {
      */
     public List<PortfolioEvidence> getEvidenceForPortfolio(int userId, int projectId) {
         List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(userId, projectId);
-        evidenceList.sort(Comparator.comparing(Evidence::getDate));
-        Collections.reverse(evidenceList);
         List<PortfolioEvidence> portfolioEvidenceList =  convertEvidenceForPortfolio(evidenceList);
         String message = "Evidence for user " + userId + " and project " + projectId + " retrieved";
         PORTFOLIO_LOGGER.info(message);
-        return portfolioEvidenceList;
+        return portfolioEvidenceList.stream().sorted(Collections.reverseOrder(Comparator.comparing(PortfolioEvidence::getDate).thenComparing(PortfolioEvidence::getId))).toList();
+    }
+
+    /**
+     * Get all evidence for members within group
+     * @param group Group retrieving evidence for
+     * @param projectId currently selected project
+     * @return list of all evidences for user in group
+     */
+    public List<PortfolioEvidence> getEvidenceForPortfolioByGroup(Group group, int projectId, int limit){
+        List<PortfolioEvidence> groupsEvidence = new ArrayList<>();
+        for (User user: group.getMembers()){
+            groupsEvidence.addAll(getEvidenceForPortfolio(user.getId(), projectId));
+        }
+        //sort by date asc, then reverse (so latest at top), then return only limit number of evidences
+        return groupsEvidence.stream().sorted(Collections.reverseOrder(Comparator.comparing(PortfolioEvidence::getDate).thenComparing(PortfolioEvidence::getId))).limit(limit).toList();
     }
 
     /**

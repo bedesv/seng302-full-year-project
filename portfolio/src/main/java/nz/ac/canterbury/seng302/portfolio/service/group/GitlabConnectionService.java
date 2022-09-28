@@ -150,15 +150,15 @@ public class GitlabConnectionService {
      * @param groupId the group id with the repo to check
      * @return true if the repository has commits, false if it doesn't or if it can't connect to the repo
      */
-    public boolean repositoryHasCommits(int groupId) {
+    public int repositoryHasCommits(int groupId) {
         try {
             GitLabApi gitLabApiConnection = getGitLabApiConnection(groupId);
             GroupRepositorySettings repositorySettings = getGroupRepositorySettings(groupId);
             Pager<Commit> commitPager = gitLabApiConnection.getCommitsApi().getCommits(repositorySettings.getGitlabProjectId(), 1);
-            return commitPager.getTotalItems() != 0;
+            return commitPager.getTotalItems() != 0 ? 1 : 0;
         } catch (Exception exception) {
             PORTFOLIO_LOGGER.error(exception.getMessage());
-            return false;
+            return -1;
         }
     }
 
