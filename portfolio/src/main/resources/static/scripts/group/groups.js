@@ -291,22 +291,18 @@ function toggleRow(row) {
  * @param row the row to have selection toggled
  */
 function toggleRowMobile(row) {
-    console.log("Toggle start")
     lastTable = currentTable
     currentTable = row.parentNode.getElementsByTagName("tr");
     let current = row.parentElement;
     let tableIdRows = current.getElementsByClassName("selected");
     if (lastTable !== currentTable) {
-        console.log("cleared old table");
         clearTableSelection(lastTable);
         lastRow = null;
         hideCopyButton();
     }
-    console.log("selected");
     row.className = row.className === 'selected' ? 'unselected' : 'selected';
     lastRow = row;
     viewCopyButton(row);
-
     if (tableIdRows.length === 0) {
         hideCopyButton();
         removeButtonVisible(current, false)
@@ -501,7 +497,6 @@ function expandGroup(group) {
  */
 function getTeacherIds() {
     const teacherRows = document.getElementById("group_" + TEACHER_GROUP_ID).getElementsByClassName("user_id");
-
     let teacherIds = []
     for (let teacher of teacherRows) {
         teacherIds.push(parseInt(teacher.innerText, 10))
@@ -541,9 +536,7 @@ function hideCopyButton() {
  * Event listener stops mouse up/down from triggering on mobile click of member row.
  */
 document.addEventListener("touchend", (event) => {
-    console.log("CLICK");
-    // if (event.target.classList.contains("group-row")) {
-    //     console.log("prevented defaults");
-    //     event.preventDefault();
-    // }
+    if (event.target.classList.contains("group-row")) {
+        event.preventDefault();
+    }
 }, false);
