@@ -3,6 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"
       lang="en">
 <head>
+    <title>Skills</title>
     <meta charset="UTF-8">
     <link rel="shortcut icon" type="image/ico" th:href="@{${@environment.getProperty('PORTFOLIO_CONTEXT')} + '/favicon.ico'}"/>
     <link rel="stylesheet" th:href="@{styles/stylesheet.css}">
@@ -12,58 +13,40 @@
     <link rel="stylesheet" th:href="@{styles/evidence/skills.css}">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
-    <link th:rel="stylesheet" th:href="@{webjars/bootstrap/5.1.3/css/bootstrap.min.css} "/>
-    <script th:src="@{webjars/bootstrap/5.1.3/js/bootstrap.min.js}"></script>
-
-    <title>Portfolio</title>
 </head>
 
-<body>
-<!-- Import the application's header bar. -->
-<header th:replace="fragments/header :: header"></header>
-<!-- Import the application's navigation bar. -->
-<nav th:replace="fragments/navbar :: navbar"></nav>
-
-<div id="page-content" class="constrict">
-    <div class="evidence__header-div">
-        <h1 class="evidence__header-title" th:if="${skillName!=''}" th:text="(${owner} ? 'Your ' : ${pageUser.getFullName()} + 's ') + 'evidence with skill: ' + ${skillName}"></h1>
-        <h1 class="evidence__header-title"  th:if="${skillName==''}" th:text="(${owner} ? 'Your ' : ${pageUser.getFullName()} + 's ') + 'evidence without skills'"></h1>
-        <h2 class="evidence__header-project" th:text="${currentProject.getName}"></h2>
+<div class="row">
+    <div class="flex-row" th:if="${skillName!=''}">
+        <h2 th:text="('Evidence with skill: ' + ${skillName})"></h2>
     </div>
-    <div class="container">
-        <div class="portfolio-navigation__div">
-            <a class="portfolio-navigation__button" th:href="@{${owner} ? 'profile' : 'profile-' + ${pageUser.id}}">Profile</a>
-            <a class="portfolio-navigation__button" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}}">Portfolio</a>
+    <div class="flex-row" th:if="${skillName==''}">
+        <h2>Evidence with no skill</h2>
+    </div>
+    <div class="col-lg-8">
+        <div class="add-evidence__container">
+            <a th:if="${owner}" class="add-evidence__button" th:href="@{editEvidence-{evidenceId}(evidenceId=-1)}">
+                Add Evidence
+            </a>
         </div>
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="add-evidence__container">
-                    <a th:if="${owner}" class="add-evidence__button" th:href="@{editEvidence-{evidenceId}(evidenceId=-1)}">
-                        Add Evidence
-                    </a>
-                </div>
-                <div th:replace="fragments/evidence"></div>
+        <div th:replace="fragments/evidence"></div>
+    </div>
+    <div class="col-lg">
+        <div class="filter-div">
+            <!-- Categories Tab -->
+            <h2>Categories</h2>
+            <div class="categories__details">
+                <button class="no-category__link" th:onclick="updateUserPortfolioWithCategory('')">No Category</button>
+                <button class="category__link" th:each="category: ${categoryList}" th:text="${category}" th:onclick="updateUserPortfolioWithCategory([[${category}]])"></button>
             </div>
-            <div class="col-lg">
-                <div class="categories">
-                    <!-- Categories Tab -->
-                    <h2>Categories</h2>
-                    <div class="categories__details">
-                        <a class="no-category__link" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-categories?category='">No Category</a>
-                        <a class="category__link" th:each="category: ${categoryList}" th:text="${category}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-categories?category=' + ${category}"></a>
-                    </div>
-                </div>
-                <div class="skills">
-                    <!-- Skill list -->
-                    <h2 th:text="Skills"></h2>
-                    <div class="skill__details">
-                        <a class="no-skill__link " th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-skill?skill='">No Skill</a>
-                        <a th:each="skill: ${skillsList}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-skill?skill=' + ${skill}"></a>
-                    </div>
-                </div>
+            <h2 th:text="Skills"></h2>
+            <div class="skill__details">
+                <button class="no-skill__link " th:onclick="updateUserPortfolioWithSkill('')">No Skill</button>
+                <button th:each="skill: ${skillsList}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:onclick="updateUserPortfolioWithSkill([[${skill}]])"></button>
+            </div>
+            <div class="reset-filter">
+                <button class="reset__link"  th:text="Reset" th:onclick="updateUserPortfolio()"></button>
             </div>
         </div>
     </div>
 </div>
-</body>
 </html>

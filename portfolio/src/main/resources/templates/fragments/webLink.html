@@ -2,7 +2,7 @@
 
 <div class="web-links" th:each="web: ${webLinks}">
   <div th:class="'web-links_' + ${evidenceId}">
-    <i th:if="${owner}" th:id="${webLinks.indexOf(web)}" class="bi bi-pencil-fill" data-bs-toggle="modal"
+    <em th:if="${owner}" th:id="${webLinks.indexOf(web)}" class="bi bi-pencil-fill" data-bs-toggle="modal"
        th:data-bs-target="'#addingWeblink_' + ${evidenceId}"
        th:data-web-link-name="${web.getName}"
        th:data-web-link-link="${web.getLink}"
@@ -14,7 +14,7 @@
      this.getAttribute('data-web-link-link'),
      this.getAttribute('data-web-link-safe'),
      this.getAttribute('data-web-link-evidenceId'))"
-    ></i>
+    ></em>
     <p class="web-link__name" th:if="${web.getName() != null}" th:text="${web.getName()} + ' - '"></p>
     <em th:if="${web.isSafe()}" class="bi bi-lock"></em>
     <em th:if="${!web.isSafe()}" class="bi bi-unlock"></em>

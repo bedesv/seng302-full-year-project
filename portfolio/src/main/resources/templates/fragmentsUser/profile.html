@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<link rel="stylesheet" th:href="@{styles/user/profile.css}">
+
+<div class="container">
+    <div class="card profile-pic__row">
+        <div class="profile-pic__content">
+            <img th:src="${pageUser.profileImagePath}" class="card-img-top profile-image" alt="profilePhoto">
+            <a th:if="${owner}" th:href="@{addProfilePicture}"><img th:src="@{images/cameraIcon.png}" class="icon" alt="cameraIcon"></a>
+            <br>
+            <div class="card-body">
+                <h3 class="card-title profile__name"> <span th:text="${pageUser.fullName}" th:remove="tag">title</span></h3>
+                <h5>Role(s)</h5>
+                <div><span class="badge badge-pill profile-card__roles" th:each="role: ${pageUser.roleStrings}" th:text="${role}"></span> </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-body__row">
+        <div class="profile-body__content" th:if="${pageUser.nickname != ''}"><strong >Nickname </strong>  <p id="profile__user-nickname" th:text="${pageUser.nickname}" /> </div>
+        <div class="profile-body__content"><strong >Username </strong>  <p th:text="${pageUser.username}" /> </div>
+        <div class="profile-body__content" th:if="${pageUser.personalPronouns != ''}"><strong >Pronouns </strong> <p id="profile__user-pronouns" th:text="${pageUser.personalPronouns}" /> </div>
+        <div class="profile-body__content"><strong >Email </strong>  <p th:text="${pageUser.email}" /> </div>
+        <div class="profile-body__content"><strong >Date of Registration </strong>  <p th:text="${user.memberSince}" /> </div>
+        <div class="profile-body__content" th:if="${pageUser.bio != ''}"><strong >Bio</strong><p id="profile__user-biography" th:text="${pageUser.bio}" /> </div>
+        <div class="profile-body__content" th:if="${groups.size() != 0}">
+            <strong>Group(s)</strong>
+            <div>
+                <a
+                        class="badge badge-pill profile-card__groups" th:each="group: ${groups}" th:text="${group.getShortName()}"
+                        th:href="@{group-{id}(id=${group.getGroupId})}"
+                ></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+

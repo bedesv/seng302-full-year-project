@@ -4,7 +4,7 @@
     /* CSS variables */
     --site-navigation-width: 200px;
     --color-primary: #FBAA60;
-    --color-secondary: #fadfc6;
+    --color-secondary: #FBC490;
     --color-tertiary: #F67B50;
     --color-complement: #F4EAE6;
     --color-accent: #A82810;
@@ -16,7 +16,7 @@
 body {
     font-family: Arial, sans-serif;
     font-weight: 200;
-    background-color: rgba(251, 196, 144, 0.5); /* Secondary Colour */
+    background-color: rgba(251, 196, 144, 0.5) !important; /* Secondary Colour */
 }
 
 h5 {
