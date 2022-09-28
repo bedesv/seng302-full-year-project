@@ -22,7 +22,7 @@ import java.util.Map;
 
 @AutoConfigureTestDatabase
 @SpringBootTest
-public class UserChartDataServiceTests {
+class UserChartDataServiceTests {
 
     @Autowired
     private UserChartDataService userChartDataService;
@@ -160,27 +160,17 @@ public class UserChartDataServiceTests {
     //////////////////////////OverTime Tests///////////////////////////
 
     @Test
-    void givenOneUser_withNoEvidence_getEvidenceOverTime(){
-        Date startDate = Date.valueOf("2022-05-01");
-        Date endDate = Date.valueOf("2022-06-01");
-
-        Map<String, Integer> result = userChartDataService.getUserEvidenceData(user, testParentProjectId, startDate, endDate);
-
-        assertTrue(result.values()
-                .stream()
-                .allMatch(x -> x == 0));
-    }
-
-    @Test
     void givenOneUser_withOneEvidence_getEvidenceOverTime(){
         Date startDate = Date.valueOf("2022-05-01");
         Date endDate = Date.valueOf("2022-06-01");
 
-        Evidence testEvidence1A = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-04-30"));
+        Evidence testEvidence1A = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-01"));
         PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
         Mockito.doReturn(List.of(testEvidence1)).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
+        userChartDataService.setEvidenceService(mockedEvidenceService);
 
         Map<String, Integer> result = userChartDataService.getUserEvidenceData(user, testParentProjectId, startDate, endDate);
         assertEquals(1, result.get("2022-05-01"));
@@ -194,10 +184,14 @@ public class UserChartDataServiceTests {
         Evidence testEvidence1A = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-02"));
         PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         Evidence testEvidence2A = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-15"));
-        PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+        PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence2A, new ArrayList<>());
+        List<PortfolioEvidence> portfolioEvidences = new ArrayList<>();
+        portfolioEvidences.add(testEvidence1);
+        portfolioEvidences.add(testEvidence2);
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
-        Mockito.doReturn(List.of(testEvidence1), List.of(testEvidence2)).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
+        Mockito.doReturn(portfolioEvidences).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
+        userChartDataService.setEvidenceService(mockedEvidenceService);
 
         Map<String, Integer> result = userChartDataService.getUserEvidenceData(user, testParentProjectId, startDate, endDate);
         assertEquals(1, result.get("2022-05-02"));
@@ -212,12 +206,18 @@ public class UserChartDataServiceTests {
         Evidence testEvidence1A = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-04-15"));
         PortfolioEvidence testEvidence1 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
         Evidence testEvidence2A = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-05-15"));
-        PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+        PortfolioEvidence testEvidence2 = new PortfolioEvidence(testEvidence2A, new ArrayList<>());
         Evidence testEvidence3A = new Evidence(user.getId(), testParentProjectId, "Test Evidence", TEST_DESCRIPTION, Date.valueOf("2022-06-15"));
-        PortfolioEvidence testEvidence3 = new PortfolioEvidence(testEvidence1A, new ArrayList<>());
+        PortfolioEvidence testEvidence3 = new PortfolioEvidence(testEvidence3A, new ArrayList<>());
+        List<PortfolioEvidence> portfolioEvidences = new ArrayList<>();
+        portfolioEvidences.add(testEvidence1);
+        portfolioEvidences.add(testEvidence2);
+        portfolioEvidences.add(testEvidence3);
+
 
         EvidenceService mockedEvidenceService = Mockito.mock(EvidenceService.class);
-        Mockito.doReturn(List.of(testEvidence1), List.of(testEvidence2), List.of(testEvidence3)).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
+        Mockito.doReturn(portfolioEvidences).when(mockedEvidenceService).getEvidenceForPortfolio(user.getId(), testParentProjectId);
+        userChartDataService.setEvidenceService(mockedEvidenceService);
 
         Map<String, Integer> result = userChartDataService.getUserEvidenceData(user, testParentProjectId, startDate, endDate);
         assertEquals(1, result.get("2022-05-15"));
