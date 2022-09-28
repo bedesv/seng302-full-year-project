@@ -54,7 +54,7 @@ async function fetchChartData(dataType) {
     if (dataType === 'dataOverTime') {
         url = new URL (`${CONTEXT}/group-${GROUP_ID}-dataOverTime?`);
     }
-    return await fetch(url+new URLSearchParams({startDateString: START_DATE, endDateString: END_DATE}), {
+    return fetch(url+new URLSearchParams({startDateString: START_DATE, endDateString: END_DATE}), {
         method: "GET",
     }).then(res => {
         return res.json();

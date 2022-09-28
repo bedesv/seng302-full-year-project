@@ -162,23 +162,23 @@ function editSkill(tag) {
     })
 }
 
+function checkSkillExists(newSkill, skillList) {
+    for (const testSkill of skillList) {
+        if (testSkill.toLowerCase() === newSkill.toLowerCase().replaceAll("_", " ")) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function submitSkillEdit() {
     const editedSkill = document.getElementById("editable-skill-tag");
     if (editedSkill) {
         const newSkill = editedSkill.value.replaceAll("_", " ").trim().replaceAll(" ", "_");
         const oldSkill = editedSkill.getAttribute('data-old-value').replaceAll(" ", "_");
 
-        let isAlreadySkill = false;
-        for (const testSkill of skillList) {
-            if (testSkill.toLowerCase() === newSkill.toLowerCase().replaceAll("_", " ")) {
-                isAlreadySkill = true;
-            }
-        }
-        for (const testSkill of ALL_SKILLS) {
-            if (testSkill.toLowerCase() === newSkill.toLowerCase().replaceAll("_", " ")) {
-                isAlreadySkill = true;
-            }
-        }
+        let isAlreadySkill = checkSkillExists(newSkill, skillList) || checkSkillExists(newSkill, ALL_SKILLS);
+
         const skillsError = document.getElementById("evidence-form__skills-error");
         if (newSkill === "" || newSkill === "_") {
             skillsError.innerHTML = "Skill not saved: skills can't be empty";

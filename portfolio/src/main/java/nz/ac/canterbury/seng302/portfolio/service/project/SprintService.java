@@ -151,7 +151,8 @@ public class SprintService {
 
         // Replaces pattern-breaking characters
         String parsedSprintName = sprintName.replaceAll("[\n\r\t]", "_");
-        String message = "New sprint created with name " + parsedSprintName + " and description " + sprintDescription;
+        String parsedSprintDescription = sprintDescription.replaceAll("[\n\r\t]", "_");
+        String message = "New sprint created with name " + parsedSprintName + " and description " + parsedSprintDescription;
         PORTFOLIO_LOGGER.info(message);
     }
 
