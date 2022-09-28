@@ -105,9 +105,6 @@ public class PortfolioEvidence {
      * Returns true if the user has high-fived the piece of evidence
      */
     public boolean hasHighFived(int userId) {
-        System.out.println(highFives);
-        System.out.println(highFives.contains(userId));
-        System.out.println(userId);
         return highFives.contains(userId);
     }
 

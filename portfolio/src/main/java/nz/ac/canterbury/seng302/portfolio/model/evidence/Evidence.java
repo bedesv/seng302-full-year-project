@@ -243,13 +243,11 @@ public class Evidence {
      * @param userId The user ID
      */
     public void toggleHighFive(int userId) {
-        System.out.println(highFives);
         if(highFives.contains(userId)) {
             highFives.remove((Integer) userId);
         } else {
             highFives.add(userId);
         }
-        System.out.println(highFives);
     }
 
     /**
