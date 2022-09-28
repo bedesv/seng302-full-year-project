@@ -26,6 +26,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-wrap: anywhere;
 }
 
 .profile__name {
@@ -33,10 +34,7 @@
 }
 
 .profile-pic__row img {
-    max-width: 100%;
-    height: auto;
     border-radius: 100%;
-    width: 50%;
 }
 
 .profile-pic__row a {
@@ -47,8 +45,8 @@
     position: relative;
     width: 30px;
     margin: auto;
-    left: 75px;
-    bottom: 15px;
+    left: 60px;
+    bottom: 10px;
 }
 
 .profile-card__roles, .profile-card__groups {
@@ -74,6 +72,7 @@
 .profile-body__content p {
     font-size: 1rem;
     margin-bottom: 1rem !important;
+    overflow-wrap: anywhere;
 }
 
 .UserProfile {

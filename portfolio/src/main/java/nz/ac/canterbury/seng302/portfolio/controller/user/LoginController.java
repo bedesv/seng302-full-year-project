@@ -134,7 +134,10 @@ public class LoginController {
                 5 * 60 * 60, // Expires in 5 hours
                 domain.startsWith("localhost") ? null : domain
             );
-            String message = username + " logged in";
+
+            // Replaces pattern-breaking characters
+            String parsedUsername = username.replaceAll("[\n\r\t]", "_");
+            String message = parsedUsername + " logged in";
             PORTFOLIO_LOGGER.info(message);
 
             return "redirect:/profile";

@@ -54,7 +54,7 @@ async function updateUserPortfolioWithCategory(selectedCategory) {
     }).then(res => {
         return res.text()
     })
-
+    console.log(selectedCategory)
     // Update the page with the new HTML content
     const portfolioWrapper = document.getElementById("portfolio_container")
     portfolioWrapper.innerHTML = portfolio

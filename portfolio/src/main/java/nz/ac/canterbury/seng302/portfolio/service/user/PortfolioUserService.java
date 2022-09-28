@@ -23,7 +23,9 @@ public class PortfolioUserService {
 
     @Autowired
     private ProjectRepository projectRepository;
+
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
+    private static final String USER = "User ";
 
     /**
      * Gets a user by their id. Creates a default user with that id if none exists.
@@ -79,7 +81,10 @@ public class PortfolioUserService {
         PortfolioUser user = getUserById(id);
         user.setUserListSortType(userListSortType);
         repository.save(user);
-        String message = "User "+ id + " sort type changed to " + userListSortType;
+
+        // Replaces pattern-breaking characters
+        String parsedSortType = userListSortType.replaceAll("[\n\r\t]", "_");
+        String message = USER + id + " sort type changed to " + parsedSortType;
         PORTFOLIO_LOGGER.info(message);
     }
 
@@ -104,7 +109,7 @@ public class PortfolioUserService {
         PortfolioUser user = getUserById(id);
         user.setUserListSortAscending(userListSortIsAscending);
         repository.save(user);
-        String message = "User "+ id + " sort order is ascending changed to " + userListSortIsAscending;
+        String message = USER + id + " sort order is ascending changed to " + userListSortIsAscending;
         PORTFOLIO_LOGGER.info(message);
     }
 
@@ -135,7 +140,7 @@ public class PortfolioUserService {
         PortfolioUser portfolioUser = getUserById(userId);
         portfolioUser.setCurrentProject(projectId);
         repository.save(portfolioUser);
-        String message = "User "+ userId + " current project changed to project " + projectId;
+        String message = USER + userId + " current project changed to project " + projectId;
         PORTFOLIO_LOGGER.info(message);
     }
 
@@ -159,7 +164,7 @@ public class PortfolioUserService {
             PortfolioUser portfolioUser = getUserById(userId);
             portfolioUser.addSkills(skills);
             repository.save(portfolioUser);
-            String message = "User "+ userId + " given skills " + skills;
+            String message = USER + userId + " given skills " + skills;
             PORTFOLIO_LOGGER.info(message);
         } catch (Exception e) {
             //should never reach as getUserById creates user if one doesn't exist
