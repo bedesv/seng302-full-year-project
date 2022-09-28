@@ -52,9 +52,7 @@ async function fetchChartData(dataType) {
  * Fetches skills data from the backend then creates a column chart
  * with the received data
  */
-async function updateSkillsChart() {
-    // Fetch updated chart data
-    let chartData = await fetchChartData('skills')
+async function updateSkillsChart(chartData) {
 
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();

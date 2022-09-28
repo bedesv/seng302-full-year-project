@@ -12,8 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @AutoConfigureTestDatabase
 @SpringBootTest
@@ -22,9 +22,37 @@ class EvidenceTests {
 
     private User user;
 
+
+
     @BeforeEach
     void resetTestEvidence() {
         testEvidence = new Evidence();
+        ArrayList<UserRole> roles = new ArrayList<>();
+        roles.add(UserRole.STUDENT);
+        roles.add(UserRole.COURSE_ADMINISTRATOR);
+        String testUsername = "test user";
+        String testFirstName = "Thomas";
+        String testMiddleName = "Brown";
+        String testLastName = "test lname";
+        String testNickname = "test nname";
+        String testBio = "test bio";
+        String testPronouns = "test/tester";
+        String testEmail = "test@email.com";
+        String testProfileImagePath = "test/image/path";
+        Timestamp testCreated = Timestamp.newBuilder().build();
+        UserResponse source = UserResponse.newBuilder()
+                .setUsername(testUsername)
+                .setFirstName(testFirstName)
+                .setMiddleName(testMiddleName)
+                .setLastName(testLastName)
+                .setProfileImagePath(testProfileImagePath)
+                .setCreated(testCreated)
+                .setEmail(testEmail)
+                .setPersonalPronouns(testPronouns)
+                .setBio(testBio)
+                .setNickname(testNickname)
+                .addAllRoles(roles).build();
+        user = new User(source);
     }
 
     @Test
@@ -67,15 +95,24 @@ class EvidenceTests {
 
     @Test
     void whenUserHighFives_testAddHighFive() {
-        testEvidence.toggleHighFive(1, "Thomas Brown");
+        testEvidence.toggleHighFive(1);
         assertEquals(1, testEvidence.getNumberOfHighFives());
-        assertEquals("Thomas Brown", testEvidence.getHighFives().get(1));
     }
 
     @Test
     void whenUserHasAlreadyHighFived_testAddHighFive() {
-        testEvidence.toggleHighFive(1, "Thomas Brown");
-        testEvidence.toggleHighFive(1, "Thomas Brown");
+        testEvidence.toggleHighFive(1);
+        testEvidence.toggleHighFive(1);
         assertEquals(0, testEvidence.getNumberOfHighFives());
+    }
+
+    @Test
+    void whenMultipleUsersHasAlreadyHighFived_testRemoveHighFive() {
+        testEvidence.toggleHighFive(2);
+        testEvidence.toggleHighFive(1);
+        testEvidence.toggleHighFive(3);
+        testEvidence.toggleHighFive(1);
+        assertEquals(2, testEvidence.getNumberOfHighFives());
+        assertFalse(testEvidence.getHighFives().contains(1)) ;
     }
 }

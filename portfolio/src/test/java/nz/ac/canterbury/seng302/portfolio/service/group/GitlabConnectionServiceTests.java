@@ -2,8 +2,6 @@ package nz.ac.canterbury.seng302.portfolio.service.group;
 
 import nz.ac.canterbury.seng302.portfolio.model.group.GroupRepositorySettings;
 import nz.ac.canterbury.seng302.portfolio.repository.group.GroupRepositorySettingsRepository;
-import nz.ac.canterbury.seng302.portfolio.service.group.GitlabConnectionService;
-import nz.ac.canterbury.seng302.portfolio.service.group.GroupRepositorySettingsService;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.models.Commit;
 import org.junit.jupiter.api.BeforeEach;
@@ -164,7 +162,7 @@ class GitlabConnectionServiceTests {
         assertNull(commits);
     }
 
-    // Test fetching a repository's commits fails when the url is not a url
+    // Test fetching a repository's commits fails when the url is not an url
     @Test
     void whenGroupRepoUrlInvalid_testGetCommits() {
         repositorySettingsService.getGroupRepositorySettingsByGroupId(1);
@@ -244,28 +242,28 @@ class GitlabConnectionServiceTests {
     void whenGroupRepoHas99Commits_testHas100OrMoreCommits() {
         repositorySettingsService.getGroupRepositorySettingsByGroupId(1);
         repositorySettingsService.updateRepositoryInformation(1, "REPO NAME", TEST_99_COMMITS_ACCESS_TOKEN, TEST_99_COMMITS_PROJECT_ID, TEST_PROJECT_URL);
-        assertEquals(gitlabConnectionService.repositoryHas100OrMoreCommits(1), 0);
+        assertEquals(0, gitlabConnectionService.repositoryHas100OrMoreCommits(1));
     }
 
     @Test
     void whenGroupRepoHas100Commits_testHas100OrMoreCommits() {
         repositorySettingsService.getGroupRepositorySettingsByGroupId(1);
         repositorySettingsService.updateRepositoryInformation(1, "REPO NAME", TEST_100_COMMITS_ACCESS_TOKEN, TEST_100_COMMITS_PROJECT_ID, TEST_PROJECT_URL);
-        assertEquals(gitlabConnectionService.repositoryHas100OrMoreCommits(1), 1);
+        assertEquals(1, gitlabConnectionService.repositoryHas100OrMoreCommits(1));
     }
 
     @Test
     void whenGroupRepoHas101Commits_testHas100OrMoreCommits() {
         repositorySettingsService.getGroupRepositorySettingsByGroupId(1);
         repositorySettingsService.updateRepositoryInformation(1, "REPO NAME", TEST_101_COMMITS_ACCESS_TOKEN, TEST_101_COMMITS_PROJECT_ID, TEST_PROJECT_URL);
-        assertEquals(gitlabConnectionService.repositoryHas100OrMoreCommits(1), 1);
+        assertEquals(1, gitlabConnectionService.repositoryHas100OrMoreCommits(1));
     }
 
     @Test
     void whenGroupRepoIsInvalid_testHas100OrMoreCommits() {
         repositorySettingsService.getGroupRepositorySettingsByGroupId(1);
         repositorySettingsService.updateRepositoryInformation(1, "REPO NAME", TEST_ACCESS_TOKEN, TEST_EMPTY_PROJECT_ID, TEST_PROJECT_URL);
-        assertEquals(gitlabConnectionService.repositoryHas100OrMoreCommits(1), -1);
+        assertEquals(-1, gitlabConnectionService.repositoryHas100OrMoreCommits(1));
     }
 
 

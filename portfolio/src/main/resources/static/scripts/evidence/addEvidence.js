@@ -1,4 +1,4 @@
-// If the evidence title/description are not valid, set the save button to disabled.
+// If the evidence title/description are not valid, set the save button to disable.
 function checkValid() {
     if (evidenceId === -1) {
         document.getElementById('evidence-form__save').disabled =
@@ -162,23 +162,23 @@ function editSkill(tag) {
     })
 }
 
+function checkSkillExists(newSkill, skillsToCheck) {
+    for (const testSkill of skillsToCheck) {
+        if (testSkill.toLowerCase() === newSkill.toLowerCase().replaceAll("_", " ")) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function submitSkillEdit() {
     const editedSkill = document.getElementById("editable-skill-tag");
     if (editedSkill) {
         const newSkill = editedSkill.value.replaceAll("_", " ").trim().replaceAll(" ", "_");
         const oldSkill = editedSkill.getAttribute('data-old-value').replaceAll(" ", "_");
 
-        let isAlreadySkill = false;
-        for (const testSkill of skillList) {
-            if (testSkill.toLowerCase() === newSkill.toLowerCase().replaceAll("_", " ")) {
-                isAlreadySkill = true;
-            }
-        }
-        for (const testSkill of ALL_SKILLS) {
-            if (testSkill.toLowerCase() === newSkill.toLowerCase().replaceAll("_", " ")) {
-                isAlreadySkill = true;
-            }
-        }
+        let isAlreadySkill = checkSkillExists(newSkill, skillList) || checkSkillExists(newSkill, ALL_SKILLS);
+
         const skillsError = document.getElementById("evidence-form__skills-error");
         if (newSkill === "" || newSkill === "_") {
             skillsError.innerHTML = "Skill not saved: skills can't be empty";
@@ -636,10 +636,10 @@ skillsDiv.addEventListener('click', (event) => {
         skillsInput.focus();
     }
 });
-skillsInput.addEventListener('focus', (event) => {
+skillsInput.addEventListener('focus', () => {
     skillsDiv.style.outline = 'black solid 2px';
 });
-skillsInput.addEventListener('blur', (event) => {
+skillsInput.addEventListener('blur', () => {
     skillsDiv.style.outline = '';
 });
 
@@ -647,13 +647,13 @@ skillsInput.addEventListener('blur', (event) => {
 /**
  * allows clicking skills container to select the input and puts outline on div
  */
-usersDiv.addEventListener('click', (event) => {
+usersDiv.addEventListener('click', () => {
     usersInput.focus();
 });
-usersInput.addEventListener('focus', (event) => {
+usersInput.addEventListener('focus', () => {
     usersDiv.style.outline = 'black solid 2px';
 });
-usersInput.addEventListener('blur', (event) => {
+usersInput.addEventListener('blur', () => {
     usersDiv.style.outline = '';
 });
 
@@ -670,7 +670,7 @@ document.getElementById("users-input").dispatchEvent(new Event('input', {
 }))
 
 
-var commitsModal = document.getElementById('add-evidence-commits__modal')
+let commitsModal = document.getElementById('add-evidence-commits__modal')
 commitsModal.addEventListener('show.bs.modal', function (event) {
     let id
     for (let child of document.getElementById("commit-selection-box").children) {

@@ -2,11 +2,9 @@ package nz.ac.canterbury.seng302.portfolio.service.group;
 
 import nz.ac.canterbury.seng302.portfolio.model.group.PortfolioGroup;
 import nz.ac.canterbury.seng302.portfolio.repository.group.PortfolioGroupRepository;
-import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -73,7 +71,7 @@ public class PortfolioGroupService {
 
     /**
      * Returns a list of portfolio groups that have the given parent project
-     * @param parentProjectId Id of the required parent project
+     * @param parentProjectId id of the required parent project
      * @return A list of portfolio groups with the given parent project
      */
     public List<PortfolioGroup> findPortfolioGroupsByParentProjectId(int parentProjectId) {

@@ -54,7 +54,7 @@ async function fetchChartData(dataType) {
     if (dataType === 'dataOverTime') {
         url = new URL (`${CONTEXT}/group-${GROUP_ID}-dataOverTime?`);
     }
-    return await fetch(url+new URLSearchParams({startDateString: START_DATE, endDateString: END_DATE}), {
+    return fetch(url+new URLSearchParams({startDateString: START_DATE, endDateString: END_DATE}), {
         method: "GET",
     }).then(res => {
         return res.json();
@@ -66,9 +66,6 @@ async function fetchChartData(dataType) {
  * with the received data.
  */
 async function updateGroupMembersData(chartData) {
-    // Fetch updated chart data
-    // let chartData = await fetchChartData('membersData')
-
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'Member');
@@ -94,8 +91,7 @@ async function updateGroupMembersData(chartData) {
  * with the received data
  */
 async function dataOverTimeChart(chartData) {
-    // let chartData = await fetchChartData('dataOverTime')
-
+    // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'Evidence');
     data.addColumn('number', 'Number of Evidence');
@@ -119,9 +115,6 @@ async function dataOverTimeChart(chartData) {
  * with the received data
  */
 async function updateCategoriesChart(chartData) {
-    // Fetch updated chart data
-    // let chartData = await fetchChartData('categories')
-
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'word');
@@ -149,9 +142,6 @@ async function updateCategoriesChart(chartData) {
  * with the received data
  */
 async function updateSkillsChart(chartData) {
-    // Fetch updated chart data
-    // let chartData = await fetchChartData('skills')
-
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'Skills');

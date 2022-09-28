@@ -17,9 +17,7 @@ import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-
 import java.sql.Date;
-import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.List;
 

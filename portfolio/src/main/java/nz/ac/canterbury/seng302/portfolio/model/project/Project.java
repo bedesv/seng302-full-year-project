@@ -16,6 +16,8 @@ public class Project {
     private Date projectStartDate;
     private Date projectEndDate;
 
+    private static final String DATE_STRING = "yyyy-MM-dd";
+
     public Project() {
         Calendar cal = Calendar.getInstance();
         projectName = String.format("Project %d", cal.get(Calendar.YEAR));
@@ -144,7 +146,7 @@ public class Project {
         this.projectEndDate = Project.stringToDate(date);
     }
 
-    public String getStartDateCalendarString() {return  Project.dateToString(this.projectStartDate, "yyyy-MM-dd"); }
+    public String getStartDateCalendarString() {return  Project.dateToString(this.projectStartDate, DATE_STRING); }
 
     /**
      * Calculates the day after the end date as a calendar string
@@ -155,9 +157,9 @@ public class Project {
         Calendar tempEndDate = Calendar.getInstance();
         tempEndDate.setTime(this.getEndDate());
         tempEndDate.add(Calendar.DATE, 1);
-        return  Project.dateToString(tempEndDate.getTime(), "yyyy-MM-dd");
+        return  Project.dateToString(tempEndDate.getTime(), DATE_STRING);
     }
 
     public String getEndDateCalendarString() {
-        return  Project.dateToString(this.projectEndDate, "yyyy-MM-dd"); }
+        return  Project.dateToString(this.projectEndDate, DATE_STRING); }
 }
