@@ -309,6 +309,7 @@ function toggleRowMobile(row) {
 
     if (tableIdRows.length === 0) {
         hideCopyButton();
+        removeButtonVisible(current, false)
     }
 }
 
@@ -541,8 +542,8 @@ function hideCopyButton() {
  */
 document.addEventListener("touchend", (event) => {
     console.log("CLICK");
-    if (event.target.classList.contains("group-row")) {
-        console.log("prevented defaults");
-        event.preventDefault();
-    }
+    // if (event.target.classList.contains("group-row")) {
+    //     console.log("prevented defaults");
+    //     event.preventDefault();
+    // }
 }, false);
