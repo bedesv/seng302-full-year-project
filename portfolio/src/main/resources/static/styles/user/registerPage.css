@@ -27,7 +27,6 @@ html {
 body {
     display: table-cell;
     vertical-align: middle;
-    font-family: "Calibri Light", serif;
     background: #FBAA60;
 }
 
@@ -63,6 +62,7 @@ label.helper{
     margin-left: 10px;
     font-style: italic;
     font-weight: normal;
+    font-size: small;
     color: #888888;
 }
 
