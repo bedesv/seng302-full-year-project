@@ -1602,4 +1602,99 @@ class EvidenceServiceTests {
         assertEquals(3, groupsSkills.size());
     }
 
+    //////GET GROUPS EVIDENCE//////////
+    //////FILTER BY CATEGORY///////////
+    @Test
+    void givenGroupExists_withNoMembers_getEvidenceByCategories() {
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterByCategory(testGroup, projects.get(2).getId(), Categories.QUALITATIVE, smallLimit);
+        assertTrue(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    void givenGroupExists_withOneMembers_withoutEvidence_getEvidenceByCategories() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterByCategory(testGroup, projects.get(2).getId(), Categories.SERVICE, smallLimit);
+        assertTrue(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withOneMember_withOneEvidence_withoutCategory_getEvidenceByCategories() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        Instant now = Instant.now(); //current date
+        Evidence evidence = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(10))), "skill1");
+        evidence.setCategories(Set.of(Categories.QUANTITATIVE));
+        evidenceService.saveEvidence(evidence);
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterByCategory(testGroup, projects.get(2).getId(), Categories.SERVICE, smallLimit);
+        assertTrue(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withOneMember_withOneEvidence_withCategory_getEvidenceByCategories() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        Instant now = Instant.now(); //current date
+        Evidence evidence = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(10))), "skill1");
+        evidence.setCategories(Set.of(Categories.SERVICE, Categories.QUALITATIVE));
+        evidenceService.saveEvidence(evidence);
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterByCategory(testGroup, projects.get(2).getId(), Categories.SERVICE, smallLimit);
+        assertEquals(1, groupsEvidence.size());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withMultipleMembers_AllWithoutEvidence_getEvidenceByCategories() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterByCategory(testGroup, projects.get(2).getId(), Categories.SERVICE, smallLimit);
+        assertTrue(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withMultipleMembers_AllWithOneEvidence_WithoutCategories_getEvidenceByCategories() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+
+        Instant now = Instant.now(); //current date
+        Evidence evidence = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(10))), "skill1");
+        evidence.setCategories(Set.of( Categories.QUALITATIVE));
+        Evidence evidence1 = new Evidence(1, projects.get(2).getId(), "title2", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(10))), "skill1");
+        evidence1.setCategories(Set.of( Categories.QUANTITATIVE));
+        Evidence evidence2 = new Evidence(2, projects.get(2).getId(), "title2", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(10))), "skill1");
+        evidence2.setCategories(Set.of( Categories.QUALITATIVE));
+        evidenceRepository.save(evidence);
+        evidenceRepository.save(evidence1);
+        evidenceRepository.save(evidence2);
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterByCategory(testGroup, projects.get(2).getId(), Categories.SERVICE, smallLimit);
+        assertTrue(groupsEvidence.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void givenGroupExists_withMultipleMembers_AllWithOneEvidence_WithCategories_getEvidenceByCategories() {
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(0).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(1).build()));
+        testGroup.addMember(new User(UserResponse.newBuilder().setId(2).build()));
+
+        Instant now = Instant.now(); //current date
+        Evidence evidence = new Evidence(0, projects.get(2).getId(), "title1", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(10))), "skill1");
+        evidence.setCategories(Set.of( Categories.SERVICE));
+        Evidence evidence1 = new Evidence(1, projects.get(2).getId(), "title2", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(10))), "skill1");
+        evidence1.setCategories(Set.of( Categories.SERVICE));
+        Evidence evidence2 = new Evidence(2, projects.get(2).getId(), "title3", TEST_DESCRIPTION, Date.from(now.minus(Duration.ofDays(10))), "skill1");
+        evidence2.setCategories(Set.of( Categories.SERVICE));
+        evidenceRepository.save(evidence);
+        evidenceRepository.save(evidence1);
+        evidenceRepository.save(evidence2);
+
+        List<PortfolioEvidence> groupsEvidence = evidenceService.getEvidenceForPortfolioByGroupFilterByCategory(testGroup, projects.get(2).getId(), Categories.SERVICE, 3);
+        assertEquals(3, groupsEvidence.size());
+    }
+
 }

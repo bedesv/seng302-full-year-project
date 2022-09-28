@@ -614,11 +614,12 @@ public class EvidenceService {
         List<PortfolioEvidence> evidenceListByCategory = new ArrayList<>();
         for (User user: group.getMembers()) {
             for (PortfolioEvidence portfolioEvidence: getEvidenceForPortfolio(user.getId(), projectId)) {
-                if (portfolioEvidence.getCategories().contains(category)) {
+                if (portfolioEvidence.getCategories().contains(category) || (category == null && portfolioEvidence.getCategories().isEmpty())) {
                     evidenceListByCategory.add(portfolioEvidence);
                 }
             }
         }
+        PORTFOLIO_LOGGER.info("Fetched group evidence filtered by category");
         return evidenceListByCategory.stream().limit(limit).toList();
     }
 }

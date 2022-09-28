@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller.group;
 
+import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
+import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.group.GroupRepositorySettings;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class GroupController {
@@ -169,6 +172,48 @@ public class GroupController {
         Group group = new Group(response);
         Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
         model.addAttribute("evidenceList", evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(group, project.getId(), skill, GROUP_HOME_EVIDENCE_LIMIT));
+        return "fragments/evidence";
+    }
+
+    /**
+     * Fetches the GROUP_HOME_EVIDENCE_LIMIT most recent pieces of evidence for the given group with
+     * the given category
+     * @param model The model to add the data to
+     * @param category The category to filter by. Is '#no_category' if wanting to get evidence with no category
+     * @param id The id of the group to fetch evidence for
+     * @return The evidence page with the new evidence filled in
+     */
+    @GetMapping("/group-{id}-evidence-categories")
+    public String getGroupEvidenceFilteredByCategories(Model model,
+                                                       @RequestParam("category") String category,
+                                                       @PathVariable String id) {
+        int groupId = Integer.parseInt(id);
+        GroupDetailsResponse response = groupsClientService.getGroupDetailsById(groupId);
+        if (response.getGroupId() == 0) {
+            return "redirect:/groups";
+        }
+
+        Group group = new Group(response);
+        Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
+
+        Categories categorySelection;
+        List<PortfolioEvidence> evidenceList;
+
+        if (Objects.equals(category, "Quantitative")) {
+            categorySelection = Categories.QUANTITATIVE;
+        } else if (Objects.equals(category, "Qualitative")) {
+            categorySelection = Categories.QUALITATIVE;
+        } else  if (Objects.equals(category, "Service")) {
+            categorySelection = Categories.SERVICE;
+        } else if (Objects.equals(category, "#no_categories")) {
+            categorySelection = null;
+        } else {
+            return "redirect:/groups";
+        }
+
+        evidenceList = evidenceService.getEvidenceForPortfolioByGroupFilterByCategory(group, project.getId(), categorySelection, GROUP_HOME_EVIDENCE_LIMIT);
+
+        model.addAttribute("evidenceList", evidenceList);
         return "fragments/evidence";
     }
 
