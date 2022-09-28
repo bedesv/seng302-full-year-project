@@ -13,14 +13,14 @@ tag-checker:
   only:
     - tags
 
-junit-identityprovider:
-  stage: test
-  script:
-    - cd identityprovider
-    - ./gradlew test
-  artifacts:
-    paths:
-      - identityprovider/build/jacoco/test-report.xml
+#junit-identityprovider:
+#  stage: test
+#  script:
+#    - cd identityprovider
+#    - ./gradlew test
+#  artifacts:
+#    paths:
+#      - identityprovider/build/jacoco/test-report.xml
 
 #junit-portfolio:
 #  stage: test
