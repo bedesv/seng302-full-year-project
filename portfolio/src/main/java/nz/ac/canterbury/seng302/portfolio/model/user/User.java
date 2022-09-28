@@ -115,11 +115,6 @@ public class User {
 
     public int getId(){return id;}
 
-    public Collection<UserRole> getRolesList() {
-        return roles;
-    }
-
-
     /**
      * Gets roles in string form. Useful for display on the website.
      * Each role is split into capitalised words.
@@ -208,6 +203,14 @@ public class User {
                 && this.profileImagePath.equals(user.profileImagePath)
                 && this.id == user.id;
 
+    }
+
+    public boolean isTeacher() {
+        return roles.contains(UserRole.TEACHER) || roles.contains(UserRole.COURSE_ADMINISTRATOR);
+    }
+
+    public boolean isAdmin() {
+        return roles.contains(UserRole.COURSE_ADMINISTRATOR);
     }
 
     @Override
