@@ -247,8 +247,10 @@ public class Evidence {
     public void toggleHighFive(int userId) {
         if(highFives.contains(userId)) {
             highFives.remove((Integer) userId);
+            System.out.println("User " + userId + " removed high five from evidence " + this.getId());
         } else {
             highFives.add(userId);
+            System.out.println("User " + userId + " added high five to evidence " + this.getId());
         }
     }
 

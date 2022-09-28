@@ -4,12 +4,12 @@
  * @param userId
  * @returns {Promise<void>}
  */
-async function toggleEvidence(evidenceId, userId) {
+async function toggleEvidence(evidenceId) {
 
     let url;
-    url = new URL (`${CONTEXT}/evidence-${evidenceId}-highfive?`);
+    url = new URL (`${CONTEXT}/evidence-${evidenceId}-highfive`);
 
-    await fetch(url + new URLSearchParams({userId: userId}), {
+    await fetch(url, {
         method: "POST"
     });
 
@@ -18,8 +18,8 @@ async function toggleEvidence(evidenceId, userId) {
 
 async function updateEvidenceFragment(evidenceId) {
     let url;
-    url = new URL(`${CONTEXT}/evidence-${evidenceId}`);
-    document.getElementById(`evidence-${evidenceId}`).innerHTML = await fetch(url, {
+    url = new URL(`${CONTEXT}/evidence-${evidenceId}-highfive`);
+    document.getElementById(`evidence-${evidenceId}-highfive`).innerHTML = await fetch(url, {
         method: "GET"
     }).then(res => {
         return res.text();

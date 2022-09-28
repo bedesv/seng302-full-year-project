@@ -45,7 +45,6 @@ public class PortfolioEvidence {
         this.linkedUsers = userList;
         this.commits = evidence.getCommits();
         this.highFives = evidence.getHighFives();
-        this.highFives.add(7);
     }
 
     public int getId() {

@@ -45,6 +45,8 @@ public class EvidenceService {
     public void toggleHighFive(int evidenceId, int userId) {
         Evidence evidence = getEvidenceById(evidenceId);
         evidence.toggleHighFive(userId);
+        System.out.println(evidence.getHighFives());
+        repository.save(evidence);
         String message = ("User: " + userId + " high-fived evidence: " + evidenceId);
         PORTFOLIO_LOGGER.info(message);
     }
@@ -116,6 +118,7 @@ public class EvidenceService {
     public List<PortfolioEvidence> convertEvidenceForPortfolio(List<Evidence> evidenceList) {
         List<PortfolioEvidence> portfolioEvidenceList = new ArrayList<>();
         for (Evidence evidence: evidenceList) {
+            System.out.println(evidence.getHighFives());
             List<User> userList = new ArrayList<>();
             for (int linkedUserId: evidence.getLinkedUsers()) {
                 userList.add(userService.getUserAccountById(linkedUserId));
