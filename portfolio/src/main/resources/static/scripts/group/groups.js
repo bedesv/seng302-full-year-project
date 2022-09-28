@@ -56,6 +56,20 @@ document.addEventListener("dragstart", function () {
 })
 
 /**
+ * Copies members to group specified by groupId. Function is called by copy buttons for mobile.
+ * @param groupId Group to copy to
+ */
+function copyHere(groupId) {
+    clearTableSelection(lastTable);
+    lastRow = null;
+    clearTableSelection(currentTable);
+    selectRows(clipboard);
+    let group = document.getElementById(groupId).parentElement.parentElement;
+    pasteMembers(group);
+    hideCopyButton();
+}
+
+/**
  * Overrides the allowDrop event so that users aren't allowed to be dropped
  * in groups that don't allow it (e.g. groupless group)
  * @param ev allowDrop event
@@ -82,11 +96,14 @@ function copyMembers(currRow) {
     } else {
         for (let row of currentTable) {
             if (row.className === "selected") {
-                clipboard.push(row)
+                clipboard.push(row);
             }
         }
     }
-    removeButtonVisible(currentTable, true);
+    if (!calledByMobile) {
+        removeButtonVisible(currentTable, true);
+        calledByMobile = false;
+    }
 }
 
 /**
@@ -272,6 +289,37 @@ function toggleRow(row) {
 }
 
 /**
+ * Takes a row and toggles it from selected to unselected, or from unselected to selected
+ * For mobile called by touch.
+ * @param row the row to have selection toggled
+ */
+let calledByMobile;
+function toggleRowMobile(row) {
+    lastTable = currentTable
+    currentTable = row.parentNode.getElementsByTagName("tr");
+    let current = row.parentElement;
+    if (lastTable !== currentTable) {
+        clearTableSelection(lastTable);
+        lastRow = null;
+        hideCopyButton();
+    }
+    row.className = row.className === 'selected' ? 'unselected' : 'selected';
+    lastRow = row;
+    viewCopyButton(row);
+    let tableIdRows = current.getElementsByClassName("selected");
+    if (tableIdRows.length === 0) {
+        clearTableSelection(lastTable)
+        clearTableSelection(currentTable);
+        lastRow = null;
+        hideCopyButton();
+        calledByMobile = true;
+    } else {
+        calledByMobile = false;
+    }
+    copyMembers(row);
+}
+
+/**
  * Takes a list of two indexes, sorts them, then marks all rows of the table between (inclusive) those indices as selected
  * @param indexes two table indexes in random order
  */
@@ -383,6 +431,7 @@ async function removeSelectedUsers(button) {
             return res.text()
         })
 
+        hideCopyButton();
         // Update the group table. Don't select any members
         updateTable(groupId, response, [])
 
@@ -400,6 +449,7 @@ async function removeSelectedUsers(button) {
  */
 function removeButtonVisible(table, visible) {
     const groupId = table[0].parentNode.parentNode.id
+
 
     // Don't do anything if it's the groupless group or if
     // it's the teacher group and the user is a teacher
@@ -459,10 +509,46 @@ function expandGroup(group) {
  */
 function getTeacherIds() {
     const teacherRows = document.getElementById("group_" + TEACHER_GROUP_ID).getElementsByClassName("user_id");
-
     let teacherIds = []
     for (let teacher of teacherRows) {
         teacherIds.push(parseInt(teacher.innerText, 10))
     }
     return teacherIds
 }
+
+/**
+ * Makes copy button visible for mobile users to copy members.
+ * @param row
+ */
+function viewCopyButton(row) {
+    let tableId = row.parentElement.parentElement.id;
+    let copyButtons = document.getElementsByClassName("groups__copy-member-mobile");
+    for (let i = 0; i < copyButtons.length; i++) {
+        let groupId = copyButtons[i].id;
+        if ((parseInt(groupId, 10) === GROUPLESS_GROUP_ID || (parseInt(groupId, 10) === TEACHER_GROUP_ID && (userIsTeacher && !userIsAdmin))) || parseInt(groupId, 10) === parseInt(tableId, 10)) {
+            copyButtons[i].hidden = true;
+        } else {
+            copyButtons[i].hidden = false;
+        }
+
+    }
+}
+
+/**
+ * hides all copy buttons
+ */
+function hideCopyButton() {
+    let copyButtons = document.getElementsByClassName("groups__copy-member-mobile");
+    for (let i = 0; i < copyButtons.length; i++) {
+        copyButtons[i].hidden = true;
+    }
+}
+
+/**
+ * Event listener stops mouse up/down from triggering on mobile click of member row.
+ */
+document.addEventListener("touchend", (event) => {
+    if (event.target.classList.contains("group-row")) {
+        event.preventDefault();
+    }
+}, false);
