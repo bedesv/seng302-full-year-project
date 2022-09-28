@@ -45,6 +45,7 @@
             <a id="new-group-button" th:if="${authUserIsTeacher}" th:href="@{editGroup-{id}(id=-1)}">New Group</a>
             <div class="group" th:each="group : *{groups}" th:with="tableDropable=${authUserIsTeacher && !(group.getGroupId == TEACHER_GROUP_ID && !userIsAdmin)}" th:ondragover="${tableDropable} ? 'allowDrop(event)' : ''" th:ondrop="${tableDropable} ? 'pasteMembers(this)' : ''">
                 <div class="group__details-wrapper">
+                    <p th:text="${authUserIsTeacher}"></p>
                     <h2 class="group__name" th:text="${group.getShortName} + ' - ' + ${group.getLongName}" type="button" data-bs-toggle="collapse" th:data-bs-target="'#group_' + ${group.getGroupId}" aria-expanded="false" th:aria-controls="group_ + ${group.getGroupId}"></h2>
                     <div class="group__details collapse" th:id="group_ + ${group.getGroupId}">
                         <h4>Members</h4>
