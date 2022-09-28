@@ -56,13 +56,13 @@
 
     <div id="carouselExampleIndicators" class="carousel slide" data-bs-interval="false" data-bs-ride="true">
         <div class="carousel-inner">
-            <div class="carousel-item" th:classappend="${!portfolioSelected} ? active">
+            <div class="carousel-item" th:classappend="${profileSelected} ? active">
                 <div th:replace="fragmentsUser/profile"></div>
             </div>
             <div id="portfolio" class="carousel-item" th:classappend="${portfolioSelected} ? active">
                 <div th:replace="fragmentsUser/portfolioMain"></div>
             </div>
-            <div class="carousel-item">
+            <div class="carousel-item" th:classappend="${statisticsSelected} ? active">
                 <div th:replace="fragmentsUser/userStatistics"></div>
             </div>
         </div>

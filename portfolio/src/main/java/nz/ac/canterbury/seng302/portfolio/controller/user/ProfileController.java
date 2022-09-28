@@ -42,6 +42,8 @@ public class ProfileController {
     @Autowired
     private PortfolioUserService portfolioUserService;
     private static final String PORTFOLIO_SELECTED = "portfolioSelected";
+    private static final String STATISTICS_SELECTED = "statisticsSelected";
+    private static final String PROFILE_SELECTED = "profileSelected";
 
     /**
      * Display the user's profile page.
@@ -53,13 +55,19 @@ public class ProfileController {
     public String profile(
             @AuthenticationPrincipal AuthState principal,
             @RequestParam(PORTFOLIO_SELECTED) Optional<Boolean> portfolioSelected,
+            @RequestParam(STATISTICS_SELECTED) Optional<Boolean> statisticsSelected,
+            @RequestParam(PROFILE_SELECTED) Optional<Boolean> profileSelected,
             Model model
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
         if (portfolioSelected.isPresent()) {
             model.addAttribute(PORTFOLIO_SELECTED, portfolioSelected.get());
+        } else if (statisticsSelected.isPresent()) {
+            model.addAttribute(STATISTICS_SELECTED, statisticsSelected.get());
+        } else if (profileSelected.isPresent()) {
+            model.addAttribute(PROFILE_SELECTED, profileSelected.get());
         } else {
-            model.addAttribute(PORTFOLIO_SELECTED, false);
+            model.addAttribute(PROFILE_SELECTED, true);
         }
 
         int projectId = portfolioUserService.getCurrentProject(user.getId()).getId();
@@ -85,6 +93,8 @@ public class ProfileController {
     public String viewProfile(
             @AuthenticationPrincipal AuthState principal,
             @RequestParam(PORTFOLIO_SELECTED) Optional<Boolean> portfolioSelected,
+            @RequestParam(STATISTICS_SELECTED) Optional<Boolean> statisticsSelected,
+            @RequestParam(PROFILE_SELECTED) Optional<Boolean> profileSelected,
             @PathVariable("userId") int userId,
             Model model
     ) {
@@ -95,8 +105,12 @@ public class ProfileController {
         model.addAttribute("pageUser", pageUser);
         if (portfolioSelected.isPresent()) {
             model.addAttribute(PORTFOLIO_SELECTED, portfolioSelected.get());
+        } else if (statisticsSelected.isPresent()) {
+            model.addAttribute(STATISTICS_SELECTED, statisticsSelected.get());
+        } else if (profileSelected.isPresent()) {
+            model.addAttribute(PROFILE_SELECTED, profileSelected.get());
         } else {
-            model.addAttribute(PORTFOLIO_SELECTED, false);
+            model.addAttribute(PROFILE_SELECTED, true);
         }
         model.addAttribute("groups", groups);
         Project project = projectService.getProjectById(projectId);
