@@ -73,8 +73,11 @@ public class GroupsController {
     }
 
     /**
-     * Create groupless group by removing users that are in a group
-     * @return groupless group
+     * Gets all users that are not in a specified group
+     * @param groups The groups the users cannot be in
+     * @param allUsers A full list of users
+     * @return A group that contains only users who are not in a group
+     *
      */
     protected Group getGrouplessGroup(List<Group> groups, List<User> allUsers){
         List<User> groupless = new ArrayList<>();
@@ -97,8 +100,9 @@ public class GroupsController {
     }
 
     /**
-     * Create teacher group from user roles
-     * @return teacher group
+     * Gets a group of all users who are teachers.
+     * @param allUsers A list of all users
+     * @return The teacher group
      */
     protected Group getTeacherGroup(List<User> allUsers){
         List<User> teachers = new ArrayList<>();
@@ -169,7 +173,10 @@ public class GroupsController {
      */
     private Group getGroup(int groupId, int projectId) {
         if (groupId == GROUPLESS_GROUP_ID){
-            return getGrouplessGroup(groupsClientService.getAllGroupsInProject(projectId), getAllUsers());
+            List<Group> groups = groupsClientService.getAllGroupsInProject(projectId);
+            List<User> users = getAllUsers();
+            groups.add(getTeacherGroup(users));
+            return getGrouplessGroup(groups, users);
         } else if (groupId == TEACHER_GROUP_ID) {
             return getTeacherGroup(getAllUsers());
         } else {
@@ -203,15 +210,20 @@ public class GroupsController {
         // Remove each user from all their groups
         for (int memberId : members) {
             for (Group tempGroup : groupsClientService.getAllGroupsInProject(projectId)) {
-                if (groupsClientService.userInGroup(memberId, tempGroup.getGroupId())) {
-                    groupsClientService.removeGroupMembers(tempGroup.getGroupId(), List.of(memberId));
+                for (User user : tempGroup.getMembers()) {
+                    if (user.getId() == memberId) {
+                        groupsClientService.removeGroupMembers(tempGroup.getGroupId(), List.of(memberId));
+                    }
                 }
             }
             if (userAccountClientService.getUserAccountById(memberId).getRoles().contains(UserRole.TEACHER)) {
                 userAccountClientService.removeRole(memberId, UserRole.TEACHER);
             }
         }
-        return getGrouplessGroup(groupsClientService.getAllGroupsInProject(projectId), getAllUsers());
+        List<Group> groups = groupsClientService.getAllGroupsInProject(projectId);
+        List<User> users = getAllUsers();
+        groups.add(getTeacherGroup(users));
+        return getGrouplessGroup(groups, users);
     }
 
     /**
@@ -258,7 +270,10 @@ public class GroupsController {
         if (groupId == TEACHER_GROUP_ID) { // teacher group
             group = getTeacherGroup(getAllUsers());
         } else if (groupId == GROUPLESS_GROUP_ID) { // groupless group
-            group = getGrouplessGroup(groupsClientService.getAllGroupsInProject(projectId), getAllUsers());
+            List<Group> groups = groupsClientService.getAllGroupsInProject(projectId);
+            List<User> users = getAllUsers();
+            groups.add(getTeacherGroup(users));
+            group = getGrouplessGroup(groups, users);
         } else {
             group = new Group(groupsClientService.getGroupDetailsById(groupId));
         }
