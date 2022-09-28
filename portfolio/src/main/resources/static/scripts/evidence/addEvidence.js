@@ -162,8 +162,8 @@ function editSkill(tag) {
     })
 }
 
-function checkSkillExists(newSkill, skillList) {
-    for (const testSkill of skillList) {
+function checkSkillExists(newSkill, skillsToCheck) {
+    for (const testSkill of skillsToCheck) {
         if (testSkill.toLowerCase() === newSkill.toLowerCase().replaceAll("_", " ")) {
             return true;
         }
