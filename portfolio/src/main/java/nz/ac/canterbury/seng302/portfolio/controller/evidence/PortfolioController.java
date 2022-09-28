@@ -64,6 +64,7 @@ public class PortfolioController {
         model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(evidenceList));
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
+        model.addAttribute("portfolioLinks", true);
         return "templatesEvidence/portfolio";
     }
 

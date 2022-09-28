@@ -42,11 +42,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="evidence__categories">
-                    <a th:each="category: ${evidence.getCategories}" class="category__link" th:text="${category}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${evidence.getOwnerId}} + '-categories?category=' + ${category}"></a>
+                <div th:if="${portfolioLinks == true}">
+                    <div class="evidence__categories">
+                        <button th:each="category: ${evidence.getCategories}" class="category__link" th:text="${category}" th:onclick="updateUserPortfolioWithCategory([[${category}]])"></button>
+                    </div>
+                    <div class="evidence__skills">
+                        <button th:each="skill: ${evidence.getSkills}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}"  th:onclick="updateUserPortfolioWithSkill([[${skill}]])"></button>
+                    </div>
                 </div>
-                <div class="evidence__skills">
-                    <a th:each="skill: ${evidence.getSkills}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${evidence.getOwnerId}} + '-skill?skill=' + ${skill}"></a>
+                <div th:if="${portfolioLinks == false}">
+                    <div class="evidence__categories">
+                        <a th:each="category: ${evidence.getCategories}" class="category__link" th:text="${category}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${evidence.getOwnerId}} + '-categories?category=' + ${category}"></a>
+                    </div>
+                    <div class="evidence__skills">
+                        <a th:each="skill: ${evidence.getSkills}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${evidence.getOwnerId}} + '-skill?skill=' + ${skill}"></a>
+                    </div>
                 </div>
                 <!-- Commits -->
                 <h4 th:if="${evidence.getNumberCommits() >  0}" class="evidence-form__commits-title">Linked Commits</h4>

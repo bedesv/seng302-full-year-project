@@ -52,7 +52,7 @@ public class ProfileController {
         } else {
             model.addAttribute(PORTFOLIO_SELECTED, false);
         }
-
+        model.addAttribute("portfolioLinks", true);
         int projectId = portfolioUserService.getCurrentProject(user.getId()).getId();
         List<Group> groups = groupsClientService.getAllGroupsUserIn(projectId, user.getId());
 
@@ -86,6 +86,7 @@ public class ProfileController {
         } else {
             model.addAttribute(PORTFOLIO_SELECTED, false);
         }
+        model.addAttribute("portfolioLinks", true);
         model.addAttribute("groups", groups);
         if (Objects.equals(pageUser.getUsername(), "") || user.getId() == pageUser.getId()) {
             return "redirect:/profile";
