@@ -15,10 +15,14 @@ h1 {
 }
 
 .carousel-buttons {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    gap: 15px;
+    display: flex;
+    flex-direction: row;
     justify-content: center;
+    overflow: hidden;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
+    width:fit-content;
+    margin: 1rem auto;
 }
 
 /* User tab buttons */
@@ -27,11 +31,11 @@ h1 {
     /*border: 1px solid var(--primary-highlight);*/
     border: 0;
     background-color: var(--surface);
-    border-radius: 8px;
     height: 3rem;
-    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
-    width: 100%;
+    /*width: 100%;*/
     font-size: 1.5rem;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .user-tab__button:hover {
