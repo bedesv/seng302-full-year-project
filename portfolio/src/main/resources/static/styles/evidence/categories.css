@@ -25,31 +25,31 @@ html {
 }
 
 .category__link {
-    border: 1px solid #A82810;
+    /*border: 1px solid #A82810;*/
+    border: none;
     border-radius: 5px;
-    background-color: #A82810;
+    background-color: var(--outline);
     padding: 2px 4px 2px 4px;
     margin: 4px;
     display: inline;
     text-decoration: none;
-    color: white;
+    color: var(--text-surface);
     text-align: center;
 }
 
 .category__link:hover {
-    color:white;
     filter: brightness(85%);
 }
 
 .no-category__link {
-    border: 1px solid #A82810;
+    border: 1px solid ;
     border-radius: 5px;
-    background-color: var(--color-complement);
+    background-color: var(--surface-highlight);
     padding: 2px 4px 2px 4px;
     margin: 4px;
     display: inline;
     text-decoration: none;
-    color: #A82810;
+    color: var(--text-surface);
     text-align: center;
 }
 
