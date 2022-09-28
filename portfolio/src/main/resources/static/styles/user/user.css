@@ -39,7 +39,7 @@ h1 {
 }
 
 .user-tab__button:hover {
-    color: var(--text-surface-inverse);
+    color: var(--text-surface-highlight);
     background-color: var(--primary-highlight);
     height: 3rem;
     box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
@@ -47,7 +47,7 @@ h1 {
 }
 
 .active-carousel-tab {
-    color: var(--text-surface-inverse);
+    color: var(--text-surface-highlight);
     background-color: var(--primary-highlight);
     box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
 }
