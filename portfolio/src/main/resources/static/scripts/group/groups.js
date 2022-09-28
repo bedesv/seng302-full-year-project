@@ -431,6 +431,7 @@ async function removeSelectedUsers(button) {
             return res.text()
         })
 
+        hideCopyButton();
         // Update the group table. Don't select any members
         updateTable(groupId, response, [])
 
