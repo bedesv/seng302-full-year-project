@@ -64,7 +64,7 @@ html {
     display: flex;
     flex-direction: row;
     vertical-align: middle;
-    width: 80%;
+    width: 90%;
 }
 
 .high-fives__button {
@@ -88,7 +88,7 @@ html {
 .evidence-title__weblinks-commits-div {
     display: flex;
     flex-direction:row;
-    padding-top: 25px;
+    align-items: center;
     margin-left: auto;
 }
 
@@ -362,3 +362,4 @@ p {
 .user-tag-nickname {
     color: #636363;
 }
+
