@@ -100,7 +100,10 @@ function copyMembers(currRow) {
             }
         }
     }
-    removeButtonVisible(currentTable, true);
+    if (!calledByMobile) {
+        removeButtonVisible(currentTable, true);
+        calledByMobile = false;
+    }
 }
 
 /**
@@ -290,11 +293,11 @@ function toggleRow(row) {
  * For mobile called by touch.
  * @param row the row to have selection toggled
  */
+let calledByMobile;
 function toggleRowMobile(row) {
     lastTable = currentTable
     currentTable = row.parentNode.getElementsByTagName("tr");
     let current = row.parentElement;
-    let tableIdRows = current.getElementsByClassName("selected");
     if (lastTable !== currentTable) {
         clearTableSelection(lastTable);
         lastRow = null;
@@ -303,10 +306,17 @@ function toggleRowMobile(row) {
     row.className = row.className === 'selected' ? 'unselected' : 'selected';
     lastRow = row;
     viewCopyButton(row);
+    let tableIdRows = current.getElementsByClassName("selected");
     if (tableIdRows.length === 0) {
+        clearTableSelection(lastTable)
+        clearTableSelection(currentTable);
+        lastRow = null;
         hideCopyButton();
-        removeButtonVisible(current, false)
+        calledByMobile = true;
+    } else {
+        calledByMobile = false;
     }
+    copyMembers(row);
 }
 
 /**
@@ -438,6 +448,7 @@ async function removeSelectedUsers(button) {
  */
 function removeButtonVisible(table, visible) {
     const groupId = table[0].parentNode.parentNode.id
+
 
     // Don't do anything if it's the groupless group or if
     // it's the teacher group and the user is a teacher
