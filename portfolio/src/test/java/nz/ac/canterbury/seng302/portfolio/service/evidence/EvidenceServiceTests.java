@@ -66,6 +66,8 @@ class EvidenceServiceTests {
         List<User> emptyList = new ArrayList<>();
         testGroup = new Group(0, "shortname", "longname", 0, emptyList);
         smallLimit = 2;
+        Mockito.doReturn(new User(UserResponse.newBuilder().setId(1).build())).when(userService).getUserAccountById(1);
+        Mockito.doReturn(new User(UserResponse.newBuilder().setId(2).build())).when(userService).getUserAccountById(2);
     }
 
     //Refresh the database after each test.
@@ -1312,5 +1314,88 @@ class EvidenceServiceTests {
         List<Boolean> response = evidenceService.validateEvidence(model, title, description, skills);
         //list should contain false, false = invalid attribute
         assertTrue(response.contains(false));
+    }
+    @Test
+    @Transactional
+    void whenUserHighFivesEvidence_testHighFiveAdded() {
+        Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
+        evidenceService.saveEvidence(evidence);
+        int testEvidenceId = evidence.getId();;
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        assertEquals(1, evidenceService.getNumberOfHighFives(testEvidenceId));
+    }
+
+    @Test
+    @Transactional
+    void whenUserAlreadyHighFivedEvidence_andUserUnHighFivesEvidence_testHighFiveRemoved() {
+        Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
+        evidenceService.saveEvidence(evidence);
+        int testEvidenceId = evidence.getId();;
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        assertEquals(0, evidenceService.getNumberOfHighFives(testEvidenceId));
+    }
+
+    @Test
+    @Transactional
+    void whenTwoUsersHighFived_andOneUserUnHighFivesEvidence_testHighFiveRemoved() {
+        Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
+        evidenceService.saveEvidence(evidence);
+        int testEvidenceId = evidence.getId();;
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        evidenceService.toggleHighFive(testEvidenceId, 2);
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        assertEquals(1, evidenceService.getNumberOfHighFives(testEvidenceId));
+    }
+
+    @Test
+    @Transactional
+    void whenNoUsersHaveHighFivedEvidence_testGetUsersWhoHaveHighFivedEvidence() {
+        Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
+        evidenceService.saveEvidence(evidence);
+        int testEvidenceId = evidence.getId();;
+        assertEquals(0, evidenceService.getHighFives(testEvidenceId).size());
+    }
+
+    @Test
+    @Transactional
+    void whenOneuserHasHighFivedEvidence_testGetUsersWhoHaveHighFivedEvidence() {
+        Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
+        evidenceService.saveEvidence(evidence);
+        int testEvidenceId = evidence.getId();;
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        assertEquals(1, evidenceService.getHighFives(testEvidenceId).size());
+
+        List<User> result = evidenceService.getHighFives(testEvidenceId);
+        assertEquals(1, result.size());
+        assertEquals(1, result.get(0).getId());
+    }
+
+    @Test
+    @Transactional
+    void whenTwoUsersHaveHighFivedEvidence_testGetUsersWhoHaveHighFivedEvidence() {
+        Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
+        evidenceService.saveEvidence(evidence);
+        int testEvidenceId = evidence.getId();;
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        evidenceService.toggleHighFive(testEvidenceId, 2);
+
+        List<User> result = evidenceService.getHighFives(testEvidenceId);
+        assertEquals(2, result.size());
+        assertEquals(1, result.get(0).getId());
+        assertEquals(2, result.get(1).getId());
+    }
+
+    @Test
+    @Transactional
+    void whenTwoUsersHaveHighFivedEvidence_andOneUserUnHighFivesEvidence_testGetUsersWhoHaveHighFivedEvidence() {
+        Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
+        evidenceService.saveEvidence(evidence);
+        int testEvidenceId = evidence.getId();;
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        evidenceService.toggleHighFive(testEvidenceId, 2);
+        evidenceService.toggleHighFive(testEvidenceId, 1);
+        assertEquals(1, evidenceService.getHighFives(testEvidenceId).size());
+        assertEquals(2, evidenceService.getHighFives(testEvidenceId).get(0).getId());
     }
 }

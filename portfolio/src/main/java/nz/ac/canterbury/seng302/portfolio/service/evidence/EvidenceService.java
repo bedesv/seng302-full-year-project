@@ -41,6 +41,47 @@ public class EvidenceService {
     private static final String SAVED_SUCCESSFULLY = " saved successfully";
 
     /**
+     * Toggles a high-five on the given piece of evidence for the given user
+     * @param evidenceId The id of the evidence to be high-fived
+     * @param userId The id of the user to add a high-five
+     */
+    public void toggleHighFive(int evidenceId, int userId) {
+        Evidence evidence = getEvidenceById(evidenceId);
+        evidence.toggleHighFive(userId);
+        String message = ("User: " + userId + " high-fived evidence: " + evidenceId);
+        PORTFOLIO_LOGGER.info(message);
+    }
+
+    /**
+     * Gets the user objects of the users who have high fived the given piece of evidence
+     * @param evidenceId The id of the evidence to fetch the users who have high-fived
+     * @return A list of user objects who have high-fived the piece of evidence
+     */
+    public List<User> getHighFives(int evidenceId) {
+        Evidence evidence = getEvidenceById(evidenceId);
+        List<Integer> userIdList = evidence.getHighFives();
+        List<User> userList = new ArrayList<>();
+        for(int userId: userIdList) {
+            userList.add(userService.getUserAccountById(userId));
+        }
+        String message = ("Getting list of users who have high-fived evidence: " + evidenceId);
+        PORTFOLIO_LOGGER.info(message);
+        return userList;
+    }
+
+    /**
+     * Gets the number of high-fives on the given piece of evidence
+     * @param evidenceId The id of the evidence to fetch the number of high-fives
+     * @return The number of high-fives on the piece of evidence
+     */
+    public int getNumberOfHighFives(int evidenceId) {
+        Evidence evidence = getEvidenceById(evidenceId);
+        String message = ("Getting number of high-fives on evidence: " + evidenceId);
+        PORTFOLIO_LOGGER.info(message);
+        return (evidence.getNumberOfHighFives());
+    }
+
+    /**
      * Updates a user's evidence with new skills.
      * Skills are space separated in order, i.e. old new old2 new2 old3 new3 ...
      *

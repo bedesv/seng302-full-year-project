@@ -273,6 +273,8 @@ html {
     margin: 1rem;
 }
 
+/* Groups Statistics */
+
 .group-statistics__flex-container {
     display: flex;
     flex-direction:column;
