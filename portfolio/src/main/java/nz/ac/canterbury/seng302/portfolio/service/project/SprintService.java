@@ -459,7 +459,8 @@ public class SprintService {
     }
 
     /**
-     * Set dropdown options for the
+     * Set dropdown options for graph refinements
+     * Gets dates projects, and sprint dates
      * @param model Global model
      * @param project current project
      */
