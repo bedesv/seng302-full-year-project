@@ -1,7 +1,8 @@
 #calendar__container {
     margin-top: 20px;
-    background-color: #F4EAE6;
+    background-color: var(--surface);
     border-radius: 5px;
+    color: var(--text-surface);
 }
 
 .fc-header-toolbar {
