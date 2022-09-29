@@ -295,10 +295,12 @@ html {
 }
 
 #open-modal__button {
-    padding: 0.5rem 1rem 0.5rem 1rem;
     font-size: x-large;
     height: 3rem;
-    margin: 1rem 1rem 1rem auto;
+    margin: 2rem 1rem 1rem auto;
+    background-color: var(--primary-highlight);
+    border-radius: 8px;
+    border: none;
 }
 
 #open-modal__button:hover {
