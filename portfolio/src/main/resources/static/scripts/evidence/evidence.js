@@ -3,7 +3,6 @@
  * @param evidenceId the evidence fragment that the high-five icon belongs too.
  */
 async function toggleEvidence(evidenceId) {
-    console.log(evidenceId);
     let url;
     url = new URL (`${CONTEXT}/evidence-${evidenceId}-highfive`);
 
