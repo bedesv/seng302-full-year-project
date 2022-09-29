@@ -61,6 +61,7 @@ public class PortfolioController {
         model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(evidenceList));
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
+        model.addAttribute("inPortfolio", true);
         return "templatesEvidence/portfolio";
     }
 
@@ -88,9 +89,10 @@ public class PortfolioController {
 
         model.addAttribute("evidenceList", evidenceList);
 
-        // Add all of the skills that the user has to the page
-        List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(user.getId(), projectId);
+        // Add all the skills that the user has to the page
+        List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
+        model.addAttribute("inPortfolio", true);
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
         if (Objects.equals(user.getUsername(), "")) {
             return "redirect:/profile";
