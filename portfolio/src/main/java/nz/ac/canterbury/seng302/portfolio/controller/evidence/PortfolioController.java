@@ -192,8 +192,8 @@ public class PortfolioController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return web link html element.
      */
-    @GetMapping("/evidence-{evidenceId}-highfive")
-    public String getEvidenceHighFive(
+    @GetMapping("/evidence-{evidenceId}-like")
+    public String getEvidenceLikes(
             @AuthenticationPrincipal AuthState principal,
             @PathVariable(name="evidenceId") String evidenceId,
             Model model
@@ -205,22 +205,23 @@ public class PortfolioController {
         PortfolioEvidence portfolioEvidence = evidenceService.convertEvidenceForPortfolio(List.of(evidence)).get(0);
         model.addAttribute("evidence", portfolioEvidence);
         model.addAttribute("pageUser", user);
-        return "fragments/highfive";
+        model.addAttribute("likedUsers", evidenceService.getLikes(id));
+        return "fragments/like";
     }
 
     /**
-     * Calls the toggle high five method where a user is added to an evidence's high-fives
-     * @param evidenceIdString ID of evidence being high-fived
+     * Calls the toggle high five method where a user is added to an evidence's likes
+     * @param evidenceIdString ID of evidence being liked
      */
-    @PostMapping("/evidence-{evidenceId}-highfive")
+    @PostMapping("/evidence-{evidenceId}-like")
     @ResponseStatus(value = HttpStatus.OK)
-    public void toggleHighFive(
+    public void toggleLike(
             @AuthenticationPrincipal AuthState principal,
             @PathVariable(name="evidenceId") String evidenceIdString
     ) {
         int userId = userService.getUserAccountByPrincipal(principal).getId();
         int evidenceId = Integer.parseInt(evidenceIdString);
-        evidenceService.toggleHighFive(evidenceId, userId);
+        evidenceService.toggleLike(evidenceId, userId);
     }
 
 }

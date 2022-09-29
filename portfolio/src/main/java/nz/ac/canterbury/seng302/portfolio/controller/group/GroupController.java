@@ -55,7 +55,7 @@ public class GroupController {
     private static final String GROUP_PAGE = "templatesGroup/group";
     private static final String GROUP_REPOSITORY = "fragmentsGroup/groupRepositorySettings";
     private static final String GROUPS_REDIRECT = "redirect:/groups";
-    private static final String EVIDENCE_FRAGMENT = "fragments/evidence";
+    private static final String EVIDENCE_FRAGMENT = "fragments/evidenceList";
     private static final String EVIDENCE_LIST = "evidenceList";
 
     /**
@@ -164,6 +164,7 @@ public class GroupController {
      */
     @GetMapping("/group-{id}-evidence-skill")
     public String getGroupEvidenceFilteredBySkill(Model model,
+                                                  @AuthenticationPrincipal AuthState principal,
                                                   @RequestParam("skill") String skill,
                                                   @PathVariable String id) {
         int groupId = Integer.parseInt(id);
@@ -174,6 +175,7 @@ public class GroupController {
         Group group = new Group(response);
         Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
         model.addAttribute(EVIDENCE_LIST, evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(group, project.getId(), skill, GROUP_HOME_EVIDENCE_LIMIT));
+        model.addAttribute("pageUser", userAccountClientService.getUserAccountByPrincipal(principal));
         return EVIDENCE_FRAGMENT;
     }
 
@@ -227,6 +229,7 @@ public class GroupController {
      */
     @GetMapping("/group-{id}-evidence")
     public String getGroupEvidence(Model model,
+                                   @AuthenticationPrincipal AuthState principal,
                                    @PathVariable String id) {
         int groupId = Integer.parseInt(id);
         GroupDetailsResponse response = groupsClientService.getGroupDetailsById(groupId);
@@ -235,6 +238,7 @@ public class GroupController {
         }
         Group group = new Group(response);
         Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
+        model.addAttribute("pageUser", userAccountClientService.getUserAccountByPrincipal(principal));
         model.addAttribute(EVIDENCE_LIST, evidenceService.getEvidenceForPortfolioByGroup(group, project.getId(), GROUP_HOME_EVIDENCE_LIMIT));
         return EVIDENCE_FRAGMENT;
     }

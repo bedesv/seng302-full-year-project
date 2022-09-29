@@ -20,6 +20,7 @@ async function updateUserPortfolio() {
     portfolioWrapper.innerHTML = portfolio
 
     updateEvidenceIds();
+    updateLikes();
     await updateAllWeblinks();
 }
 
@@ -42,6 +43,7 @@ async function updateUserPortfolioWithSkill(selectedSkill) {
     const portfolioWrapper = document.getElementById("portfolio_container")
     portfolioWrapper.innerHTML = portfolio
     updateEvidenceIds();
+    updateLikes();
     await updateAllWeblinks();
 }
 
@@ -65,6 +67,7 @@ async function updateUserPortfolioWithCategory(selectedCategory) {
     const portfolioWrapper = document.getElementById("portfolio_container")
     portfolioWrapper.innerHTML = portfolio
     updateEvidenceIds();
+    updateLikes();
     await updateAllWeblinks();
 }
 
@@ -76,5 +79,14 @@ function updateEvidenceIds() {
     EVIDENCE_IDS = []
     for (let evidence of evidenceObjects) {
         EVIDENCE_IDS.push(evidence.id.split("_")[1])
+    }
+}
+
+/**
+ * Updates all the likes for each piece of evidence
+ */
+function updateLikes() {
+    for (let evidenceId of EVIDENCE_IDS) {
+        updateLikeFragment(evidenceId)
     }
 }
