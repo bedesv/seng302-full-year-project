@@ -61,13 +61,13 @@ html {
     padding: 0;
     height: 5rem;
     line-height: 5rem;
-    color: var(--primary-highlight);
+    color: var(--text-surface);
     cursor: pointer;
     width: calc(100% - 25rem);
 }
 
 .project__name:hover {
-    filter: brightness(80%);
+    color: var(--primary-highlight);
 }
 
 .project.collapsed {
@@ -134,7 +134,7 @@ html {
 }
 
 #new-project__button:hover, .project__button-wrapper button:hover{
-    filter: brightness(80%);
+    color: var(--primary-highlight);
     cursor: pointer;
 }
 
@@ -157,12 +157,12 @@ html {
     padding: 0;
     height: 3rem;
     line-height: 3rem;
-    color: var(--primary-highlight);
+    color: var(--text-surface);
     cursor: pointer;
 }
 
 .sprint__name:hover {
-    filter: brightness(80%);
+    color: var(--primary-highlight);
 }
 
 .sprint.collapsed {
