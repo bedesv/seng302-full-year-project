@@ -52,7 +52,7 @@
         <button type="button" class="user-tab__button" th:classappend="${portfolioSelected} ? 'active-carousel-tab'" onclick="makeActive(this)" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1">
             <span>Portfolio</span>
         </button>
-        <button type="button" class="user-tab__button" onclick="makeActive(this)" th:classappend="${statisticsSelected} ? 'active-carousel-tab'" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2">
+        <button type="button" class="user-tab__button" onclick="updateChartData();makeActive(this)" th:classappend="${statisticsSelected} ? 'active-carousel-tab'" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2">
             <span>Statistics</span>
         </button>
     </div>
