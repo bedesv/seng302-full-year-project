@@ -27,7 +27,7 @@
         <div class="add-evidence__container">
             <a th:if="${owner}" class="add-evidence__button" th:href="@{editEvidence-{evidenceId}(evidenceId=-1)}"> Add Evidence</a>
         </div>
-        <div th:replace="fragments/evidence"></div>
+        <div th:replace="fragments/evidenceList"></div>
     </div>
 
     <div class="col-lg">

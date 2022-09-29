@@ -160,6 +160,7 @@ html {
     white-space: nowrap;
     font-size: 20px;
     padding-left: 20px;
+    margin-block: auto;
 }
 
 .group-member__nickname {
@@ -168,6 +169,7 @@ html {
     white-space: nowrap;
     font-size: 20px;
     margin-left: auto;
+    margin-block: auto;
 }
 
 /* Group Statistics */
@@ -218,6 +220,7 @@ html {
 }
 
 #char_count_long_name, #char_count_short_name {
+    font-size: x-small;
     font-size: x-small;
     padding-bottom: 10px;
 }
@@ -347,10 +350,6 @@ a {
 
 a.hover {
     text-decoration: none;
-}
-
-.groupsEvidence {
-    margin-top: -4rem;
 }
 
 

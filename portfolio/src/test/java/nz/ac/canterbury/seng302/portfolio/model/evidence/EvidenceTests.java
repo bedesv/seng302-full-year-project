@@ -94,25 +94,25 @@ class EvidenceTests {
     }
 
     @Test
-    void whenUserHighFives_testAddHighFive() {
-        testEvidence.toggleHighFive(1);
-        assertEquals(1, testEvidence.getNumberOfHighFives());
+    void whenUserlikes_testAddlike() {
+        testEvidence.toggleLike(1);
+        assertEquals(1, testEvidence.getNumberOfLikes());
     }
 
     @Test
-    void whenUserHasAlreadyHighFived_testAddHighFive() {
-        testEvidence.toggleHighFive(1);
-        testEvidence.toggleHighFive(1);
-        assertEquals(0, testEvidence.getNumberOfHighFives());
+    void whenUserHasAlreadyliked_testAddlike() {
+        testEvidence.toggleLike(1);
+        testEvidence.toggleLike(1);
+        assertEquals(0, testEvidence.getNumberOfLikes());
     }
 
     @Test
-    void whenMultipleUsersHasAlreadyHighFived_testRemoveHighFive() {
-        testEvidence.toggleHighFive(2);
-        testEvidence.toggleHighFive(1);
-        testEvidence.toggleHighFive(3);
-        testEvidence.toggleHighFive(1);
-        assertEquals(2, testEvidence.getNumberOfHighFives());
-        assertFalse(testEvidence.getHighFives().contains(1)) ;
+    void whenMultipleUsersHasAlreadyliked_testRemovelike() {
+        testEvidence.toggleLike(2);
+        testEvidence.toggleLike(1);
+        testEvidence.toggleLike(3);
+        testEvidence.toggleLike(1);
+        assertEquals(2, testEvidence.getNumberOfLikes());
+        assertFalse(testEvidence.getLikes().contains(1)) ;
     }
 }

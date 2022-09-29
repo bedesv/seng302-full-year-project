@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<button class="likes__button" th:onclick="toggleEvidence([[${evidence.getId}]])">
+    <em class="bi bi-hand-thumbs-up like__icon" th:if="!${evidence.hasLiked(pageUser.id)}" ></em>
+    <em class="bi bi-hand-thumbs-up-fill like__icon" th:if="${evidence.hasLiked(pageUser.id)}"></em>
+</button>
+<button th:if="${evidence.getNumberOfLikes} == 1" class="like__number" th:text="${evidence.getNumberOfLikes} + ' Like'" data-bs-toggle="modal" th:data-bs-target="'#evidence-likes__modal' + ${evidence.getId}"></button>
+<button th:if="${evidence.getNumberOfLikes} != 1" class="like__number" th:text="${evidence.getNumberOfLikes} + ' Likes'" data-bs-toggle="modal" th:data-bs-target="'#evidence-likes__modal' + ${evidence.getId}"></button>
+
+<!-- Modal -->
+<div class="modal fade" th:id="evidence-likes__modal + ${evidence.getId}"  tabindex="-1" aria-labelledby="evidence-likes__modal--label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header evidence-likes__header">
+                <h5 class="modal-title" id="evidence-likes__modal--label">People who liked this</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="user-like__container">
+                <div th:each="user : ${likedUsers}">
+                    <a class="user-like__link" th:href="@{profile-{id}(id=${user.id})}">
+                        <img class="user-like__image" th:src="${user.getProfileImagePath()}" alt="Profile Photo">
+                        <div class="user-like__name-container" th:text="${user.getFirstAndLast()}"></div>
+                    </a>
+                    <hr>
+                </div>
+            </div>
+       </div>
+    </div>
+</div>

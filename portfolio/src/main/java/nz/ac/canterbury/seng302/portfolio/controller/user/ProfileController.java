@@ -44,6 +44,7 @@ public class ProfileController {
     private static final String PORTFOLIO_SELECTED = "portfolioSelected";
     private static final String STATISTICS_SELECTED = "statisticsSelected";
     private static final String PROFILE_SELECTED = "profileSelected";
+    private static final int MAX_WEBLINKS_PER_EVIDENCE = 5;
 
     /**
      * Display the user's profile page.
@@ -73,6 +74,7 @@ public class ProfileController {
         int projectId = portfolioUserService.getCurrentProject(user.getId()).getId();
         List<Group> groups = groupsClientService.getAllGroupsUserIn(projectId, user.getId());
         Project project = projectService.getProjectById(projectId);
+        model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
         model.addAttribute("pageUser", user);
         model.addAttribute("groups", groups);
         model.addAttribute("owner", true);
@@ -113,6 +115,7 @@ public class ProfileController {
             model.addAttribute(PROFILE_SELECTED, true);
         }
         model.addAttribute("groups", groups);
+        model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
         Project project = projectService.getProjectById(projectId);
         sprintService.getDateRefiningOptions(model, project);
         if (Objects.equals(pageUser.getUsername(), "") || user.getId() == pageUser.getId()) {

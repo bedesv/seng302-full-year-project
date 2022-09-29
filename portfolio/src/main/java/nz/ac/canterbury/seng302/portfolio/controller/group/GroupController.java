@@ -160,6 +160,7 @@ public class GroupController {
      */
     @GetMapping("/group-{id}-evidence-skill")
     public String getGroupEvidenceFilteredBySkill(Model model,
+                                                  @AuthenticationPrincipal AuthState principal,
                                                   @RequestParam("skill") String skill,
                                                   @PathVariable String id) {
         int groupId = Integer.parseInt(id);
@@ -170,7 +171,8 @@ public class GroupController {
         Group group = new Group(response);
         Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
         model.addAttribute("evidenceList", evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(group, project.getId(), skill, GROUP_HOME_EVIDENCE_LIMIT));
-        return "fragments/evidence";
+        model.addAttribute("pageUser", userAccountClientService.getUserAccountByPrincipal(principal));
+        return "fragments/evidenceList";
     }
 
     /**
@@ -181,6 +183,7 @@ public class GroupController {
      */
     @GetMapping("/group-{id}-evidence")
     public String getGroupEvidence(Model model,
+                                   @AuthenticationPrincipal AuthState principal,
                                    @PathVariable String id) {
         int groupId = Integer.parseInt(id);
         GroupDetailsResponse response = groupsClientService.getGroupDetailsById(groupId);
@@ -190,7 +193,8 @@ public class GroupController {
         Group group = new Group(response);
         Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
         model.addAttribute("evidenceList", evidenceService.getEvidenceForPortfolioByGroup(group, project.getId(), GROUP_HOME_EVIDENCE_LIMIT));
-        return "fragments/evidence";
+        model.addAttribute("pageUser", userAccountClientService.getUserAccountByPrincipal(principal));
+        return "fragments/evidenceList";
     }
 
 

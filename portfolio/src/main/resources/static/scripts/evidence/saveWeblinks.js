@@ -70,11 +70,13 @@ function clearModel(id) {
     document.getElementById(`weblink-modal__name-field_${id}`).value = "";
     document.getElementById(`weblink-modal__link-field_${id}`).value = "";
     document.getElementById("weblink-incorrect").hidden = true;
+    document.getElementById(`weblink-modal__title-${id}`).textContent = "Add Weblink";
 }
 
 //update display based on number of weblinks
 function updateWeblinks(id) {
     const divs = document.querySelectorAll(`.web-links_${id}`);
+    document.getElementById(`evidence-${id}-title__number-weblinks`).textContent = divs.length.toString();
     if (divs.length >= MAX_WEBLINKS) {
         document.getElementById("add-weblink-button__div").hidden = true;
     }
@@ -91,10 +93,15 @@ function editWebLink(name, link, safe, id) {
     document.getElementById("weblink-incorrect").hidden = true;
     if (name) {
         document.getElementById(`weblink-modal__name-field_${id}`).value = name;
+        document.getElementById(`weblink-modal__title-${id}`).textContent = "Edit Weblink"
     }
     if (isTrueSet) {
         document.getElementById(`weblink-modal__link-field_${id}`).value = "https://" + link;
     } else {
         document.getElementById(`weblink-modal__link-field_${id}`).value = "http://" + link;
+    }
+
+    if (link === null) {
+        document.getElementById(`weblink-modal__link-field_${id}`).value = "";
     }
 }

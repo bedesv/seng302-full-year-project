@@ -15,6 +15,7 @@ async function resetEvidenceFilter() {
     // Update the header
     document.getElementById("group-home__evidence-title").textContent = "Recent Evidence";
     await updateEvidenceWeblinks();
+    updateLikes();
 }
 
 /**
@@ -40,6 +41,7 @@ async function fetchEvidenceWithSkill(skill) {
         title = "Evidence with no skill";
     }
     document.getElementById("group-home__evidence-title").textContent = title;
+    updateLikes();
     await updateEvidenceWeblinks();
 }
 
