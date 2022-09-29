@@ -17,73 +17,88 @@
             <h2 id="nav-head__title">PoFo</h2>
             <hr id="nav-head__line">
         </div>
-            <ul class="site-navigation__list">
-                <li class="site-navigation__item">
-                    <h5 class="site-navigation__label">
-                        <a th:href="@{profile?profileSelected=true}" class="site-navigation__link" th:classappend="${#httpServletRequest.getRequestURI() == '/profile' ? 'active':''}">
-                            <span class="bi bi-person-circle navigation_icon" ></span>
-                            Profile
-                        </a>
-                    </h5>
-                </li>
-                <li class="site-navigation__item">
-                    <h5 class="site-navigation__label">
-                        <a th:href="@{profile?statisticsSelected=true}" class="site-navigation__link">
-                            <span class="bi bi-bar-chart-line navigation_icon" ></span>
-                            Statistics
-                        </a>
-                    </h5>
-                </li>
-                <li class="site-navigation__item">
-                    <h5 class="site-navigation__label">
-                        <a th:href="@{projectDetails-{id}(id=${currentProject.getId})}" class="site-navigation__link" th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(), '/projectDetails') ? 'active':''}">
-                            <span class="bi bi-kanban navigation_icon"></span>
-                            Project
-                        </a>
-                    </h5>
-                </li>
-                <li class="site-navigation__item">
-                    <h5 class="site-navigation__label">
-                        <a th:href="@{planner-{id}(id=${currentProject.getId})}" class="site-navigation__link" th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(), 'planner') ? 'active':''}">
-                            <span class="bi bi-calendar navigation_icon"> </span>
-                            Planner
-                        </a>
-                    </h5>
-                </li>
-                <li class="site-navigation__item">
-                  <h5 class="site-navigation__label">
-                    <a th:href="@{userList}" class="site-navigation__link" th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(), '/userList') ? 'active':''}">
-                      <span class="bi bi-person-lines-fill navigation_icon"> </span>
-                      Users
+        <ul class="site-navigation__list">
+            <li class="site-navigation__item">
+                <h5 class="site-navigation__label">
+                    <a th:href="@{profile?profileSelected=true}" class="site-navigation__link" th:classappend="${#httpServletRequest.getRequestURI() == '/profile' ? 'active':''}">
+                        <span class="bi bi-person-circle navigation_icon" ></span>
+                        Profile
                     </a>
-                  </h5>
-                </li>
-                <li class="site-navigation__item">
-                    <h5 class="site-navigation__label">
-                        <a th:href="@{groups}" class="site-navigation__link" th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(), 'groups') ? 'active':''}">
-                            <span class="bi bi-people navigation_icon"> </span>
-                            Groups
+                </h5>
+            </li>
+            <li class="site-navigation__item">
+                <h5 class="site-navigation__label">
+                    <a th:href="@{profile?statisticsSelected=true}" class="site-navigation__link">
+                        <span class="bi bi-bar-chart-line navigation_icon" ></span>
+                        Statistics
+                    </a>
+                </h5>
+            </li>
+            <li class="site-navigation__item">
+                <h5 class="site-navigation__label">
+                    <a th:href="@{projectDetails-{id}(id=${currentProject.getId})}" class="site-navigation__link" th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(), '/projectDetails') ? 'active':''}">
+                        <span class="bi bi-kanban navigation_icon"></span>
+                        Project
+                    </a>
+                </h5>
+            </li>
+            <li class="site-navigation__item">
+                <h5 class="site-navigation__label">
+                    <a th:href="@{planner-{id}(id=${currentProject.getId})}" class="site-navigation__link" th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(), 'planner') ? 'active':''}">
+                        <span class="bi bi-calendar navigation_icon"> </span>
+                        Planner
+                    </a>
+                </h5>
+            </li>
+            <li class="site-navigation__item">
+              <h5 class="site-navigation__label">
+                <a th:href="@{userList}" class="site-navigation__link" th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(), '/userList') ? 'active':''}">
+                  <span class="bi bi-person-lines-fill navigation_icon"> </span>
+                  Users
+                </a>
+              </h5>
+            </li>
+            <li class="site-navigation__item">
+                <h5 class="site-navigation__label">
+                    <a th:href="@{groups}" class="site-navigation__link" th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(), 'groups') ? 'active':''}">
+                        <span class="bi bi-people navigation_icon"> </span>
+                        Groups
+                    </a>
+                </h5>
+            </li>
+            <li class="site-navigation__item">
+                <div class="dropdown navbar__dropdown">
+                    <div id="projects-button" class="dropdown__container" th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(), 'projects') ? 'active':''}">
+                      <span class="bi bi-chevron-down navigation_icon" onclick="dropDown()"></span>
+                      <h5>
+                        <a th:href="@{projects}" class="clear-decoration">
+                            Projects
                         </a>
-                    </h5>
-                </li>
-                <li class="site-navigation__item">
-                    <div class="dropdown navbar__dropdown">
-                        <div id="projects-button" class="dropdown__container" th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(), 'projects') ? 'active':''}">
-                          <span class="bi bi-chevron-down navigation_icon" onclick="dropDown()"></span>
-                          <h5>
-                            <a th:href="@{projects}" class="clear-decoration">
-                                Projects
-                            </a>
-                          </h5>
-                        </div>
-                        <div id="js-dropdown__list" class="dropdown-content navbar__dropdown-content" >
-                            <h5 class="site-navigation__sublabel" th:each="project : ${allProjects}">
-                                <a class="site-navigation__sublink" th:href="@{setCurrentProject-{id}(id=${project.getId})}" th:text="${project.getName}" th:classappend="${(project.getId == currentProject.getId) ? 'active':''}"></a>
-                            </h5>
+                      </h5>
+                    </div>
+                    <div id="js-dropdown__list" class="dropdown-content navbar__dropdown-content" >
+                        <h5 class="site-navigation__sublabel" th:each="project : ${allProjects}">
+                            <a class="site-navigation__sublink" th:href="@{setCurrentProject-{id}(id=${project.getId})}" th:text="${project.getName}" th:classappend="${(project.getId == currentProject.getId) ? 'active':''}"></a>
+                        </h5>
+                    </div>
+                </div>
+            </li>
+            <li class="site-navigation__item" style="margin-top: auto">
+                <div class="accordion .accordion-flush">
+                    <div class="accordion-item">
+                        <h5 class="accordion-header" id="panelsStayOpen-headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                                Theme
+                            </button>
+                        </h5>
+                        <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                            <div class="accordion-body">
+                            </div>
                         </div>
                     </div>
-                </li>
-            </ul>
+                </div>
+            </li>
+        </ul>
     </nav>
 </body>
 

@@ -12,6 +12,9 @@
 
 
 /******************** Elements ********************/
+body html {
+    height: 100%;
+}
 
 body {
     font-family: Arial, sans-serif;
