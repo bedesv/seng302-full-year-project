@@ -57,7 +57,7 @@
     justify-content: space-evenly;
 }
 
-#user-chart__skills-chart, #user-chart__time-chart {
+#user-chart__skills-chart, #user-chart__time-chart, #user-chart__categories-chart {
     min-height: 25em;
     min-width: 35em;
     max-width: 60em;
