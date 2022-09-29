@@ -610,4 +610,24 @@ public class EvidenceService {
         return validationResponses;
     }
 
+    /**
+     * Get the pieces of evidence for a group filtered by the selected category
+     * @param group is the group for which the pieces of evidence are fetched
+     * @param projectId is the id of the current project selected
+     * @param category is the category by which to filter
+     * @param limit is the max number of pieces of evidence to fetch
+     * @return a list of evidence filtered by the selected category
+     */
+    public List<PortfolioEvidence> getEvidenceForPortfolioByGroupFilterByCategory(Group group, int projectId, Categories category, int limit) {
+        List<PortfolioEvidence> evidenceListByCategory = new ArrayList<>();
+        for (User user: group.getMembers()) {
+            for (PortfolioEvidence portfolioEvidence: getEvidenceForPortfolio(user.getId(), projectId)) {
+                if (portfolioEvidence.getCategories().contains(category) || (category == null && portfolioEvidence.getCategories().isEmpty())) {
+                    evidenceListByCategory.add(portfolioEvidence);
+                }
+            }
+        }
+        PORTFOLIO_LOGGER.info("Fetched group evidence filtered by category");
+        return evidenceListByCategory.stream().limit(limit).toList();
+    }
 }

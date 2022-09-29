@@ -14,8 +14,7 @@ async function resetEvidenceFilter() {
 
     // Update the header
     document.getElementById("group-home__evidence-title").textContent = "Recent Evidence";
-    await updateEvidenceWeblinks();
-    updateLikes();
+    await updateEvidenceFragments();
 }
 
 /**
@@ -41,16 +40,40 @@ async function fetchEvidenceWithSkill(skill) {
         title = "Evidence with no skill";
     }
     document.getElementById("group-home__evidence-title").textContent = title;
-    updateLikes();
-    await updateEvidenceWeblinks();
+    await updateEvidenceFragments();
+}
+
+async function fetchEvidenceWithCategories(category) {
+    // Fetch and update the new evidence
+    let url;
+    url = new URL (`${CONTEXT}/group-${GROUP_ID}-evidence-categories`);
+    url.searchParams.append("category", category)
+    document.getElementById("group-home__evidence-container").innerHTML = await fetch(url, {
+        method: "GET"
+    }).then(res => {
+        return res.text();
+    });
+
+    // Update the header
+    let title;
+    if (category !== "#no_categories") {
+        title = "Evidence with category: " + category;
+    } else {
+        title = "Evidence with no category";
+    }
+    document.getElementById("group-home__evidence-title").textContent = title;
+    await updateEvidenceFragments();
 }
 
 /**
- * Finds all pieces of evidence on the page and fetches their weblinks
+ * Finds all pieces of evidence on the page and fetches their weblinks and likes
  */
-async function updateEvidenceWeblinks() {
+async function updateEvidenceFragments() {
     const evidenceObjects = document.getElementsByClassName("evidence__details");
+    let evidenceId;
     for (let evidence of evidenceObjects) {
-        await getWebLinks(evidence.id.split("_")[1]);
+        evidenceId = evidence.id.split("_")[1];
+        await getWebLinks(evidenceId);
+        await updateLikeFragment(evidenceId);
     }
 }
