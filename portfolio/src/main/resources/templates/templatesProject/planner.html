@@ -4,6 +4,7 @@
     <title th:text="${project.getName}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="shortcut icon" type="image/ico" th:href="@{${@environment.getProperty('PORTFOLIO_CONTEXT')} + '/favicon.ico'}"/>
+    <link th:href="@{styles/theme.css}" rel="stylesheet"/>
     <link rel="stylesheet" th:href="@{styles/stylesheet.css}">
     <link rel="stylesheet" th:href="@{styles/project/planner.css}">
     <link rel="stylesheet" th:href="@{styles/project/projectDetails.css}"/>
@@ -83,7 +84,7 @@
 
 </head>
 
-<body>
+<body class="dark cobalt">
     <!-- Import the application's header bar. -->
     <header th:replace="fragments/header :: header"></header>
     <!-- Import the application's navigation bar. -->
