@@ -21,19 +21,14 @@ html {
 
     padding-top: 0;
     padding-bottom: 0;
-    border: 1px solid var(--color-accent);
-    border-radius: 10px;
-    background-color: var(--color-complement);
-
+    border-radius: 8px;
     overflow: hidden;
 }
 
 #group header {
     padding: 15px 15px 15px 15px;
-    border-bottom: 1px solid var(--color-accent);
-
-    background-image: linear-gradient(180deg, var(--color-primary), var(--color-tertiary) 90%);
-    color: var(--color-complement);
+    background-color: var(--surface-highlight);
+    color: var(--text-surface);
 }
 
 .group-short-name {
@@ -70,31 +65,38 @@ html {
 /* Tab Buttons */
 
 .carousel-buttons {
-    justify-content: space-between;
-    /*width: 100%;*/
-    margin-top: 1rem;
-    gap: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
+    width:fit-content;
+    margin: 2rem 0;
 }
 
-.btn-fill-tertiary {
-    color: white;
-    border-color: var(--color-accent);
-    background-color: #e06c41;
-    border-radius: 3px;
+.group-tab__button {
+    color: var(--text-surface);
+    border: 0;
+    background-color: var(--surface);
     height: 3rem;
-    box-shadow: none !important;
-    width: 100%;
+    font-size: 1.5rem;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.group-tab__button:hover {
+    color: var(--text-surface-highlight);
+    background-color: var(--primary-highlight);
+    height: 3rem;
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
     font-size: 1.5rem;
 }
 
-.btn-fill-tertiary:hover {
-    color: #f78e55;
-    border-color: #f78e55;
-    background-color: #f4ebe6;
-    height: 3rem;
-    box-shadow: none !important;
-    width: 100%;
-    font-size: 1.5rem;
+.active-carousel-tab {
+    color: var(--text-surface-highlight);
+    background-color: var(--primary-highlight);
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
 }
 
 /* Group Home */
@@ -104,7 +106,7 @@ html {
 }
 
 .group-members {
-    background-color: var(--color-secondary);
+    background-color: var(--surface-highlight);
     display: flex;
     flex-direction: column;
     border-radius: 5px;
@@ -119,7 +121,7 @@ html {
     padding-top: 10px;
     max-height: 22rem;
     overflow-y: auto;
-    border-top: 1px solid var(--color-accent);
+    border-top: 1px solid var(--primary-highlight);
 }
 
 .evidence__container {
@@ -128,12 +130,12 @@ html {
     padding: 10px 15px 0 0;
     max-height: 30rem;
     overflow-y: auto;
-    border-top: 1px solid var(--color-accent);
+    border-top: 1px solid var(--primary-highlight);
 }
 
 .group-member__link {
     text-decoration: none;
-    color: black;
+    color: var(--text-surface);
     display: flex;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -145,7 +147,7 @@ html {
 }
 
 .group-member__link:hover {
-    color: var(--color-tertiary);
+    filter: brightness(85%);
 }
 
 .group-member__image {
@@ -174,7 +176,7 @@ html {
 .group-chart__settings-div {
     margin: 1rem 0 1rem 0;
     border-radius: 10px;
-    background-color: var(--color-secondary);
+    background-color: var(--surface-highlight);
     padding: 25px;
     color: black;
     font-size: 20px;
@@ -188,11 +190,18 @@ html {
 
 /* Group Repository */
 
+.group-repository__container {
+    background-color: var(--surface);
+    color: var(--text-surface);
+    padding: 2rem;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
 #group-repository-form__wrapper {
     display: block;
-    background-color: var(--color-complement);
-    border: 1px solid var(--color-accent);
-    border-radius: 10px;
+    background-color: var(--surface);
+    border-radius: 8px;
     overflow: hidden;
 }
 
@@ -207,14 +216,13 @@ html {
 #group-repository-form__form input, #group-repository-form__form textarea {
     margin: 0 0 1rem 1rem;
     border: none;
-    border-bottom: 2px solid lightgray;
+    background-color: var(--surface-highlight);
+    color: var(--text-surface);
 }
 
 .group-repository-form__header {
-    border-bottom: 1px solid var(--color-accent);
-
-    background-image: linear-gradient(180deg, var(--color-primary), var(--color-tertiary) 90%);
-    color: var(--color-complement);
+    color: var(--text-surface);
+    border: none;
 }
 
 #char_count_long_name, #char_count_short_name {
@@ -226,23 +234,22 @@ html {
 #group-repository-form__form button, #group-repository-form__form a {
     padding: 0;
     margin-bottom: 1rem;
-    background-color: var(--color-complement);
-    border: 1px solid var(--color-accent);
-    border-radius: 10px;
+    background-color: var(--surface-highlight);
+    border-radius: 8px;
     overflow: hidden;
 
     height: 3rem;
     line-height: 3rem;
     text-align: center;
-    color: black;
+    color: var(--text-surface);
     font-size: 1rem;
     text-decoration: none;
 }
 
 /*Add some hover effects to buttons */
 #group-repository-form__form button:hover, #group-repository-form__form a:hover {
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
     cursor: pointer;
+    filter: brightness(85%);
 }
 
 .group-repository__wrapper {
@@ -251,7 +258,7 @@ html {
 }
 
 .repository_container {
-    background-color: var(--color-secondary);
+    background-color: var(--surface-highlight);
     margin: 1rem 0 1rem 0;
     visibility: visible;
     border-radius: 10px;
@@ -284,6 +291,7 @@ html {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    margin-top: 1rem;
 }
 
 .evidence-chart__flex-container {
@@ -291,13 +299,14 @@ html {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-evenly;
+    gap: 1rem;
 }
 
 #group-chart__categories-chart, #group-chart__skills-chart, #group-chart__evidence-chart, #group-chart__time-chart {
     min-height: 25em;
     min-width: 35em;
     max-width: 60em;
-    flex: 1 1 0px;
+    flex: 1 1 0;
 }
 
 .graph__dropdown {
@@ -307,34 +316,61 @@ html {
 
 .graphs-dropdown__button  {
     position: relative;
-    border: 1px solid var(--color-accent) !important;
-    color: black;
-    background-color: var(--color-complement) !important;
-    padding: 10px;
-    height: 3rem;
-    border-radius: 5px;
+    border: none;
+    border-radius: 8px;
     font-size: 1rem;
     font-weight: bold;
+    background-color: var(--primary-highlight) !important;
+    padding: 10px;
+    height: 3rem;
     text-decoration: none;
+    color: var(--text-surface);
     box-shadow: none !important;
 }
 
 .graphs-dropdown__button:hover {
-    color: #f78e55;
-    border-color: #f78e55;
-    background-color: #f4ebe6;
+    filter: brightness(85%);
+    background-color: var(--text-surface);
     height: 3rem;
     box-shadow: none !important;
     font-size: 1rem;
 }
 
 .graphs-dropdown__button:active {
-    background-color: #f78e55;
+    background-color: var(--primary-highlight);
 }
 
+#group-chart__evidence-chart, #group-chart__time-chart, #group-chart__categories-chart, #group-chart__skills-chart {
+    min-height: 25em;
+    min-width: 35em;
+    max-width: 60em;
+    flex: 1 1 0;
+    background-color: var(--surface);
+    border-radius: 8px;
+}
+
+#group-chart__evidence-chart text, #group-chart__time-chart text, #group-chart__categories-chart text, #group-chart__skills-chart text {
+    fill: var(--text-surface);
+}
+
+.dropdown-graph__container {
+    background-color: var(--surface);
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
+    border: none;
+}
+
+.chart__dropdown_item {
+    background-color: var(--surface);
+    color: var(--text-surface);
+}
+
+.chart__dropdown_item:hover {
+    background-color: var(--surface-highlight);
+    color: var(--text-surface);
+}
 
 .chart__dropdown_item:active {
-    background-color: #f78e55;
+    background-color: var(--surface-highlight);
 }
 
 .dropdown-menu {
