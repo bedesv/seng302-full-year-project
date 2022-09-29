@@ -173,3 +173,9 @@ textarea {
     border-radius: 5px;
     border: 1px solid lightgrey;
 }
+
+hr {
+    height: 3px;
+    border: none;
+    color: var(--outline);
+}
