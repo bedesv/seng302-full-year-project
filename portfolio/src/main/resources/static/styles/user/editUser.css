@@ -1,6 +1,6 @@
 .container {
     border: 1px solid var(--surface);
-    border-radius: 5px;
+    border-radius: 8px;
     background-color: var(--surface);
     box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
     max-width: 500px;
@@ -31,23 +31,6 @@ button {
     margin-left: 20px;
 }
 
-h2 {
-    margin-bottom: 0;
-    font-size: 20px;
-}
-
-h4 {
-    color: #333333;
-    font-size: small;
-    margin-bottom: 0;
-}
-
-h6 {
-    color: #444444;
-    font-size: smaller;
-    margin-top: 0;
-    margin-bottom: 0;
-}
 
 
 a.button {
@@ -172,4 +155,10 @@ textarea {
 
 .edit-title {
     text-align: center;
+}
+
+hr {
+    height: 3px;
+    border: none;
+    color: var(--outline);
 }
