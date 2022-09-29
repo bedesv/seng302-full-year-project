@@ -1,4 +1,5 @@
 @charset "ISO-8859-1";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 :root {
     /* CSS variables */
     --color-primary: #FBAA60;
@@ -8,124 +9,164 @@
     --color-accent: #A82810;
 }
 
+/* Hide scrollbar */
+html::-webkit-scrollbar {
+    /* Chrome, Safari, Opera */
+    display: none;
+}
+
+html {
+    -ms-overflow-style: none; /* IE, Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
 /* Simple class for hiding components */
 .hidden {
     display: none !important;
 }
 
-/******************** Register Page ********************/
+/******************** Login Page ********************/
 
-html, body {
-    height: 100%;
-}
-
-html {
-    display: table;
-    margin: auto;
-}
-
-body {
-    display: table-cell;
-    vertical-align: middle;
-    font-family: "Calibri Light", serif;
+body{
     background: #FBAA60;
 }
 
-.container {
-    max-width: 1000px;
-    padding: 20px;
-    margin: 80px auto;
-    border-radius: 5px;
-    background: #F4EAE6;
-    box-shadow: 0 4px 10px 1px rgba(0,0,0,0.1);
-}
-
-.wrapper {
-    background: black;
-    text-align: center;
-    color: #F4EAE6;
+h2{
+    color: aqua;
     font-weight: bold;
-    margin-top: 10px;
+    font-variant: inherit;
 }
 
-div {
-    padding: 30px;
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins',sans-serif;
 }
 
-input, textarea {
+/* ::selection{
+  background: rgba(26,188,156,0.3);
+} */
+.container{
+    max-width: 500px;
+    padding: 0 20px;
+    margin: 50px auto;
+}
+.wrapper{
+    width: 100%;
+    background: #F4EAE6;
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px 1px rgba(0,0,0,0.1);
+}
+.wrapper .title{
+    height: 90px;
+    background: black;
+    border-radius: 5px 5px 0 0;
+    color: #fff;
+    font-size: 30px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.wrapper form{
+    padding: 10px 25px 10px 25px;
+}
+.wrapper form .row{
+    height: 40px;
+    margin-bottom: 10px;
+    position: relative;
+}
+.wrapper form .row input{
+    height: 100%;
+    width: 100%;
+    outline: none;
+    padding-left: 15px;
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+form .row input:focus{
+    border-color: black;
+    box-shadow: inset 0px 0px 2px 2px rgba(26,188,156,0.25);
+}
+form .row input::placeholder{
+    color: #999;
+}
+.wrapper form .row i{
+    position: absolute;
+    width: 47px;
+    height: 100%;
+    color: #fff;
     font-size: 18px;
-    margin-left: 10px;
-    margin-bottom: 5px;
-    outline-color: white;
+    background: #16a085;
+    border: 1px solid #16a085;
+    border-radius: 5px 0 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.wrapper form .pass{
+    margin: -8px 0 20px 0;
+}
+.wrapper form .pass a{
+    color: #16a085;
+    font-size: 17px;
+    text-decoration: none;
+}
+.wrapper form .pass a:hover{
+    text-decoration: underline;
+}
+.wrapper form .button input{
+    display: block;
+    position: relative;
+
+    border: 1px solid var(--color-accent);
+    border-radius: 10px;
+    background-color: var(--color-complement);
+    padding: 0 2rem 0 2rem;
+    margin-top: 1rem;
 }
 
-label.helper{
-    margin-left: 10px;
-    font-style: italic;
-    font-weight: normal;
+.wrapper form .button input:hover{
+    cursor: pointer;
+    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
+}
+
+.register-navigation {
+    margin-top: -40px;
+}
+
+.wrapper form .signup-link{
+    text-align: center;
+    margin-top: 20px;
+    font-size: 17px;
+}
+.wrapper form .signup-link a{
+    color: green;
+    text-decoration: none;
+}
+form .signup-link a:hover{
+    text-decoration: underline;
+}
+p{
+    color: red;
+    text-align: center;
+}
+
+.helper {
+    font-size: small;
     color: #888888;
 }
 
-/* Selects any valid <input> */
-input:valid, textarea {
-    border: none;
-    border-bottom: 2px solid lightgray;
+.subtitle {
+    margin-left: -5px;
 }
 
-input.required:valid {
-    outline-color: green;
-}
-
-/* Selects any invalid <input> */
-input:invalid {
-    background-color: #fff5f5;
-    border: none;
-    border-bottom: 2px solid red;
-}
-
-a.register-page__button, input.register-page__button {
-    display: inline-block;
-    color: black;
-    min-width: 100px;
-    text-align: center;
-    padding-top: 0;
-    padding-bottom: 0;
-    border: 1px solid var(--color-accent);
+textarea {
+    resize: none;
+    width: 100%;
     border-radius: 5px;
-    background-color: var(--color-complement);
-    text-decoration: none;
-    font-size: 18px;
-}
-
-a.register-page__button:hover, input.register-page__button:hover {
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
-    cursor: pointer;
-}
-
-h1 {
-    margin-top: -20px;
-}
-
-h2 {
-    margin-bottom: 0;
-}
-
-h4 {
-    color: #333333;
-    font-size: small;
-    margin-bottom: 0;
-}
-
-h6 {
-    color: #444444;
-    font-size: smaller;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-.form-error-message {
-    margin-left: 10px;
-    color: red;
-    margin-top: -5px;
-    margin-bottom: 10px;
+    border: 1px solid lightgrey;
 }

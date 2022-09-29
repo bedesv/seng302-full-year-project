@@ -11,18 +11,20 @@
 <div class="container">
     <div class="wrapper">
         <div class="title"><span>Login</span></div>
+
+        <!-- error message received from the controller-->
         <p th:text="${loginMessage}" />
         <p th:text="${usernameError}" class="form-error-message"></p>
         <form th:action="${'login'}" method="post">
             <div class="row">
                 <label>
-                    <input type="text" required th:pattern="${isNotBlankPattern}" title="Must not be blank" placeholder="Username" th:name="username">
+                    <input type="text" required th:pattern="${isNotBlankPattern}" title="Username must not be blank" placeholder="Username" th:name="username">
                 </label>
             </div>
             <div class="row">
 
                 <label>
-                    <input type="password" required placeholder="Password" th:name="password">
+                    <input type="password" required placeholder="Password" th:name="password" title="Password must not be blank">
                 </label>
             </div>
             <div class="row button">
