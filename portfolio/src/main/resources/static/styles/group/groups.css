@@ -9,10 +9,9 @@
 #group__header-div {
     position: relative;
     padding: 15px 15px 15px 15px;
-    border: 1px solid var(--color-accent);
-    background-image: linear-gradient(180deg, var(--color-primary), var(--color-tertiary) 90%);
-    color: var(--color-complement);
-    border-radius: 10px;
+    background-color: var(--surface);
+    color: var(--primary-highlight);
+    border-radius: 8px;
     margin-bottom: 15px;
 }
 
@@ -30,7 +29,6 @@
 .group, #new-group-button, .group__button-wrapper button, #open-modal__button {
     padding-top: 0;
     padding-bottom: 0;
-    border: 1px solid var(--color-accent);
     border-radius: 10px;
     background-color: var(--color-complement);
 }
@@ -45,7 +43,7 @@
     padding: 0;
     height: 5rem;
     line-height: 5rem;
-
+    color
     cursor: pointer;
 }
 
@@ -91,27 +89,27 @@
     font-weight: 400;
 }
 
-#new-group-button {
-    /* Position & Size */
-    padding: 0;
-    height: 3rem;
-    line-height: 3rem;
+.new-group__container {
+    display: flex;
+    align-content: center;
+    padding-bottom: 20px;
+    justify-content: flex-start;
+}
 
-    /* Text */
-    font-size: 1.5rem;
+#new-group__button {
+    padding: 10px;
+    background-color: var(--primary-highlight);
+    color: var(--text-surface);
+    border: none;
+    border-radius: 8px;
+    font-size: 20px;
     text-decoration: none;
-    color: initial;
-    text-align: center;
 }
 
-#new-group-button:hover, #open-modal__button:hover, .group__button-wrapper button:hover{
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
-    cursor: pointer;
+#new-group__button:hover {
+    filter: brightness(85%);
 }
 
-.unselected {
-    --bs-table-accent-bg: var(--color-complement)
-}
 
 .selected {
     opacity: 0.8 !important;
