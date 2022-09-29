@@ -84,14 +84,14 @@
 }
 
 .reset__link {
-    border: 1px solid var(--color-primary);
+    border: 1px solid var(--primary-highlight);
     border-radius: 5px;
-    background-color: var(--color-complement);
+    background-color: var(--surface);
     padding: 2px 4px 2px 4px;
     margin: 4px;
     display: inline;
     text-decoration: none;
-    color: var(--color-primary);
+    color: var(--primary-highlight);
     text-align: center;
 }
 

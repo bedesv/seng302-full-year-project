@@ -41,3 +41,15 @@
 .milestonePlannerGrid {
     bottom: -100px;
 }
+
+.cal-con button {
+    background: var(--primary-highlight)!important;
+    border-color: var(--primary-highlight)!important;
+    color: black!important;
+}
+
+.calendar__container button:hover {
+    filter: brightness(85%)!important;
+    border-color: var(--primary-highlight)!important;
+    color: black!important;
+}
