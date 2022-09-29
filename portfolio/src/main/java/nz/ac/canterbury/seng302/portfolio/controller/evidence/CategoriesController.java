@@ -45,7 +45,6 @@ public class CategoriesController {
     public String getEvidenceWithCategory(
             @AuthenticationPrincipal AuthState principal,
             @RequestParam("category") String category,
-            @RequestParam("portfolioLinks") String portfolioLinks,
             Model model) {
 
         User user = userService.getUserAccountByPrincipal(principal);
@@ -78,7 +77,7 @@ public class CategoriesController {
         List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
-        model.addAttribute("portfolioLinks", portfolioLinks);
+        model.addAttribute("inPortfolio", true);
         model.addAttribute("categoryName", category);
         model.addAttribute("evidenceList", portfolioEvidenceList);
         return "templatesEvidence/categories";
@@ -96,7 +95,6 @@ public class CategoriesController {
             @AuthenticationPrincipal AuthState principal,
             @PathVariable("userId") int userId,
             @RequestParam("category") String category,
-            @RequestParam(name="portfolioLinks") String portfolioLinks,
             Model model
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
@@ -128,11 +126,11 @@ public class CategoriesController {
 
         model.addAttribute("evidenceList", evidenceService.convertEvidenceForPortfolio(evidenceList));
         model.addAttribute("categoryName", category);
-        model.addAttribute("portfolioLinks", portfolioLinks);
+        model.addAttribute("inPortfolio", true);
         if (Objects.equals(pageUser.getUsername(), "")) {
             return "redirect:/profile";
         } else if (user.getId() == pageUser.getId()) {
-            return PORTFOLIO_REDIRECT + "-categories?category=" + category + "&portfolioLinks=" + portfolioLinks; // Take user to their own portfolio if they try to view it
+            return PORTFOLIO_REDIRECT + "-categories?category=" + category; // Take user to their own portfolio if they try to view it
         } else {
             model.addAttribute("owner", false);
             return "templatesEvidence/categories";

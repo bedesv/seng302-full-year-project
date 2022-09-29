@@ -43,7 +43,8 @@
                         </div>
                     </div>
                 </div>
-                <div th:if="${portfolioLinks == 'T'}">
+            </div>
+                <div th:if="${inPortfolio}">
                     <div class="evidence__categories">
                         <button th:each="category: ${evidence.getCategories}" class="category__link" th:text="${#strings.capitalize(#strings.toLowerCase(category))}"
                                 th:onclick="updateUserPortfolioWithCategory([[${#strings.capitalize(#strings.toLowerCase(category))}]])"></button>
@@ -52,12 +53,12 @@
                         <button th:each="skill: ${evidence.getSkills}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}"  th:onclick="updateUserPortfolioWithSkill([[${skill}]])"></button>
                     </div>
                 </div>
-                <div th:if="${portfolioLinks == 'F'}">
+                <div th:if="${!inPortfolio}">
                     <div class="evidence__categories">
-                        <a th:each="category: ${evidence.getCategories}" class="category__link" th:text="${category}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${evidence.getOwnerId}} + '-categories?category=' + ${category}"></a>
+                        <a th:each="category: ${evidence.getCategories}" class="category__link" th:text="${#strings.capitalize(#strings.toLowerCase(category))}" th:attr="onclick=|fetchEvidenceWithCategories('${#strings.capitalize(#strings.toLowerCase(category))}')|"></a>
                     </div>
                     <div class="evidence__skills">
-                        <a th:each="skill: ${evidence.getSkills}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${evidence.getOwnerId}} + '-skill?skill=' + ${skill}"></a>
+                        <a th:each="skill: ${evidence.getSkills}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:attr="onclick=|fetchEvidenceWithSkill('${skill}')|" ></a>
                     </div>
                 </div>
                 <!-- Commits -->

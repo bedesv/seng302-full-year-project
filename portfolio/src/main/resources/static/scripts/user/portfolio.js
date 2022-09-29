@@ -5,7 +5,6 @@ async function updateUserPortfolio() {
     // Build the url
     let url
     url = new URL (`${CONTEXT}/portfolio-${USER_ID}`)
-    url.searchParams.append("portfolioLinks", 'T')
 
     // Send a get request to fetch the user portfolio
     // Receives the updated element HTML content as a response
@@ -29,7 +28,6 @@ async function updateUserPortfolioWithSkill(selectedSkill) {
     let url
     url = new URL (`${CONTEXT}/portfolio-${USER_ID}-skill`)
     url.searchParams.append("skill", selectedSkill)
-    url.searchParams.append("portfolioLinks", 'T')
 
     // Send a get request to fetch the user portfolio
     // Receives the updated element HTML content as a response
@@ -53,8 +51,6 @@ async function updateUserPortfolioWithCategory(selectedCategory) {
 
     url = new URL (`${CONTEXT}/portfolio-${USER_ID}-categories`)
     url.searchParams.append("category", selectedCategory)
-    url.searchParams.append("portfolioLinks", 'T')
-    console.log(url)
 
     // Send a get request to fetch the user portfolio
     // Receives the updated element HTML content as a response

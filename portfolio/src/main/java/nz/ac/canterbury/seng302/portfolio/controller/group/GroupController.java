@@ -83,6 +83,7 @@ public class GroupController {
         model.addAttribute("graphEndDate", project.getEndDate());
         model.addAttribute("timeRange", "day");
         model.addAttribute("pageUser", userAccountClientService.getUserAccountByPrincipal(principal));
+        model.addAttribute("inPortfolio", false);
         sprintService.getDateRefiningOptions(model, project);
         return GROUP_PAGE;
     }
@@ -176,6 +177,7 @@ public class GroupController {
         Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
         model.addAttribute(EVIDENCE_LIST, evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(group, project.getId(), skill, GROUP_HOME_EVIDENCE_LIMIT));
         model.addAttribute("pageUser", userAccountClientService.getUserAccountByPrincipal(principal));
+        model.addAttribute("inPortfolio", false);
         return EVIDENCE_FRAGMENT;
     }
 
@@ -189,6 +191,7 @@ public class GroupController {
      */
     @GetMapping("/group-{id}-evidence-categories")
     public String getGroupEvidenceFilteredByCategories(Model model,
+                                                       @AuthenticationPrincipal AuthState principal,
                                                        @RequestParam("category") String category,
                                                        @PathVariable String id) {
         int groupId = Integer.parseInt(id);
@@ -216,8 +219,9 @@ public class GroupController {
         }
 
         evidenceList = evidenceService.getEvidenceForPortfolioByGroupFilterByCategory(group, project.getId(), categorySelection, GROUP_HOME_EVIDENCE_LIMIT);
-
+        model.addAttribute("pageUser", userAccountClientService.getUserAccountByPrincipal(principal));
         model.addAttribute(EVIDENCE_LIST, evidenceList);
+        model.addAttribute("inPortfolio", false);
         return EVIDENCE_FRAGMENT;
     }
 
@@ -240,6 +244,7 @@ public class GroupController {
         Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
         model.addAttribute("pageUser", userAccountClientService.getUserAccountByPrincipal(principal));
         model.addAttribute(EVIDENCE_LIST, evidenceService.getEvidenceForPortfolioByGroup(group, project.getId(), GROUP_HOME_EVIDENCE_LIMIT));
+        model.addAttribute("inPortfolio", false);
         return EVIDENCE_FRAGMENT;
     }
 

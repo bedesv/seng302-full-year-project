@@ -44,7 +44,6 @@ public class SkillsController {
     public String getEvidenceWithSkill(
                                         @AuthenticationPrincipal AuthState principal,
                                         @RequestParam("skill") String skill,
-                                        @RequestParam("portfolioLinks") String portfolioLinks,
                                         Model model) {
         User user = userService.getUserAccountByPrincipal(principal);
         model.addAttribute("pageUser", user);
@@ -62,7 +61,7 @@ public class SkillsController {
         List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
-        model.addAttribute("portfolioLinks", portfolioLinks);
+        model.addAttribute("inPortfolio", true);
         String skillName = skill.replace("_", " ");
         model.addAttribute("skillName", skillName);
         return "templatesEvidence/skills";
@@ -81,7 +80,6 @@ public class SkillsController {
             @AuthenticationPrincipal AuthState principal,
             @PathVariable("userId") int userId,
             @RequestParam("skill") String skill,
-            @RequestParam(name="portfolioLinks") String portfolioLinks,
             Model model) {
 
         User user = userService.getUserAccountByPrincipal(principal);
@@ -99,11 +97,11 @@ public class SkillsController {
         model.addAttribute("skillName", skillName);
         model.addAttribute("pageUser", pageUser);
         model.addAttribute("evidenceList", evidenceWithSkillList);
-        model.addAttribute("portfolioLinks", portfolioLinks);
+        model.addAttribute("inPortfolio", true);
         if (Objects.equals(pageUser.getUsername(), "")) {
             return "redirect:/profile";
         } else if (user.getId() == pageUser.getId()) {
-            return "redirect:/portfolio-skill?skill=" + skill + "&portfolioLinks=" + portfolioLinks; // Take user to their own skills if they try to view it
+            return "redirect:/portfolio-skill?skill=" + skill; // Take user to their own skills if they try to view it
         } else {
             model.addAttribute("owner", false);
             return "templatesEvidence/skills";

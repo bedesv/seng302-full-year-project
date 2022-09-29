@@ -70,7 +70,7 @@ public class ProfileController {
         } else {
             model.addAttribute(PROFILE_SELECTED, true);
         }
-        model.addAttribute("portfolioLinks", true);
+        model.addAttribute("inPortfolio", true);
         int projectId = portfolioUserService.getCurrentProject(user.getId()).getId();
         List<Group> groups = groupsClientService.getAllGroupsUserIn(projectId, user.getId());
         Project project = projectService.getProjectById(projectId);
@@ -114,7 +114,7 @@ public class ProfileController {
         } else {
             model.addAttribute(PROFILE_SELECTED, true);
         }
-        model.addAttribute("portfolioLinks", true);
+        model.addAttribute("inPortfolio", true);
         model.addAttribute("groups", groups);
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
         Project project = projectService.getProjectById(projectId);
