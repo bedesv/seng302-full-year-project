@@ -28,11 +28,9 @@ h1 {
 /* User tab buttons */
 .user-tab__button {
     color: var(--text-surface);
-    /*border: 1px solid var(--primary-highlight);*/
     border: 0;
     background-color: var(--surface);
     height: 3rem;
-    /*width: 100%;*/
     font-size: 1.5rem;
     padding-left: 10px;
     padding-right: 10px;
@@ -78,7 +76,7 @@ h1 {
     min-height: 25em;
     min-width: 35em;
     max-width: 60em;
-    flex: 1 1 0px;
+    flex: 1 1 0;
     background-color: var(--surface);
     border-radius: 8px;
 }
@@ -114,10 +112,6 @@ h1 {
     font-size: 1rem;
     color: var(--text-surface);
 }
-
-/*.graphs-dropdown__button:active .graphs-dropdown__button:focus {*/
-/*    color: var(--text-surface) !important;*/
-/*}*/
 
 .dropdown-graph__container {
     background-color: var(--surface);
