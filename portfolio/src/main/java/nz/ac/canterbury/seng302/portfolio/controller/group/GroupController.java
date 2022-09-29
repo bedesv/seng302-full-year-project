@@ -7,6 +7,7 @@ import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.group.*;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
+import nz.ac.canterbury.seng302.portfolio.service.project.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -45,9 +46,9 @@ public class GroupController {
     @Autowired
     private PortfolioGroupService portfolioGroupService;
     @Autowired
-    private GroupChartDataService groupChartDataService;
-    @Autowired
     private EvidenceService evidenceService;
+    @Autowired
+    private SprintService sprintService;
 
     private static final int GROUP_HOME_EVIDENCE_LIMIT = 20;
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
@@ -78,7 +79,7 @@ public class GroupController {
         model.addAttribute("timeRange", "day");
         model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("pageUser", userAccountClientService.getUserAccountByPrincipal(principal));
-        groupChartDataService.setDateRefiningOptions(model, project);
+        sprintService.getDateRefiningOptions(model, project);
         return GROUP_PAGE;
     }
 

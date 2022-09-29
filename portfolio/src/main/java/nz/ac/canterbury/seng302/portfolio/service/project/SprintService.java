@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.service.project;
 
+import nz.ac.canterbury.seng302.portfolio.model.project.DateRefineOption;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.project.Sprint;
 import nz.ac.canterbury.seng302.portfolio.repository.project.SprintRepository;
@@ -8,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.*;
 
@@ -454,5 +456,23 @@ public class SprintService {
             String message = SPRINT + sprintId + " end date changed to " + newDate;
             PORTFOLIO_LOGGER.info(message);
         }
+    }
+
+    /**
+     * Set dropdown options for graph refinements
+     * Gets dates projects, and sprint dates
+     * @param model Global model
+     * @param project current project
+     */
+    public void getDateRefiningOptions (Model model, Project project) {
+        List<DateRefineOption> dateRefineOptions = new ArrayList<>();
+        dateRefineOptions.add(new DateRefineOption("Whole Project", project.getStartDate(), project.getEndDate()));
+        List<Sprint> sprints = getSprintsByProjectInOrder(project.getId());
+        if (!sprints.isEmpty()){
+            for (Sprint sprint : sprints) {
+                dateRefineOptions.add(new DateRefineOption(sprint.getLabel(), sprint.getStartDate(), sprint.getEndDate()));
+            }
+        }
+        model.addAttribute("dateRefiningOptions", dateRefineOptions);
     }
 }

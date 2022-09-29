@@ -216,11 +216,11 @@ public class GroupChartDataService {
         }
     }
 
-        /**
-         * Only for mocking purposes
-         * Updates the current EvidenceService with a new one
-         * @param newEvidenceService the new (mocked) EvidenceService
-         */
+    /**
+     * Only for mocking purposes
+     * Updates the current EvidenceService with a new one
+     * @param newEvidenceService the new (mocked) EvidenceService
+     */
     @VisibleForTesting
     protected void setEvidenceService(EvidenceService newEvidenceService) {
         evidenceService = newEvidenceService;
@@ -235,20 +235,4 @@ public class GroupChartDataService {
         return evidenceService;
     }
 
-    /**
-     * Set dropdown options for the
-     * @param model Global model
-     * @param project current project
-     */
-    public void setDateRefiningOptions (Model model, Project project) {
-        List<DateRefineOption> dateRefineOptions = new ArrayList<>();
-        dateRefineOptions.add(new DateRefineOption("Whole Project", project.getStartDate(), project.getEndDate()));
-        List<Sprint> sprints = sprintService.getSprintsByProjectInOrder(project.getId());
-        if (!sprints.isEmpty()){
-            for (Sprint sprint : sprints) {
-                dateRefineOptions.add(new DateRefineOption(sprint.getLabel(), sprint.getStartDate(), sprint.getEndDate()));
-            }
-        }
-        model.addAttribute("dateRefiningOptions", dateRefineOptions);
-    }
 }
