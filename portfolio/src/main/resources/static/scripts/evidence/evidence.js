@@ -1,8 +1,6 @@
 /**
  * Toggles a high five adding the user to th
- * @param evidenceId
- * @param userId
- * @returns {Promise<void>}
+ * @param evidenceId the evidence fragment that the high-five icon belongs too.
  */
 async function toggleEvidence(evidenceId) {
 
@@ -13,10 +11,14 @@ async function toggleEvidence(evidenceId) {
         method: "POST"
     });
 
-    await updateEvidenceFragment(evidenceId);
+    await updateHighFiveFragment(evidenceId);
 }
 
-async function updateEvidenceFragment(evidenceId) {
+/**
+ * Updates the highFive fragment when a user clicks on the high five icon
+ * @param evidenceId the evidence fragment that the high-five icon belongs too.
+ */
+async function updateHighFiveFragment(evidenceId) {
     let url;
     url = new URL(`${CONTEXT}/evidence-${evidenceId}-highfive`);
     document.getElementById(`evidence-${evidenceId}-highfive`).innerHTML = await fetch(url, {

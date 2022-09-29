@@ -75,7 +75,9 @@ html {
     height: 50px;
     border: 0;
     background-color: var(--color-complement);
+    font-size: 30px;
 }
+
 
 .evidence-title__high-fives{
     width: 10%;
