@@ -1,28 +1,40 @@
 /******************** Add Evidence Form ********************/
+.container {
+    border: 1px solid var(--surface);
+    border-radius: 8px;
+    background-color: var(--surface);
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 0px!important;
+}
 
 .evidence-form__header {
-    padding: 3rem 2rem 3rem 2rem;
-    border-bottom: 1px solid var(--color-accent);
+    padding: 2rem 2rem 1rem 2rem;
+    border-bottom: 1px solid var(--surface);
     border-top-left-radius: 1.5rem;
     border-top-right-radius: 1.5rem;
-    background-image: linear-gradient(180deg, var(--color-primary), var(--color-tertiary) 90%);
-    color: var(--color-complement);
+    background: var(--surface);
+    color: var(--primary-highlight);
+    text-align: center;
 }
 
 #evidence-form__wrapper {
+    width: 100%;
     display: block;
-    background-color: var(--color-complement);
-    border: 1px solid var(--color-accent);
-    border-radius: 1.5rem;
+    background-color: var(--surface);
+    border: 1px solid var(--surface);
+    border-radius: 8px;
+    padding: 15px;
 }
 
 #evidence-form__form {
     padding: 1rem 2rem 1rem 2rem;
 }
 
-#evidence-form__form label {
-    margin-bottom: 0.5rem;
-}
+/*#evidence-form__form label {*/
+/*    margin-bottom: 0.5rem;*/
+/*}*/
 
 #editable-skill-tag {
     margin: 0 !important;
@@ -30,9 +42,11 @@
 }
 
 #evidence-form__form input, #evidence-form__form textarea {
-    margin: 0 0 1rem 1rem;
     border: none;
     border-bottom: 2px solid lightgray;
+    border-radius: 5px;
+    height: 40px;
+    padding-left: 10px;
 }
 
 #evidence-form__helper {
@@ -45,9 +59,9 @@
     padding: 0;
     margin-bottom: 1rem;
     overflow: hidden;
-    background-color: var(--color-complement);
-    border: 1px solid var(--color-accent);
-    border-radius: 1.5rem;
+    background-color: var(--primary-highlight);
+    border: 1px solid var(--surface);
+    border-radius: 8px;
 
     height: 3rem;
     line-height: 3rem;
@@ -59,7 +73,7 @@
 
 /*Add some hover effects to buttons */
 .evidence-form__control-button:hover {
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
+    filter: brightness(80%);
     cursor: pointer;
     color: black;
 }
@@ -125,6 +139,7 @@ p {
 .autocomplete-items div {
     padding: 10px;
     cursor: pointer;
+    color: black;
     background-color: #fff;
     border-bottom: 1px solid #d4d4d4;
     overflow-wrap: anywhere;
@@ -144,7 +159,7 @@ p {
 #skill-input-container {
     display: block;
     margin-bottom: 1rem;
-    margin-left: 1rem;
+    border-radius: 5px;
     background: #fff;
 }
 
@@ -167,8 +182,8 @@ p {
 .skill-tag {
     width: fit-content;
     height: fit-content;
-    background-color: var(--color-primary);
-    border: 1px solid var(--color-secondary);
+    background-color: var(--primary-highlight);
+    border: 1px solid var(--primary-highlight);
     padding: 2px 4px 2px 4px;
     display: inline-block;
     border-radius: 5px;
@@ -212,8 +227,8 @@ p {
 #user-input-container {
     display: block;
     margin-bottom: 1rem;
-    margin-left: 1rem;
     background: #fff;
+    border-radius: 5px;
 }
 
 #user-container {
@@ -235,8 +250,8 @@ p {
 .user-tag {
     width: fit-content;
     height: fit-content;
-    background-color: var(--color-primary);
-    border: 1px solid var(--color-secondary);
+    background-color: var(--primary-highlight);
+    border: 1px solid var(--primary-highlight);
     padding: 2px 4px 2px 4px;
     display: inline-block;
     border-radius: 5px;
@@ -281,7 +296,7 @@ p {
     padding: 0 !important;
     border: none !important;
     margin: 0 !important;
-    width: 80px;
+    width: 60px;
     background: #fff;
 }
 
@@ -308,10 +323,6 @@ p {
     gap: 4px;
     margin-bottom: 10px;
     margin-left: 1rem;
-}
-
-#weblink-button {
-    margin-bottom: 10px;
 }
 
 #commit-filter__date-box {
@@ -348,4 +359,70 @@ p {
     font-size: 20px;
     margin-left: 2px;
     margin-bottom: 5px;
+}
+
+.subtitle {
+    color: var(--text-surface);
+    margin-left: -20px;
+    margin-top: 15px;
+}
+
+.evidence-form__wrapper {
+    height: 90px;
+    background: var(--surface);
+    border-radius: 5px 5px 0 0;
+    color: var(--primary-highlight);
+    font-size: 30px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.evidence-form__wrapper form{
+    padding: 10px 25px 10px 25px;
+}
+
+.evidence-form__wrapper form .row{
+    height: 40px;
+    margin-bottom: 10px;
+    position: relative;
+}
+.evidence-form__wrapper form .row input{
+    height: 100%;
+    width: 100%;
+    outline: none;
+    padding-left: 15px;
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+form .row input:focus{
+    border-color: black;
+    box-shadow: inset 0px 0px 2px 2px rgba(26,188,156,0.25);
+}
+form .row input::placeholder{
+    color: #999;
+}
+
+.add-weblink__button {
+    margin-top: 10px;
+    width: 100%;
+}
+
+#evidence-form__webLink-link {
+    margin-top: 10px;
+}
+
+.checkboxes label {
+    display: inline-block;
+    padding-right: 10px;
+    white-space: nowrap;
+}
+.checkboxes input {
+    vertical-align: middle;
+}
+.checkboxes label span {
+    vertical-align: middle;
 }
