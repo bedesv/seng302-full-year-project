@@ -1317,70 +1317,70 @@ class EvidenceServiceTests {
     }
     @Test
     @Transactional
-    void whenUserHighFivesEvidence_testHighFiveAdded() {
+    void whenUserlikesEvidence_testlikeAdded() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
         evidenceService.saveEvidence(evidence);
         int testEvidenceId = evidence.getId();;
-        evidenceService.toggleHighFive(testEvidenceId, 1);
-        assertEquals(1, evidenceService.getNumberOfHighFives(testEvidenceId));
+        evidenceService.toggleLike(testEvidenceId, 1);
+        assertEquals(1, evidenceService.getNumberOfLikes(testEvidenceId));
     }
 
     @Test
     @Transactional
-    void whenUserAlreadyHighFivedEvidence_andUserUnHighFivesEvidence_testHighFiveRemoved() {
+    void whenUserAlreadylikedEvidence_andUserUnlikesEvidence_testlikeRemoved() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
         evidenceService.saveEvidence(evidence);
         int testEvidenceId = evidence.getId();;
-        evidenceService.toggleHighFive(testEvidenceId, 1);
-        evidenceService.toggleHighFive(testEvidenceId, 1);
-        assertEquals(0, evidenceService.getNumberOfHighFives(testEvidenceId));
+        evidenceService.toggleLike(testEvidenceId, 1);
+        evidenceService.toggleLike(testEvidenceId, 1);
+        assertEquals(0, evidenceService.getNumberOfLikes(testEvidenceId));
     }
 
     @Test
     @Transactional
-    void whenTwoUsersHighFived_andOneUserUnHighFivesEvidence_testHighFiveRemoved() {
+    void whenTwoUsersliked_andOneUserUnlikesEvidence_testlikeRemoved() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
         evidenceService.saveEvidence(evidence);
         int testEvidenceId = evidence.getId();;
-        evidenceService.toggleHighFive(testEvidenceId, 1);
-        evidenceService.toggleHighFive(testEvidenceId, 2);
-        evidenceService.toggleHighFive(testEvidenceId, 1);
-        assertEquals(1, evidenceService.getNumberOfHighFives(testEvidenceId));
+        evidenceService.toggleLike(testEvidenceId, 1);
+        evidenceService.toggleLike(testEvidenceId, 2);
+        evidenceService.toggleLike(testEvidenceId, 1);
+        assertEquals(1, evidenceService.getNumberOfLikes(testEvidenceId));
     }
 
     @Test
     @Transactional
-    void whenNoUsersHaveHighFivedEvidence_testGetUsersWhoHaveHighFivedEvidence() {
+    void whenNoUsersHavelikedEvidence_testGetUsersWhoHavelikedEvidence() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
         evidenceService.saveEvidence(evidence);
         int testEvidenceId = evidence.getId();;
-        assertEquals(0, evidenceService.getHighFives(testEvidenceId).size());
+        assertEquals(0, evidenceService.getLikes(testEvidenceId).size());
     }
 
     @Test
     @Transactional
-    void whenOneuserHasHighFivedEvidence_testGetUsersWhoHaveHighFivedEvidence() {
+    void whenOneuserHaslikedEvidence_testGetUsersWhoHavelikedEvidence() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
         evidenceService.saveEvidence(evidence);
         int testEvidenceId = evidence.getId();;
-        evidenceService.toggleHighFive(testEvidenceId, 1);
-        assertEquals(1, evidenceService.getHighFives(testEvidenceId).size());
+        evidenceService.toggleLike(testEvidenceId, 1);
+        assertEquals(1, evidenceService.getLikes(testEvidenceId).size());
 
-        List<User> result = evidenceService.getHighFives(testEvidenceId);
+        List<User> result = evidenceService.getLikes(testEvidenceId);
         assertEquals(1, result.size());
         assertEquals(1, result.get(0).getId());
     }
 
     @Test
     @Transactional
-    void whenTwoUsersHaveHighFivedEvidence_testGetUsersWhoHaveHighFivedEvidence() {
+    void whenTwoUsersHavelikedEvidence_testGetUsersWhoHavelikedEvidence() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
         evidenceService.saveEvidence(evidence);
         int testEvidenceId = evidence.getId();;
-        evidenceService.toggleHighFive(testEvidenceId, 1);
-        evidenceService.toggleHighFive(testEvidenceId, 2);
+        evidenceService.toggleLike(testEvidenceId, 1);
+        evidenceService.toggleLike(testEvidenceId, 2);
 
-        List<User> result = evidenceService.getHighFives(testEvidenceId);
+        List<User> result = evidenceService.getLikes(testEvidenceId);
         assertEquals(2, result.size());
         assertEquals(1, result.get(0).getId());
         assertEquals(2, result.get(1).getId());
@@ -1388,15 +1388,15 @@ class EvidenceServiceTests {
 
     @Test
     @Transactional
-    void whenTwoUsersHaveHighFivedEvidence_andOneUserUnHighFivesEvidence_testGetUsersWhoHaveHighFivedEvidence() {
+    void whenTwoUsersHavelikedEvidence_andOneUserUnlikesEvidence_testGetUsersWhoHavelikedEvidence() {
         Evidence evidence = new Evidence(0, projects.get(1).getId(), "Test", TEST_DESCRIPTION, Date.valueOf("2022-05-9"));
         evidenceService.saveEvidence(evidence);
         int testEvidenceId = evidence.getId();;
-        evidenceService.toggleHighFive(testEvidenceId, 1);
-        evidenceService.toggleHighFive(testEvidenceId, 2);
-        evidenceService.toggleHighFive(testEvidenceId, 1);
-        assertEquals(1, evidenceService.getHighFives(testEvidenceId).size());
-        assertEquals(2, evidenceService.getHighFives(testEvidenceId).get(0).getId());
+        evidenceService.toggleLike(testEvidenceId, 1);
+        evidenceService.toggleLike(testEvidenceId, 2);
+        evidenceService.toggleLike(testEvidenceId, 1);
+        assertEquals(1, evidenceService.getLikes(testEvidenceId).size());
+        assertEquals(2, evidenceService.getLikes(testEvidenceId).get(0).getId());
     }
     //////GET GROUPS EVIDENCE//////////
     //////FILTER BY SKILL//////////////

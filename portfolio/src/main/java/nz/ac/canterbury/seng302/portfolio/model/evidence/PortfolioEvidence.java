@@ -24,7 +24,7 @@ public class PortfolioEvidence {
     private final List<String> skills; //skills related to this piece of evidence
     private final List<User> linkedUsers;
     private List<Commit> commits;
-    private List<Integer> highFives;
+    private List<Integer> likes;
 
     /**
      * Creates a piece of evidence for display in the portfolio. This is identical to a regular piece of evidence,
@@ -44,7 +44,7 @@ public class PortfolioEvidence {
         this.skills = evidence.getSkills();
         this.linkedUsers = userList;
         this.commits = evidence.getCommits();
-        this.highFives = evidence.getHighFives();
+        this.likes = evidence.getLikes();
     }
 
     public int getId() {
@@ -102,10 +102,14 @@ public class PortfolioEvidence {
     }
 
     /**
-     * Returns true if the user has high-fived the piece of evidence
+     * Returns true if the user has liked the piece of evidence
      */
-    public boolean hasHighFived(int userId) {
-        return highFives.contains(userId);
+    public boolean hasLiked(int userId) {
+        return likes.contains(userId);
+    }
+
+    public int getNumberOfLikes() {
+        return likes.size();
     }
 
 }
