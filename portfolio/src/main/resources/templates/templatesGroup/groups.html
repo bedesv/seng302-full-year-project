@@ -6,6 +6,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="shortcut icon" type="image/ico" th:href="@{${@environment.getProperty('PORTFOLIO_CONTEXT')} + '/favicon.ico'}"/>
     <link th:rel="stylesheet" th:href="@{webjars/bootstrap/5.1.3/css/bootstrap.min.css} "/>
+    <link rel="stylesheet" th:href="@{styles/theme.css}">
+    <script defer rel="script" th:src="@{scripts/theme.js}"></script>
     <script th:src="@{webjars/bootstrap/5.1.3/js/bootstrap.min.js}"></script>
     <link rel="stylesheet" th:href="@{styles/stylesheet.css}">
     <link rel="stylesheet" th:href="@{styles/group/groups.css}">
@@ -42,7 +44,9 @@
 
         <div class="flex-column">
             <!-- New Group Button -->
-            <a id="new-group-button" th:if="${user.isTeacher}" th:href="@{editGroup-{id}(id=-1)}">New Group</a>
+            <div class="new-group__container">
+                <a id="new-group__button" th:if="${user.isTeacher}" th:href="@{editGroup-{id}(id=-1)}">New Group</a>
+            </div>
             <div class="group" th:each="group : *{groups}" th:with="tableDropable=${user.isTeacher && !(group.getGroupId == TEACHER_GROUP_ID && !user.isTeacher)}" th:ondragover="${tableDropable} ? 'allowDrop(event)' : ''" th:ondrop="${tableDropable} ? 'pasteMembers(this)' : ''">
                 <div class="group__details-wrapper">
                     <h2 class="group__name" th:text="${group.getShortName} + ' - ' + ${group.getLongName}" type="button" data-bs-toggle="collapse" th:data-bs-target="'#group_' + ${group.getGroupId}" aria-expanded="false" th:aria-controls="group_ + ${group.getGroupId}"></h2>
@@ -97,7 +101,6 @@
             </div>
         </div>
     </div>
-
 </body>
 <script th:src="@{scripts/group/groups.js}"></script>
 </html>
