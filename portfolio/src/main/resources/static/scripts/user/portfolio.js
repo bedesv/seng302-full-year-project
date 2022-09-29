@@ -5,10 +5,11 @@ async function updateUserPortfolio() {
     // Build the url
     let url
     url = new URL (`${CONTEXT}/portfolio-${USER_ID}`)
+    url.searchParams.append("portfolioLinks", 'T')
 
     // Send a get request to fetch the user portfolio
     // Receives the updated element HTML content as a response
-    const portfolio = await fetch(url, {
+    let portfolio = await fetch(url, {
         method: "GET"
     }).then(res => {
         return res.text()
@@ -25,11 +26,13 @@ async function updateUserPortfolio() {
 async function updateUserPortfolioWithSkill(selectedSkill) {
     // Build the url
     let url
-    url = new URL (`${CONTEXT}/portfolio-${USER_ID}-skill?`)
+    url = new URL (`${CONTEXT}/portfolio-${USER_ID}-skill`)
+    url.searchParams.append("skill", selectedSkill)
+    url.searchParams.append("portfolioLinks", 'T')
 
     // Send a get request to fetch the user portfolio
     // Receives the updated element HTML content as a response
-    const portfolio = await fetch(url+new URLSearchParams({skill: selectedSkill}), {
+    const portfolio = await fetch(url, {
         method: "GET"
     }).then(res => {
         return res.text()
@@ -45,16 +48,19 @@ async function updateUserPortfolioWithSkill(selectedSkill) {
 async function updateUserPortfolioWithCategory(selectedCategory) {
     // Build the url
     let url
-    url = new URL (`${CONTEXT}/portfolio-${USER_ID}-categories?`)
+
+    url = new URL (`${CONTEXT}/portfolio-${USER_ID}-categories`)
+    url.searchParams.append("category", selectedCategory)
+    url.searchParams.append("portfolioLinks", 'T')
+    console.log(url)
 
     // Send a get request to fetch the user portfolio
     // Receives the updated element HTML content as a response
-    const portfolio = await fetch(url+new URLSearchParams({category: selectedCategory}), {
+    const portfolio = await fetch(url, {
         method: "GET"
     }).then(res => {
         return res.text()
     })
-    console.log(selectedCategory)
     // Update the page with the new HTML content
     const portfolioWrapper = document.getElementById("portfolio_container")
     portfolioWrapper.innerHTML = portfolio

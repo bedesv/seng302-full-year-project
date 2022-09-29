@@ -42,15 +42,16 @@
                         </div>
                     </div>
                 </div>
-                <div th:if="${portfolioLinks == true}">
+                <div th:if="${portfolioLinks == 'T'}">
                     <div class="evidence__categories">
-                        <button th:each="category: ${evidence.getCategories}" class="category__link" th:text="${category}" th:onclick="updateUserPortfolioWithCategory([[${category}]])"></button>
+                        <button th:each="category: ${evidence.getCategories}" class="category__link" th:text="${#strings.capitalize(#strings.toLowerCase(category))}"
+                                th:onclick="updateUserPortfolioWithCategory([[${#strings.capitalize(#strings.toLowerCase(category))}]])"></button>
                     </div>
                     <div class="evidence__skills">
                         <button th:each="skill: ${evidence.getSkills}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}"  th:onclick="updateUserPortfolioWithSkill([[${skill}]])"></button>
                     </div>
                 </div>
-                <div th:if="${portfolioLinks == false}">
+                <div th:if="${portfolioLinks == 'F'}">
                     <div class="evidence__categories">
                         <a th:each="category: ${evidence.getCategories}" class="category__link" th:text="${category}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${evidence.getOwnerId}} + '-categories?category=' + ${category}"></a>
                     </div>

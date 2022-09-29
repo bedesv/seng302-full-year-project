@@ -51,6 +51,7 @@ public class PortfolioController {
     @GetMapping("/portfolio")
     public String portfolio(
             @AuthenticationPrincipal AuthState principal,
+            @RequestParam ("portfolioLinks") String portfolioLinks,
             Model model
     ) {
         User user = userService.getUserAccountByPrincipal(principal);
@@ -64,7 +65,7 @@ public class PortfolioController {
         model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(evidenceList));
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
-        model.addAttribute("portfolioLinks", true);
+        model.addAttribute("portfolioLinks", portfolioLinks);
         return "templatesEvidence/portfolio";
     }
 
@@ -80,6 +81,7 @@ public class PortfolioController {
     @GetMapping("/portfolio-{userId}")
     public String viewPortfolio(
             @AuthenticationPrincipal AuthState principal,
+            @RequestParam(name="portfolioLinks") String portfolioLinks,
             @PathVariable("userId") int userId,
             Model model
     ) {
@@ -92,13 +94,14 @@ public class PortfolioController {
 
         model.addAttribute("evidenceList", evidenceList);
 
-        // Add all of the skills that the user has to the page
+        // Add all the skills that the user has to the page
         List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
+        model.addAttribute("portfolioLinks", portfolioLinks);
         if (Objects.equals(pageUser.getUsername(), "")) {
             return "redirect:/profile";
         } else if (user.getId() == pageUser.getId()) {
-            return PORTFOLIO_REDIRECT; // Take user to their own portfolio if they try to view it
+            return PORTFOLIO_REDIRECT + "?portfolioLinks=" + portfolioLinks; // Take user to their own portfolio if they try to view it
         } else {
             model.addAttribute(OWNER, false);
             return "templatesEvidence/portfolio";
