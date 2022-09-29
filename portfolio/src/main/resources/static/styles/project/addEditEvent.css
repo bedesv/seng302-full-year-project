@@ -32,7 +32,8 @@
     border: none;
     border-radius: 5px;
     height: 40px;
-    border-bottom: 2px solid lightgray;
+    color: var(--text-surface);
+    background-color: var(--surface-highlight);
     padding-left: 5px;
 }
 
@@ -46,25 +47,25 @@
     padding: 0;
     margin-bottom: 1rem;
     background-color: var(--primary-highlight);
-    border: 1px solid var(--primary-highlight);
+    border: none;
     border-radius: 8px;
     overflow: hidden;
 
     height: 3rem;
     line-height: 3rem;
     text-align: center;
-    color: black;
+    color: var(--text-surface);
     font-size: 1rem;
     text-decoration: none;
 }
 
 /*Add some hover effects to buttons */
 #event-form__form button:hover, #event-form__form a:hover {
-    filter: brightness(80%);
+    filter: brightness(85%);
     cursor: pointer;
 }
 
 .edit-sprint__wrapper{
-    box-shadow: 0px 4px 10px 1px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px 1px rgba(0,0,0,0.1);
     width: 100%;
 }
