@@ -1,5 +1,17 @@
 let toggle1 = 0;
 
+document.addEventListener('DOMContentLoaded', () => {
+    if (theme) {
+        if (theme === 'dark') {
+            document.getElementById("flexSwitchCheckDefault").checked = true;
+            document.getElementById("theme-toggle__label").innerText = 'Dark';
+        } else {
+            document.getElementById("flexSwitchCheckDefault").checked = false;
+            document.getElementById("theme-toggle__label").innerText = 'Light';
+        }
+    }
+})
+
 function expandNav() {
     document.getElementById("site-navigation").classList.remove("collapsed");
     document.getElementById("site-navigation").classList.add("expanded");
@@ -79,9 +91,11 @@ document.addEventListener('change', (event) => {
         if (toggle.checked) {
             body.classList.replace('light', 'dark');
             localStorage.setItem('theme', 'dark');
+            document.getElementById("theme-toggle__label").innerText = 'Dark';
         } else {
             body.classList.replace('dark', 'light');
             localStorage.setItem('theme', 'light');
+            document.getElementById("theme-toggle__label").innerText = 'Light';
         }
     }
 })
