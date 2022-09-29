@@ -2,17 +2,19 @@
 
 .form__header {
     padding: 3rem 2rem 3rem 2rem;
-    border-bottom: 1px solid var(--color-accent);
-
-    background-image: linear-gradient(180deg, var(--color-primary), var(--color-tertiary) 90%);
-    color: var(--color-complement);
+    border-bottom: 1px solid var(--surface);
+    color: var(--primary-highlight);
+    background: var(--surface);
+    text-align: center;
 }
 
 #form__wrapper {
+    box-shadow: 0px 4px 10px 1px rgba(0,0,0,0.1);
     display: block;
-    background-color: var(--color-complement);
-    border: 1px solid var(--color-accent);
-    border-radius: 1.5rem;
+    background-color: var(--surface);
+    border: 1px solid var(--surface);
+    color: var(--text-surface);
+    border-radius: 8px;
     overflow: hidden;
 }
 
@@ -22,12 +24,17 @@
 
 #form__body label {
     margin-bottom: 0.5rem;
+    margin-left: -10px;
+    color: var(--text-surface);
 }
 
 #form__body input, #form__body textarea {
-    margin: 0 0 1rem 1rem;
+    margin: 0 0 1rem 0;
     border: none;
+    border-radius: 5px;
+    height: 40px;
     border-bottom: 2px solid lightgray;
+    padding-left: 5px;
 }
 
 #char_count {
@@ -39,9 +46,9 @@
 #form__body button, #form__body a {
     padding: 0;
     margin-bottom: 1rem;
-    background-color: var(--color-complement);
-    border: 1px solid var(--color-accent);
-    border-radius: 1.5rem;
+    background-color: var(--primary-highlight);
+    border: 1px solid var(--primary-highlight);
+    border-radius: 8px;
     overflow: hidden;
 
     height: 3rem;
@@ -54,6 +61,6 @@
 
 /*Add some hover effects to buttons */
 #form__body button:hover, #form__body a:hover {
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
+    filter: brightness(80%);
     cursor: pointer;
 }
