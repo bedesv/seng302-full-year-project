@@ -79,19 +79,19 @@ public class PortfolioController {
             @PathVariable("userId") int userId,
             Model model
     ) {
-        User user = userService.getUserAccountByPrincipal(principal);
-        User pageUser = userService.getUserAccountById(userId);
+        User pageUser = userService.getUserAccountByPrincipal(principal);
+        User user = userService.getUserAccountById(userId);
         model.addAttribute("pageUser", pageUser);
 
-        int projectId = portfolioUserService.getUserById(user.getId()).getCurrentProject();
-        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
+        int projectId = portfolioUserService.getUserById(pageUser.getId()).getCurrentProject();
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(user.getId(), projectId);
 
         model.addAttribute("evidenceList", evidenceList);
 
         // Add all of the skills that the user has to the page
-        List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
+        List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(user.getId(), projectId);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
-        if (Objects.equals(pageUser.getUsername(), "")) {
+        if (Objects.equals(user.getUsername(), "")) {
             return "redirect:/profile";
         } else if (user.getId() == pageUser.getId()) {
             return PORTFOLIO_REDIRECT; // Take user to their own portfolio if they try to view it
