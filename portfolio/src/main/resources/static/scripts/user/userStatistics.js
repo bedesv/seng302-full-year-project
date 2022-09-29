@@ -53,13 +53,16 @@ async function fetchChartData(dataType) {
  * with the received data
  */
 async function updateSkillsChart(chartData) {
+    let color = getComputedStyle(document.documentElement).getPropertyValue('--primary-highlight')
+    console.log(color);
 
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'Skills');
     data.addColumn('number', 'Number of Skills');
+    data.addColumn({type: 'string', role: 'style'});
     for (let key in chartData) {
-        data.addRow([key, chartData[key]]);
+        data.addRow([key, chartData[key], `color: ${color}`]);
     }
 
     // Specify options for the column chart
