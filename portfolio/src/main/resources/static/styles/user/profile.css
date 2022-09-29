@@ -3,7 +3,7 @@
     visibility: hidden;
 }
 
-.container {
+.profile__container {
     display: flex;
     flex-direction: row;
     /*border: 1px solid var(--primary-highlight);*/
@@ -12,6 +12,7 @@
     padding: 20px;
     margin: 1rem auto;
     box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
+    max-width: 1000px;
 }
 
 .profile-pic__row {

@@ -14,6 +14,11 @@ h1 {
     margin: 0 !important;
 }
 
+.user-page__wrapper {
+    width: 80%;
+    margin: 0 auto;
+}
+
 .carousel-buttons {
     display: flex;
     flex-direction: row;
