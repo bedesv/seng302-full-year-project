@@ -68,7 +68,6 @@ public class UserChartDataController {
     /**
      * Endpoint to retrieve evidence for user witihn given dates
      * Formatted by service and returned as map to frontend
-     * @param principal authentication pr
      * @param userId user profile being viewed, and graphs being generated
      * @param parentProjectId of currently selected project
      * @param startDateString start date of refinement
@@ -98,4 +97,39 @@ public class UserChartDataController {
 
         return userChartDataService.getUserEvidenceData(user, parentProjectId, startDate, endDate);
     }
+
+    /**
+     * Used by the front end to fetch the number of evidence per category for a given user
+     * @param userId The ID of the selected user
+     * @param parentProjectId The project ID
+     * @param startDateString A string representation of the date that evidence must be on or before to be included in the data.
+     * @param endDateString A string representation of the date that evidence must be on or after to be included in the data.
+     * @return A map of category names to the number of times they're used
+     */
+    @GetMapping("/user-{userId}-categoriesData")
+    public Map<String, Integer> getCategoriesData(@AuthenticationPrincipal AuthState principal,
+                                              @PathVariable int userId,
+                                              @RequestParam int parentProjectId,
+                                              @RequestParam String startDateString,
+                                              @RequestParam String endDateString) {
+        String message = ("Getting user: [" + userId +  "] skill data for category statistics");
+        PORTFOLIO_LOGGER.info(message);
+        User user = userService.getUserAccountByPrincipal(principal);
+        if (user.getUsername() == null) {
+            return Collections.emptyMap();
+        }
+
+        Date startDate;
+        Date endDate;
+        try {
+            startDate = new SimpleDateFormat(TIME_FORMAT).parse(startDateString);
+            endDate = new SimpleDateFormat(TIME_FORMAT).parse(endDateString);
+        } catch (ParseException e) {
+            PORTFOLIO_LOGGER.error(e.getMessage());
+            return Collections.emptyMap();
+        }
+
+        return userChartDataService.getUserCategoryInfo(userId, parentProjectId, startDate, endDate);
+    }
+
 }
