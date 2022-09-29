@@ -89,7 +89,7 @@ class PortfolioControllerTests {
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
-        mockMvc.perform(get("/portfolio?inPortfolio=T"))
+        mockMvc.perform(get("/portfolio"))
                 .andExpect(status().isOk())
                 .andExpect(redirectedUrl(null));
     }
@@ -108,7 +108,7 @@ class PortfolioControllerTests {
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
-        mockMvc.perform(get("/portfolio-2?inPortfolio=T"))
+        mockMvc.perform(get("/portfolio-2"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profile"));
     }
@@ -127,7 +127,7 @@ class PortfolioControllerTests {
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
-        mockMvc.perform(get("/portfolio-2?inPortfolio=T"))
+        mockMvc.perform(get("/portfolio-2"))
                 .andExpect(status().isOk())
                 .andExpect(redirectedUrl(null));
     }
@@ -146,9 +146,9 @@ class PortfolioControllerTests {
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
-        mockMvc.perform(get("/portfolio-1?inPortfolio=T"))
+        mockMvc.perform(get("/portfolio-1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/portfolio?inPortfolio=T"));
+                .andExpect(redirectedUrl("/portfolio"));
     }
 
 }

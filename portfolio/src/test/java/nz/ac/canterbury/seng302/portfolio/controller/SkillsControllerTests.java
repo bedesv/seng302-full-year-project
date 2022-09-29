@@ -114,7 +114,7 @@ class SkillsControllerTests {
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
 
-        mockMvc.perform(get("/portfolio-2-skill?skill=skill&inPortfolio=T"))
+        mockMvc.perform(get("/portfolio-2-skill?skill=skill"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profile"));
     }
@@ -133,7 +133,7 @@ class SkillsControllerTests {
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
-        mockMvc.perform(get("/portfolio-2-skill?skill=skill&inPortfolio=T"))
+        mockMvc.perform(get("/portfolio-2-skill?skill=skill"))
                 .andExpect(status().isOk())
                 .andExpect(redirectedUrl(null));
     }
@@ -152,8 +152,8 @@ class SkillsControllerTests {
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
-        mockMvc.perform(get("/portfolio-1-skill?skill=skill&inPortfolio=T"))
+        mockMvc.perform(get("/portfolio-1-skill?skill=skill"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/portfolio-skill?skill=skill&inPortfolio=T"));
+                .andExpect(redirectedUrl("/portfolio-skill?skill=skill"));
     }
 }
