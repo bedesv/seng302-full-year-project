@@ -61,3 +61,7 @@
 .cobalt {
     --primary-highlight: var(--cobalt);
 }
+
+.theme__transition {
+    transition: background 200ms ease-in-out, color 400ms ease-in-out, border 400ms ease-in-out;
+}

@@ -111,6 +111,7 @@ document.addEventListener("mouseover", (e) => {
 })
 
 document.addEventListener('change', (event) => {
+    body.classList.add('theme__transition');
     let toggle = event.target;
     if (toggle.id === 'flexSwitchCheckDefault' && toggle.type === 'checkbox') {
         if (toggle.checked) {

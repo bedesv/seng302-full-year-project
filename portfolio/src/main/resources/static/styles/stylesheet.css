@@ -21,8 +21,6 @@ body {
     font-weight: 200;
     background: var(--background);
     color: var(--text-surface);
-    /*transition: background 500ms ease-in-out, color 1000ms ease-in-out, border 1000ms ease-in-out;*/
-    /*background-color: rgba(251, 196, 144, 0.5) !important; !* Secondary Colour *!*/
 }
 
 h5 {
