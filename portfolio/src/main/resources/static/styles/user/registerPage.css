@@ -8,17 +8,6 @@
     --color-accent: #A82810;
 }
 
-/* Hide scrollbar */
-html::-webkit-scrollbar {
-    /* Chrome, Safari, Opera */
-    display: none;
-}
-
-html {
-    -ms-overflow-style: none; /* IE, Edge */
-    scrollbar-width: none; /* Firefox */
-}
-
 /* Simple class for hiding components */
 .hidden {
     display: none !important;

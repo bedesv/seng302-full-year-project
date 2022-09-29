@@ -1,4 +1,4 @@
-<table class="table table-active table-sm table__color" aria-describedby="Table contains users belonging to this group" th:classappend="${userIsTeacher} ? 'table-hover' : ''" th:with="tableDropable=${userIsTeacher && !(group.getGroupId == TEACHER_GROUP_ID && !userIsAdmin)}" th:id="${group.getGroupId}" th:ondragover="${tableDropable} ? 'allowDrop(event)' : ''" >
+<table class="table table-active table-sm table__color" aria-describedby="Table contains users belonging to this group" th:classappend="${user.isTeacher} ? 'table-hover' : ''" th:with="tableDropable=${user.isTeacher && !(group.getGroupId == TEACHER_GROUP_ID && !user.isTeacher)}" th:id="${group.getGroupId}" th:ondragover="${tableDropable} ? 'allowDrop(event)' : ''" >
   <thead>
   <tr class="unselected" th:ondragover="${tableDropable} ? 'allowDrop(event)' : ''" th:ondrop="${tableDropable} ? 'pasteMembers(this)' : ''">
     <th scope="col">User Id</th>
@@ -7,10 +7,17 @@
   </tr>
   </thead>
   <tbody>
-  <tr th:each="member : ${group.getMembers}" th:with="rowDraggable=${userIsTeacher}" th:id="${!rowDraggable} ? 'no-hover' : ''" th:draggable="${rowDraggable}" th:onmousedown="${rowDraggable} ? 'copyMembers(this)' : ''" th:onmouseup="${rowDraggable} ? 'rowClick(this)' : ''"  class="unselected">
-    <th scope="row" class="user_id" th:text="${member.getId}"></th>
-    <td th:text="${member.getFirstName}"></td>
-    <td th:text="${member.getLastName}"></td>
+  <tr th:each="member : ${group.getMembers}"
+      th:with="rowDraggable=${user.isTeacher}"
+      th:id="${!rowDraggable} ? 'no-hover' : ''"
+      th:draggable="${rowDraggable}"
+      th:ontouchstart="${rowDraggable} ? 'toggleRowMobile(this)' : ''"
+      th:onmousedown="${rowDraggable} ? 'copyMembers(this)' : ''"
+      th:onmouseup="${rowDraggable} ? 'rowClick(this)' : ''"
+      class="unselected">
+    <th scope="row" class="user_id group-row" th:text="${member.getId}"></th>
+    <td class="group-row" th:text="${member.getFirstName}"></td>
+    <td class="group-row" th:text="${member.getLastName}"></td>
   </tr>
   </tbody>
 </table>

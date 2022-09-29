@@ -75,33 +75,6 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         }
     }
 
-    @ModelAttribute("authUserIsTeacher")
-    public boolean userIsTeacher(@AuthenticationPrincipal AuthState principal){
-        try {
-            return userAccountClientService.isTeacher(principal);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    @ModelAttribute("authUserIsAdmin")
-    public boolean userIsAdmin(@AuthenticationPrincipal AuthState principal){
-        try {
-            return userAccountClientService.isAdmin(principal);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    @ModelAttribute("authUserIsPrivileged")
-    public boolean userIsPrivileged(@AuthenticationPrincipal AuthState principal) {
-        try {
-            return userIsAdmin(principal) || userIsTeacher(principal);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     /**
      * This attribute will be used in th:pattern to ensure that fields are not blank
      * Then additional validation to be carried out in the service

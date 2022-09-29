@@ -342,15 +342,15 @@ public class UserAccountsServerService extends UserAccountServiceImplBase {
                 if (success) {
                     user.setProfileImagePath(null);
                     repository.save(user);
-                    response = DeleteUserProfilePhotoResponse.newBuilder().setIsSuccess(true).build();
+                    response = DeleteUserProfilePhotoResponse.newBuilder().setIsSuccess(true).setMessage("User profile picture updated successfully.").build();
                 } else {
-                    response = DeleteUserProfilePhotoResponse.newBuilder().setIsSuccess(false).build();
+                    response = DeleteUserProfilePhotoResponse.newBuilder().setIsSuccess(false).setMessage("Could not delete photo").build();
                 }
             } catch (Exception e) {
-                response = DeleteUserProfilePhotoResponse.newBuilder().setIsSuccess(false).build();
+                response = DeleteUserProfilePhotoResponse.newBuilder().setIsSuccess(false).setMessage(e.getMessage()).build();
             }
         } else {
-            response = DeleteUserProfilePhotoResponse.newBuilder().setIsSuccess(true).build();
+            response = DeleteUserProfilePhotoResponse.newBuilder().setIsSuccess(true).setMessage("User does not have a profile picture.").build();
         }
 
         return response;

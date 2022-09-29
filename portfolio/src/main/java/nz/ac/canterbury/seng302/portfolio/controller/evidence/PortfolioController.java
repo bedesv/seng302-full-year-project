@@ -91,6 +91,7 @@ public class PortfolioController {
         // Add all of the skills that the user has to the page
         List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(user.getId(), projectId);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
+        model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
         if (Objects.equals(user.getUsername(), "")) {
             return "redirect:/profile";
         } else if (user.getId() == pageUser.getId()) {

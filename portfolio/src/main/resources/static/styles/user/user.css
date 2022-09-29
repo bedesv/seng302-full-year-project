@@ -16,6 +16,7 @@
     justify-content: space-between;
 }
 
+/* User tab buttons */
 .user-tab__button {
     color: white;
     border: 1px solid var(--color-accent);
@@ -35,3 +36,81 @@
     box-shadow: none;
     font-size: 1.5rem;
 }
+
+/* User Statistics Tab */
+
+.user-statistics__flex-container {
+    display: flex;
+    flex-direction:column;
+}
+
+.data-charts__flex-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.evidence-chart__flex-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+#user-chart__skills-chart, #user-chart__time-chart {
+    min-height: 25em;
+    min-width: 35em;
+    max-width: 60em;
+    flex: 1 1 0px;
+}
+
+.graph__dropdown {
+    margin-top: 5px;
+    max-width: fit-content;
+}
+
+.graphs-dropdown__button  {
+    position: relative;
+    border: 1px solid var(--color-accent) !important;
+    color: black;
+    background-color: var(--color-complement) !important;
+    padding: 10px;
+    height: 3rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    box-shadow: none !important;
+}
+
+.graphs-dropdown__button:hover {
+    color: #f78e55;
+    border-color: #f78e55;
+    background-color: #f4ebe6;
+    height: 3rem;
+    box-shadow: none !important;
+    font-size: 1rem;
+}
+
+.graphs-dropdown__button:active {
+    background-color: #f78e55;
+}
+
+
+.chart__dropdown_item:active {
+    background-color: #f78e55;
+}
+
+.dropdown-menu {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+}
+
+a.hover {
+    text-decoration: none;
+}
+
+

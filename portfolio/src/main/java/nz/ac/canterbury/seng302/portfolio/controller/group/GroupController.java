@@ -7,6 +7,7 @@ import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.group.*;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
+import nz.ac.canterbury.seng302.portfolio.service.project.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.user.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.util.ValidationUtil;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -45,9 +46,9 @@ public class GroupController {
     @Autowired
     private PortfolioGroupService portfolioGroupService;
     @Autowired
-    private GroupChartDataService groupChartDataService;
-    @Autowired
     private EvidenceService evidenceService;
+    @Autowired
+    private SprintService sprintService;
 
     private static final int GROUP_HOME_EVIDENCE_LIMIT = 20;
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
@@ -70,6 +71,7 @@ public class GroupController {
         Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
         List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolioByGroup(group, project.getId(), GROUP_HOME_EVIDENCE_LIMIT);
         model.addAttribute("evidenceList", evidenceList);
+        model.addAttribute("skillsList", evidenceService.getAllGroupsSkills(group, project.getId()));
         model.addAttribute("group", group);
         model.addAttribute("userInGroup", groupsClientService.userInGroup(group.getGroupId(), userId));
         model.addAttribute("graphStartDate", project.getStartDate());
@@ -77,7 +79,7 @@ public class GroupController {
         model.addAttribute("timeRange", "day");
         model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("pageUser", userAccountClientService.getUserAccountByPrincipal(principal));
-        groupChartDataService.setDateRefiningOptions(model, project);
+        sprintService.getDateRefiningOptions(model, project);
         return GROUP_PAGE;
     }
 
@@ -146,6 +148,49 @@ public class GroupController {
         model.addAttribute("numCommits", numCommits);
         model.addAttribute("groupRepositorySettings", groupRepositorySettings);
         return GROUP_REPOSITORY;
+    }
+
+    /**
+     * Fetches the GROUP_HOME_EVIDENCE_LIMIT most recent pieces of evidence for the given group with
+     * the given skill
+     * @param model The model to add the data to
+     * @param skill The skill to filter by. Is '#no_skill' if wanting to get evidence with no skill
+     * @param id The id of the group to fetch evidence for
+     * @return The evidence page with the new evidence filled in
+     */
+    @GetMapping("/group-{id}-evidence-skill")
+    public String getGroupEvidenceFilteredBySkill(Model model,
+                                                  @RequestParam("skill") String skill,
+                                                  @PathVariable String id) {
+        int groupId = Integer.parseInt(id);
+        GroupDetailsResponse response = groupsClientService.getGroupDetailsById(groupId);
+        if (response.getGroupId() == 0) {
+            return "redirect:/groups";
+        }
+        Group group = new Group(response);
+        Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
+        model.addAttribute("evidenceList", evidenceService.getEvidenceForPortfolioByGroupFilterBySkill(group, project.getId(), skill, GROUP_HOME_EVIDENCE_LIMIT));
+        return "fragments/evidence";
+    }
+
+    /**
+     * Fetches the GROUP_HOME_EVIDENCE_LIMIT most recent pieces of evidence for the given group
+     * @param model The model to add the data to
+     * @param id The id of the group to fetch evidence for
+     * @return The evidence page with the new evidence filled in
+     */
+    @GetMapping("/group-{id}-evidence")
+    public String getGroupEvidence(Model model,
+                                   @PathVariable String id) {
+        int groupId = Integer.parseInt(id);
+        GroupDetailsResponse response = groupsClientService.getGroupDetailsById(groupId);
+        if (response.getGroupId() == 0) {
+            return "redirect:/groups";
+        }
+        Group group = new Group(response);
+        Project project = projectService.getProjectById((portfolioGroupService.getPortfolioGroupByGroupId(group.getGroupId())).getParentProjectId());
+        model.addAttribute("evidenceList", evidenceService.getEvidenceForPortfolioByGroup(group, project.getId(), GROUP_HOME_EVIDENCE_LIMIT));
+        return "fragments/evidence";
     }
 
 

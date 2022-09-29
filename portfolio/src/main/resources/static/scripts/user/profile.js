@@ -34,3 +34,15 @@ window.addEventListener('load', (event) => {
         hideElement(ancestor);
     }
 });
+
+/**
+ * Called in html file, don't remove!
+ * Updates all charts with new values
+ * @param startDate new start date
+ * @param endDate new end date
+ */
+async function selectRefinement(startDate, endDate){
+    START_DATE = startDate;
+    END_DATE = endDate;
+    await updateChartData();
+}

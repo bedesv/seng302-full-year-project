@@ -373,8 +373,8 @@ function changeText(text) {
 async function updatePage() {
 
     // Clear the lists of sprints and events
-    let sprints = []
-    let events = []
+    sprints = []
+    events = []
 
     // Fetch updated sprints, events, deadlines and milestones
     await updateSprints()

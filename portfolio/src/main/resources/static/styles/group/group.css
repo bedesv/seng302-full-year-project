@@ -131,9 +131,6 @@ html {
     border-top: 1px solid var(--color-accent);
 }
 
-.group-member__container {
-}
-
 .group-member__link {
     text-decoration: none;
     color: black;
@@ -275,6 +272,8 @@ html {
 #group-repository-information {
     margin: 1rem;
 }
+
+/* Groups Statistics */
 
 .group-statistics__flex-container {
     display: flex;

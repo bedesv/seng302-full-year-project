@@ -20,9 +20,17 @@
             <ul class="site-navigation__list">
                 <li class="site-navigation__item">
                     <h5 class="site-navigation__label">
-                        <a th:href="@{profile}" class="site-navigation__link" th:classappend="${#httpServletRequest.getRequestURI() == '/profile' ? 'active':''}">
+                        <a th:href="@{profile?profileSelected=true}" class="site-navigation__link" th:classappend="${#httpServletRequest.getRequestURI() == '/profile' ? 'active':''}">
                             <span class="bi bi-person-circle navigation_icon" ></span>
                             Profile
+                        </a>
+                    </h5>
+                </li>
+                <li class="site-navigation__item">
+                    <h5 class="site-navigation__label">
+                        <a th:href="@{profile?statisticsSelected=true}" class="site-navigation__link">
+                            <span class="bi bi-bar-chart-line navigation_icon" ></span>
+                            Statistics
                         </a>
                     </h5>
                 </li>
