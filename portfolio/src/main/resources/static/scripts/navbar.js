@@ -87,7 +87,7 @@ document.addEventListener("mouseover", (e) => {
 
 document.addEventListener('change', (event) => {
     let toggle = event.target;
-    if (toggle.tagName === 'INPUT' && toggle.type === 'checkbox') {
+    if (toggle.id === 'flexSwitchCheckDefault' && toggle.type === 'checkbox') {
         if (toggle.checked) {
             body.classList.replace('light', 'dark');
             localStorage.setItem('theme', 'dark');

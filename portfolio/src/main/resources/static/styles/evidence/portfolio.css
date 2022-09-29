@@ -46,7 +46,6 @@
 
 .add-evidence__container {
     display: flex;
-    justify-content: center;
 }
 
 .add-evidence__button {
@@ -61,7 +60,8 @@
 }
 
 .add-evidence__button:hover {
-    color: var(--text-surface-highlight);
+    color: black;
+    filter: brightness(85%);
     box-shadow: none !important;
 }
 
