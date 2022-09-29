@@ -1,7 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.model.evidence;
 
-import nz.ac.canterbury.seng302.portfolio.model.user.User;
-
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.*;

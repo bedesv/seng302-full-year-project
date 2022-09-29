@@ -14,6 +14,7 @@
     <script rel="script" th:src="@{scripts/user/profile.js}"></script>
     <script rel="script" th:src="@{scripts/user/portfolio.js}"></script>
     <script rel="script" th:src="@{scripts/evidence/saveWeblinks.js}"></script>
+    <script rel="script" th:src="@{scripts/evidence/evidence.js}"></script>
     <script rel="script" th:src="@{scripts/user/userStatistics.js}"></script>
     <link rel="stylesheet" th:href="@{styles/user/user.css}">
     <script th:inline="javascript">
@@ -73,6 +74,7 @@
 
 <script>
     updateUserPortfolio()
+
     // Removes the portfolioSelected search param from the url
     const url = new URL(location);
     url.searchParams.delete('portfolioSelected');

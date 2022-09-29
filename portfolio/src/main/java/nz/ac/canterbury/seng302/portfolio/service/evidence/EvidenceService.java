@@ -50,6 +50,7 @@ public class EvidenceService {
     public void toggleHighFive(int evidenceId, int userId) {
         Evidence evidence = getEvidenceById(evidenceId);
         evidence.toggleHighFive(userId);
+        repository.save(evidence);
         String message = ("User: " + userId + " high-fived evidence: " + evidenceId);
         PORTFOLIO_LOGGER.info(message);
     }
