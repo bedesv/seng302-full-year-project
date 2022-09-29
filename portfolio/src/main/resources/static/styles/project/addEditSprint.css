@@ -34,7 +34,8 @@ body {
     border: none;
     border-radius: 5px;
     height: 40px;
-    border-bottom: 2px solid lightgray;
+    background-color: var(--surface-highlight);
+    color: var(--text-surface);
     padding-left: 5px;
 }
 
@@ -51,21 +52,21 @@ body {
     padding: 0;
     margin-bottom: 1rem;
     background-color: var(--primary-highlight);
-    border: 1px solid var(--primary-highlight);
+    color: var(--text-surface);
+    border: none;
     border-radius: 8px;
     overflow: hidden;
 
     height: 3rem;
     line-height: 3rem;
     text-align: center;
-    color: black;
     font-size: 1rem;
     text-decoration: none;
 }
 
 /*Add some hover effects to buttons */
 #sprint-form__form button:hover, #sprint-form__form a:hover {
-    filter: brightness(80%);
+    filter: brightness(85%);
     cursor: pointer;
 }
 

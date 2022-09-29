@@ -1,13 +1,3 @@
-:root {
-    /* CSS variables */
-    --color-primary: #FBAA60;
-    --color-secondary: #FADFC6FF;
-    --color-tertiary: #F67B50;
-    --color-complement: #F4EAE6;
-    --color-accent: #A82810;
-}
-
-
 /* Hide scrollbar */
 html::-webkit-scrollbar {
     /* Chrome, Safari, Opera */
