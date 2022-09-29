@@ -117,6 +117,8 @@ public class ProfileController {
         model.addAttribute("groups", groups);
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
         Project project = projectService.getProjectById(projectId);
+        model.addAttribute("graphStartDate", project.getStartDate());
+        model.addAttribute("graphEndDate", project.getEndDate());
         sprintService.getDateRefiningOptions(model, project);
         if (Objects.equals(pageUser.getUsername(), "") || user.getId() == pageUser.getId()) {
             return "redirect:/profile";
