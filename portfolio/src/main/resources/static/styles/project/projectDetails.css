@@ -209,7 +209,7 @@ html {
 .sprint__button-wrapper button:hover, .event__button-wrapper button:hover, .new-sprint__button:hover,
 .new-event__button:hover, .new-deadline__button:hover, .new-milestone__button:hover,
 .deadline__button-wrapper button:hover, .milestone__button-wrapper button:hover {
-    filter: brightness(80%);
+    filter: brightness(85%);
     color: black;
     cursor: pointer;
 }
@@ -242,32 +242,39 @@ html {
 }
 
 .carousel-buttons {
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 1rem;
-    gap: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
+    width:fit-content;
+    margin: 2rem 0;
 }
 
 /*NAVIGATION BUTTONS*/
-.btn-fill-tertiary {
-    color: var(--primary-highlight);
-    border-color: var(--primary-highlight);
+.projects__tab-button {
+    color: var(--text-surface);
+    border: 0;
     background-color: var(--surface);
-    border-radius: 3px;
     height: 3rem;
-    box-shadow: none !important;
-    width: 100%;
+    font-size: 1.5rem;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.projects__tab-button:hover {
+    color: var(--text-surface-highlight);
+    background-color: var(--primary-highlight);
+    height: 3rem;
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
     font-size: 1.5rem;
 }
 
-.btn-fill-tertiary:hover {
-    color: white;
-    border-color: var(--primary-highlight);
+.active-carousel-tab {
+    color: var(--text-surface-highlight);
     background-color: var(--primary-highlight);
-    height: 3rem;
-    box-shadow: none !important;
-    width: 100%;
-    font-size: 1.5rem;
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
 }
 
 /*BUTTONS idk what for???*/
