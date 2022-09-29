@@ -38,24 +38,26 @@
                     </div>
                 </div>
             </div>
-            <div class="categories">
-                <!-- Categories Tab -->
-                <h2>Categories</h2>
-                <div class="categories__details">
-                    <a class="no-category__link" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-categories?category='">No Category</a>
-                    <a class="category__link" th:each="category: ${categoryList}" th:text="${category}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-categories?category=' + ${category}"></a>
+            <div class="filter-tags">
+                <div class="categories">
+                    <!-- Categories Tab -->
+                    <h2>Categories</h2>
+                    <div class="categories__details">
+                        <a class="no-category__link" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-categories?category='">No Category</a>
+                        <a class="category__link" th:each="category: ${categoryList}" th:text="${category}" th:href="@{${owner} ? 'portfolio' : 'portfolio-' + ${pageUser.id}} + '-categories?category=' + ${category}"></a>
+                    </div>
                 </div>
-            </div>
-            <div class="skills">
-                <!-- Skill list -->
-                <h2 th:text="Skills"></h2>
-                <div class="skill__details">                                    <!--  v using # here because skills can't have a # so we can differentiate between a skill "no_skill" and evidence with no skill -->
-                    <button class="no-skill__link " onclick="fetchEvidenceWithSkill('#no_skill')">No Skill</button>
-                    <button th:each="skill: ${skillsList}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:attr="onclick=|fetchEvidenceWithSkill('${skill}')|"></button>
+                <div class="skills">
+                    <!-- Skill list -->
+                    <h2 th:text="Skills"></h2>
+                    <div class="skill__details">                                    <!--  v using # here because skills can't have a # so we can differentiate between a skill "no_skill" and evidence with no skill -->
+                        <button class="no-skill__link " onclick="fetchEvidenceWithSkill('#no_skill')">No Skill</button>
+                        <button th:each="skill: ${skillsList}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:attr="onclick=|fetchEvidenceWithSkill('${skill}')|"></button>
+                    </div>
                 </div>
-            </div>
-            <div class="reset-filter">
-                <button class="reset__link" th:onclick="resetEvidenceFilter()">Reset Filter</button>
+                <div class="reset-filter">
+                    <button class="reset__link" th:onclick="resetEvidenceFilter()">Reset Filter</button>
+                </div>
             </div>
         </div>
 

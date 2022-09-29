@@ -30,7 +30,9 @@
     padding-top: 0;
     padding-bottom: 0;
     border-radius: 10px;
-    background-color: var(--color-complement);
+    color: var(--text-surface);
+    background-color: var(--primary-highlight);
+    border: none;
 }
 
 .group__details-wrapper {
@@ -47,7 +49,7 @@
 }
 
 .group__name:hover {
-    color: var(--color-accent);
+    filter: brightness(85%);
 }
 
 .table {

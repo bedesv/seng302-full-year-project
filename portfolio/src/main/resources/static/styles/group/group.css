@@ -27,7 +27,7 @@ html {
 
 #group header {
     padding: 15px 15px 15px 15px;
-    background-color: var(--surface-highlight);
+    background-color: var(--surface);
     color: var(--text-surface);
 }
 
@@ -58,7 +58,7 @@ html {
 }
 
 .group__button-wrapper button:hover {
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
+    filter: brightness(85%);
     cursor: pointer;
 }
 
@@ -106,7 +106,7 @@ html {
 }
 
 .group-members {
-    background-color: var(--surface-highlight);
+    background-color: var(--surface);
     display: flex;
     flex-direction: column;
     border-radius: 5px;
@@ -170,6 +170,30 @@ html {
     white-space: nowrap;
     font-size: 20px;
     margin-left: auto;
+}
+
+.filter-tags {
+    background-color: var(--surface);
+    margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
+}
+
+.categories__details {
+    padding-top: 10px;
+    padding-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--primary-highlight);
+}
+
+.skill__details {
+    padding-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--primary-highlight);
+    padding-bottom: 30px;
 }
 
 /* Group Statistics */
@@ -259,7 +283,7 @@ html {
 }
 
 .repository_container {
-    background-color: var(--surface-highlight);
+    background-color: var(--surface);
     margin: 1rem 0 1rem 0;
     visibility: visible;
     border-radius: 10px;
@@ -271,6 +295,10 @@ html {
     font-size: x-large;
     height: 3rem;
     margin: 1rem 1rem 1rem auto;
+}
+
+#open-modal__button:hover {
+    filter: brightness(85%);
 }
 
 #group-repository-info__wrapper {
