@@ -28,13 +28,7 @@ html {
 /******************** Login Page ********************/
 
 body{
-    background: #FBAA60;
-}
-
-h2{
-    color: aqua;
-    font-weight: bold;
-    font-variant: inherit;
+    background: var(--background);
 }
 
 *{
@@ -54,15 +48,15 @@ h2{
 }
 .wrapper{
     width: 100%;
-    background: #F4EAE6;
+    background: var(--surface);
     border-radius: 5px;
     box-shadow: 0px 4px 10px 1px rgba(0,0,0,0.1);
 }
 .wrapper .title{
     height: 90px;
-    background: black;
+    background: var(--surface);
     border-radius: 5px 5px 0 0;
-    color: #fff;
+    color: var(--text-surface);
     font-size: 30px;
     font-weight: 600;
     display: flex;
@@ -122,16 +116,16 @@ form .row input::placeholder{
     display: block;
     position: relative;
 
-    border: 1px solid var(--color-accent);
+    border: 1px solid var(--primary-highlight);
     border-radius: 10px;
-    background-color: var(--color-complement);
+    background-color: var(--primary-highlight);
     padding: 0 2rem 0 2rem;
     margin-top: 1rem;
 }
 
 .wrapper form .button input:hover{
     cursor: pointer;
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
+    filter: brightness(80%);
 }
 
 .register-navigation {
@@ -161,6 +155,7 @@ p{
 }
 
 .subtitle {
+    color: var(--text-surface);
     margin-left: -5px;
 }
 
