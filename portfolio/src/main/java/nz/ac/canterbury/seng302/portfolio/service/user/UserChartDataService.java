@@ -2,12 +2,17 @@ package nz.ac.canterbury.seng302.portfolio.service.user;
 
 import com.google.common.annotations.VisibleForTesting;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
+import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
+import nz.ac.canterbury.seng302.portfolio.util.DateComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -70,5 +75,55 @@ public class UserChartDataService {
                          Map.Entry::getValue,
                         (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
+
+    /**
+     * Get user evidence data over time within a project
+     * @param user getting data for given user
+     * @param parentProjectId select project id
+     * @param startDate of evidence refinement
+     * @param endDate of evidence refinement
+     * @return a map of values.
+     */
+    public Map<String, Integer> getUserEvidenceData(User user, int parentProjectId, Date startDate, Date endDate) {
+        final TreeMap<String, Integer> evidenceCountOverTime = new TreeMap<>(new DateComparator());
+        getEvidenceOverTimeDay(evidenceCountOverTime, startDate, endDate, user, parentProjectId);
+        String message = ("Retrieved user [" + user.getId() +  "] evidence data for user statistics");
+        PORTFOLIO_LOGGER.info(message);
+
+        return evidenceCountOverTime;
+    }
+
+
+    /**
+     * Helper function for which creates a map of the total evidence produced by a user within a project
+     * over time for each day within the start and end dates
+     * @param evidenceCountOverTime the Map of all date strings in form ("yyyy-mm-dd") and the integer value of evidence
+     * @param startDate The start date
+     * @param endDate The end date
+     * @param user the user object that the data is wanted for
+     * @param parentProjectId The project id of the current project so the correct evidence is used
+     */
+    public void getEvidenceOverTimeDay(Map<String, Integer> evidenceCountOverTime, Date startDate, Date endDate, User user, int parentProjectId) {
+        LocalDate start = Instant.ofEpochMilli(startDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate finish = Instant.ofEpochMilli(endDate.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+
+        //Populate the map with all days within the bounds with key value 0
+        for(LocalDate date = start; date.isBefore(finish.plusDays(1)); date = date.plusDays(1)) {
+            evidenceCountOverTime.put(date.toString(), 0);
+        }
+
+        // Iterate through all of that user's evidence for the  project
+        for (PortfolioEvidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
+            if (!startDate.after(e.getDate()) && !endDate.before(e.getDate())) {
+                // Iterate through all of that user's evidence for the project and if the evidence falls on one of the days
+                // mentioned above add 1 to that day
+                LocalDate evidenceDate = Instant.ofEpochMilli(e.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+                if (evidenceDate.isAfter(start.minusDays(1)) && evidenceDate.isBefore(finish.plusDays(1))) {
+                    evidenceCountOverTime.merge(evidenceDate.toString(), 1, Integer::sum);
+                }
+            }
+        }
+    }
+
 }
 
