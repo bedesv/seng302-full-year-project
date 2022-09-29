@@ -80,163 +80,186 @@
 
 <!-- Page content -->
 <div id="page-content" class="constrict">
-    <div id="evidence-form__wrapper">
-        <!-- Heading -->
-        <header class="evidence-form__header flex-column">
-            <div th:if="${evidenceId == -1 || evidenceId =='-1'}">
-                <h1 id="evidence__name" th:text="'Add Evidence'"></h1>
-            </div>
-            <div th:if="${evidenceId != -1 && evidenceId !='-1'}">
-                <h1 th:text="'Editing: ' + ${evidenceTitle}"></h1>
-            </div>
+    <div class="container">
+        <div id="evidence-form__wrapper">
+            <!-- Heading -->
+            <header class="evidence-form__header flex-column">
+                <div th:if="${evidenceId == -1 || evidenceId =='-1'}">
+                    <h1 id="evidence__name" th:text="'Add Evidence'"></h1>
+                </div>
+                <div th:if="${evidenceId != -1 && evidenceId !='-1'}">
+                    <h1 th:text="'Editing: ' + ${evidenceTitle}"></h1>
+                </div>
+            </header>
 
-        </header>
+            <!-- Add Evidence Form -->
+            <form id="evidence-form__form" class="flex-column" th:action="@{editEvidence-{evidenceId}(evidenceId=${evidenceId})}" th:method="post">
+                <!-- Evidence Name !-->
+                <label class="subtitle">Title*</label>
 
-        <!-- Add Evidence Form -->
-        <form id="evidence-form__form" class="flex-column" th:action="@{editEvidence-{evidenceId}(evidenceId=${evidenceId})}" th:method="post">
-            <!-- Evidence Name !-->
-            <label>Title *</label>
-            <input minlength="2" maxlength="64" type="text" id="evidence-form__title-field" onkeyup="checkValid()" name="evidenceTitle" placeholder="Evidence Title" th:value="${evidenceTitle}" th:pattern="${isNotBlankPattern}" title="Evidence Name must not be blank and cannot contain special characters" required>
-            <p class="evidence-form__error-message" th:text="${titleError}" />
-            <!-- Evidence Description !-->
-            <label>Description *</label>
-            <span id="evidence-form__helper">Minimum 50 characters</span>
-            <textarea minlength="50" maxlength="1024" type="text" id="evidence-form__description-field" onkeyup="checkValid()" name="evidenceDescription" placeholder="Evidence Description" th:text="${evidenceDescription}" required></textarea>
-            <p class="evidence-form__error-message" th:text="${descriptionError}" />
-            <!-- Evidence Date !-->
-            <label>Date *
-                <span data-toggle="tooltip"
-                      data-placement="top" data-html=true class="bi bi-question-circle-fill"
-                      title="The date the evidence occurred (Cannot be outside project dates)">
-                </span>
-            </label>
-            <input type="date" id="evidence-form__date-field" name="evidenceDate" onchange="checkValid()" th:placeholder="${evidenceDate}" th:value="${evidenceDate}" th:min="${minEvidenceDate}" th:max="${maxEvidenceDate}" required>
-            <p class="evidence-form__error-message" th:text="${dateError}" />
-            <!-- Evidence Categories !-->
-            <!-- (Can add th:checked values in the future for editing evidence, so the pre existing categories are pre-ticked) !-->
-            <label for="evidence-form__categories-check">
-                Select Categories
-            </label>
-            <div class="flex-row" id="evidence-form__categories-check">
-                <div class="form-check edit-input">
-                    <input type="checkbox" value="" id="flex-check--quantitative" name="isQuantitative" onclick="checkValid()" th:checked="${#strings.contains(categories,  'QUANTITATIVE')?true:false}">
-                    <label class="form-check-label" for="flex-check--quantitative">
-                        Quantitative
+                <div class="row">
+                    <input minlength="2" maxlength="64" type="text" id="evidence-form__title-field" onkeyup="checkValid()" name="evidenceTitle" placeholder="Evidence Title" th:value="${evidenceTitle}" th:pattern="${isNotBlankPattern}" title="Evidence Name must not be blank and cannot contain special characters" required>
+                    <p class="evidence-form__error-message" th:text="${titleError}" />
+                </div>
+
+                <!-- Evidence Description !-->
+                <div class="row">
+                    <label class="subtitle">Description*</label>
+                    <span id="evidence-form__helper">Minimum 50 characters</span>
+                    <textarea minlength="50" maxlength="1024" type="text" id="evidence-form__description-field" onkeyup="checkValid()" name="evidenceDescription" placeholder="Evidence Description" th:text="${evidenceDescription}" required></textarea>
+                    <p class="evidence-form__error-message" th:text="${descriptionError}" />
+                    </div>
+
+                <!-- Evidence Date !-->
+                <div class="row">
+                    <label class="subtitle">Date*
+                        <span data-toggle="tooltip"
+                              data-placement="top" data-html=true class="bi bi-question-circle-fill"
+                              title="The date the evidence occurred (Cannot be outside project dates)">
+                    </span>
                     </label>
-                </div>
-                <div class="form-check">
-                    <input type="checkbox" value="" id="flex-check--qualitative" name="isQualitative" onclick="checkValid()" th:checked="${#strings.contains(categories,  'QUALITATIVE')?true:false}">
-                    <label class="form-check-label" for="flex-check--qualitative">
-                        Qualitative
-                    </label>
+                    <input type="date" id="evidence-form__date-field" name="evidenceDate" onchange="checkValid()" th:placeholder="${evidenceDate}" th:value="${evidenceDate}" th:min="${minEvidenceDate}" th:max="${maxEvidenceDate}" required>
+                    <p class="evidence-form__error-message" th:text="${dateError}" />
                 </div>
 
-                <div class="form-check">
-                    <input type="checkbox" value="" id="flex-check--service" name="isService" onclick="checkValid()" th:checked="${#strings.contains(categories,  'SERVICE')?true:false}">
-                    <label class="form-check-label" for="flex-check--service">
-                        Service
-                    </label>
-                </div>
-            </div>
-            <!-- Skills !-->
-            <label>Skills
-                <span data-toggle="tooltip"
-                      data-placement="top" data-html=true class="bi bi-question-circle-fill"
-                      title="Skills are separated by spaces. Use underscores instead of spaces inside a skill. For example, Intra-team_Communication.">
-                </span>
-            </label>
-            <div id="skill-input-container">
-                <div id="skill-container">
-                  <div class="input-container">
-                    <input type="text" id="skills-input" onkeyup="checkValid()" th:value="${evidenceSkills}" contenteditable="true" autocomplete="off"
-                       placeholder="Add Skills"/>
-                  </div>
-                </div>
-            </div>
-            <input type="hidden" id="evidence-form__hidden-skills-field" name="evidenceSkills"/>
-            <p id="evidence-form__skills-error" class="evidence-form__error-message" th:text="${skillsError}" />
+                <!-- Evidence Categories !-->
+                <!-- (Can add th:checked values in the future for editing evidence, so the pre existing categories are pre-ticked) !-->
+                <label class="subtitle" for="evidence-form__categories-check">
+                    Select Categories
+                </label>
+                <div class="flex-row" id="evidence-form__categories-check">
+                    <div class="checkboxes">
+                        <label>
+                            <input type="checkbox" value="" id="flex-check--quantitative" name="isQuantitative" onclick="checkValid()" th:checked="${#strings.contains(categories,  'QUANTITATIVE')?true:false}">
+                            <span class="form-check-label" for="flex-check--quantitative">
+                                Quantitative
+                            </span>
+                        </label>
+                        <label>
+                            <input type="checkbox"  value="" id="flex-check--qualitative" name="isQualitative" onclick="checkValid()" th:checked="${#strings.contains(categories,  'QUALITATIVE')?true:false}">
+                            <span class="form-check-label" for="flex-check--qualitative">
+                                Qualitative
+                            </span>
+                        </label>
 
-            <input type="hidden" id="evidence-form__hidden--change-skills-field" name="skillsToChange"/>
-            <!-- Web Links !-->
-            <label th:if="${evidenceId == -1 || evidenceId =='-1'}">Web Links</label>
-            <div th:if="${evidenceId == -1 || evidenceId =='-1'}" id="evidence-form__webLink-container"></div>
-            <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="text" id="evidence-form__webLink-name" onkeyup="checkValid()" placeholder="Web Link Name"/>
-            <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="url" id="evidence-form__webLink-link" onkeyup="checkValid()" placeholder="Web Link" oninvalid="this.setCustomValidity('Incorrect Web Link Format. Example: \'http(s)://example.com\'')" oninput="this.setCustomValidity('')"/>
-            <P th:if="${webLinkError}" style="color: red">Incorrect Web Link Format</P>
-            <div th:if="${evidenceId == -1 || evidenceId =='-1'}" class="evidence__button-wrapper flex-row">
-              <button id="weblink-button" type="button" class="btn btn-primary" onclick="addWebLinks()">
-                Add Weblink
-              </button>
-            </div>
-            <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="hidden" id="evidence-form__hidden-webLinks-names" name="evidenceWebLinkNames"/>
-            <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="hidden" id="evidence-form__hidden-webLinks-links" name="evidenceWebLinks"/>
-
-            <!-- Users !-->
-            <label>Users
-                <span data-toggle="tooltip"
-                      data-placement="top" data-html=true class="bi bi-question-circle-fill"
-                      title="Search for users by name. Click on a user in the drop-down menu to add them to the evidence">
-                </span>
-            </label>
-            <div id="user-input-container">
-                <div id="user-container">
-                    <div class="input-container">
-                        <input type="text" id="users-input" contenteditable="true" autocomplete="off"
-                               placeholder="Add Users"/>
+                        <label>
+                            <input type="checkbox" value="" id="flex-check--service" name="isService" onclick="checkValid()" th:checked="${#strings.contains(categories,  'SERVICE')?true:false}">
+                            <span class="form-check-label" for="flex-check--service">
+                                Service
+                            </span>
+                        </label>
                     </div>
                 </div>
-            </div>
-            <p class="evidence-form__error-message" th:text="${usersError}" />
-            <input type="hidden" id="evidence-form__hidden-users-field" name="evidenceUsers"/>
 
-            <!-- Commits !-->
-            <div th:if="${displayCommits}">
-                <button type="button" class="btn btn-primary evidence-form__add-commits-button" id="open-modal__button" data-bs-toggle="modal" data-bs-target="#add-evidence-commits__modal">Add Commits</button>
-            </div>
-            <p class="evidence-form__error-message" th:text="${commitsError}" />
-            <div id="commit-container"></div>
-            <input type="hidden" id="evidence-form__hidden-commits-field" name="evidenceCommits"/>
-
-            <!-- Submit form !-->
-            <button type="button" class="evidence-form__control-button" onclick="submitForm()" id="evidence-form__save" disabled>Save Changes</button>
-            <a class="evidence-form__control-button" id="evidence-form__discard" th:href="@{profile?portfolioSelected=true}">Discard</a>
-            <p class="evidence-form__error-message" th:text="${generalError}" />
-        </form>
-    </div>
-
-    <!-- Commits Modal -->
-    <div class="modal fade" id="add-evidence-commits__modal" tabindex="-1" aria-labelledby="add-evidence-commits--label" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header add-evidence-commits__header">
-                    <h4 class="modal-title" id="add-evidence-commits__modal--label">Add Commits</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div th:if="${displayCommits}" class="modal-body add-evidence-commits__wrapper">
-                    <div id="commit-filter-box__wrapper">
-                        <div id="commit-filter-box">
-                            The rest of this div will be filled in by Javascript. The group id is needed to send
-                            the request for the other information
-                            <select class="form-select" id="commit-filter__group-selection" aria-label="group" onchange="updateCommitModal(); searchCommits();">
-                                <option th:value="${mainGroup.getGroupId()}" th:text="${mainGroup.getShortName()}" selected></option>
-                            </select>
+                <!-- Skills !-->
+                <label class="subtitle">Skills
+                    <span data-toggle="tooltip"
+                          data-placement="top" data-html=true class="bi bi-question-circle-fill"
+                          title="Skills are separated by spaces. Use underscores instead of spaces inside a skill. For example, Intra-team_Communication.">
+                </span>
+                </label>
+                <div id="skill-input-container">
+                    <div id="skill-container">
+                        <div class="input-container">
+                            <input type="text" id="skills-input" onkeyup="checkValid()" th:value="${evidenceSkills}" contenteditable="true" autocomplete="off"
+                                   placeholder="Add Skills"/>
                         </div>
                     </div>
-                    <button class="btn btn-primary" id="commit-filter__save-button" onclick="saveCommitChanges()" data-bs-dismiss="modal">Save Changes</button>
-                    <div id="commit-selection-box">
-                        <div th:each="commit: ${commits}" th:id="${commit.id}" class="row commit-tag-outside">
-                            <div class="col-11 commit-modal-inside">
-                                <p class="commit-description strip-margin" th:text="${commit.description}"></p>
-                                <p class="commit-author strip-margin" th:text="${commit.author} + '  -  ' + ${commit.dateString}"></p>
-                                <a class="commit-author strip-margin" th:href="${commit.link}" th:text="${commit.id}"></a>
+                </div>
+                <input type="hidden" id="evidence-form__hidden-skills-field" name="evidenceSkills"/>
+                <p id="evidence-form__skills-error" class="evidence-form__error-message" th:text="${skillsError}" />
+
+                <input type="hidden" id="evidence-form__hidden--change-skills-field" name="skillsToChange"/>
+
+                <!-- Web Links !-->
+                <label th:if="${evidenceId == -1 || evidenceId =='-1'}" class="subtitle">Web Links</label>
+                <div th:if="${evidenceId == -1 || evidenceId =='-1'}" id="evidence-form__webLink-container"></div>
+                <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="text" id="evidence-form__webLink-name" onkeyup="checkValid()" placeholder="Web Link Name"/><br>
+                <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="url" id="evidence-form__webLink-link" onkeyup="checkValid()" placeholder="Web Link" oninvalid="this.setCustomValidity('Incorrect Web Link Format. Example: \'http(s)://example.com\'')" oninput="this.setCustomValidity('')"/><br>
+                <P th:if="${webLinkError}" style="color: red">Incorrect Web Link Format</P>
+                <div th:if="${evidenceId == -1 || evidenceId =='-1'}" class="flex-row">
+                    <button type="button" class="evidence-form__control-button add-weblink__button" onclick="addWebLinks()">
+                        Add Weblink
+                    </button>
+                </div>
+                <div class="row">
+                    <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="hidden" id="evidence-form__hidden-webLinks-names" name="evidenceWebLinkNames"/>
+                </div>
+                <div class="row">
+                    <input th:if="${evidenceId == -1 || evidenceId =='-1'}" type="hidden" id="evidence-form__hidden-webLinks-links" name="evidenceWebLinks"/>
+                </div>
+
+                <!-- Users !-->
+                <label class="subtitle">Users
+                    <span data-toggle="tooltip"
+                          data-placement="top" data-html=true class="bi bi-question-circle-fill"
+                          title="Search for users by name. Click on a user in the drop-down menu to add them to the evidence">
+                </span>
+                </label>
+                <div id="user-input-container">
+                    <div id="user-container">
+                        <div class="input-container">
+                            <input type="text" id="users-input" contenteditable="true" autocomplete="off"
+                                   placeholder="Add Users"/>
+                        </div>
+                    </div>
+                </div>
+                <p class="evidence-form__error-message" th:text="${usersError}" />
+                <input type="hidden" id="evidence-form__hidden-users-field" name="evidenceUsers"/>
+
+
+                <!-- Commits !-->
+                <div class="row">
+                    <div th:if="${displayCommits}">
+                        <button type="button" class="btn btn-primary evidence-form__add-commits-button" id="open-modal__button" data-bs-toggle="modal" data-bs-target="#add-evidence-commits__modal">Add Commits</button>
+                    </div>
+                    <p class="evidence-form__error-message" th:text="${commitsError}" />
+                    <div id="commit-container"></div>
+                    <input type="hidden" id="evidence-form__hidden-commits-field" name="evidenceCommits"/>
+                </div>
+
+                <!-- Submit form !-->
+                <button type="button" class="evidence-form__control-button" onclick="submitForm()" id="evidence-form__save" disabled>Save Changes</button>
+                <a class="evidence-form__control-button" id="evidence-form__discard" th:href="@{profile?portfolioSelected=true}">Discard</a>
+
+                <p class="evidence-form__error-message" th:text="${generalError}" />
+            </form>
+        </div>
+
+        <!-- Commits Modal -->
+        <div class="modal fade" id="add-evidence-commits__modal" tabindex="-1" aria-labelledby="add-evidence-commits--label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header add-evidence-commits__header">
+                        <h4 class="modal-title" id="add-evidence-commits__modal--label">Add Commits</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div th:if="${displayCommits}" class="modal-body add-evidence-commits__wrapper">
+                        <div id="commit-filter-box__wrapper">
+                            <div id="commit-filter-box">
+                                The rest of this div will be filled in by Javascript. The group id is needed to send
+                                the request for the other information
+                                <select class="form-select" id="commit-filter__group-selection" aria-label="group" onchange="updateCommitModal(); searchCommits();">
+                                    <option th:value="${mainGroup.getGroupId()}" th:text="${mainGroup.getShortName()}" selected></option>
+                                </select>
                             </div>
-                            <input class="col-auto" th:id="${commit.id}" type="checkbox"/>
+                        </div>
+                        <button class="btn btn-primary" id="commit-filter__save-button" onclick="saveCommitChanges()" data-bs-dismiss="modal">Save Changes</button>
+                        <div id="commit-selection-box">
+                            <div th:each="commit: ${commits}" th:id="${commit.id}" class="row commit-tag-outside">
+                                <div class="col-11 commit-modal-inside">
+                                    <p class="commit-description strip-margin" th:text="${commit.description}"></p>
+                                    <p class="commit-author strip-margin" th:text="${commit.author} + '  -  ' + ${commit.dateString}"></p>
+                                    <a class="commit-author strip-margin" th:href="${commit.link}" th:text="${commit.id}"></a>
+                                </div>
+                                <input class="col-auto" th:id="${commit.id}" type="checkbox"/>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div th:if="${!displayCommits}" class="modal-body add-evidence-commits__wrapper">
-                    <div class="evidence-form__error-message">
-                        No commits found! Make sure a repository is linked in a group you are in.
+                    <div th:if="${!displayCommits}" class="modal-body add-evidence-commits__wrapper">
+                        <div class="evidence-form__error-message">
+                            No commits found! Make sure a repository is linked in a group you are in.
+                        </div>
                     </div>
                 </div>
             </div>

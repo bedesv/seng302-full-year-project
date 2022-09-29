@@ -94,9 +94,11 @@
                     </div>
 
                     <div th:if="${owner}" class="evidence-title-div__button">
-                        <a class="evidence-title--icon_container" th:href="@{editEvidence-{evidenceId}(evidenceId=${evidence.getId})}">
-                            <em class="bi bi-pencil-square evidence-title--icon"></em>
-                        </a>
+                        <form th:action="@{editEvidence-{evidenceId}(evidenceId=${evidence.getId})}">
+                            <button type="submit" class="evidence-title--icon_container-delete">
+                                <em class="bi bi-pencil-square evidence-title--icon"></em>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
