@@ -67,7 +67,7 @@ html {
     width: 90%;
 }
 
-.high-fives__button {
+.likes__button {
     vertical-align: middle;
     margin: auto;
     border-radius: 100px;
@@ -79,13 +79,24 @@ html {
 }
 
 
-.evidence-title__high-fives{
+.evidence-title__likes{
     width: 10%;
     display: flex;
     justify-content: center;
     padding-left: 30px;
 }
 
+.like__number {
+    background-color: transparent;
+    border: none;
+    height: fit-content;
+    margin: auto;
+    white-space: nowrap;
+}
+
+.like__number:hover {
+    text-decoration: underline;
+}
 
 .evidence-title__weblinks-commits-div {
     display: flex;
@@ -140,7 +151,7 @@ html {
     padding: 5px 0 4px 0;
 }
 
-.evidence-title--icon_container:hover, .evidence-title--icon_container-delete:hover, .high-fives__button:hover{
+.evidence-title--icon_container:hover, .evidence-title--icon_container-delete:hover, .likes__button:hover{
     color: black;
     background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
     filter: brightness(120%);
@@ -365,3 +376,38 @@ p {
     color: #636363;
 }
 
+.user-like__link {
+    text-decoration: none;
+    color: black;
+    display: flex;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-direction: row;
+    padding-top: 5px;
+    padding-left: 10px;
+}
+
+.user-like__link:hover {
+    color: var(--color-tertiary);
+}
+
+.user-like__image {
+    max-width: 50px;
+    max-height: 50px;
+    border-radius: 50px;
+}
+
+.user-like__name-container {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 20px;
+    padding-left: 20px;
+    margin-block: auto;
+}
+
+.user-like__container{
+    max-height: 22rem;
+    overflow-y: auto;
+}

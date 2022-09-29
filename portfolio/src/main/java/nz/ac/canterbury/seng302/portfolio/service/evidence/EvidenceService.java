@@ -6,9 +6,7 @@ import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
-import nz.ac.canterbury.seng302.portfolio.model.project.DateRefineOption;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
-import nz.ac.canterbury.seng302.portfolio.model.project.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
@@ -43,45 +41,45 @@ public class EvidenceService {
     private static final String SAVED_SUCCESSFULLY = " saved successfully";
 
     /**
-     * Toggles a high-five on the given piece of evidence for the given user
-     * @param evidenceId The id of the evidence to be high-fived
-     * @param userId The id of the user to add a high-five
+     * Toggles a like on the given piece of evidence for the given user
+     * @param evidenceId The id of the evidence to be liked
+     * @param userId The id of the user to add a like
      */
-    public void toggleHighFive(int evidenceId, int userId) {
+    public void toggleLike(int evidenceId, int userId) {
         Evidence evidence = getEvidenceById(evidenceId);
-        evidence.toggleHighFive(userId);
+        evidence.toggleLike(userId);
         repository.save(evidence);
-        String message = ("User: " + userId + " high-fived evidence: " + evidenceId);
+        String message = ("User: " + userId + " liked evidence: " + evidenceId);
         PORTFOLIO_LOGGER.info(message);
     }
 
     /**
      * Gets the user objects of the users who have high fived the given piece of evidence
-     * @param evidenceId The id of the evidence to fetch the users who have high-fived
-     * @return A list of user objects who have high-fived the piece of evidence
+     * @param evidenceId The id of the evidence to fetch the users who have liked
+     * @return A list of user objects who have liked the piece of evidence
      */
-    public List<User> getHighFives(int evidenceId) {
+    public List<User> getLikes(int evidenceId) {
         Evidence evidence = getEvidenceById(evidenceId);
-        List<Integer> userIdList = evidence.getHighFives();
+        List<Integer> userIdList = evidence.getLikes();
         List<User> userList = new ArrayList<>();
         for(int userId: userIdList) {
             userList.add(userService.getUserAccountById(userId));
         }
-        String message = ("Getting list of users who have high-fived evidence: " + evidenceId);
+        String message = ("Getting list of users who have liked evidence: " + evidenceId);
         PORTFOLIO_LOGGER.info(message);
         return userList;
     }
 
     /**
-     * Gets the number of high-fives on the given piece of evidence
-     * @param evidenceId The id of the evidence to fetch the number of high-fives
-     * @return The number of high-fives on the piece of evidence
+     * Gets the number of likes on the given piece of evidence
+     * @param evidenceId The id of the evidence to fetch the number of likes
+     * @return The number of likes on the piece of evidence
      */
-    public int getNumberOfHighFives(int evidenceId) {
+    public int getNumberOfLikes(int evidenceId) {
         Evidence evidence = getEvidenceById(evidenceId);
-        String message = ("Getting number of high-fives on evidence: " + evidenceId);
+        String message = ("Getting number of likes on evidence: " + evidenceId);
         PORTFOLIO_LOGGER.info(message);
-        return (evidence.getNumberOfHighFives());
+        return (evidence.getNumberOfLikes());
     }
 
     /**
