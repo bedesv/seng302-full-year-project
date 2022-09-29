@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+
+<!-- List of Evidence -->
+<div id="evidence__form-wrapper flex-column">
+    <div th:each="evidence: ${evidenceList}">
+        <div th:id="'evidence-' + ${evidence.getId}">
+            <div th:replace="fragments/evidence"></div>
+        </div>
+    </div>
+
+</div>

@@ -6,7 +6,9 @@ import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
+import nz.ac.canterbury.seng302.portfolio.model.project.DateRefineOption;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
+import nz.ac.canterbury.seng302.portfolio.model.project.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
 import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
@@ -48,6 +50,7 @@ public class EvidenceService {
     public void toggleHighFive(int evidenceId, int userId) {
         Evidence evidence = getEvidenceById(evidenceId);
         evidence.toggleHighFive(userId);
+        repository.save(evidence);
         String message = ("User: " + userId + " high-fived evidence: " + evidenceId);
         PORTFOLIO_LOGGER.info(message);
     }
@@ -608,4 +611,5 @@ public class EvidenceService {
         }
         return validationResponses;
     }
+
 }

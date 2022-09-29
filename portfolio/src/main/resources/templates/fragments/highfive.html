@@ -1,0 +1,6 @@
+<!DOCTYPE html>
+
+<button class="high-fives__button" th:onclick="toggleEvidence([[${evidence.getId}]])">
+    <i class="bi bi-hand-thumbs-up high-five__icon" th:if="!${evidence.hasHighFived(pageUser.id)}"></i>
+    <i class="bi bi-hand-thumbs-up-fill high-five__icon" th:if="${evidence.hasHighFived(pageUser.id)}"></i>
+</button>

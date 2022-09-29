@@ -89,7 +89,7 @@ class PortfolioControllerTests {
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
-        mockMvc.perform(get("/portfolio"))
+        mockMvc.perform(get("/portfolio?portfolioLinks=T"))
                 .andExpect(status().isOk())
                 .andExpect(redirectedUrl(null));
     }
@@ -108,7 +108,7 @@ class PortfolioControllerTests {
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
-        mockMvc.perform(get("/portfolio-2"))
+        mockMvc.perform(get("/portfolio-2?portfolioLinks=T"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profile"));
     }
@@ -127,7 +127,7 @@ class PortfolioControllerTests {
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
-        mockMvc.perform(get("/portfolio-2"))
+        mockMvc.perform(get("/portfolio-2?portfolioLinks=T"))
                 .andExpect(status().isOk())
                 .andExpect(redirectedUrl(null));
     }
@@ -146,9 +146,9 @@ class PortfolioControllerTests {
         Mockito.when(globalControllerAdvice.getAllProjects()).thenReturn(List.of(new Project()));
         Mockito.when(globalControllerAdvice.getUser(validAuthState)).thenReturn(new User(UserResponse.newBuilder().setId(1).build()));
 
-        mockMvc.perform(get("/portfolio-1"))
+        mockMvc.perform(get("/portfolio-1?portfolioLinks=T"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/portfolio"));
+                .andExpect(redirectedUrl("/portfolio?portfolioLinks=T"));
     }
 
 }
