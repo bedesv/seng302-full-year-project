@@ -326,3 +326,68 @@
 .accordion-button:not(.collapsed)::after {
     background-image: var(--carat);
 }
+
+.accordion-body {
+    height: fit-content;
+}
+
+.color-content__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 1rem;
+}
+
+.accent-color__container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 1rem;
+}
+
+.accent-color__radio {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+}
+
+#accent-color__radio-1 {
+    border: 2px solid var(--berry);
+}
+
+#accent-color__radio-1.accent-color__active {
+    background-color: var(--berry);
+}
+
+#accent-color__radio-2 {
+    border: 2px solid var(--forest);
+}
+
+#accent-color__radio-2.accent-color__active {
+    background-color: var(--forest);
+}
+
+#accent-color__radio-3 {
+    border: 2px solid var(--peach);
+}
+
+#accent-color__radio-3.accent-color__active {
+    background-color: var(--peach);
+}
+
+#accent-color__radio-4 {
+    border: 2px solid var(--cobalt);
+}
+
+#accent-color__radio-4.accent-color__active {
+    background-color: var(--cobalt);
+}
+
+#accent-color__radio-5 {
+    border: 2px solid var(--steel);
+}
+
+#accent-color__radio-5.accent-color__active {
+    background-color: var(--steel);
+}

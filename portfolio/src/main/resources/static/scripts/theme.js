@@ -6,7 +6,6 @@ if (theme) {
     body.classList.add(theme);
     body.classList.add(accent);
 } else {
-    console.log("HERE");
     body.classList.add('light');
     body.classList.add('cobalt');
     localStorage.setItem('theme', 'light');

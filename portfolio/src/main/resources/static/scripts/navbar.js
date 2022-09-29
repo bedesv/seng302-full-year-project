@@ -10,6 +10,31 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById("theme-toggle__label").innerText = 'Light';
         }
     }
+    if (accent) {
+        let radio;
+        switch (accent) {
+            case "berry":
+                radio = document.getElementById("accent-color__radio-1");
+                radio.classList.add('accent-color__active');
+                break;
+            case "forest":
+                radio = document.getElementById("accent-color__radio-2");
+                radio.classList.add('accent-color__active');
+                break;
+            case "peach":
+                radio = document.getElementById("accent-color__radio-3");
+                radio.classList.add('accent-color__active');
+                break;
+            case "cobalt":
+                radio = document.getElementById("accent-color__radio-4");
+                radio.classList.add('accent-color__active');
+                break;
+            case "steel":
+                radio = document.getElementById("accent-color__radio-5");
+                radio.classList.add('accent-color__active');
+                break;
+        }
+    }
 })
 
 function expandNav() {
@@ -99,3 +124,57 @@ document.addEventListener('change', (event) => {
         }
     }
 })
+
+function updateRadioButton(radio) {
+    let radios = document.getElementsByClassName("accent-color__radio");
+    for (let i = 0; i< radios.length; i++) {
+        if (radios[i] === radio) {
+            radio.classList.add("accent-color__active")
+            switch (radio.id) {
+                case "accent-color__radio-1":
+                    if (body.classList.contains('dark')) {
+                        body.className = 'dark berry';
+                    } else {
+                        body.className = 'light berry';
+                    }
+                    localStorage.setItem('accent', 'berry');
+                    break;
+                case "accent-color__radio-2":
+                    if (body.classList.contains('dark')) {
+                        body.className = 'dark forest';
+                    } else {
+                        body.className = 'light forest';
+                    }
+                    localStorage.setItem('accent', 'forest');
+                    break;
+                case "accent-color__radio-3":
+                    if (body.classList.contains('dark')) {
+                        body.className = 'dark peach';
+                    } else {
+                        body.className = 'light peach';
+                    }
+                    localStorage.setItem('accent', 'peach');
+                    break;
+                case "accent-color__radio-4":
+                    if (body.classList.contains('dark')) {
+                        body.className = 'dark cobalt';
+                    } else {
+                        body.className = 'light cobalt';
+                    }
+                    localStorage.setItem('accent', 'cobalt');
+                    break;
+                case "accent-color__radio-5":
+                    if (body.classList.contains('dark')) {
+                        body.className = 'dark steel';
+                    } else {
+                        body.className = 'light steel';
+                    }
+                    localStorage.setItem('accent', 'steel');
+                    break;
+            }
+        } else {
+            radios[i].classList.remove("accent-color__active");
+        }
+
+    }
+}
