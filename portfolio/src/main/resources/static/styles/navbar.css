@@ -287,7 +287,7 @@
 .accordion-item {
     outline: none !important;
     border: none !important;
-    background-color: var(--surface);
+    background-color: var(--background);
 }
 
 .accordion-button:not(.collapsed) {
@@ -298,11 +298,19 @@
     box-shadow: none;
 }
 
+.accordion-button:not(.collapsed):hover {
+    background-color: var(--surface-highlight);
+}
+
 .accordion-button.collapsed {
     background-color: var(--surface);
     color: var(--text-surface);
     border: none !important;
     outline: none !important;
+}
+
+.accordion-button.collapsed:hover {
+    background-color: var(--surface-highlight);
 }
 
 .accordion-button:focus {
