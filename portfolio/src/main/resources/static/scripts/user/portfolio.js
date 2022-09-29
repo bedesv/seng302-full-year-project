@@ -54,7 +54,6 @@ async function updateUserPortfolioWithCategory(selectedCategory) {
     }).then(res => {
         return res.text()
     })
-    console.log(selectedCategory)
     // Update the page with the new HTML content
     const portfolioWrapper = document.getElementById("portfolio_container")
     portfolioWrapper.innerHTML = portfolio
@@ -67,7 +66,7 @@ async function updateUserPortfolioWithCategory(selectedCategory) {
  */
 function updateEvidenceIds() {
     const evidenceObjects = document.getElementsByClassName("evidence__details");
-    let EVIDENCE_IDS = []
+    EVIDENCE_IDS = []
     for (let evidence of evidenceObjects) {
         EVIDENCE_IDS.push(evidence.id.split("_")[1])
     }

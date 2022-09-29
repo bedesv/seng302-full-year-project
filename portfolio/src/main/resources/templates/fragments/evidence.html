@@ -18,7 +18,7 @@
             </div>
               <div class="evidence-title__weblinks-commits-div">
                   <div id="evidence-title__weblinks">
-                      <em class="bi bi-link-45deg" th:text="${evidence.getNumberWeblinks}"></em>
+                      <em class="bi bi-link-45deg" th:id="evidence- + ${evidence.getId} + -title__number-weblinks" th:text="${evidence.getNumberWeblinks}"></em>
                   </div>
                   <div class="evidence-title__commits">
                       <em class="bi bi-git" th:text="${evidence.getNumberCommits}"></em>
@@ -107,7 +107,7 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header weblink-modal__header">
-                        <h5 class="modal-title" id="modalTitle">Save Weblink</h5>
+                        <h5 class="modal-title" th:id="weblink-modal__title- + ${evidence.getId}">Add Weblink</h5>
                         <button type="button" class="btn-close close-button" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="weblink-modal__wrapper">
