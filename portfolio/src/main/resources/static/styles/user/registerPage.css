@@ -78,6 +78,8 @@ body{
     outline: none;
     padding-left: 15px;
     border-radius: 5px;
+    background-color: var(--surface-highlight);
+    color: var(--text-surface);
     border: 1px solid lightgrey;
     font-size: 16px;
     transition: all 0.3s ease;
@@ -123,12 +125,12 @@ form .row input::placeholder{
 .wrapper form .button input{
     display: block;
     position: relative;
-
     border: 1px solid var(--primary-highlight);
     border-radius: 10px;
     background-color: var(--primary-highlight);
     padding: 0 2rem 0 2rem;
     margin-top: 1rem;
+    color: var(--text-surface-highlight);
 }
 
 .wrapper form .button input:hover{
@@ -173,6 +175,8 @@ textarea {
     width: 100%;
     border-radius: 5px;
     border: 1px solid lightgrey;
+    background-color: var(--surface-highlight);
+    color: var(--text-surface);
 }
 
 hr {
