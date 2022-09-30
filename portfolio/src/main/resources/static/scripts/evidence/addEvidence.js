@@ -809,7 +809,18 @@ async function updateCommitModal() {
     }).then(res => {
         return res.text();
     });
-    await searchCommits();
+    displayCommits = document.getElementById("display-commits__hidden-variable").innerText === 'true'
+    commitsError = document.getElementById("commits-error__hidden-variable").innerText
+    if (displayCommits) {
+        document.getElementById("open-modal__button").removeAttribute('disabled')
+        document.getElementById("evidence-form__commits-error").setAttribute('hidden', "true")
+        await searchCommits();
+    } else {
+        document.getElementById("open-modal__button").setAttribute('disabled', "true")
+        document.getElementById("evidence-form__commits-error").removeAttribute('hidden')
+        document.getElementById("evidence-form__commits-error").innerText = commitsError
+    }
+
 
     // Event listeners for the search start and end dates to let the user know if the dates they have selected are valid or not
     // when they click off them.
