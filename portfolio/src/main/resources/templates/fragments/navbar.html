@@ -59,16 +59,16 @@
                     </h5>
                 </li>
                 <li class="site-navigation__item">
-                    <div class="dropdown navbar__dropdown">
-                        <div id="projects-button" class="dropdown__container" th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(), 'projects') ? 'active':''}">
-                          <span class="bi bi-chevron-down navigation_icon" onclick="dropDown()"></span>
+                    <div class="site-navigation__dropdown navbar__dropdown">
+                        <div id="projects-button" class="site-navigation__dropdown-container" th:classappend="${#strings.contains(#httpServletRequest.getRequestURI(), 'projects') ? 'active':''}">
+                          <span class="bi bi-chevron-down navigation_icon site-navigation__navigation-icon" onclick="dropDown()"></span>
                           <h5>
-                            <a th:href="@{projects}" class="clear-decoration">
+                            <a th:href="@{projects}" class="site-navigation__clear-decoration">
                                 Projects
                             </a>
                           </h5>
                         </div>
-                        <div id="js-dropdown__list" class="dropdown-content navbar__dropdown-content" >
+                        <div id="js-dropdown__list" class="site-navigation__dropdown-content navbar__dropdown-content" >
                             <h5 class="site-navigation__sublabel" th:each="project : ${allProjects}">
                                 <a class="site-navigation__sublink" th:href="@{setCurrentProject-{id}(id=${project.getId})}" th:text="${project.getName}" th:classappend="${(project.getId == currentProject.getId) ? 'active':''}"></a>
                             </h5>

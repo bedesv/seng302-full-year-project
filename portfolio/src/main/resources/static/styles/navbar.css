@@ -272,7 +272,7 @@ h5 {
     text-decoration: none;
 }
 
-.dropdown__container {
+.site-navigation__dropdown-container {
     display: flex !important;
     flex-direction: row;
     align-items: center;
@@ -282,7 +282,7 @@ h5 {
     gap: 0.3rem;
 }
 
-.clear-decoration {
+.site-navigation__clear-decoration {
     text-decoration: none !important;
     color: var(--color-complement) !important;
     font-weight: 200;
