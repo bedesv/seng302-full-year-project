@@ -2,17 +2,14 @@
 
 .group-form__header {
     padding: 3rem 2rem 3rem 2rem;
-    border-bottom: 1px solid var(--color-accent);
-
-    background-image: linear-gradient(180deg, var(--color-primary), var(--color-tertiary) 90%);
-    color: var(--color-complement);
+    background-color: var(--surface);
+    color: var(--text-surface);
 }
 
 #group-form__wrapper {
     display: block;
-    background-color: var(--color-complement);
-    border: 1px solid var(--color-accent);
-    border-radius: 1.5rem;
+    background-color: var(--surface);
+    border-radius: 8px;
     overflow: hidden;
 }
 
@@ -29,7 +26,8 @@
 #group-form__form input, #sprint-form__form textarea {
     margin: 0 0 1rem 1rem;
     border: none;
-    border-bottom: 2px solid lightgray;
+    color: var(--text-surface);
+    background-color: var(--surface-highlight);
 }
 
 #char-count__long_name, #char-count__short_name {
@@ -41,9 +39,8 @@
 #group-form__form button, #group-form__form a {
     padding: 0;
     margin-bottom: 1rem;
-    background-color: var(--color-complement);
-    border: 1px solid var(--color-accent);
-    border-radius: 1.5rem;
+    background-color: var(--primary-highlight);
+    border-radius: 8px;
     overflow: hidden;
 
     height: 3rem;
@@ -52,11 +49,12 @@
     color: black;
     font-size: 1rem;
     text-decoration: none;
+    border: none;
 }
 
 /*Add some hover effects to buttons */
 #group-form__form button:hover, #group-form__form a:hover {
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
+    filter: brightness(85%);
     cursor: pointer;
 }
 

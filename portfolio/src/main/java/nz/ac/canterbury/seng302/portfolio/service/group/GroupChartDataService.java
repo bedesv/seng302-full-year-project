@@ -4,16 +4,12 @@ import com.google.common.annotations.VisibleForTesting;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Categories;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
-import nz.ac.canterbury.seng302.portfolio.model.project.DateRefineOption;
-import nz.ac.canterbury.seng302.portfolio.model.project.Project;
-import nz.ac.canterbury.seng302.portfolio.model.project.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.service.evidence.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.project.SprintService;
 import nz.ac.canterbury.seng302.portfolio.util.DateComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import java.time.DayOfWeek;
 import java.time.Instant;
@@ -118,7 +114,7 @@ public class GroupChartDataService {
             // Iterate through all of that user's evidence for the groups project
             for (PortfolioEvidence e : evidenceService.getEvidenceForPortfolio(user.getId(), parentProjectId)) {
                 if (!startDate.after(e.getDate()) && !endDate.before(e.getDate())) {
-                    evidenceCountsByMember.merge(user.getId() + " " + user.getFullName(), 1, Integer::sum);;
+                    evidenceCountsByMember.merge(user.getId() + " " + user.getFullName(), 1, Integer::sum);
                 }
             }
         }
@@ -143,7 +139,6 @@ public class GroupChartDataService {
         int parentProjectId = group.getParentProject();
 
         final TreeMap<String, Integer> evidenceCountOverTime = new TreeMap<>(new DateComparator());
-        //Map<String, Integer> evidenceCountOverTime = new HashMap<>();
 
         //check granularity
         if (Objects.equals(timeRange, "day")) {
@@ -217,11 +212,11 @@ public class GroupChartDataService {
         }
     }
 
-        /**
-         * Only for mocking purposes
-         * Updates the current EvidenceService with a new one
-         * @param newEvidenceService the new (mocked) EvidenceService
-         */
+    /**
+     * Only for mocking purposes
+     * Updates the current EvidenceService with a new one
+     * @param newEvidenceService the new (mocked) EvidenceService
+     */
     @VisibleForTesting
     protected void setEvidenceService(EvidenceService newEvidenceService) {
         evidenceService = newEvidenceService;
@@ -236,20 +231,4 @@ public class GroupChartDataService {
         return evidenceService;
     }
 
-    /**
-     * Set dropdown options for the
-     * @param model Global model
-     * @param project current project
-     */
-    public void setDateRefiningOptions (Model model, Project project) {
-        List<DateRefineOption> dateRefineOptions = new ArrayList<>();
-        dateRefineOptions.add(new DateRefineOption("Whole Project", project.getStartDate(), project.getEndDate()));
-        List<Sprint> sprints = sprintService.getSprintsByProjectInOrder(project.getId());
-        if (!sprints.isEmpty()){
-            for (Sprint sprint : sprints) {
-                dateRefineOptions.add(new DateRefineOption(sprint.getLabel(), sprint.getStartDate(), sprint.getEndDate()));
-            }
-        }
-        model.addAttribute("dateRefiningOptions", dateRefineOptions);
-    }
 }

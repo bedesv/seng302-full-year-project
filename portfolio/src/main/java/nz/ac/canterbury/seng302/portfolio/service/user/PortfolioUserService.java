@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.portfolio.model.user.PortfolioUser;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.repository.user.PortfolioUserRepository;
 import nz.ac.canterbury.seng302.portfolio.repository.project.ProjectRepository;
+import nz.ac.canterbury.seng302.portfolio.service.project.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,16 @@ import java.util.List;
 public class PortfolioUserService {
 
     @Autowired
+    private ProjectService projectService;
+
+    @Autowired
     private PortfolioUserRepository repository;
 
     @Autowired
     private ProjectRepository projectRepository;
+
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
+    private static final String USER = "User ";
 
     /**
      * Gets a user by their id. Creates a default user with that id if none exists.
@@ -28,14 +34,30 @@ public class PortfolioUserService {
      */
     public PortfolioUser getUserById(int id) {
         PortfolioUser user = repository.findByUserId(id);
-        if(user != null) {
+        if (user != null) {
             return user;
         } else {
             // Ascending by name is the default user list sort
             PortfolioUser newUser = new PortfolioUser(id, "name", true);
+            resetCurrentProject(newUser);
             repository.save(newUser);
             return newUser;
         }
+    }
+
+    /**
+     * Reset the current project of a user to the first project in the application, or make a new project if none exist.
+     * Should be used when creating a portfolio user, or if that user's current project is null.
+     * @param user The user to reset the current project of
+     */
+    private void resetCurrentProject(PortfolioUser user) {
+        List<Project> projects = projectService.getAllProjects();
+        if (projects.isEmpty()) {
+            Project defaultProject = new Project();
+            projectService.saveProject(defaultProject);
+            projects = projectService.getAllProjects();
+        }
+        user.setCurrentProject(projects.get(0).getId());
     }
 
     /**
@@ -59,7 +81,10 @@ public class PortfolioUserService {
         PortfolioUser user = getUserById(id);
         user.setUserListSortType(userListSortType);
         repository.save(user);
-        String message = "User "+ id + " sort type changed to " + userListSortType;
+
+        // Replaces pattern-breaking characters
+        String parsedSortType = userListSortType.replaceAll("[\n\r\t]", "_");
+        String message = USER + id + " sort type changed to " + parsedSortType;
         PORTFOLIO_LOGGER.info(message);
     }
 
@@ -84,7 +109,7 @@ public class PortfolioUserService {
         PortfolioUser user = getUserById(id);
         user.setUserListSortAscending(userListSortIsAscending);
         repository.save(user);
-        String message = "User "+ id + " sort order is ascending changed to " + userListSortIsAscending;
+        String message = USER + id + " sort order is ascending changed to " + userListSortIsAscending;
         PORTFOLIO_LOGGER.info(message);
     }
 
@@ -93,12 +118,14 @@ public class PortfolioUserService {
      * @param userId of authenticated user
      * @return current selected project else first in project repo
      */
-    public Project getCurrentProject(int userId){
-        PortfolioUser portfolioUser = repository.findByUserId(userId);
+    public Project getCurrentProject(int userId) {
+        PortfolioUser portfolioUser = getUserById(userId);
         int id = portfolioUser.getCurrentProject();
         Project project = projectRepository.findById(id);
-        if (project==null){
-            return projectRepository.findAll().iterator().next();
+        if (project == null) {
+            resetCurrentProject(portfolioUser);
+            repository.save(portfolioUser);
+            return projectRepository.findById(portfolioUser.getCurrentProject());
         } else {
             return project;
         }
@@ -109,17 +136,11 @@ public class PortfolioUserService {
      * @param userId of user selecting a project
      * @param projectId of project being selected
      */
-    public void setProject(int userId, int projectId){
-        PortfolioUser portfolioUser = repository.findByUserId(userId);
-        if (portfolioUser == null) {
-            PortfolioUser portfolioUser1 = new PortfolioUser(userId);
-            repository.save(portfolioUser1);
-        } 
-        
-        assert portfolioUser != null;
+    public void setProject(int userId, int projectId) {
+        PortfolioUser portfolioUser = getUserById(userId);
         portfolioUser.setCurrentProject(projectId);
         repository.save(portfolioUser);
-        String message = "User "+ userId + " current project changed to project " + projectId;
+        String message = USER + userId + " current project changed to project " + projectId;
         PORTFOLIO_LOGGER.info(message);
     }
 
@@ -142,20 +163,12 @@ public class PortfolioUserService {
         try {
             PortfolioUser portfolioUser = getUserById(userId);
             portfolioUser.addSkills(skills);
-            savePortfolioUser(portfolioUser);
-            String message = "User "+ userId + " given skills " + skills;
+            repository.save(portfolioUser);
+            String message = USER + userId + " given skills " + skills;
             PORTFOLIO_LOGGER.info(message);
         } catch (Exception e) {
             //should never reach as getUserById creates user if one doesn't exist
         }
-    }
-
-    /**
-     * Save user to Portfolio User Repository
-     * @param portfolioUser
-     */
-    public void savePortfolioUser(PortfolioUser portfolioUser){
-        repository.save(portfolioUser);
     }
 
 }

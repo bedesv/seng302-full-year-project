@@ -1,26 +1,23 @@
 <!DOCTYPE html>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <link rel="stylesheet" th:href="@{styles/stylesheet.css}">
 <link rel="stylesheet" th:href="@{styles/group/group.css}">
 <link rel="stylesheet" th:href="@{styles/group/groups.css}">
 
 <div class="group-statistics__flex-container">
     <br>
-    <div class="dropdown">
+    <div class="dropdown graph__dropdown">
         <button type="button" class="btn btn-primary dropdown-toggle graphs-dropdown__button" data-bs-toggle="dropdown">Refine Graphs</button>
-        <ul class="dropdown-menu">
+        <ul class="dropdown-menu dropdown-graph__container">
             <li th:each="dateRefineOption: ${dateRefiningOptions}">
                 <a class="dropdown-item chart__dropdown_item" th:text="${dateRefineOption.getTitle()}" th:attr="onclick=|selectRefinement('${dateRefineOption.getStartDate()}', '${dateRefineOption.getEndDate()}')|"></a>
             </li>
         </ul>
     </div>
+
     <div class="data-charts__flex-container">
-        <div class="evidence-time-chart__flex-container">
+        <div class="evidence-chart__flex-container">
             <div id="group-chart__evidence-chart"></div>
             <div id="group-chart__time-chart"></div>
-        </div>
-        <div class="skills-categories-chart__flex-container">
             <div id="group-chart__categories-chart"></div>
             <div id="group-chart__skills-chart"></div>
         </div>

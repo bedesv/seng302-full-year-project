@@ -4,9 +4,13 @@ th, td {
     padding: 12px 15px;
 }
 
+.table-card {
+    background-color: var(--surface);
+}
+
 thead tr {
-    background-color: #F67B50;
-    color: #ffffff;
+    background-color: var(--primary-highlight);
+    color: var(--text-surface-highlight);
     text-align: left;
 }
 
@@ -16,58 +20,64 @@ table {
     width: 100%;
     border-collapse: collapse;
     min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
     font-size: small;
     margin: 25px auto;
 }
 
-tbody tr:nth-of-type(even) {
-    background-color: #F4EAE6;
+tbody tr:nth-of-type(odd) {
+    background-color: var(--surface);
 }
 
-tbody tr:last-of-type {
-    border-bottom: 2px solid #F67B50;
+tbody tr:nth-of-type(even) {
+    background-color: var(--surface-highlight);
 }
 
  /* Pagination styling adapted from w3schools https://www.w3schools.com/howto/howto_css_pagination.asp */
 .pagination a, .pagination div {
-  color: black;
-  float: left;
-  padding: 8px 16px;
-  text-decoration: none;
-  transition: background-color .3s;
+    float: left;
+    padding: 8px 16px;
+    color: var(--text-surface);
+    text-decoration: none;
+    transition: background-color .3s;
 }
 
-.pagination a:hover {background-color: #F4EAE6;}
+.pagination a:hover {background-color: var(--surface);}
 
  /* Pagination styling adapted from w3schools https://www.w3schools.com/howto/howto_css_pagination.asp */
 .sort-header a, .sort-header div {
-  color: black;
-  float: left;
-  padding: 8px 16px;
-  text-decoration: none;
-  transition: background-color .3s;
+    color: var(--text-surface-highlight);
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color .3s;
 }
 
-.sort-header a:hover {background-color: #FBAA60;}
+.sort-header a:hover {
+    filter: brightness(85%) !important;
+    background-color: var(--primary-highlight);
+    border-radius: 8px;
+}
 
 button {
     font-size: small;
-    border: 1px solid var(--color-secondary);
+    border: 1px solid var(--primary-highlight);
     border-radius: 5px;
-    background-color: var(--color-primary);
+    background-color: var(--primary-highlight);
     /* Needed to make the buttons look better, due to kerning issues with display: inline */
     padding: 2px 4px 2px 2px;
     margin: 4px;
+    color: var(--text-surface-highlight);
     display: inline;
 }
 
 button:hover {
-    background-color: #F67B50;
+    filter: brightness(85%);
 }
 
 a {
-    color: black;
+    color: var(--primary-highlight);
 }
 
 #role-button form {
@@ -76,7 +86,7 @@ a {
 
 #role-button button {
     text-decoration: none;
-    color: #999;
+    color: var(--text-surface);
     transition: background-color .3s;
     background: transparent;
     border: transparent;
@@ -89,4 +99,6 @@ a {
     box-sizing: border-box;
 }
 
-#role-button button:hover {background-color: #F4EAE6;}
+#role-button button:hover {
+    filter: brightness(85%);
+}

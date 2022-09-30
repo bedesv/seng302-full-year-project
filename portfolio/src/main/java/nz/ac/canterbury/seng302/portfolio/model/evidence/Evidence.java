@@ -37,7 +37,8 @@ public class Evidence {
     private List<Commit> commits;
     @ElementCollection
     private Set<Integer> linkedUsers = new HashSet<>();
-
+    @ElementCollection
+    private List<Integer> likes = new ArrayList<>();
 
     public Evidence() {
         webLinks = new ArrayList<>();
@@ -235,4 +236,29 @@ public class Evidence {
     public void setCategories(Set<Categories> categories) {
         this.categories = categories;
     }
+
+    /**
+     * When a user likes a piece of evidence there ID is used as a key in a hash map linking to their name
+     * if they have already likes the evidence then they are removed
+     * @param userId The user ID
+     */
+    public void toggleLike(int userId) {
+        if(likes.contains(userId)) {
+            likes.remove((Integer) userId);
+        } else {
+            likes.add(userId);
+        }
+    }
+
+    /**
+     * Returns the number of users that have currently liked the piece of evidence
+     */
+    public int getNumberOfLikes() {
+        return likes.size();
+    }
+
+    public List<Integer> getLikes(){
+        return this.likes;
+    }
+
 }

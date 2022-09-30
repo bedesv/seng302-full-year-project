@@ -1,4 +1,4 @@
-// If the evidence title/description are not valid, set the save button to disabled.
+// If the evidence title/description are not valid, set the save button to disable.
 function checkValid() {
     if (evidenceId === -1) {
         document.getElementById('evidence-form__save').disabled =
@@ -84,12 +84,14 @@ function removeUser(user) {
 }
 
 function saveCommitChanges() {
-    newCommits = [];
+    let newCommits = [];
     for (const commitId of commitList) {
         if (!currentlyShownCommits[commitId]) {
             newCommits.push(commitId);
         }
     }
+    let child;
+    let checkbox;
     for (child of document.getElementById("commit-selection-box").children) {
         checkbox = child.children[1];
         if (checkbox.checked) {
@@ -160,23 +162,23 @@ function editSkill(tag) {
     })
 }
 
+function checkSkillExists(newSkill, skillsToCheck) {
+    for (const testSkill of skillsToCheck) {
+        if (testSkill.toLowerCase() === newSkill.toLowerCase().replaceAll("_", " ")) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function submitSkillEdit() {
     const editedSkill = document.getElementById("editable-skill-tag");
     if (editedSkill) {
         const newSkill = editedSkill.value.replaceAll("_", " ").trim().replaceAll(" ", "_");
         const oldSkill = editedSkill.getAttribute('data-old-value').replaceAll(" ", "_");
 
-        let isAlreadySkill = false;
-        for (const testSkill of skillList) {
-            if (testSkill.toLowerCase() === newSkill.toLowerCase().replaceAll("_", " ")) {
-                isAlreadySkill = true;
-            }
-        }
-        for (const testSkill of ALL_SKILLS) {
-            if (testSkill.toLowerCase() === newSkill.toLowerCase().replaceAll("_", " ")) {
-                isAlreadySkill = true;
-            }
-        }
+        let isAlreadySkill = checkSkillExists(newSkill, skillList) || checkSkillExists(newSkill, ALL_SKILLS);
+
         const skillsError = document.getElementById("evidence-form__skills-error");
         if (newSkill === "" || newSkill === "_") {
             skillsError.innerHTML = "Skill not saved: skills can't be empty";
@@ -232,11 +234,9 @@ function saveSkillsOnSubmit() {
     document.getElementById("skills-input").placeholder = '';
     value = value.replace(/_+/g, '_');
     let skills = value.split(" ");
-    let shouldUpdateSkills = false;
     for (let skill of skills) {
         let trimmedSkill = skill.replaceAll("_", " ").trim().replaceAll(" ", "_");
         if (trimmedSkill !== "") {
-            shouldUpdateSkills = true;
             addToSkills(trimmedSkill);
         }
     }
@@ -245,15 +245,15 @@ function saveSkillsOnSubmit() {
 
 // Listen for input so the tags and autocomplete can be triggered
 document.getElementById("skills-input").addEventListener("input", (event) => {
-    const skillsError = document.getElementById("evidence-form__skills-error");
+    let skillsError = document.getElementById("evidence-form__skills-error");
     skillsError.innerHTML = ""
     event.target.style.width = event.target.value.length > 8 ? event.target.value.length + "ch" : "80px";
     let value = event.target.value;
 
     const oldValue = value
     value = value.replaceAll(/[^a-zA-Z0-9\-_ ]/g, '');
-    if(oldValue !== value) {
-            const skillsError = document.getElementById("evidence-form__skills-error");
+    if (oldValue !== value) {
+            skillsError = document.getElementById("evidence-form__skills-error");
             skillsError.innerHTML = "Skills can not contain special characters";
     }
     value = value.replace(/_+/g, '_');
@@ -363,10 +363,18 @@ function updateSkillTagsInDOM(tags) {
 // Updates the list of commits the user has linked to their piece of evidence.
 function updateCommitsInDOM(commits) {
     let commitObjects = [];
+    let commit;
     for (const tag of commits) {
         commit = ALL_COMMITS[tag];
         if (!commit) {
             commit = ORIGINAL_COMMITS[tag];
+        }
+        commit = {
+            author: commit.author,
+            description: commit.description,
+            date: commit.date,
+            link: commit.link,
+            id: commit.id
         }
         commitObjects.push(commit);
     }
@@ -377,7 +385,7 @@ function updateCommitsInDOM(commits) {
         parent.removeChild(parent.firstChild);
     }
     for (let tag of commits) {
-        let commit = ALL_COMMITS[tag];
+        commit = ALL_COMMITS[tag];
         if (!commit) {
             commit = ORIGINAL_COMMITS[tag];
         }
@@ -449,7 +457,7 @@ function updateUserTagsInDOM(tags) {
     }
     let userInput = parent.firstChild
     for (let tag of tags) {
-        for (user of ALL_USERS) {
+        for (let user of ALL_USERS) {
             if (tag === user.id) {
                 let element = createElementFromHTML(`
                             <div class="user-tag-con">
@@ -628,10 +636,10 @@ skillsDiv.addEventListener('click', (event) => {
         skillsInput.focus();
     }
 });
-skillsInput.addEventListener('focus', (event) => {
+skillsInput.addEventListener('focus', () => {
     skillsDiv.style.outline = 'black solid 2px';
 });
-skillsInput.addEventListener('blur', (event) => {
+skillsInput.addEventListener('blur', () => {
     skillsDiv.style.outline = '';
 });
 
@@ -639,13 +647,13 @@ skillsInput.addEventListener('blur', (event) => {
 /**
  * allows clicking skills container to select the input and puts outline on div
  */
-usersDiv.addEventListener('click', (event) => {
+usersDiv.addEventListener('click', () => {
     usersInput.focus();
 });
-usersInput.addEventListener('focus', (event) => {
+usersInput.addEventListener('focus', () => {
     usersDiv.style.outline = 'black solid 2px';
 });
-usersInput.addEventListener('blur', (event) => {
+usersInput.addEventListener('blur', () => {
     usersDiv.style.outline = '';
 });
 
@@ -662,9 +670,10 @@ document.getElementById("users-input").dispatchEvent(new Event('input', {
 }))
 
 
-var commitsModal = document.getElementById('add-evidence-commits__modal')
+let commitsModal = document.getElementById('add-evidence-commits__modal')
 commitsModal.addEventListener('show.bs.modal', function (event) {
-    for (child of document.getElementById("commit-selection-box").children) {
+    let id
+    for (let child of document.getElementById("commit-selection-box").children) {
         id = child.children[1].id;
         child.children[1].checked = commitList.includes(id);
     }
@@ -706,25 +715,30 @@ let numWebLinks = 0;
 function addWebLinks() {
     let webLinkNameElement = document.getElementById("evidence-form__webLink-name");
     let webLinkElement = document.getElementById("evidence-form__webLink-link");
-    let webLink = {name: webLinkNameElement.value, link: webLinkElement.value}
-    if (numWebLinks < 5) {
-        if (webLink.link) {
-            addWebLinkToDOM(webLink, numWebLinks);
-            webLinks.push(webLink);
-            webLinkNames.push(webLink.name);
-            webLinkLinks.push(webLink.link);
-            numWebLinks++;
-            webLinkNameElement.value = "";
-            webLinkElement.value = "";
-            document.getElementById("evidence-form__hidden-webLinks-names").value = webLinkNames;
-            document.getElementById("evidence-form__hidden-webLinks-links").value = webLinkLinks;
+    webLinkElement.reportValidity();
+    webLinkNameElement.reportValidity();
+    if (webLinkElement.checkValidity() && webLinkNameElement.checkValidity()) {
+        let webLink = {name: webLinkNameElement.value, link: webLinkElement.value}
+        if (numWebLinks < 5) {
+            if (webLink.link) {
+                addWebLinkToDOM(webLink, numWebLinks);
+                webLinks.push(webLink);
+                webLinkNames.push(webLink.name);
+                webLinkLinks.push(webLink.link);
+                numWebLinks++;
+                webLinkNameElement.value = "";
+                webLinkElement.value = "";
+                document.getElementById("evidence-form__hidden-webLinks-names").value = webLinkNames;
+                document.getElementById("evidence-form__hidden-webLinks-links").value = webLinkLinks;
+            }
+        }
+        if (numWebLinks === 5) {
+            webLinkNameElement.hidden = true;
+            webLinkElement.hidden = true;
+            document.getElementById("weblink-button").hidden = true;
         }
     }
-    if (numWebLinks === 5) {
-        webLinkNameElement.hidden = true;
-        webLinkElement.hidden = true;
-        document.getElementById("weblink-button").hidden = true;
-    }
+
 }
 
 /**
@@ -795,7 +809,18 @@ async function updateCommitModal() {
     }).then(res => {
         return res.text();
     });
-    await searchCommits();
+    displayCommits = document.getElementById("display-commits__hidden-variable").innerText === 'true'
+    commitsError = document.getElementById("commits-error__hidden-variable").innerText
+    if (displayCommits) {
+        document.getElementById("open-modal__button").removeAttribute('disabled')
+        document.getElementById("evidence-form__commits-error").setAttribute('hidden', "true")
+        await searchCommits();
+    } else {
+        document.getElementById("open-modal__button").setAttribute('disabled', "true")
+        document.getElementById("evidence-form__commits-error").removeAttribute('hidden')
+        document.getElementById("evidence-form__commits-error").innerText = commitsError
+    }
+
 
     // Event listeners for the search start and end dates to let the user know if the dates they have selected are valid or not
     // when they click off them.

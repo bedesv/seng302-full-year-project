@@ -1,34 +1,41 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link rel="shortcut icon" type="image/ico" th:href="@{${@environment.getProperty('PORTFOLIO_CONTEXT')} + '/favicon.ico'}"/>
+    <link rel="stylesheet" th:href="@{styles/theme.css}">
+    <link rel="stylesheet" th:href="@{styles/stylesheet.css}">
+    <script defer rel="script" th:src="@{scripts/theme.js}"></script>
     <link th:href="@{styles/user/loginPage.css}" rel="stylesheet"/>
 </head>
 <body>
 <div class="container">
     <div class="wrapper">
         <div class="title"><span>Login</span></div>
+        <hr>
+
+        <!-- error message received from the controller-->
         <p th:text="${loginMessage}" />
         <p th:text="${usernameError}" class="form-error-message"></p>
         <form th:action="${'login'}" method="post">
             <div class="row">
                 <label>
-                    <input type="text" required th:pattern="${isNotBlankPattern}" title="Must not be blank" placeholder="Username" th:name="username">
+                    <input type="text" required th:pattern="${isNotBlankPattern}" title="Username must not be blank" placeholder="Username" th:name="username">
                 </label>
             </div>
             <div class="row">
 
                 <label>
-                    <input type="password" required placeholder="Password" th:name="password">
+                    <input type="password" required placeholder="Password" th:name="password" title="Password must not be blank">
                 </label>
             </div>
             <div class="row button">
                 <input type="submit" value="Login">
             </div>
         </form>
-        <form th:action="@{register}">
+        <form class="register-navigation" th:action="@{register}">
             <div class="row button">
                 <label>
                     <input type="submit" value="Register">

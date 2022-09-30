@@ -77,6 +77,7 @@ public class CategoriesController {
         List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
+        model.addAttribute("inPortfolio", true);
         model.addAttribute("categoryName", category);
         model.addAttribute("evidenceList", portfolioEvidenceList);
         return "templatesEvidence/categories";
@@ -123,8 +124,9 @@ public class CategoriesController {
         List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
 
-        model.addAttribute("evidenceList", evidenceList);
+        model.addAttribute("evidenceList", evidenceService.convertEvidenceForPortfolio(evidenceList));
         model.addAttribute("categoryName", category);
+        model.addAttribute("inPortfolio", true);
         if (Objects.equals(pageUser.getUsername(), "")) {
             return "redirect:/profile";
         } else if (user.getId() == pageUser.getId()) {

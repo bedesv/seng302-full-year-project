@@ -21,7 +21,9 @@ public class ProjectService {
 
     @Autowired
     private ProjectEditsService projectEditsService;
+
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
+    private static final String PROJECT = "Project ";
 
     /**
      * Get list of all projects
@@ -47,7 +49,7 @@ public class ProjectService {
             throw new IllegalArgumentException("Validation Error");
         } else {
             projectEditsService.refreshProject(project.getId());
-            String message = "Project "+ project.getId() + " saved successfully";
+            String message = PROJECT+ project.getId() + " saved successfully";
             PORTFOLIO_LOGGER.info(message);
             return repository.save(project);
         }
@@ -57,10 +59,10 @@ public class ProjectService {
         try {
             repository.deleteById(id);
             projectEditsService.refreshProject(id);
-            String message = "Project "+ id + " deleted successfully";
+            String message = PROJECT+ id + " deleted successfully";
             PORTFOLIO_LOGGER.info(message);
         } catch (EmptyResultDataAccessException e) {
-            String message = "Project "+ id + " not found to delete";
+            String message = PROJECT+ id + " not found to delete";
             PORTFOLIO_LOGGER.error(message);
             throw new NoSuchElementException("No project found to delete");
         }
@@ -73,7 +75,7 @@ public class ProjectService {
      * @param projectDescription description
      * @param projectStartDate start date
      * @param projectEndDate end date
-     * @return new projecct
+     * @return new project
      */
     public Project updateProject(int id, String projectName, String projectDescription, Date projectStartDate, Date projectEndDate) {
         Project existingProject = getProjectById(id);

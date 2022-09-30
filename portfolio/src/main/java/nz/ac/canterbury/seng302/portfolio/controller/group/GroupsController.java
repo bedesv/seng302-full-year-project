@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller.group;
 
 import nz.ac.canterbury.seng302.portfolio.model.group.Group;
-import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.model.user.UserListResponse;
 import nz.ac.canterbury.seng302.portfolio.service.group.GroupsClientService;
@@ -46,41 +45,21 @@ public class GroupsController {
     private static final int TEACHER_GROUP_ID = -2;
     private static final String TEACHER_GROUP_ID_STRING = "TEACHER_GROUP_ID";
 
-    private static final String USER_IS_TEACHER = "userIsTeacher";
-    private static final String USER_IS_ADMIN = "userIsAdmin";
-    private static final int DEFAULT_PROJECT_ID = -1;
-
-
-
     /**
      * Get mapping to fetch groups page
      * @param principal Authentication principal storing current user information
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
-     * @return The  groups html page
+     * @return The groups html page
      */
     @GetMapping("/groups")
     public String groups(@AuthenticationPrincipal AuthState principal, Model model){
         int userId = userAccountClientService.getUserId(principal);
-        boolean userIsTeacher = userAccountClientService.isTeacher(principal);
-        boolean userIsAdmin = userAccountClientService.isAdmin(principal);
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
 
-        // If the user doesn't have a project selected, select the first one in the list of projects
-        // If no projects exist, create one and select it.
-        if (projectId == DEFAULT_PROJECT_ID) {
-            List<Project> projects = projectService.getAllProjects();
-            if (projects.isEmpty()) {
-                Project defaultProject = new Project();
-                projectService.saveProject(defaultProject);
-                projects = projectService.getAllProjects();
-            }
-            portfolioUserService.setProject(userId, projects.get(0).getId());
-        }
-
-
         List<Group> groups = groupsClientService.getAllGroupsInProject(projectId);
-        groups.add(getTeacherGroup());
-        groups.add(getGrouplessGroup(projectId));
+        List<User> users = getAllUsers();
+        groups.add(getTeacherGroup(users));
+        groups.add(getGrouplessGroup(groups, users));
         List<Integer> allGroupIds = new ArrayList<>();
         for (Group g : groups) {
             allGroupIds.add(g.getGroupId());
@@ -88,22 +67,19 @@ public class GroupsController {
 
         model.addAttribute(GROUPS_STRING, groups);
         model.addAttribute("allGroupIds", allGroupIds);
-        model.addAttribute(USER_IS_TEACHER, userIsTeacher);
-        model.addAttribute(USER_IS_ADMIN, userIsAdmin);
         model.addAttribute(GROUPLESS_GROUP_ID_STRING, GROUPLESS_GROUP_ID);
         model.addAttribute(TEACHER_GROUP_ID_STRING, TEACHER_GROUP_ID);
         return GROUPS_PAGE;
     }
 
     /**
-     * Create groupless group by removing users that are in a group
-     * @return groupless group
+     * Gets all users that are not in a specified group
+     * @param groups The groups the users cannot be in
+     * @param allUsers A full list of users
+     * @return A group that contains only users who are not in a group
+     *
      */
-    protected Group getGrouplessGroup(int projectId){
-        List<Group> groups = groupsClientService.getAllGroupsInProject(projectId);
-        groups.add(getTeacherGroup());
-
-        Set<User> allUsers = getAllUsers();
+    protected Group getGrouplessGroup(List<Group> groups, List<User> allUsers){
         List<User> groupless = new ArrayList<>();
         boolean userIsInGroup;
         for(User userInAllUsers: allUsers){
@@ -124,11 +100,11 @@ public class GroupsController {
     }
 
     /**
-     * Create teacher group from user roles
-     * @return teacher group
+     * Gets a group of all users who are teachers.
+     * @param allUsers A list of all users
+     * @return The teacher group
      */
-    protected Group getTeacherGroup(){
-        Set<User> allUsers = getAllUsers();
+    protected Group getTeacherGroup(List<User> allUsers){
         List<User> teachers = new ArrayList<>();
         for (User user: allUsers){
             if (isTeacher(user)){
@@ -139,26 +115,12 @@ public class GroupsController {
     }
 
     /**
-     * Retrieve all users
-     * @return set of all Users
+     * Retrieve all users.
+     * @return Set of all users
      */
-    protected Set<User> getAllUsers() {
-        Set<User> users = new HashSet<>();
-        int offset = 0;
-        boolean endOfUsersReached = false;
-
-        while (!endOfUsersReached) {
-            UserListResponse userListResponse = userAccountClientService.getPaginatedUsers(offset, 500, "userId", true);
-            List<User> returnedUsers = userListResponse.getUsers();
-
-            if (!returnedUsers.isEmpty()){
-                users.addAll(returnedUsers);
-                offset += 500;
-            } else {
-                endOfUsersReached = true;
-            }
-        }
-        return users;
+    protected List<User> getAllUsers() {
+        UserListResponse userListResponse = userAccountClientService.getPaginatedUsers(0, Integer.MAX_VALUE, "userId", true);
+        return userListResponse.getUsers();
     }
 
     protected boolean isTeacher(User user) {
@@ -181,69 +143,110 @@ public class GroupsController {
                                  @RequestParam(value="members") List<Integer> members,
                                  Model model) {
         boolean userIsTeacher = userAccountClientService.isTeacher(principal);
-        boolean userIsAdmin = userAccountClientService.isAdmin(principal);
         int id = userAccountClientService.getUserId(principal);
         int projectId = portfolioUserService.getUserById(id).getCurrentProject();
 
         Group group;
         //Check if it is a teacher making the request
         if (!userIsTeacher) {
-            if (groupId == GROUPLESS_GROUP_ID){
-                group = getGrouplessGroup(projectId);
-            } else if (groupId == TEACHER_GROUP_ID) {
-                group = getTeacherGroup();
-            } else {
-                group = new Group(groupsClientService.getGroupDetailsById(groupId));
-            }
-            model.addAttribute(GROUP_STRING, group);
+            group = getGroup(groupId, projectId);
         } else if (groupId == TEACHER_GROUP_ID) { // Add to teacher group
-            // Give the users the teacher role
-            for (int member : members) {
-                // Only add the role if user isn't already a teacher
-                if (!userAccountClientService.getUserAccountById(member).getRoles().contains(UserRole.TEACHER)) {
-                    userAccountClientService.addRole(member, UserRole.TEACHER);
-                }
-            }
-            group = getTeacherGroup();
+            group = addToTeacherGroup(members);
         } else if (groupId == GROUPLESS_GROUP_ID) {
-
-            // Remove each user from all their groups
-            for (int memberId : members) {
-                for (Group tempGroup : groupsClientService.getAllGroupsInProject(projectId)) {
-                    if (groupsClientService.userInGroup(memberId, tempGroup.getGroupId())) {
-                        groupsClientService.removeGroupMembers(tempGroup.getGroupId(), List.of(memberId));
-                    }
-                }
-                if (userAccountClientService.getUserAccountById(memberId).getRoles().contains(UserRole.TEACHER)) {
-                    userAccountClientService.removeRole(memberId, UserRole.TEACHER);
-                }
-            }
-            group = getGrouplessGroup(projectId);
-
+            group = removeFromAllGroups(members, projectId);
         } else { // Adding to a regular group
-            // Figure out what users to add to the group
-            List<Integer> usersToAdd = new ArrayList<>();
-            for (int userId : members) {
-                // Only add the user if they aren't already in the group
-                if (!groupsClientService.userInGroup(groupId, userId)) {
-                    usersToAdd.add(userId);
-                }
-            }
-
-            // Add the users to the group and fetch an updated group object
-            if (!usersToAdd.isEmpty()) {
-                groupsClientService.addGroupMembers(groupId, usersToAdd);
-            }
-            group = new Group(groupsClientService.getGroupDetailsById(groupId));
+            group = addToGroup(members, groupId);
         }
 
         model.addAttribute(GROUP_STRING, group);
-        model.addAttribute(USER_IS_TEACHER, userIsTeacher);
-        model.addAttribute(USER_IS_ADMIN, userIsAdmin);
         model.addAttribute(GROUPLESS_GROUP_ID_STRING, GROUPLESS_GROUP_ID);
         model.addAttribute(TEACHER_GROUP_ID_STRING, TEACHER_GROUP_ID);
 
         return GROUPS_TABLE;
+    }
+
+    /**
+     * Gets a group without making any changes to it.
+     * @param groupId The id of the group
+     * @param projectId The id of the project the group is in
+     * @return A group
+     */
+    private Group getGroup(int groupId, int projectId) {
+        if (groupId == GROUPLESS_GROUP_ID){
+            List<Group> groups = groupsClientService.getAllGroupsInProject(projectId);
+            List<User> users = getAllUsers();
+            groups.add(getTeacherGroup(users));
+            return getGrouplessGroup(groups, users);
+        } else if (groupId == TEACHER_GROUP_ID) {
+            return getTeacherGroup(getAllUsers());
+        } else {
+            return new Group(groupsClientService.getGroupDetailsById(groupId));
+        }
+    }
+
+    /**
+     * Adds a list of users to the teacher group.
+     * @param members The users to add to the teaching group
+     * @return The teacher group
+     */
+    private Group addToTeacherGroup(Collection<Integer> members) {
+        // Give the users the teacher role
+        for (int member : members) {
+            // Only add the role if user isn't already a teacher
+            if (!userAccountClientService.getUserAccountById(member).getRoles().contains(UserRole.TEACHER)) {
+                userAccountClientService.addRole(member, UserRole.TEACHER);
+            }
+        }
+        return getTeacherGroup(getAllUsers());
+    }
+
+    /**
+     * Removes a list of users from all groups in a project.
+     * @param members The users to remove
+     * @param projectId The id of the project
+     * @return The groupless group
+     */
+    private Group removeFromAllGroups(Collection<Integer> members, int projectId) {
+        // Remove each user from all their groups
+        for (int memberId : members) {
+            for (Group tempGroup : groupsClientService.getAllGroupsInProject(projectId)) {
+                for (User user : tempGroup.getMembers()) {
+                    if (user.getId() == memberId) {
+                        groupsClientService.removeGroupMembers(tempGroup.getGroupId(), List.of(memberId));
+                    }
+                }
+            }
+            if (userAccountClientService.getUserAccountById(memberId).getRoles().contains(UserRole.TEACHER)) {
+                userAccountClientService.removeRole(memberId, UserRole.TEACHER);
+            }
+        }
+        List<Group> groups = groupsClientService.getAllGroupsInProject(projectId);
+        List<User> users = getAllUsers();
+        groups.add(getTeacherGroup(users));
+        return getGrouplessGroup(groups, users);
+    }
+
+    /**
+     * Adds a list of users to a group.
+     * @param members The users to add to the group
+     * @param groupId The id of the group
+     * @return The group
+     */
+    private Group addToGroup(Collection<Integer> members, int groupId) {
+        // Figure out what users to add to the group
+        List<Integer> usersToAdd = new ArrayList<>();
+        for (int userId : members) {
+            // Only add the user if they aren't already in the group
+            if (!groupsClientService.userInGroup(groupId, userId)) {
+                usersToAdd.add(userId);
+            }
+        }
+
+        // Add the users to the group and fetch an updated group object
+        if (!usersToAdd.isEmpty()) {
+            groupsClientService.addGroupMembers(groupId, usersToAdd);
+        }
+        return new Group(groupsClientService.getGroupDetailsById(groupId));
     }
 
     /**
@@ -260,22 +263,21 @@ public class GroupsController {
                                 Model model) {
 
         int userId = userAccountClientService.getUserId(principal);
-        boolean userIsTeacher = userAccountClientService.isTeacher(principal);
-        boolean userIsAdmin = userAccountClientService.isAdmin(principal);
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
 
         Group group;
 
         if (groupId == TEACHER_GROUP_ID) { // teacher group
-            group = getTeacherGroup();
+            group = getTeacherGroup(getAllUsers());
         } else if (groupId == GROUPLESS_GROUP_ID) { // groupless group
-            group = getGrouplessGroup(projectId);
+            List<Group> groups = groupsClientService.getAllGroupsInProject(projectId);
+            List<User> users = getAllUsers();
+            groups.add(getTeacherGroup(users));
+            group = getGrouplessGroup(groups, users);
         } else {
             group = new Group(groupsClientService.getGroupDetailsById(groupId));
         }
         model.addAttribute(GROUP_STRING, group);
-        model.addAttribute(USER_IS_TEACHER, userIsTeacher);
-        model.addAttribute(USER_IS_ADMIN, userIsAdmin);
         model.addAttribute(USER_IS_MEMBER, groupsClientService.userInGroup(groupId, userId));
         model.addAttribute(GROUPLESS_GROUP_ID_STRING, GROUPLESS_GROUP_ID);
         model.addAttribute(TEACHER_GROUP_ID_STRING, TEACHER_GROUP_ID);
@@ -298,21 +300,13 @@ public class GroupsController {
                                  @RequestParam(value="members") List<Integer> members,
                                  Model model) {
         boolean userIsTeacher = userAccountClientService.isTeacher(principal);
-        boolean userIsAdmin = userAccountClientService.isAdmin(principal);
         int id = userAccountClientService.getUserId(principal);
         int projectId = portfolioUserService.getUserById(id).getCurrentProject();
 
         Group group = new Group();
         //Check if it is a teacher making the request
         if (!userIsTeacher) {
-            if (groupId == GROUPLESS_GROUP_ID){
-                group = getGrouplessGroup(projectId);
-            } else if (groupId == TEACHER_GROUP_ID) {
-                group = getTeacherGroup();
-            } else {
-                group = new Group(groupsClientService.getGroupDetailsById(groupId));
-            }
-            model.addAttribute(GROUP_STRING, group);
+            group = getGroup(groupId, projectId);
         } else if (groupId == TEACHER_GROUP_ID) { // Remove from teacher group
             for (int member : members) {
                 // Only remove the role if user is a teacher
@@ -320,7 +314,7 @@ public class GroupsController {
                     userAccountClientService.removeRole(member, UserRole.TEACHER);
                 }
             }
-            group = getTeacherGroup();
+            group = getTeacherGroup(getAllUsers());
         } else if (groupId != GROUPLESS_GROUP_ID) { // Not the groupless group
             // Figure out what users to remove from the group
             List<Integer> usersToRemove = new ArrayList<>();
@@ -339,8 +333,6 @@ public class GroupsController {
         }
 
         model.addAttribute(GROUP_STRING, group);
-        model.addAttribute(USER_IS_TEACHER, userIsTeacher);
-        model.addAttribute(USER_IS_ADMIN, userIsAdmin);
         model.addAttribute(GROUPLESS_GROUP_ID_STRING, GROUPLESS_GROUP_ID);
         model.addAttribute(TEACHER_GROUP_ID_STRING, TEACHER_GROUP_ID);
 

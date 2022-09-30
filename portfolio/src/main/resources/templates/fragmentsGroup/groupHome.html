@@ -1,29 +1,70 @@
 <!DOCTYPE html>
+<head>
 
+    <link rel="stylesheet" th:href="@{styles/evidence/portfolio.css}">
+    <link rel="stylesheet" th:href="@{styles/evidence/evidence.css}">
+    <link rel="stylesheet" th:href="@{styles/evidence/categories.css}">
+    <link rel="stylesheet" th:href="@{styles/evidence/skills.css}">
+    <title>Home</title>
+    <script th:inline="javascript">
+        let EVIDENCE_IDS = [];
+        let middle_id;
+    </script>
+    <script rel="script" th:src="@{scripts/evidence/saveWeblinks.js}"></script>
+</head>
 
 <div class="group-home">
     <div class="row">
-
-        <div class="col-12 col-lg">
-            <h2>Recent Activity</h2>
+        <div class="flex-row">
+            <h2 id="group-home__evidence-title" >Recent Evidence</h2>
+        </div>
+        <div class="col-lg-8">
+            <div class="evidence__container" id="group-home__evidence-container">
+                <div th:replace="fragments/evidenceList"></div>
+            </div>
         </div>
 
-        <div class="col-12 col-lg-5">
-                <div class="group-members">
-                        <h2>Group Members</h2>
-
-                    <div class="group-members__container">
-
-                        <div class="group-member__container" th:each="member: ${group.getMembers()}">
-                            <a class="group-member__link" th:href="@{profile-{id}(id=${member.id})}">
-                                <img class="group-member__image" th:src="${member.getProfileImagePath()}" alt="Profile Photo">
-                                <div class="group-member__name-container" th:text="${member.getFirstAndLast()}"></div>
-                                <div class="group-member__nickname" th:text="${member.getNickname()}"></div>
-                            </a>
-                        </div>
+        <div class="col-lg">
+            <div class="group-members">
+                <h2>Group Members</h2>
+                <div class="group-members__container">
+                    <div class="group-member__container" th:each="member: ${group.getMembers()}">
+                        <a class="group-member__link" th:href="@{profile-{id}(id=${member.id})}">
+                            <img class="group-member__image" th:src="${member.getProfileImagePath()}" alt="Profile Photo">
+                            <div class="group-member__name-container" th:text="${member.getFirstAndLast()}"></div>
+                            <div class="group-member__nickname" th:text="${member.getNickname()}"></div>
+                        </a>
                     </div>
                 </div>
+            </div>
+            <div class="filter-tags">
+                <div class="categories">
+                    <!-- Categories Tab -->
+                    <h2>Categories</h2>
+                    <div class="categories__details">
+                        <button class="no-category__link" onclick="fetchEvidenceWithCategories('#no_categories')">No Category</button>
+                        <button class="category__link" th:each="category: ${categoryList}" th:text="${category}" th:attr="onclick=|fetchEvidenceWithCategories('${category}')|"></button>
+                    </div>
+                </div>
+                <div class="skills">
+                    <!-- Skill list -->
+                    <h2 th:text="Skills"></h2>
+                    <div class="skill__details">                                    <!--  v using # here because skills can't have a # so we can differentiate between a skill "no_skill" and evidence with no skill -->
+                        <button class="no-skill__link " onclick="fetchEvidenceWithSkill('#no_skill')">No Skill</button>
+                        <button th:each="skill: ${skillsList}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:attr="onclick=|fetchEvidenceWithSkill('${skill}')|"></button>
+                    </div>
+                </div>
+                <div class="reset-filter">
+                    <button class="reset__link" th:onclick="resetEvidenceFilter()">Reset Filter</button>
+                </div>
+            </div>
         </div>
-
     </div>
 </div>
+
+<script th:inline="javascript">
+    for (let i = 0; i < EVIDENCE_IDS.length; i++) {
+        getWebLinks(EVIDENCE_IDS[i])
+    }
+    updateLikes();
+</script>

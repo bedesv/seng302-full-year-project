@@ -1,14 +1,34 @@
 @charset "ISO-8859-1";
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
-
-body{
-    background: #FBAA60;
+:root {
+    /* CSS variables */
+    --color-primary: #FBAA60;
+    --color-secondary: #FADFC6FF;
+    --color-tertiary: #F67B50;
+    --color-complement: #F4EAE6;
+    --color-accent: #A82810;
 }
 
-h2{
-    color: aqua;
-    font-weight: bold;
-    font-variant: inherit;
+/* Hide scrollbar */
+html::-webkit-scrollbar {
+    /* Chrome, Safari, Opera */
+    display: none;
+}
+
+html {
+    -ms-overflow-style: none; /* IE, Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+/* Simple class for hiding components */
+.hidden {
+    display: none !important;
+}
+
+/******************** Login Page ********************/
+
+body{
+    background: var(--background);
 }
 
 *{
@@ -28,15 +48,15 @@ h2{
 }
 .wrapper{
     width: 100%;
-    background: #F4EAE6;
+    background: var(--surface);
     border-radius: 5px;
     box-shadow: 0px 4px 10px 1px rgba(0,0,0,0.1);
 }
 .wrapper .title{
     height: 90px;
-    background: black;
+    background: var(--surface);
     border-radius: 5px 5px 0 0;
-    color: #fff;
+    color: var(--primary-highlight);
     font-size: 30px;
     font-weight: 600;
     display: flex;
@@ -60,6 +80,8 @@ h2{
     border: 1px solid lightgrey;
     font-size: 16px;
     transition: all 0.3s ease;
+    background-color: var(--surface-highlight);
+    color: var(--text-surface);
 }
 form .row input:focus{
     border-color: black;
@@ -93,13 +115,23 @@ form .row input::placeholder{
     text-decoration: underline;
 }
 .wrapper form .button input{
-    color: #fff;
-    font-size: 20px;
-    font-weight: 500;
-    padding-left: 0px;
-    background: black;
-    border: 1px solid #16a085;
+    display: block;
+    position: relative;
+    color: var(--text-surface-highlight);
+    border: 1px solid var(--primary-highlight);
+    border-radius: 10px;
+    background-color: var(--primary-highlight);
+    padding: 0 2rem 0 2rem;
+    margin-top: 1rem;
+}
+
+.wrapper form .button input:hover{
     cursor: pointer;
+    filter: brightness(80%);
+}
+
+.register-navigation {
+    margin-top: -40px;
 }
 
 .wrapper form .signup-link{
@@ -111,10 +143,14 @@ form .row input::placeholder{
     color: green;
     text-decoration: none;
 }
-form .signup-link a:hover{
-    text-decoration: underline;
-}
+
 p{
     color: red;
     text-align: center;
+}
+
+hr {
+    height: 3px;
+    border: none;
+    color: var(--outline);
 }

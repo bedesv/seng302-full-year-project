@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.evidence.Commit;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.PortfolioEvidence;
 import nz.ac.canterbury.seng302.portfolio.model.evidence.WebLink;
+import nz.ac.canterbury.seng302.portfolio.model.group.Group;
 import nz.ac.canterbury.seng302.portfolio.model.project.Project;
 import nz.ac.canterbury.seng302.portfolio.model.user.User;
 import nz.ac.canterbury.seng302.portfolio.repository.evidence.EvidenceRepository;
@@ -35,6 +36,51 @@ public class EvidenceService {
     private ProjectService projectService;
 
     private static final Logger PORTFOLIO_LOGGER = LoggerFactory.getLogger("com.portfolio");
+    private static final String EVIDENCE = "Evidence ";
+    private static final String NOT_FOUND = " not found";
+    private static final String SAVED_SUCCESSFULLY = " saved successfully";
+
+    /**
+     * Toggles a like on the given piece of evidence for the given user
+     * @param evidenceId The id of the evidence to be liked
+     * @param userId The id of the user to add a like
+     */
+    public void toggleLike(int evidenceId, int userId) {
+        Evidence evidence = getEvidenceById(evidenceId);
+        evidence.toggleLike(userId);
+        repository.save(evidence);
+        String message = ("User: " + userId + " liked evidence: " + evidenceId);
+        PORTFOLIO_LOGGER.info(message);
+    }
+
+    /**
+     * Gets the user objects of the users who have high fived the given piece of evidence
+     * @param evidenceId The id of the evidence to fetch the users who have liked
+     * @return A list of user objects who have liked the piece of evidence
+     */
+    public List<User> getLikes(int evidenceId) {
+        Evidence evidence = getEvidenceById(evidenceId);
+        List<Integer> userIdList = evidence.getLikes();
+        List<User> userList = new ArrayList<>();
+        for(int userId: userIdList) {
+            userList.add(userService.getUserAccountById(userId));
+        }
+        String message = ("Getting list of users who have liked evidence: " + evidenceId);
+        PORTFOLIO_LOGGER.info(message);
+        return userList;
+    }
+
+    /**
+     * Gets the number of likes on the given piece of evidence
+     * @param evidenceId The id of the evidence to fetch the number of likes
+     * @return The number of likes on the piece of evidence
+     */
+    public int getNumberOfLikes(int evidenceId) {
+        Evidence evidence = getEvidenceById(evidenceId);
+        String message = ("Getting number of likes on evidence: " + evidenceId);
+        PORTFOLIO_LOGGER.info(message);
+        return (evidence.getNumberOfLikes());
+    }
 
     /**
      * Updates a user's evidence with new skills.
@@ -73,10 +119,24 @@ public class EvidenceService {
 
     public List<PortfolioEvidence> convertEvidenceForPortfolio(List<Evidence> evidenceList) {
         List<PortfolioEvidence> portfolioEvidenceList = new ArrayList<>();
+        List<User> cachedUsers = new ArrayList<>();
+        boolean userAdded;
         for (Evidence evidence: evidenceList) {
             List<User> userList = new ArrayList<>();
             for (int linkedUserId: evidence.getLinkedUsers()) {
-                userList.add(userService.getUserAccountById(linkedUserId));
+                userAdded = false;
+                for (User u : cachedUsers) {
+                    if (u.getId() == linkedUserId) {
+                        userList.add(u);
+                        userAdded = true;
+                    }
+                }
+                if (!userAdded) {
+                    User tempUser = userService.getUserAccountById(linkedUserId);
+                    userList.add(tempUser);
+                    cachedUsers.add(tempUser);
+                }
+
             }
             portfolioEvidenceList.add(new PortfolioEvidence(evidence, userList));
         }
@@ -91,12 +151,61 @@ public class EvidenceService {
      */
     public List<PortfolioEvidence> getEvidenceForPortfolio(int userId, int projectId) {
         List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(userId, projectId);
-        evidenceList.sort(Comparator.comparing(Evidence::getDate));
-        Collections.reverse(evidenceList);
         List<PortfolioEvidence> portfolioEvidenceList =  convertEvidenceForPortfolio(evidenceList);
         String message = "Evidence for user " + userId + " and project " + projectId + " retrieved";
         PORTFOLIO_LOGGER.info(message);
-        return portfolioEvidenceList;
+        return portfolioEvidenceList.stream().sorted(Collections.reverseOrder(Comparator.comparing(PortfolioEvidence::getDate).thenComparing(PortfolioEvidence::getId))).toList();
+    }
+
+    /**
+     * Get all evidence for members within group
+     * @param group Group retrieving evidence for
+     * @param projectId currently selected project
+     * @return list of all evidences for user in group
+     */
+    public List<PortfolioEvidence> getEvidenceForPortfolioByGroup(Group group, int projectId, int limit){
+        List<PortfolioEvidence> groupsEvidence = new ArrayList<>();
+        for (User user: group.getMembers()){
+            groupsEvidence.addAll(getEvidenceForPortfolio(user.getId(), projectId));
+        }
+        //sort by date asc, then reverse (so latest at top), then return only limit number of evidences
+        return groupsEvidence.stream().sorted(Collections.reverseOrder(Comparator.comparing(PortfolioEvidence::getDate).thenComparing(PortfolioEvidence::getId))).limit(limit).toList();
+    }
+
+    /**
+     * Get all pieces of evidence with the given skill for all members in the given group
+     * @param group The group to retrieve evidence for
+     * @param projectId The currently selected project id
+     * @param skill The skill to filter by
+     * @param limit The max number of pieces of evidence to return
+     * @return A list of all pieces of evidence with the given skill from users in the group
+     */
+    public List<PortfolioEvidence> getEvidenceForPortfolioByGroupFilterBySkill(Group group, int projectId, String skill, int limit) {
+        List<PortfolioEvidence> groupsEvidence = new ArrayList<>();
+        for (User user : group.getMembers()) {
+            for (PortfolioEvidence evidence : getEvidenceForPortfolio(user.getId(), projectId)) {
+                if ((skill.equals("#no_skill") && evidence.getSkills().isEmpty()) || evidence.getSkills().contains(skill)) {
+                    groupsEvidence.add(evidence);
+                }
+            }
+        }
+        return groupsEvidence.stream().limit(limit).toList();
+    }
+
+    /**
+     * Get all skills for all members in the given group
+     * @param group The group to retrieve skills for
+     * @param projectId The currently selected project id
+     * @return A list of all skills from users in the group
+     */
+    public List<String> getAllGroupsSkills(Group group, int projectId) {
+        Set<String> groupsSkills = new HashSet<>();
+        for (User user : group.getMembers()) {
+            for (PortfolioEvidence evidence : getEvidenceForPortfolio(user.getId(), projectId)) {
+                groupsSkills.addAll(evidence.getSkills());
+            }
+        }
+        return new ArrayList<>(groupsSkills);
     }
 
     /**
@@ -108,7 +217,7 @@ public class EvidenceService {
             return evidence.get();
         }
         else {
-            String message = "Evidence " + id + " not found";
+            String message = EVIDENCE + id + NOT_FOUND;
             PORTFOLIO_LOGGER.error(message);
             throw new NoSuchElementException(message);
         }
@@ -129,18 +238,22 @@ public class EvidenceService {
         try {
             project = projectService.getProjectById(evidence.getProjectId());
         } catch (NoSuchElementException exception) {
-            String message = "Evidence parent project " + evidence.getProjectId() + " not found";
+            String message = "Evidence parent project " + evidence.getProjectId() + NOT_FOUND;
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException(message);
         }
 
         if (!ValidationUtil.titleContainsAtleastOneLanguageCharacter(evidence.getTitle()) || evidence.getTitle().length() < 2 || evidence.getTitle().length() > 64) {
-            String message = "Evidence title (" + evidence.getTitle() + ") is invalid";
+            // Replaces pattern-breaking characters
+            String parsedTitle = evidence.getTitle().replaceAll("[\n\r\t]", "_");
+            String message = "Evidence (" + parsedTitle + ") title is invalid";
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException("Title not valid");
         }
         if (!ValidationUtil.titleContainsAtleastOneLanguageCharacter(evidence.getDescription()) || evidence.getDescription().length() < 50 || evidence.getDescription().length() > 1024) {
-            String message = "Evidence description (" + evidence.getDescription() + ") is invalid";
+            // Replaces pattern-breaking characters
+            String parsedDescription = evidence.getDescription().replaceAll("[\n\r\t]", "_");
+            String message = "Evidence (" + parsedDescription + ") description is invalid";
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException("Description not valid");
         }
@@ -159,7 +272,7 @@ public class EvidenceService {
         List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(evidence.getOwnerId(), evidence.getProjectId());
         evidence.conformSkills(getSkillsFromEvidence(evidenceList));
         repository.save(evidence);
-        String message = "Evidence " + evidence.getId() + " saved successfully";
+        String message = EVIDENCE + evidence.getId() + SAVED_SUCCESSFULLY;
         PORTFOLIO_LOGGER.info(message);
     }
 
@@ -199,7 +312,7 @@ public class EvidenceService {
             // This is to make sure that there are no duplicate skills in the other user's portfolio
             List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(copiedEvidence.getOwnerId(), copiedEvidence.getProjectId());
             copiedEvidence.conformSkills(getSkillsFromEvidence(evidenceList));
-            String message = "Evidence " + evidence.getId() + " copied to " + userId + "'s portfolio";
+            String message = EVIDENCE + evidence.getId() + " copied to " + userId + "'s portfolio";
             PORTFOLIO_LOGGER.info(message);
             repository.save(copiedEvidence);
         }
@@ -245,12 +358,12 @@ public class EvidenceService {
                 // This is to make sure that there are no duplicate skills in the other user's portfolio
                 List<Evidence> evidenceList = repository.findByOwnerIdAndProjectIdOrderByDateDescIdDesc(copiedEvidence.getOwnerId(), copiedEvidence.getProjectId());
                 copiedEvidence.conformSkills(getSkillsFromEvidence(evidenceList));
-                String message = "Evidence " + evidenceId + " copied to " + userId + "'s portfolio";
+                String message = EVIDENCE + evidenceId + " copied to " + userId + "'s portfolio";
                 PORTFOLIO_LOGGER.info(message);
                 repository.save(copiedEvidence);
             }
         } catch (NoSuchElementException e) {
-            String message = "Evidence " + evidenceId + " not found";
+            String message = EVIDENCE + evidenceId + NOT_FOUND;
             PORTFOLIO_LOGGER.error(message);
             throw new NoSuchElementException(e.getMessage());
         }
@@ -296,7 +409,7 @@ public class EvidenceService {
             String message = "Deleted evidence: " + id;
             PORTFOLIO_LOGGER.info(message);
         } catch(Exception exception) {
-            String message = "Evidence " + id + " not found";
+            String message = EVIDENCE + id + NOT_FOUND;
             PORTFOLIO_LOGGER.error(message);
             throw new IllegalArgumentException(message);
         }
@@ -315,10 +428,10 @@ public class EvidenceService {
                 Evidence evidence = getEvidenceById(evidenceId);
                 evidence.addWebLink(weblink);
                 saveEvidence(evidence);
-                String message = "Evidence web link " + weblink.getName() + " saved successfully";
+                String message = "Evidence web link " + weblink.getName() + SAVED_SUCCESSFULLY;
                 PORTFOLIO_LOGGER.info(message);
             } catch (NoSuchElementException e) {
-                String message = "Evidence " + evidenceId + " not found. Weblink not saved";
+                String message = EVIDENCE + evidenceId + " not found. Weblink not saved";
                 PORTFOLIO_LOGGER.error(message);
                 throw new NoSuchElementException("Evidence not found: web link not saved");
             }
@@ -337,10 +450,10 @@ public class EvidenceService {
             Evidence evidence = getEvidenceById(evidenceId);
             evidence.addWebLinkWithIndex(weblink, index);
             saveEvidence(evidence);
-            String message = "Evidence weblink" + weblink.getName() + " saved successfully";
+            String message = "Evidence weblink" + weblink.getName() + SAVED_SUCCESSFULLY;
             PORTFOLIO_LOGGER.info(message);
         } catch (NoSuchElementException e) {
-            String message = "Evidence " + evidenceId + " not found. Weblink not saved";
+            String message = EVIDENCE + evidenceId + " not found. Weblink not saved";
             PORTFOLIO_LOGGER.error(message);
             throw new NoSuchElementException(message);
         }
@@ -361,7 +474,7 @@ public class EvidenceService {
             String message = "Evidence commit saved successfully";
             PORTFOLIO_LOGGER.info(message);
         } catch (NoSuchElementException e) {
-            String message = "Evidence " + evidenceId + " not found. Commit not saved";
+            String message = EVIDENCE + evidenceId + " not found. Commit not saved";
             PORTFOLIO_LOGGER.error(message);
             throw new NoSuchElementException(message);
         }
@@ -381,9 +494,9 @@ public class EvidenceService {
         } catch (NoSuchElementException e) {
             String message;
             if (e.getMessage().contains("Commit")) {
-                message = "Evidence " + evidenceId + " has less than " + (commitIndex + 1) + " commits. Commit not deleted.";
+                message = EVIDENCE + evidenceId + " has less than " + (commitIndex + 1) + " commits. Commit not deleted.";
             } else {
-                message = "Evidence " + evidenceId + " not found. Commit not deleted";
+                message = EVIDENCE + evidenceId + " not found. Commit not deleted";
             }
             PORTFOLIO_LOGGER.error(message);
             throw new NoSuchElementException(message);
@@ -429,7 +542,7 @@ public class EvidenceService {
     }
 
     /**
-     * Retrieves all evidence owned by the given user user and with the given skill
+     * Retrieves all evidence owned by the given user and with the given skill
      * @param skill The skill being searched for
      * @param userId The owner of the Evidence
      * @return A list of evidence owned by the user and containing the skill
@@ -509,5 +622,26 @@ public class EvidenceService {
             validationResponses.add(ValidationUtil.validAttribute(model, "skills", "Skills", invalidSkill));
         }
         return validationResponses;
+    }
+
+    /**
+     * Get the pieces of evidence for a group filtered by the selected category
+     * @param group is the group for which the pieces of evidence are fetched
+     * @param projectId is the id of the current project selected
+     * @param category is the category by which to filter
+     * @param limit is the max number of pieces of evidence to fetch
+     * @return a list of evidence filtered by the selected category
+     */
+    public List<PortfolioEvidence> getEvidenceForPortfolioByGroupFilterByCategory(Group group, int projectId, Categories category, int limit) {
+        List<PortfolioEvidence> evidenceListByCategory = new ArrayList<>();
+        for (User user: group.getMembers()) {
+            for (PortfolioEvidence portfolioEvidence: getEvidenceForPortfolio(user.getId(), projectId)) {
+                if (portfolioEvidence.getCategories().contains(category) || (category == null && portfolioEvidence.getCategories().isEmpty())) {
+                    evidenceListByCategory.add(portfolioEvidence);
+                }
+            }
+        }
+        PORTFOLIO_LOGGER.info("Fetched group evidence filtered by category");
+        return evidenceListByCategory.stream().limit(limit).toList();
     }
 }

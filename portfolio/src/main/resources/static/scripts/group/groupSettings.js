@@ -1,17 +1,39 @@
-// Load Google Charts then update charts once it's done
-google.charts.load("current", {packages:["corechart"]}).then(updateAllCharts);
-
-// Update charts when the window resizes
-window.onresize = updateAllCharts
+// // Load Google Charts then update charts once it's done
+// google.charts.load("current", {packages:["corechart"]}).then(updateAllCharts);
+//Contingency if first load doesn't work
+document.addEventListener('DOMContentLoaded', () => {
+    google.charts.load("current", {packages:["corechart"]}).then(updateChartData);
+});
+// // Update charts when the window resizes
+window.onresize = updateCharts
 
 /**
  * Updates all the charts
  */
-async function updateAllCharts() {
-    await updateGroupMembersData();
-    await updateCategoriesChart();
-    await updateSkillsChart();
-    await dataOverTimeChart();
+let memberData;
+let dataOverTime;
+let categoriesData;
+let skillsData;
+async function updateChartData() {
+    memberData = await fetchChartData('membersData');
+    dataOverTime = await fetchChartData('dataOverTime');
+    categoriesData = await fetchChartData('categories');
+    skillsData = await fetchChartData('skills');
+    await updateGroupMembersData(memberData);
+    await dataOverTimeChart(dataOverTime);
+    await updateCategoriesChart(categoriesData);
+    await updateSkillsChart(skillsData);
+}
+
+/**
+ * Update charts without calling server
+ * @returns {Promise<void>}
+ */
+async function updateCharts() {
+    await updateGroupMembersData(memberData);
+    await dataOverTimeChart(dataOverTime);
+    await updateCategoriesChart(categoriesData);
+    await updateSkillsChart(skillsData);
 }
 
 /**
@@ -32,7 +54,7 @@ async function fetchChartData(dataType) {
     if (dataType === 'dataOverTime') {
         url = new URL (`${CONTEXT}/group-${GROUP_ID}-dataOverTime?`);
     }
-    return await fetch(url+new URLSearchParams({startDateString: START_DATE, endDateString: END_DATE}), {
+    return fetch(url+new URLSearchParams({startDateString: START_DATE, endDateString: END_DATE}), {
         method: "GET",
     }).then(res => {
         return res.json();
@@ -43,10 +65,7 @@ async function fetchChartData(dataType) {
  * Fetches group members evidence count data from the backend, then creates a column chart
  * with the received data.
  */
-async function updateGroupMembersData() {
-    // Fetch updated chart data
-    let chartData = await fetchChartData('membersData')
-
+async function updateGroupMembersData(chartData) {
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'Member');
@@ -71,9 +90,8 @@ async function updateGroupMembersData() {
  * Fetches evidence over time data from the backend then creates a line chart
  * with the received data
  */
-async function dataOverTimeChart() {
-    let chartData = await fetchChartData('dataOverTime')
-
+async function dataOverTimeChart(chartData) {
+    // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'Evidence');
     data.addColumn('number', 'Number of Evidence');
@@ -96,10 +114,15 @@ async function dataOverTimeChart() {
  * Fetches categories data from the backend then creates a pie chart
  * with the received data
  */
-async function updateCategoriesChart() {
-    // Fetch updated chart data
-    let chartData = await fetchChartData('categories')
-
+async function updateCategoriesChart(chartData) {
+    const isEmpty = Object.values(chartData).every((item) => {
+        return item === 0;
+    })
+    if (isEmpty) {
+        document.getElementById("group-chart__categories-chart").setAttribute("hidden", "")
+    } else {
+        document.getElementById("group-chart__categories-chart").removeAttribute("hidden")
+    }
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'word');
@@ -126,10 +149,7 @@ async function updateCategoriesChart() {
  * Fetches skills data from the backend then creates a column chart
  * with the received data
  */
-async function updateSkillsChart() {
-    // Fetch updated chart data
-    let chartData = await fetchChartData('skills')
-
+async function updateSkillsChart(chartData) {
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'Skills');
@@ -217,9 +237,36 @@ async function saveGroupRepositorySettings() {
 async function selectRefinement(startDate, endDate){
     START_DATE = startDate;
     END_DATE = endDate;
-    await updateGroupMembersData();
-    await updateCategoriesChart();
-    await updateSkillsChart();
-    await dataOverTimeChart();
+    await updateChartData();
+}
+
+/**
+ * Toggles a high five adding the user to th
+ * @param evidenceId the evidence fragment that the like icon belongs too.
+ */
+async function toggleEvidence(evidenceId) {
+
+    let url;
+    url = new URL (`${CONTEXT}/evidence-${evidenceId}-like`);
+
+    await fetch(url, {
+        method: "POST"
+    });
+
+    await updateLikeFragment(evidenceId);
+}
+
+/**
+ * Updates the like fragment when a user clicks on the high five icon
+ * @param evidenceId the evidence fragment that the like icon belongs too.
+ */
+async function updateLikeFragment(evidenceId) {
+    let url;
+    url = new URL(`${CONTEXT}/evidence-${evidenceId}-like`);
+    document.getElementById(`evidence-${evidenceId}-like`).innerHTML = await fetch(url, {
+        method: "GET"
+    }).then(res => {
+        return res.text();
+    });
 }
 

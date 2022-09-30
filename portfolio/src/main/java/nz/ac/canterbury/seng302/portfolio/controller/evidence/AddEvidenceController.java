@@ -41,7 +41,7 @@ import java.util.*;
 public class AddEvidenceController {
 
     private static final String ADD_EVIDENCE = "templatesEvidence/addEvidence";
-    private static final String PORTFOLIO_REDIRECT = "redirect:/portfolio";
+    private static final String USER_REDIRECT = "redirect:/profile";
 
     @Autowired
     private ProjectService projectService;
@@ -92,7 +92,7 @@ public class AddEvidenceController {
         int projectId = portfolioUserService.getUserById(userId).getCurrentProject();
         if (projectId == -1) {
             model.addAttribute("errorMessage", "Please select a project first");
-            return PORTFOLIO_REDIRECT;
+            return USER_REDIRECT;
         }
         Project project = projectService.getProjectById(projectId);
 
@@ -105,7 +105,7 @@ public class AddEvidenceController {
             model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
             return ADD_EVIDENCE;
         } catch (IllegalArgumentException e) {
-            return PORTFOLIO_REDIRECT;
+            return USER_REDIRECT;
         }
     }
 
@@ -149,7 +149,7 @@ public class AddEvidenceController {
         try {
             date = new SimpleDateFormat(TIMEFORMAT).parse(dateString);
         } catch (ParseException exception) {
-            return PORTFOLIO_REDIRECT; // Fail silently as client has responsibility for error checking
+            return USER_REDIRECT; // Fail silently as client has responsibility for error checking
         }
 
         Set<Categories> categories = new HashSet<>();
@@ -192,12 +192,11 @@ public class AddEvidenceController {
         } catch (JsonProcessingException e) {
             PORTFOLIO_LOGGER.info(e.getMessage());
             addEvidenceToModel(model, projectId, userId, evidence);
-            return PORTFOLIO_REDIRECT; // Fail silently as client has responsibility for error checking
+            return USER_REDIRECT; // Fail silently as client has responsibility for error checking
         }
 
         try {
             addWebLinksToEvidence(evidence, webLinkLinks, webLinkNames);
-            System.out.println(evidence.getWebLinks());
             evidenceService.saveEvidence(evidence);
         } catch (IllegalArgumentException exception) {
             if (Objects.equals(exception.getMessage(), "Title not valid")) {
@@ -224,7 +223,8 @@ public class AddEvidenceController {
         } catch (IllegalArgumentException exception) {
             return ADD_EVIDENCE;
         }
-        return PORTFOLIO_REDIRECT;
+        // Return to the user page but open the portfolio tab
+        return USER_REDIRECT + "?portfolioSelected=true";
     }
 
     private void addWebLinksToEvidence(Evidence evidence, List<String> webLinkLinks, List<String> webLinkNames) {
@@ -303,12 +303,22 @@ public class AddEvidenceController {
         Date startDate = null;
         Date actualEndDate = null;
         boolean displayCommits = false;
+        String commitsError = "";
         if (!groups.isEmpty()) {
             // Try to set the selected group to the given group id
             for (Group g : groups) {
-                if (gitlabConnectionService.repositoryHasCommits(g.getGroupId())) {
+                int repoHasCommits = gitlabConnectionService.repositoryHasCommits(g.getGroupId());
+                if (repoHasCommits == 1) {
                     groupsWithCommits.add(g);
                     displayCommits = true;
+                } else if (groups.size() > 1 && repoHasCommits == 0) {
+                    commitsError = "One of your groups has no commits, cannot add commits from that group.";
+                } else if (repoHasCommits == 0) {
+                    commitsError = "You cannot add commits. There are no commits in your group repository.";
+                } else if (groups.size() > 1 && repoHasCommits == -1) {
+                    commitsError = "One of your groups is not connected to a repository, cannot add commits from that group.";
+                } else {
+                    commitsError = "You cannot add commits. Your group is not connected to a repository.";
                 }
                 if (g.getGroupId() == groupId) {
                     mainGroup = g;
@@ -317,7 +327,7 @@ public class AddEvidenceController {
 
 
             // If at least one of the user's groups has a repo with commits
-            if (groupsWithCommits.size() > 0) {
+            if (!groupsWithCommits.isEmpty()) {
 
                 // If selected group is null, set the selected group to the first group in the list
                 if (mainGroup == null) {
@@ -356,6 +366,8 @@ public class AddEvidenceController {
                     }
                 }
             }
+        } else {
+            commitsError = "You cannot add commits. You're not currently assigned to a group.";
         }
 
         // Sort the list of commits in reverse chronological order (newest first)
@@ -365,6 +377,7 @@ public class AddEvidenceController {
         // Add all the relevant objects to the page model
         model.addAttribute("commits", commitList);
         model.addAttribute("displayCommits", displayCommits);
+        model.addAttribute("commitsError", commitsError);
         model.addAttribute("repositoryUsers", members);
         model.addAttribute("branches", branches);
         model.addAttribute("defaultBranch", defaultBranch);
@@ -402,7 +415,8 @@ public class AddEvidenceController {
             PORTFOLIO_LOGGER.error(e.getMessage());
         }
         model.addAttribute("users", userService.getAllUsersExcept(userId));
-        addRepositoryInfoToModel(projectId, userId, -1, model);
+//        model.addAttribute("displayCommits", getShouldDisplayCommits(projectId, userId, -1));
+//        addRepositoryInfoToModel(projectId, userId, -1, model);
     }
 
     /**
@@ -414,7 +428,7 @@ public class AddEvidenceController {
             @PathVariable(name="evidenceId") String evidenceId) {
         int id = Integer.parseInt(evidenceId);
         evidenceService.deleteById(id);
-        return PORTFOLIO_REDIRECT;
+        return USER_REDIRECT + "?portfolioSelected=true";
     }
 
     @GetMapping(value="/evidenceCommitFilterBox")

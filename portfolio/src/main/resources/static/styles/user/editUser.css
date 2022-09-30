@@ -1,56 +1,23 @@
 .container {
-    border: 1px solid var(--color-accent);
-    border-radius: 1.5rem;
-    background-color: var(--color-complement);
-    width: 650px;
-    padding: 20px;
-    margin: 100px auto;
+    border: 1px solid var(--surface);
+    border-radius: 8px;
+    background-color: var(--surface);
     box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 0px!important;
 }
 
-.wrapper {
-    background: black;
-    text-align: center;
-    color: #F4EAE6;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-
-input, textarea {
-    margin-left: 10px;
-    margin-bottom: 5px;
-    outline-color: white;
-}
-
-label.helper{
-    margin-left: 10px;
-    font-style: italic;
-    font-weight: normal;
-    color: slategray;
-}
-
-/* Selects any valid <input> */
-input:valid, textarea {
-    border: none;
-    border-bottom: 2px solid lightgray;
-}
-
-input.readonly{
-    border: none;
-    border-bottom: 2px solid lightgray;
-    color: #c8c8c8;
-}
-
-input.required:valid {
-    outline-color: green;
-}
-
-/* Selects any invalid <input> */
-input:invalid {
-    background-color: #fff5f5;
-    border: none;
-    border-bottom: 2px solid red;
+.title{
+    height: 90px;
+    background: var(--surface);
+    border-radius: 5px 5px 0 0;
+    color: var(--primary-highlight);
+    font-size: 30px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 input.button {
@@ -61,26 +28,8 @@ input.button {
 button {
     padding: 3px 10px 3px 10px;
     margin-right: 5px;
-    margin-left: 20px;
 }
 
-h2 {
-    margin-bottom: 0;
-    font-size: 20px;
-}
-
-h4 {
-    color: #333333;
-    font-size: small;
-    margin-bottom: 0;
-}
-
-h6 {
-    color: #444444;
-    font-size: smaller;
-    margin-top: 0;
-    margin-bottom: 0;
-}
 
 
 a.button {
@@ -95,7 +44,126 @@ a.button {
 
 .form-error-message {
     margin-left: 10px;
-    color: red;
-    margin-top: -5px;
     margin-bottom: 10px;
+    margin-top: -15px!important;
+    color: red;
+    font-size: small;
+    text-align: center;
+}
+
+body {
+    background-color: var(--background)!important;
+}
+
+
+.wrapper{
+    width: 100%;
+    background: var(--surface);
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px 1px rgba(0,0,0,0.1);
+    padding: 15px;
+    justify-content: center;
+}
+
+.wrapper .title{
+    height: 90px;
+    background: var(--surface);
+    border-radius: 5px 5px 0 0;
+    color: var(--primary-highlight);
+    font-size: 30px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wrapper form{
+    padding: 10px 25px 10px 25px;
+}
+
+.wrapper form .row{
+    height: 40px;
+    margin-bottom: 20px;
+    position: relative;
+}
+.wrapper form .row input{
+    height: 100%;
+    width: 100%;
+    outline: none;
+    padding-left: 15px;
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+}
+form .row input:focus{
+    border-color: black;
+    box-shadow: inset 0px 0px 2px 2px rgba(26,188,156,0.25);
+}
+form .row input::placeholder{
+    color: #999;
+}
+.wrapper form .row i{
+    position: absolute;
+    width: 47px;
+    height: 100%;
+    color: #fff;
+    font-size: 18px;
+    background: #16a085;
+    border: 1px solid #16a085;
+    border-radius: 5px 0 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.wrapper form .button input{
+    display: block;
+    position: relative;
+    border: 1px solid var(--primary-highlight);
+    border-radius: 10px;
+    background-color: var(--primary-highlight);
+    color: var(--text-surface-highlight);
+    padding: 0 2rem 0 2rem;
+    margin-top: 35px;
+}
+
+.wrapper form .button input:hover{
+    cursor: pointer;
+    filter: brightness(80%);
+}
+
+.helper {
+    font-size: small;
+    color: #888888;
+}
+
+.subtitle {
+    color: var(--text-surface);
+    margin-left: -15px;
+    margin-top: 15px;
+}
+
+textarea {
+    resize: none!important;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    margin-bottom: 15px;
+}
+
+.backbutton {
+    margin-top: -20px;
+}
+
+.edit-title {
+    text-align: center;
+}
+
+hr {
+    height: 3px;
+    border: none;
+    color: var(--outline);
 }

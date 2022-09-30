@@ -14,8 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,11 +34,11 @@ public class SkillsController {
 
 
     /**
-     * Finds the logged in user's id and then loads the evidence page using the more generic endpoint
+     * Finds the logged-in user's id and then loads the evidence page using the more generic endpoint
      * @param principal Authentication state of client
      * @param skill The skill to search for
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
-     * @return A page with all of the user's evidence with the given skill
+     * @return A page with all the user's evidence with the given skill
      */
     @GetMapping("/portfolio-skill")
     public String getEvidenceWithSkill(
@@ -63,9 +61,9 @@ public class SkillsController {
         List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
+        model.addAttribute("inPortfolio", true);
         String skillName = skill.replace("_", " ");
         model.addAttribute("skillName", skillName);
-
         return "templatesEvidence/skills";
     }
 
@@ -75,7 +73,7 @@ public class SkillsController {
      * @param userId The id of the user whose evidence needs to be searched
      * @param skill The skill to search for
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
-     * @return A page with all of the user's evidence with the given skill
+     * @return A page with all the user's evidence with the given skill
      */
     @GetMapping("/portfolio-{userId}-skill")
     public String getOtherUsersEvidenceWithSkill(
@@ -99,7 +97,7 @@ public class SkillsController {
         model.addAttribute("skillName", skillName);
         model.addAttribute("pageUser", pageUser);
         model.addAttribute("evidenceList", evidenceWithSkillList);
-
+        model.addAttribute("inPortfolio", true);
         if (Objects.equals(pageUser.getUsername(), "")) {
             return "redirect:/profile";
         } else if (user.getId() == pageUser.getId()) {
@@ -117,7 +115,6 @@ public class SkillsController {
         } else {
            evidenceList = evidenceService.retrieveEvidenceBySkillAndUser(skill, userId, projectId);
         }
-        List<PortfolioEvidence> portfolioEvidenceList =  evidenceService.convertEvidenceForPortfolio(evidenceList);
-        return portfolioEvidenceList;
+        return evidenceService.convertEvidenceForPortfolio(evidenceList);
     }
 }

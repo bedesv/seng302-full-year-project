@@ -1,13 +1,3 @@
-:root {
-    /* CSS variables */
-    --color-primary: #FBAA60;
-    --color-secondary: #FADFC6FF;
-    --color-tertiary: #F67B50;
-    --color-complement: #F4EAE6;
-    --color-accent: #A82810;
-}
-
-
 /* Hide scrollbar */
 html::-webkit-scrollbar {
     /* Chrome, Safari, Opera */
@@ -26,24 +16,24 @@ html {
 
 /******************** Project Details ********************/
 
+/*edit, delete, planner, etc buttons*/
 #project, .project__button-wrapper button, .sprint__button-wrapper button, .event__button-wrapper button, .deadline__button-wrapper button, .milestone__button-wrapper button {
     position: relative;
-
     padding-top: 0;
     padding-bottom: 0;
-    border: 1px solid var(--color-accent);
-    border-radius: 1.5rem;
-    background-color: var(--color-complement);
-
+    border: none;
+    border-radius: 8px;
+    color: var(--text-surface-highlight);
+    background-color: var(--primary-highlight);
     overflow: hidden;
 }
 
 #project header {
     padding: 3rem 2rem 3rem 2rem;
-    border-bottom: 1px solid var(--color-accent);
+    border-bottom: 1px solid var(--surface);
 
-    background-image: linear-gradient(180deg, var(--color-primary), var(--color-tertiary) 90%);
-    color: var(--color-complement);
+    background: var(--surface);
+    color: var(--text-surface);
 }
 
 #project__name {
@@ -51,6 +41,10 @@ html {
     margin: 0 0 1rem 0;
     width: calc(100% - 15rem);
     word-wrap: break-word;
+    color: var(--primary-highlight);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 #project__date {
@@ -73,12 +67,14 @@ html {
     line-height: 3rem;
 
     /* Text */
+    color: var(--text-surface-highlight);
     font-size: 1rem;
     font-weight: 400;
 }
 
 .project__button-wrapper button:hover {
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
+    filter: brightness(80%);
+    color: black;
     cursor: pointer;
 }
 
@@ -90,13 +86,26 @@ html {
 
 /********************Sprints ********************/
 
-.sprint, .event__outside, .deadline__outside, .milestone__outside, .new-sprint__button, .new-event__button, .new-deadline__button, .new-milestone__button {
+.sprint, .event__outside, .deadline__outside, .milestone__outside {
     display: block;
     position: relative;
 
-    border: 1px solid var(--color-accent);
-    border-radius: 1.5rem;
-    background-color: var(--color-complement);
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
+    background-color: var(--surface);
+    padding: 0 2rem 0 2rem;
+    margin-top: 1rem;
+}
+
+.new-sprint__button, .new-event__button, .new-deadline__button, .new-milestone__button {
+    display: block;
+    position: relative;
+    color: var(--text-surface-highlight) !important;
+    border: none;
+    border-radius: 10px;
+    /*box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);*/
+    background-color: var(--primary-highlight);
     padding: 0 2rem 0 2rem;
     margin-top: 1rem;
 }
@@ -105,9 +114,9 @@ html {
     display: block;
     position: relative;
 
-    border: 1px solid var(--color-accent);
-    border-radius: 1.5rem;
-    background-color: var(--color-complement);
+    /*border: 1px solid var(--primary-highlight);*/
+    border-radius: 10px;
+    background-color: var(--surface-highlight);
     padding: 0 2rem 0 2rem;
 }
 
@@ -138,6 +147,9 @@ html {
     padding: 0;
     height: 5rem;
     line-height: 5rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .sprint__button-wrapper, .event__button-wrapper, .deadline__button-wrapper, .milestone__button-wrapper {
@@ -165,7 +177,7 @@ html {
 }
 
 .break{
-    border-top: 1px solid var(--color-accent);
+    border-top: 1px solid var(--outline);
     margin-top: 1rem;
     margin-bottom: 1rem;
 }
@@ -203,7 +215,8 @@ html {
 .sprint__button-wrapper button:hover, .event__button-wrapper button:hover, .new-sprint__button:hover,
 .new-event__button:hover, .new-deadline__button:hover, .new-milestone__button:hover,
 .deadline__button-wrapper button:hover, .milestone__button-wrapper button:hover {
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
+    filter: brightness(85%);
+    color: black;
     cursor: pointer;
 }
 
@@ -235,39 +248,47 @@ html {
 }
 
 .carousel-buttons {
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 1rem;
-    gap: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
+    width:fit-content;
+    margin: 2rem 0;
 }
 
+/*NAVIGATION BUTTONS*/
+.projects__tab-button {
+    color: var(--text-surface);
+    border: 0;
+    background-color: var(--surface);
+    height: 3rem;
+    font-size: 1.5rem;
+    padding-left: 10px;
+    padding-right: 10px;
+}
 
+.projects__tab-button:hover {
+    color: var(--text-surface-highlight);
+    background-color: var(--primary-highlight);
+    height: 3rem;
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
+    font-size: 1.5rem;
+}
+
+.active-carousel-tab {
+    color: var(--text-surface-highlight);
+    background-color: var(--primary-highlight);
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
+}
+
+/*BUTTONS idk what for???*/
 .btn-outline-primary {
     color: black;
-    border-color: var(--color-accent);
-    background-color: var(--color-complement);
-    border-radius: 2em;
-    height: 3rem;
-    box-shadow: none !important;
-    width: 100%;
-    font-size: 1.5rem;
-}
-
-.btn-fill-tertiary:hover {
-    color: #f78e55;
-    border-color: #f78e55;
-    background-color: #f4ebe6;
-    height: 3rem;
-    box-shadow: none !important;
-    width: 100%;
-    font-size: 1.5rem;
-}
-
-.btn-fill-tertiary {
-    color: white;
-    border-color: var(--color-accent);
-    background-color: #e06c41;
-    border-radius: 3px;
+    border-color: var(--surface);
+    background-color: var(--primary-highlight);
+    border-radius: 10px;
     height: 3rem;
     box-shadow: none !important;
     width: 100%;
@@ -276,14 +297,13 @@ html {
 
 .btn-outline-primary:hover {
     color: black;
-    background-color: rgba(168, 40, 16, 0.3);
-    border-color: var(--color-accent);
+    filter: brightness(80%);
+    border-color: var(--primary-highlight);
     box-shadow: none !important;
 }
 
 .btn-outline-primary:active {
     color: black;
-    background-color: var(--color-tertiary);
-    border-color: var(--color-accent);
+    filter: brightness(90%);
     box-shadow: none !important;
 }
