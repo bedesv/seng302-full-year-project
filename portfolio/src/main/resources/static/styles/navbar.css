@@ -241,19 +241,20 @@
 .site-navigation__sublink {
     /* Position & size */
     display: block;
-    color: var(--text-surface);
+    color: var(--text-backround);
     text-decoration: none;
     padding: 5px;
 }
 
-.site-navigation__sublink.active {
-    background-color: var(--background); /* Accent Colour */
+.site-navigation__sublink:hover, .site-navigation__sublabel:hover {
+    background-color: var(--outline)!important;
+    color: var(--text-surface-highlight);
+    text-decoration: none;
 }
 
-.site-navigation__sublink:hover {
-    background-color: var(--surface-highlight); /* Accent Colour */
-    color: var(--background);
-    text-decoration: none;
+.site-navigation__sublink.active {
+    background-color: var(--primary-highlight); /* Accent Colour */
+    color: var(--text-surface-highlight);
 }
 
 .dropdown__container {
