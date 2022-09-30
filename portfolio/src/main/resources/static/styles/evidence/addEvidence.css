@@ -67,7 +67,7 @@
     height: 3rem;
     line-height: 3rem;
     text-align: center;
-    color: black !important;
+    color: var(--text-surface-highlight);
     font-size: 1rem;
     text-decoration: none;
 }
@@ -101,6 +101,7 @@
     margin-bottom: 15px;
     background-color: var(--primary-highlight);
     border: none !important;
+    color: var(--text-surface-highlight);
 }
 
 .evidence-form__add-commits-button:hover {
@@ -397,7 +398,7 @@ p {
 #commit-filter__save-button {
     margin-bottom: 5px;
     background-color: var(--primary-highlight);
-    color: var(--text-surface);
+    color: var(--text-surface-highlight);
     border: none;
     border-radius: 8px;
 }
