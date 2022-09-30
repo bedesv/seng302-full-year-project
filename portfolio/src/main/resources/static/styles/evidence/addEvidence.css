@@ -99,6 +99,13 @@
 
 .evidence-form__add-commits-button {
     margin-bottom: 15px;
+    background-color: var(--primary-highlight);
+    border: none !important;
+}
+
+.evidence-form__add-commits-button:hover {
+    filter: brightness(85%);
+    background-color: var(--primary-highlight);
 }
 
 .add-evidence-commits__wrapper {
@@ -203,6 +210,11 @@ p {
     flex-direction: row;
     justify-content: center;
     align-items: center;
+}
+
+#commit-filter-box {
+    background-color: var(--surface);
+    color: var(--text-surface);
 }
 
 .commit-modal-inside {
@@ -333,6 +345,11 @@ p {
     margin-left: 1rem;
 }
 
+.commits-modal {
+    background-color: var(--surface);
+    color: var(--text-surface);
+}
+
 #commit-filter__date-box {
     display: flex;
     flex-direction: row;
@@ -340,27 +357,53 @@ p {
 
 #commit-filter__start-date {
     min-width: 125px;
+    background-color: var(--surface-highlight);
+    color: var(--text-surface);
+    border: none;
+    border-radius: 5px;
 }
 
 #commit-filter__end-date {
     min-width: 125px;
     margin-left: 5px;
     margin-right: 5px;
+    background-color: var(--surface-highlight);
+    color: var(--text-surface);
+    border: none;
+    border-radius: 5px;
 }
 
 #commit-filter-box {
     padding: 5px;
-    border: 1px solid rgb(222, 226, 230);
+    border: none;
     margin-bottom: 5px;
     border-radius: 5px;
+    background-color: var(--surface-highlight);
+    color: var(--text-surface);
+
 }
 
 #commit-filter__group-selection,
 #commit-filter__branch-selection,
 #commit-filter__member-selection,
-#commit-filter__id-search,
+#commit-filter__id-search {
+    margin-bottom: 5px;
+    background-color: var(--surface-imbed);
+    color: var(--text-surface);
+    border: none;
+    border-radius: 8px;
+}
+
 #commit-filter__save-button {
     margin-bottom: 5px;
+    background-color: var(--primary-highlight);
+    color: var(--text-surface);
+    border: none;
+    border-radius: 8px;
+}
+
+#commit-filter__save-button:hover {
+    filter: brightness(85%);
 }
 
 #commit-filter__label {
@@ -373,6 +416,13 @@ p {
     color: var(--text-surface);
     margin-left: -20px;
     margin-top: 15px;
+}
+
+#commit-filter__sprint-selection {
+    background-color: var(--surface-highlight);
+    color: var(--text-surface);
+    border: none;
+    border-radius: 5px;
 }
 
 .evidence-form__wrapper {
