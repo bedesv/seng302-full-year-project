@@ -61,8 +61,14 @@ html {
     width: 50px;
     height: 50px;
     border: 0;
-    background-color: var(--color-complement);
     font-size: 30px;
+    background-color: var(--surface);
+    color: var(--text-surface);
+}
+
+.likes__button:hover {
+    background-color: var(--surface-highlight);
+    color: var(--text-surface)!important;
 }
 
 .evidence-title__likes{
@@ -78,6 +84,7 @@ html {
     height: fit-content;
     margin: auto;
     white-space: nowrap;
+    color: var(--text-surface);
 }
 
 .like__number:hover {
@@ -144,10 +151,14 @@ html {
     padding: 5px 0 4px 0;
 }
 
-.evidence-title--icon_container:hover, .evidence-title--icon_container-delete:hover, .likes__button:hover {
+.evidence-title--icon_container:hover, .evidence-title--icon_container-delete:hover {
     color: var(--text-surface-highlight) !important;
     border: none;
     /*background-color: rgba(168, 40, 16, 0.3); !* Accent Colour *!*/
+}
+
+.likes__button:hover {
+    color: black;
 }
 
 .evidence-title--icon {
