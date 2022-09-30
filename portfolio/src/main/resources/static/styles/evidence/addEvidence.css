@@ -75,6 +75,11 @@
     font-size: small;
     margin-top: -5px;
     margin-bottom: 10px;
+    padding-top: 15px;
+}
+
+.evidence-form__add-commits-button-wrapper {
+    display: flex;
 }
 
 .evidence-form__add-commits-button {
@@ -190,6 +195,7 @@ p {
     align-items: left;
     border-bottom: 1px solid #dee2e6;
     margin-bottom: 5px;
+    overflow-wrap: anywhere;
 }
 
 .commit-tag-outside {

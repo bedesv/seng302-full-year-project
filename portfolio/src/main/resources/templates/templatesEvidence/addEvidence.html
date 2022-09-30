@@ -43,6 +43,8 @@
         let repositoryUsers = [[${repositoryUsers}]];
         let sprints = [[${sprints}]];
         let branches = [[${branches}]];
+        let displayCommits;
+        let commitsError;
     </script>
 
     <script type="text/javascript" th:inline="javascript" th:each="user, iterInfo: ${users}">
@@ -185,14 +187,15 @@
                     </div>
                 </div>
             </div>
-            <p class="evidence-form__error-message" th:text="${usersError}" />
+            <p class="evidence-form__error-message" th:text="${usersError}"></p>
             <input type="hidden" id="evidence-form__hidden-users-field" name="evidenceUsers"/>
 
             <!-- Commits !-->
-            <div th:if="${displayCommits}">
+            <div class="evidence-form__add-commits-button-wrapper">
                 <button type="button" class="btn btn-primary evidence-form__add-commits-button" id="open-modal__button" data-bs-toggle="modal" data-bs-target="#add-evidence-commits__modal">Add Commits</button>
+                <p class="evidence-form__error-message" id="evidence-form__commits-error"></p>
             </div>
-            <p class="evidence-form__error-message" th:text="${commitsError}" />
+
             <div id="commit-container"></div>
             <input type="hidden" id="evidence-form__hidden-commits-field" name="evidenceCommits"/>
 
@@ -211,31 +214,17 @@
                     <h4 class="modal-title" id="add-evidence-commits__modal--label">Add Commits</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div th:if="${displayCommits}" class="modal-body add-evidence-commits__wrapper">
+                <div class="modal-body add-evidence-commits__wrapper">
                     <div id="commit-filter-box__wrapper">
                         <div id="commit-filter-box">
-                            The rest of this div will be filled in by Javascript. The group id is needed to send
-                            the request for the other information
                             <select class="form-select" id="commit-filter__group-selection" aria-label="group" onchange="updateCommitModal(); searchCommits();">
-                                <option th:value="${mainGroup.getGroupId()}" th:text="${mainGroup.getShortName()}" selected></option>
+                                <option value="-1" selected></option>
                             </select>
                         </div>
+
                     </div>
                     <button class="btn btn-primary" id="commit-filter__save-button" onclick="saveCommitChanges()" data-bs-dismiss="modal">Save Changes</button>
                     <div id="commit-selection-box">
-                        <div th:each="commit: ${commits}" th:id="${commit.id}" class="row commit-tag-outside">
-                            <div class="col-11 commit-modal-inside">
-                                <p class="commit-description strip-margin" th:text="${commit.description}"></p>
-                                <p class="commit-author strip-margin" th:text="${commit.author} + '  -  ' + ${commit.dateString}"></p>
-                                <a class="commit-author strip-margin" th:href="${commit.link}" th:text="${commit.id}"></a>
-                            </div>
-                            <input class="col-auto" th:id="${commit.id}" type="checkbox"/>
-                        </div>
-                    </div>
-                </div>
-                <div th:if="${!displayCommits}" class="modal-body add-evidence-commits__wrapper">
-                    <div class="evidence-form__error-message">
-                        No commits found! Make sure a repository is linked in a group you are in.
                     </div>
                 </div>
             </div>

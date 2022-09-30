@@ -1,4 +1,6 @@
 <div id="commit-filter-box">
+    <div id="display-commits__hidden-variable" th:text="${displayCommits}" hidden></div>
+    <div id="commits-error__hidden-variable" th:text="${commitsError}" hidden></div>
     <label id="commit-filter__label">Filter Results</label>
     <select class="form-select" id="commit-filter__group-selection" aria-label="group" onchange="updateCommitModal(); searchCommits();">
         <option th:each="group: ${groups}" th:value="${group.getGroupId()}" th:text="${group.getShortName()}" th:selected="${group.getGroupId()} == ${mainGroup.getGroupId()}"></option>

@@ -115,6 +115,14 @@ async function dataOverTimeChart(chartData) {
  * with the received data
  */
 async function updateCategoriesChart(chartData) {
+    const isEmpty = Object.values(chartData).every((item) => {
+        return item === 0;
+    })
+    if (isEmpty) {
+        document.getElementById("group-chart__categories-chart").setAttribute("hidden", "")
+    } else {
+        document.getElementById("group-chart__categories-chart").removeAttribute("hidden")
+    }
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'word');
