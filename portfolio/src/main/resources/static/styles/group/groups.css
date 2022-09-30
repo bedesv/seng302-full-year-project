@@ -1,18 +1,21 @@
 
 /******************** Group Cards ********************/
 
-.group, #new-group-button {
+.group {
     position: relative;
     margin-bottom: 1rem;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-radius: 8px;
+    background-color: var(--surface);
 }
 
 #group__header-div {
     position: relative;
     padding: 15px 15px 15px 15px;
-    border: 1px solid var(--color-accent);
-    background-image: linear-gradient(180deg, var(--color-primary), var(--color-tertiary) 90%);
-    color: var(--color-complement);
-    border-radius: 10px;
+    background-color: var(--surface);
+    color: var(--primary-highlight);
+    border-radius: 8px;
     margin-bottom: 15px;
 }
 
@@ -27,13 +30,6 @@
 }
 
 
-.group, #new-group-button, .group__button-wrapper button, #open-modal__button {
-    padding-top: 0;
-    padding-bottom: 0;
-    border: 1px solid var(--color-accent);
-    border-radius: 10px;
-    background-color: var(--color-complement);
-}
 
 .group__details-wrapper {
     position: relative;
@@ -45,7 +41,7 @@
     padding: 0;
     height: 5rem;
     line-height: 5rem;
-
+    color: var(--text-surface);
     cursor: pointer;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -53,7 +49,7 @@
 }
 
 .group__name:hover {
-    color: var(--color-accent);
+    color: var(--primary-highlight);
 }
 
 .table {
@@ -64,10 +60,12 @@
     min-width: 400px;
     font-size: small;
     margin: 25px auto;
+    --bs-table-accent-bg: var(--surface);
+    --bs-table-hover-bg: var(--primary-highlight);
+    color: var(--text-surface);
 }
 
 .group__details {
-    border-top: 1px solid var(--color-accent);
     padding-top: 1rem;
     visibility: visible;
 }
@@ -83,42 +81,71 @@
     overflow: hidden;
 }
 
-.group__button-wrapper button{
-    /* Position & Size */
+.group__details-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.group__details-button-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#remove-user__button {
     margin-right: 1rem;
-    padding: 0 1rem 0 1rem;
-    min-width: 4rem;
-    height: 3rem;
+    border-radius: 8px;
+    min-width: 60px;
     line-height: 3rem;
-
-    /* Text */
-    font-size: 1rem;
-    font-weight: 400;
+    background-color: var(--primary-highlight);
+    color: var(--text-surface);
+    border: none;
 }
 
-#new-group-button {
-    /* Position & Size */
-    padding: 0;
-    height: 3rem;
-    line-height: 3rem;
+#remove-user__button:hover {
+    filter: brightness(85%);
+}
 
-    /* Text */
-    font-size: 1.5rem;
+.group__button {
+    margin-right: 1rem;
+    border-radius: 8px;
+    min-width: 60px;
+    line-height: 3rem;
+    background-color: var(--primary-highlight);
+    color: var(--text-surface);
+    border: none;
+}
+
+.group__button:hover {
+    filter: brightness(85%);
+}
+
+.new-group__container {
+    display: flex;
+    align-content: center;
+    padding-bottom: 20px;
+    justify-content: flex-start;
+}
+
+#new-group__button {
+    padding: 10px;
+    background-color: var(--primary-highlight);
+    color: var(--text-surface);
+    border: none;
+    border-radius: 8px;
+    font-size: 20px;
     text-decoration: none;
-    color: initial;
-    text-align: center;
 }
 
-#new-group-button:hover, #open-modal__button:hover, .group__button-wrapper button:hover{
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
-    cursor: pointer;
+#new-group__button:hover {
+    filter: brightness(85%);
 }
 
-.unselected {
-    --bs-table-accent-bg: var(--color-complement)
-}
 
 .selected {
+    color: var(--primary-highlight) !important;
     opacity: 0.8 !important;
 }
 

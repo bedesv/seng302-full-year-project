@@ -1,0 +1,67 @@
+:root {
+    --berry: #ef798a;
+    --forest: #84c059;
+    --peach: #f6b08b;
+    --steel: #bbadf0;
+    --cobalt: #9bbeff;
+
+    --charcoal: #1e1e22;
+    --slate: #2b2b33;
+    --stone: #383842;
+    --lightgrey: #848494;
+    --cloud: #eceaf0;
+
+    --carat-cloud: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23eceaf0'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    --carat-charcoal: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%231e1e22'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+
+}
+
+.dark {
+    --background: var(--charcoal);
+    --surface: var(--slate);
+    --surface-highlight: var(--stone);
+    --surface-imbed: var(--charcoal);
+    --outline: var(--lightgrey);
+    --text-faded: var(--lightgrey);
+    --text-background: var(--cloud);
+    --text-surface: var(--cloud);
+    --text-surface-highlight: var(--charcoal);
+    --carat: var(--carat-cloud);
+}
+
+.light {
+    --background: hsl(240, 5%, 91%);
+    --surface: hsl(0, 0%, 100%);
+    --surface-highlight: hsl(0, 0%, 88%);
+    --surface-imbed: hsl(210, 14%, 95%);
+    --outline: hsl(240, 2%, 72%);
+    --text-faded: hsl(240, 1%, 40%);
+    --text-backround: hsl(0, 0%, 7%);
+    --text-surface: hsl(0, 0%, 7%);
+    --text-surface-highlight: hsl(0, 0%, 100%);
+    --carat: var(--carat-charcoal);
+}
+
+.berry {
+    --primary-highlight: var(--berry);
+}
+
+.forest {
+    --primary-highlight: var(--forest);
+}
+
+.peach {
+    --primary-highlight: var(--peach);
+}
+
+.steel {
+    --primary-highlight: var(--steel);
+}
+
+.cobalt {
+    --primary-highlight: var(--cobalt);
+}
+
+.theme__transition {
+    transition: background 200ms ease-in-out, color 400ms ease-in-out, border 400ms ease-in-out;
+}

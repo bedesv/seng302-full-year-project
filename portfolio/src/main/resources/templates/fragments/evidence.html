@@ -119,7 +119,7 @@
         <!-- Modal -->
         <div class="modal fade" th:id="addingWeblink_ + ${evidence.getId}" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
+                <div class="modal-content weblink-modal__container">
                     <div class="modal-header weblink-modal__header">
                         <h5 class="modal-title" th:id="weblink-modal__title- + ${evidence.getId}">Add Weblink</h5>
                         <button type="button" class="btn-close close-button" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -127,11 +127,11 @@
                     <div class="weblink-modal__wrapper">
                         <form id="weblink__modal" class="flex-column" th:data-evidenceId="${evidence.getId}" onsubmit="saveWebLink(this.getAttribute('data-evidenceId')); return false;" th:method="post">
                           <label> Name </label>
-                            <input type="text" th:id="weblink-modal__name-field_ + ${evidence.getId}" name="webLinkName" maxlength="64" placeholder="WebLink Name" th:value="${webLinkName}">
+                            <input class="weblink-modal__input" type="text" th:id="weblink-modal__name-field_ + ${evidence.getId}" name="webLinkName" maxlength="64" placeholder="WebLink Name" th:value="${webLinkName}">
                             <label> Link *</label>
-                            <input type="url" th:id="weblink-modal__link-field_ + ${evidence.getId}" name="webLink" placeholder="WebLink" oninvalid="this.setCustomValidity('Incorrect Web Link Format. Example: \'http(s)://example.com\'')" oninput="this.setCustomValidity('')" th:value="${webLink}" required>
+                            <input class="weblink-modal__input" type="url" th:id="weblink-modal__link-field_ + ${evidence.getId}" name="webLink" placeholder="WebLink" oninvalid="this.setCustomValidity('Incorrect Web Link Format. Example: \'http(s)://example.com\'')" oninput="this.setCustomValidity('')" th:value="${webLink}" required>
                             <p id="weblink-incorrect" hidden>Incorrect Web Link Format. Example: 'http(s)://example.com'</p>
-                            <div class="modal-footer">
+                            <div class="modal-footer weblink-modal__footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
                                 <button type="submit" class="btn btn-primary">Save</button>
                             </div>

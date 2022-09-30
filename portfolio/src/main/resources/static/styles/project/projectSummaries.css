@@ -31,12 +31,25 @@ html {
     margin-bottom: 1rem;
 }
 
-.project, #new-project__button, .project__button-wrapper button {
+.project {
     padding-top: 0;
     padding-bottom: 0;
-    border: 1px solid var(--color-accent);
+    border: 1px solid var(--surface);
     border-radius: 10px;
-    background-color: var(--color-complement);
+    background-color: var(--surface);
+}
+
+#new-project__button, .project__button-wrapper button {
+    padding-top: 0;
+    padding-bottom: 0;
+    border: 1px solid var(--primary-highlight);
+    border-radius: 10px;
+    background-color: var(--primary-highlight);
+    color: var(--text-surface-highlight);
+}
+
+.project__button-wrapper button:hover {
+    filter: brightness(80%);
 }
 
 .project__details-wrapper {
@@ -49,6 +62,7 @@ html {
     padding: 0;
     height: 5rem;
     line-height: 5rem;
+    color: var(--text-surface);
     cursor: pointer;
     width: calc(100% - 25rem);
     text-overflow: ellipsis;
@@ -57,7 +71,7 @@ html {
 }
 
 .project__name:hover {
-    color: var(--color-accent);
+    color: var(--primary-highlight);
 }
 
 .project.collapsed {
@@ -75,7 +89,7 @@ html {
 }
 
 .project.expanded .project__details {
-    border-top: 1px solid var(--color-accent);
+    border-top: 1px solid var(--surface);
     padding-top: 1rem;
     visibility: visible;
 }
@@ -121,10 +135,11 @@ html {
     text-decoration: none;
     color: initial;
     text-align: center;
+    color: var(--text-surface-highlight);
 }
 
 #new-project__button:hover, .project__button-wrapper button:hover{
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
+    filter: brightness(80%);
     cursor: pointer;
 }
 
@@ -133,12 +148,13 @@ html {
 
 .sprint, .new-sprint__button {
     padding: 0 2rem 0 2rem;
-    border-top: 1px solid var(--color-accent);
-    background-color: var(--color-complement);
+    border-top: 1px solid var(--surface);
+    background-color: var(--surface);
+    color: var(--text-surface);
 }
 
 .sprint:last-child {
-    border-bottom: 1px solid var(--color-accent);
+    border-bottom: 1px solid var(--surface);
 }
 
 .sprint__name {
@@ -146,12 +162,12 @@ html {
     padding: 0;
     height: 3rem;
     line-height: 3rem;
-
+    color: var(--text-surface);
     cursor: pointer;
 }
 
 .sprint__name:hover {
-    color: var(--color-accent);
+    color: var(--primary-highlight);
 }
 
 .sprint.collapsed {
@@ -167,7 +183,7 @@ html {
 }
 
 .sprint.expanded .sprint__details {
-    border-top: 1px solid var(--color-accent);
+    border-top: 1px solid var(--surface);
     padding-top: 1rem;
     visibility: visible;
 }
@@ -177,6 +193,6 @@ html {
 }
 
 .new-sprint__button:hover {
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
+    filter: brightness(80%);
     cursor: pointer;
 }

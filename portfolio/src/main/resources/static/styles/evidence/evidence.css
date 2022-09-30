@@ -1,13 +1,3 @@
-:root {
-    /* CSS variables */
-    --color-primary: #FBAA60;
-    --color-secondary: #FADFC6FF;
-    --color-tertiary: #F67B50;
-    --color-complement: #F4EAE6;
-    --color-accent: #A82810;
-}
-
-
 /* Hide scrollbar */
 html::-webkit-scrollbar {
     /* Chrome, Safari, Opera */
@@ -40,9 +30,7 @@ html {
 .evidence__button-wrapper button {
     padding-top: 0;
     padding-bottom: 0;
-    border: 1px solid var(--color-accent);
     border-radius: 5px;
-    background-color: var(--color-complement);
 }
 
 .web-link-title {
@@ -52,12 +40,11 @@ html {
 .evidence__collapsed {
     display: block;
     position: relative;
-
-    border: 1px solid var(--color-accent);
     border-radius: 5px;
-    background-color: var(--color-complement);
+    background-color: var(--surface);
     padding: 0 2rem 0 2rem;
     margin-top: 1rem;
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
 }
 
 .evidence-title__child {
@@ -74,10 +61,15 @@ html {
     width: 50px;
     height: 50px;
     border: 0;
-    background-color: var(--color-complement);
     font-size: 30px;
+    background-color: var(--surface);
+    color: var(--text-surface);
 }
 
+.likes__button:hover {
+    background-color: var(--surface-highlight);
+    color: var(--text-surface)!important;
+}
 
 .evidence-title__likes{
     width: 10%;
@@ -92,10 +84,16 @@ html {
     height: fit-content;
     margin: auto;
     white-space: nowrap;
+    color: var(--text-surface);
 }
 
 .like__number:hover {
     text-decoration: underline;
+}
+
+.evidence-title__left-div {
+    display: flex;
+    flex-direction: column;
 }
 
 .evidence-title__weblinks-commits-div {
@@ -133,28 +131,34 @@ html {
 
 .evidence-title--icon_container {
     width: 100%;
-    color: black;
+    color: var(--text-surface);
     padding: 20px 20px 10px 20px;
-    border: 1px solid var(--color-accent);
+    /*border: 1px solid var(--color-accent);*/
     border-radius: 5px;
-    background-color: transparent;
+    background-color: var(--primary-highlight);
     cursor: pointer;
+    border: none;
 }
 
 .evidence-title--icon_container-delete {
     width: 100%;
-    color: black;
-    border: 1px solid var(--color-accent);
+    color: var(--text-surface);
+    /*border: 1px solid var(--color-accent);*/
+    border: none;
     border-radius: 5px;
-    background-color: transparent;
+    background-color: var(--primary-highlight);
     margin: -8px 0 0 0;
     padding: 5px 0 4px 0;
 }
 
-.evidence-title--icon_container:hover, .evidence-title--icon_container-delete:hover, .likes__button:hover{
+.evidence-title--icon_container:hover, .evidence-title--icon_container-delete:hover {
+    color: var(--text-surface-highlight) !important;
+    border: none;
+    /*background-color: rgba(168, 40, 16, 0.3); !* Accent Colour *!*/
+}
+
+.likes__button:hover {
     color: black;
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
-    filter: brightness(120%);
 }
 
 .evidence-title--icon {
@@ -191,12 +195,12 @@ html {
     font-size: 25px;
 }
 
-.evidence-title__child:hover {
-    color: var(--color-accent);
+.evidence-title__child:hover, .evidence__title--icon_container:hover, .evidence-title--icon_container-delete:hover {
+    color: var(--text-faded);
 }
 
 .evidence__details {
-    border-top: 1px solid var(--color-accent);
+    border-top: 1px solid var(--primary-highlight);
     padding-top: 1rem;
     padding-bottom: 1rem;
     visibility: visible;
@@ -215,53 +219,73 @@ html {
     font-size: 20px;
 }
 
-.weblink-modal__header {
-    padding: 1rem;
-    border-bottom: 1px solid var(--color-accent);
+/*Weblink modal*/
 
-    background-image: linear-gradient(180deg, var(--color-primary), var(--color-tertiary) 90%);
-    color: var(--color-complement);
+.weblink-modal__header {
+    padding: 1rem 0;
+    color: var(--text-surface);
+    border: none;
+
+}
+
+.close-button {
+    color: var(--background);
+}
+
+.close-button:focus {
+    color: var(--text-background);
+    box-shadow: none;
 }
 
 .modal-title {
     float: left;
 }
 
+.weblink-modal__container {
+    background-color: var(--surface);
+    border-radius: 8px;
+    overflow: hidden;
+    color: var(--text-surface);
+    padding: 2rem;
+}
+
 #weblink-modal__wrapper {
     display: block;
-    background-color: var(--color-complement);
-    border: 1px solid var(--color-accent);
-    border-radius: 5px;
-    overflow: hidden;
 }
 
 #weblink__modal label {
     margin-top: 0.5rem;
-    margin-left: 0.5rem;
-}
-
-#weblink__modal input {
-    margin: 1rem;
-    border: none;
-    border-bottom: 2px solid lightgray;
+    /*margin-left: 0.5rem;*/
 }
 
 /* Set a style for the button */
 #weblink__modal button {
-    background-color: var(--color-complement);
-    border: 1px solid var(--color-accent);
+    background-color: var(--primary-highlight);
+    /*border: 1px solid var(--color-accent);*/
     border-radius: 5px;
-
+    border: none;
     text-align: center;
-    color: black;
     font-size: 1rem;
     text-decoration: none;
+    color: var(--text-surface);
 }
 
 /*Add some hover effects to buttons */
 #weblink__modal button:hover {
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
+    color: var(--text-surface-highlight);
+    border: none;
     cursor: pointer;
+}
+
+#weblink__modal button:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.weblink-modal__footer {
+    border: none;
+    outline: none !important;
 }
 
 .form-error-message {
@@ -273,17 +297,38 @@ html {
 }
 
 #weblink-button {
+    background-color: var(--primary-highlight);
+    color: var(--text-surface);
+    border: none;
     font-size: medium;
-    padding: 3px 5px 3px 5px;
+    padding: 5px 5px 5px 5px;
 }
 
 #weblink-button:hover {
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
+    color: var(--text-surface-highlight);
 }
 
 #close-button{
     float: right;
 }
+
+.weblink-modal__input {
+    background-color: var(--surface-highlight);
+    border: none;
+    border-radius: 2px;
+    overflow: hidden;
+    color: var(--text-surface);
+}
+
+.weblink-modal__input:focus {
+    outline: 1px solid var(--outline);
+}
+
+.weblink-modal__input::placeholder {
+    color: var(--outline);
+}
+
+/*Weblink modal end*/
 
 .evidence__skills {
     display: flex;
@@ -343,8 +388,8 @@ p {
 .user-tag {
     width: fit-content;
     height: fit-content;
-    background-color: var(--color-primary);
-    border: 1px solid var(--color-secondary);
+    background-color: var(--primary-highlight);
+    /*border: 1px solid var(--o);*/
     padding: 2px 4px 2px 4px;
     display: inline-block;
     border-radius: 5px;
@@ -373,7 +418,7 @@ p {
 }
 
 .user-tag-nickname {
-    color: #636363;
+    color: var(--text-surface);
 }
 
 .user-like__link {
@@ -389,7 +434,7 @@ p {
 }
 
 .user-like__link:hover {
-    color: var(--color-tertiary);
+    color: var(--primary-highlight);
 }
 
 .user-like__image {

@@ -46,24 +46,22 @@
 
 .add-evidence__container {
     display: flex;
-    justify-content: center;
 }
 
 .add-evidence__button {
-    border: 1px solid var(--color-accent);
-    border-radius: 10px;
-    background-color: var(--color-complement);
+    border-radius: 8px;
+    background-color: var(--primary-highlight);
     padding: 10px;
     font-size: 20px;
     text-decoration: none;
-    color: black;
+    color: var(--text-surface-highlight);
     width: fit-content;
+    border: none;
 }
 
 .add-evidence__button:hover {
-    color: #f78e55;
-    border-color: #f78e55;
-    background-color: #f4ebe6;
+    filter: brightness(85%);
+    color: var(--text-surface-highlight);
     box-shadow: none !important;
 }
 
@@ -77,7 +75,7 @@
     padding-top: 10px;
     display: flex;
     flex-wrap: wrap;
-    border-bottom: 1px solid var(--color-accent);
+    border-bottom: 1px solid var(--primary-highlight);
     padding-bottom: 30px;
 }
 
@@ -86,14 +84,14 @@
 }
 
 .reset__link {
-    border: 1px solid var(--color-primary);
+    border: 1px solid var(--primary-highlight);
     border-radius: 5px;
-    background-color: var(--color-complement);
+    background-color: var(--surface);
     padding: 2px 4px 2px 4px;
     margin: 4px;
     display: inline;
     text-decoration: none;
-    color: var(--color-primary);
+    color: var(--primary-highlight);
     text-align: center;
 }
 
@@ -121,20 +119,21 @@
 }
 
 .web-link-title {
-    border-bottom: 1px solid var(--color-accent);
+    border-bottom: 1px solid var(--primary-highlight);
     width: fit-content;
 }
 
 .evidence-form__commits-title {
-    border-bottom: 1px solid var(--color-accent);
+    border-bottom: 1px solid var(--primary-highlight);
     width: fit-content;
 }
 
 .filter-div {
-    background-color: var(--color-secondary);
+    background-color: var(--surface);
     margin: 5px;
     padding: 10px;
     border-radius: 5px;
+    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
 }
 
 .categories__details {
@@ -142,7 +141,7 @@
     padding-bottom: 30px;
     display: flex;
     flex-wrap: wrap;
-    border-bottom: 1px solid var(--color-accent);
+    border-bottom: 1px solid var(--primary-highlight);
 }
 
 .all-evidence-link {

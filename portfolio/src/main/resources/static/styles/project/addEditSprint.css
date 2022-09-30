@@ -1,18 +1,21 @@
 /******************** Add/Edit Sprint Form ********************/
+body {
+    background: var(--background);
+}
+
 
 .sprint-form__header {
     padding: 3rem 2rem 3rem 2rem;
-    border-bottom: 1px solid var(--color-accent);
-
-    background-image: linear-gradient(180deg, var(--color-primary), var(--color-tertiary) 90%);
-    color: var(--color-complement);
+    background: var(--surface);
+    color: var(--primary-highlight);
+    text-align: center;
 }
 
 #sprint-form__wrapper {
     display: block;
-    background-color: var(--color-complement);
-    border: 1px solid var(--color-accent);
-    border-radius: 1.5rem;
+    background-color: var(--surface);
+    border: 1px solid var(--surface);
+    border-radius: 8px;
     overflow: hidden;
 }
 
@@ -22,12 +25,18 @@
 
 #sprint-form__form label {
     margin-bottom: 0.5rem;
+    margin-left: -10px;
+    color: var(--text-surface);
 }
 
 #sprint-form__form input, #sprint-form__form textarea {
-    margin: 0 0 1rem 1rem;
+    margin: 0 0 1rem 0;
     border: none;
-    border-bottom: 2px solid lightgray;
+    border-radius: 5px;
+    height: 40px;
+    background-color: var(--surface-highlight);
+    color: var(--text-surface);
+    padding-left: 5px;
 }
 
 .form-error-message {
@@ -42,21 +51,26 @@
 #sprint-form__form button, #sprint-form__form a {
     padding: 0;
     margin-bottom: 1rem;
-    background-color: var(--color-complement);
-    border: 1px solid var(--color-accent);
-    border-radius: 1.5rem;
+    background-color: var(--primary-highlight);
+    color: var(--text-surface);
+    border: none;
+    border-radius: 8px;
     overflow: hidden;
 
     height: 3rem;
     line-height: 3rem;
     text-align: center;
-    color: black;
     font-size: 1rem;
     text-decoration: none;
 }
 
 /*Add some hover effects to buttons */
 #sprint-form__form button:hover, #sprint-form__form a:hover {
-    background-color: rgba(168, 40, 16, 0.3); /* Accent Colour */
+    filter: brightness(85%);
     cursor: pointer;
+}
+
+.edit-sprint__wrapper{
+    box-shadow: 0px 4px 10px 1px rgba(0,0,0,0.1);
+    width: 100%;
 }
