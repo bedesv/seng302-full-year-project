@@ -64,8 +64,9 @@ function eventHandle(e) {
 document.addEventListener("mouseover", (e) => {
     let dropdown = document.getElementById("js-dropdown__list");
     let classList = e.target.classList;
-    if (classList.contains("dropdown") || classList.contains("clear-decoration") || classList.contains("navigation_icon")
-        || classList.contains("dropdown__container") || classList.contains("dropdown-content")
+    if (classList.contains("site-navigation__dropdown") || classList.contains("site-navigation__clear-decoration")
+        || classList.contains("site-navigation__navigation-icon")
+        || classList.contains("site-navigation__dropdown-container") || classList.contains("site-navigation__dropdown-content")
         || classList.contains("site-navigation__sublabel") || classList.contains("site-navigation__sublink")) {
         dropdown.style.display = 'block';
     } else if (toggle1 === 0) {
