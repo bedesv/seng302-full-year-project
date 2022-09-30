@@ -51,13 +51,13 @@
                 <div class="group__details-wrapper">
                     <div class="group__details-header">
                         <h2 class="group__name" th:text="${group.getShortName} + ' - ' + ${group.getLongName}" type="button" data-bs-toggle="collapse" th:data-bs-target="'#group_' + ${group.getGroupId}" aria-expanded="false" th:aria-controls="group_ + ${group.getGroupId}"></h2>
-                        <button id="remove-user__button" onclick="removeSelectedUsers(this)" hidden="hidden" th:class="'group_' + ${group.getGroupId} + '_remove_users_button'">Remove Selected Users</button>
                             <div class="group__details-button-container">
                                 <form th:action="@{group-{id}(id=${group.getGroupId})}" th:method="get" th:if="${group.getGroupId} >= 0")>
                                     <button class="group__button" type="submit">View</button>
                                 </form>
-                                <div class="flex-row" th:if="${user.isTeacher || #lists.contains(group.getMembers, user)}">
-                                    <button th:id="${group.getGroupId}" th:data-group-id="group_ + ${group.getGroupId}" onclick="copyHere(this.getAttribute('data-group-id'))" hidden="hidden" th:class="groups__copy-member-mobile">Copy</button>
+                                <button id="remove-user__button2" onclick="removeSelectedUsers(this)" hidden="hidden" th:class="'group_' + ${group.getGroupId} + '_remove_users_button'" th:classappend="'group__button'">Remove Selected Users</button>
+                                <div class="flex-row" style="gap: 1rem" th:if="${user.isTeacher || #lists.contains(group.getMembers, user)}">
+                                    <button th:id="${group.getGroupId}" th:data-group-id="group_ + ${group.getGroupId}" onclick="copyHere(this.getAttribute('data-group-id'))" hidden="hidden" th:class="groups__copy-member-mobile" th:classappend="'group__button'">Copy</button>
                                     <form th:action="@{editGroup-{id}(id=${group.getGroupId})}" th:method="get" th:if="${group.getGroupId} >= 0")>
                                         <button class="group__button" type="submit">Edit</button>
                                     </form>
