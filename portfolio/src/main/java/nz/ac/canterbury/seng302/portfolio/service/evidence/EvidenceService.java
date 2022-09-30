@@ -119,10 +119,24 @@ public class EvidenceService {
 
     public List<PortfolioEvidence> convertEvidenceForPortfolio(List<Evidence> evidenceList) {
         List<PortfolioEvidence> portfolioEvidenceList = new ArrayList<>();
+        List<User> cachedUsers = new ArrayList<>();
+        boolean userAdded;
         for (Evidence evidence: evidenceList) {
             List<User> userList = new ArrayList<>();
             for (int linkedUserId: evidence.getLinkedUsers()) {
-                userList.add(userService.getUserAccountById(linkedUserId));
+                userAdded = false;
+                for (User u : cachedUsers) {
+                    if (u.getId() == linkedUserId) {
+                        userList.add(u);
+                        userAdded = true;
+                    }
+                }
+                if (!userAdded) {
+                    User tempUser = userService.getUserAccountById(linkedUserId);
+                    userList.add(tempUser);
+                    cachedUsers.add(tempUser);
+                }
+
             }
             portfolioEvidenceList.add(new PortfolioEvidence(evidence, userList));
         }
