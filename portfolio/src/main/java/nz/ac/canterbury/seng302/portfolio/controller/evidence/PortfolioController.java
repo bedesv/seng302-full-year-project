@@ -14,10 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -64,6 +61,7 @@ public class PortfolioController {
         model.addAttribute("evidenceList", evidenceList);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(evidenceList));
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
+        model.addAttribute("inPortfolio", true);
         return "templatesEvidence/portfolio";
     }
 
@@ -82,19 +80,21 @@ public class PortfolioController {
             @PathVariable("userId") int userId,
             Model model
     ) {
-        User user = userService.getUserAccountByPrincipal(principal);
-        User pageUser = userService.getUserAccountById(userId);
+        User pageUser = userService.getUserAccountByPrincipal(principal);
+        User user = userService.getUserAccountById(userId);
         model.addAttribute("pageUser", pageUser);
 
-        int projectId = portfolioUserService.getUserById(user.getId()).getCurrentProject();
-        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
+        int projectId = portfolioUserService.getUserById(pageUser.getId()).getCurrentProject();
+        List<PortfolioEvidence> evidenceList = evidenceService.getEvidenceForPortfolio(user.getId(), projectId);
 
         model.addAttribute("evidenceList", evidenceList);
 
-        // Add all of the skills that the user has to the page
+        // Add all the skills that the user has to the page
         List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
-        if (Objects.equals(pageUser.getUsername(), "")) {
+        model.addAttribute("inPortfolio", true);
+        model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
+        if (Objects.equals(user.getUsername(), "")) {
             return "redirect:/profile";
         } else if (user.getId() == pageUser.getId()) {
             return PORTFOLIO_REDIRECT; // Take user to their own portfolio if they try to view it
@@ -182,6 +182,44 @@ public class PortfolioController {
         model.addAttribute("webLinks", evidence.getWebLinks());
         model.addAttribute("evidenceId", evidence.getId());
         return "fragments/webLink";
+    }
+
+    /**
+     * Gets the web links of evidence with evidenceId in html element.
+     * @param evidenceId Id of evidence to find weblinks for.
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @return web link html element.
+     */
+    @GetMapping("/evidence-{evidenceId}-like")
+    public String getEvidenceLikes(
+            @AuthenticationPrincipal AuthState principal,
+            @PathVariable(name="evidenceId") String evidenceId,
+            Model model
+    ) {
+        User user = userService.getUserAccountByPrincipal(principal);
+        int id = Integer.parseInt(evidenceId);
+        Evidence evidence = evidenceService.getEvidenceById(id);
+        model.addAttribute(OWNER, user.getId() == evidence.getOwnerId());
+        PortfolioEvidence portfolioEvidence = evidenceService.convertEvidenceForPortfolio(List.of(evidence)).get(0);
+        model.addAttribute("evidence", portfolioEvidence);
+        model.addAttribute("pageUser", user);
+        model.addAttribute("likedUsers", evidenceService.getLikes(id));
+        return "fragments/like";
+    }
+
+    /**
+     * Calls the toggle high five method where a user is added to an evidence's likes
+     * @param evidenceIdString ID of evidence being liked
+     */
+    @PostMapping("/evidence-{evidenceId}-like")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void toggleLike(
+            @AuthenticationPrincipal AuthState principal,
+            @PathVariable(name="evidenceId") String evidenceIdString
+    ) {
+        int userId = userService.getUserAccountByPrincipal(principal).getId();
+        int evidenceId = Integer.parseInt(evidenceIdString);
+        evidenceService.toggleLike(evidenceId, userId);
     }
 
 }

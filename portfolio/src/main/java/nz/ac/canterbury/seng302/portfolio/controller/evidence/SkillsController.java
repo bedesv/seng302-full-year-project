@@ -61,9 +61,9 @@ public class SkillsController {
         List<PortfolioEvidence> allUsersEvidenceList = evidenceService.getEvidenceForPortfolio(userId, projectId);
         model.addAttribute("skillsList", evidenceService.getSkillsFromPortfolioEvidence(allUsersEvidenceList));
         model.addAttribute("maxWeblinks", MAX_WEBLINKS_PER_EVIDENCE);
+        model.addAttribute("inPortfolio", true);
         String skillName = skill.replace("_", " ");
         model.addAttribute("skillName", skillName);
-
         return "templatesEvidence/skills";
     }
 
@@ -97,7 +97,7 @@ public class SkillsController {
         model.addAttribute("skillName", skillName);
         model.addAttribute("pageUser", pageUser);
         model.addAttribute("evidenceList", evidenceWithSkillList);
-
+        model.addAttribute("inPortfolio", true);
         if (Objects.equals(pageUser.getUsername(), "")) {
             return "redirect:/profile";
         } else if (user.getId() == pageUser.getId()) {

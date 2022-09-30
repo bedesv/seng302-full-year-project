@@ -27,7 +27,7 @@
         <div class="add-evidence__container">
             <a th:if="${owner}" class="add-evidence__button" th:href="@{editEvidence-{evidenceId}(evidenceId=-1)}"> Add Evidence</a>
         </div>
-        <div th:replace="fragments/evidence"></div>
+        <div th:replace="fragments/evidenceList"></div>
     </div>
 
     <div class="col-lg">
@@ -35,13 +35,16 @@
             <!-- Categories Tab -->
             <h2>Categories</h2>
             <div class="categories__details">
-                <button class="no-category__link" th:onclick="updateUserPortfolioWithCategory('')">No Category</button>
+                <button class="no-category__link" onclick="updateUserPortfolioWithCategory('')">No Category</button>
                 <button class="category__link" th:each="category: ${categoryList}" th:text="${category}" th:onclick="updateUserPortfolioWithCategory([[${category}]])"></button>
             </div>
-            <h2 th:text="Skills"></h2>
+            <h2>Skills</h2>
             <div class="skill__details">
-                <button class="no-skill__link " th:onclick="updateUserPortfolioWithSkill('')">No Skill</button>
-                <button th:each="skill: ${skillsList}"  class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:onclick="updateUserPortfolioWithSkill([[${skill}]])"></button>
+                <button class="no-skill__link " onclick="updateUserPortfolioWithSkill('')">No Skill</button>
+                <button th:each="skill: ${skillsList}" class="skill__link" th:text="${skill.replaceAll('_', ' ')}" th:onclick="updateUserPortfolioWithSkill([[${skill}]])"></button>
+            </div>
+            <div class="reset-filter">
+                <button class="reset__link" onclick="updateUserPortfolio()">Reset Filter</button>
             </div>
         </div>
     </div>

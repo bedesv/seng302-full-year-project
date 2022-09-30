@@ -1,7 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.model.evidence;
 
-import nz.ac.canterbury.seng302.portfolio.model.user.User;
-
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -40,7 +38,7 @@ public class Evidence {
     @ElementCollection
     private Set<Integer> linkedUsers = new HashSet<>();
     @ElementCollection
-    private List<Integer> highFives = new ArrayList<>();
+    private List<Integer> likes = new ArrayList<>();
 
     public Evidence() {
         webLinks = new ArrayList<>();
@@ -240,27 +238,27 @@ public class Evidence {
     }
 
     /**
-     * When a user high-fives a piece of evidence there ID is used as a key in a hash map linking to their name
-     * if they have already high-fives the evidence then they are removed
+     * When a user likes a piece of evidence there ID is used as a key in a hash map linking to their name
+     * if they have already likes the evidence then they are removed
      * @param userId The user ID
      */
-    public void toggleHighFive(int userId) {
-        if(highFives.contains(userId)) {
-            highFives.remove((Integer) userId);
+    public void toggleLike(int userId) {
+        if(likes.contains(userId)) {
+            likes.remove((Integer) userId);
         } else {
-            highFives.add(userId);
+            likes.add(userId);
         }
     }
 
     /**
-     * Returns the number of users that have currently high-fived the piece of evidence
+     * Returns the number of users that have currently liked the piece of evidence
      */
-    public int getNumberOfHighFives() {
-        return highFives.size();
+    public int getNumberOfLikes() {
+        return likes.size();
     }
 
-    public List<Integer> getHighFives(){
-        return this.highFives;
+    public List<Integer> getLikes(){
+        return this.likes;
     }
 
 }
