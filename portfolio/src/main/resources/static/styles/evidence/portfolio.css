@@ -54,14 +54,14 @@
     padding: 10px;
     font-size: 20px;
     text-decoration: none;
-    color: var(--text-surface);
+    color: var(--text-surface-highlight);
     width: fit-content;
     border: none;
 }
 
 .add-evidence__button:hover {
-    color: black;
     filter: brightness(85%);
+    color: var(--text-surface-highlight);
     box-shadow: none !important;
 }
 

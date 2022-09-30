@@ -99,7 +99,7 @@ h1 {
     position: relative;
     /*border: 1px solid var(--color-accent) !important;*/
     border: none;
-    color: var(--text-surface);
+    color: var(--text-surface-highlight);
     background-color: var(--primary-highlight) !important;
     padding: 10px;
     height: 3rem;
@@ -115,7 +115,7 @@ h1 {
     height: 3rem;
     box-shadow: none !important;
     font-size: 1rem;
-    color: var(--text-surface);
+    color: var(--text-surface-highlight);
 }
 
 .dropdown-graph__container {
