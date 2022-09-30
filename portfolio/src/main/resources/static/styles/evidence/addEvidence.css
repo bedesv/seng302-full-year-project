@@ -190,6 +190,7 @@ p {
     align-items: left;
     border-bottom: 1px solid #dee2e6;
     margin-bottom: 5px;
+    overflow-wrap: anywhere;
 }
 
 .commit-tag-outside {
