@@ -80,6 +80,8 @@ body{
     border: 1px solid lightgrey;
     font-size: 16px;
     transition: all 0.3s ease;
+    background-color: var(--surface-highlight);
+    color: var(--text-surface);
 }
 form .row input:focus{
     border-color: black;

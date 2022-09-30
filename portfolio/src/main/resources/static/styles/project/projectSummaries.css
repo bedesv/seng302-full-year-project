@@ -45,6 +45,7 @@ html {
     border: 1px solid var(--primary-highlight);
     border-radius: 10px;
     background-color: var(--primary-highlight);
+    color: var(--text-surface-highlight);
 }
 
 .project__button-wrapper button:hover {
@@ -131,10 +132,11 @@ html {
     text-decoration: none;
     color: initial;
     text-align: center;
+    color: var(--text-surface-highlight);
 }
 
 #new-project__button:hover, .project__button-wrapper button:hover{
-    color: var(--primary-highlight);
+    filter: brightness(80%);
     cursor: pointer;
 }
 

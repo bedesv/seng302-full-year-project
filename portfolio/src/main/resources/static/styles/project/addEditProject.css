@@ -49,7 +49,7 @@
     height: 3rem;
     line-height: 3rem;
     text-align: center;
-    color: var(--text-surface);
+    color: var(--text-surface-highlight);
     font-size: 1rem;
     text-decoration: none;
 }
