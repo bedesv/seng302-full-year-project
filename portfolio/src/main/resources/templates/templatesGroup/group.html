@@ -17,6 +17,7 @@
   <link rel="stylesheet" th:href="@{styles/stylesheet.css}">
   <link rel="stylesheet" th:href="@{styles/group/group.css}">
   <link rel="stylesheet" th:href="@{styles/group/groups.css}">
+  <script th:src="@{scripts/group/group.js}"></script>
   <script th:inline="javascript">
     const CONTEXT = [[${@environment.getProperty('PORTFOLIO_CONTEXT')}]];
     const GROUP_ID = [[${group.getGroupId}]];
@@ -50,7 +51,7 @@
   </div>
 
   <div class="carousel-buttons flex-row">
-    <button type="button" class="group-tab__button" onclick="makeActive(this)" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0">
+    <button type="button" class="group-tab__button active-carousel-tab" onclick="makeActive(this)" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0">
       <span>Home</span>
     </button>
     <button type="button" class="group-tab__button" onclick="updateChartData();makeActive(this)" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1">
