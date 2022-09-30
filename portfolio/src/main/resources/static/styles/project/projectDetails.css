@@ -21,9 +21,9 @@ html {
     position: relative;
     padding-top: 0;
     padding-bottom: 0;
-    border: 1px solid var(--primary-highlight);
-    border-radius: 10px;
-    color: black;
+    border: none;
+    border-radius: 8px;
+    color: var(--text-surface-highlight);
     background-color: var(--primary-highlight);
     overflow: hidden;
 }
@@ -64,7 +64,7 @@ html {
     line-height: 3rem;
 
     /* Text */
-    color: black;
+    color: var(--text-surface-highlight);
     font-size: 1rem;
     font-weight: 400;
 }
@@ -87,7 +87,7 @@ html {
     display: block;
     position: relative;
 
-    border: 1px solid var(--primary-highlight);
+    border: none;
     border-radius: 10px;
     box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
     background-color: var(--surface);
@@ -98,10 +98,10 @@ html {
 .new-sprint__button, .new-event__button, .new-deadline__button, .new-milestone__button {
     display: block;
     position: relative;
-
-    border: 1px solid var(--primary-highlight);
+    color: var(--text-surface-highlight) !important;
+    border: none;
     border-radius: 10px;
-    box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
+    /*box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);*/
     background-color: var(--primary-highlight);
     padding: 0 2rem 0 2rem;
     margin-top: 1rem;
@@ -111,9 +111,9 @@ html {
     display: block;
     position: relative;
 
-    border: 1px solid var(--primary-highlight);
+    /*border: 1px solid var(--primary-highlight);*/
     border-radius: 10px;
-    background-color: var(--surface);
+    background-color: var(--surface-highlight);
     padding: 0 2rem 0 2rem;
 }
 
