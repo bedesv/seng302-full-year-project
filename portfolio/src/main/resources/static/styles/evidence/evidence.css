@@ -456,3 +456,8 @@ p {
     max-height: 22rem;
     overflow-y: auto;
 }
+
+.evidence-likes__header {
+    background-color: var(--primary-highlight);
+    color: var(--text-surface-highlight);
+}
