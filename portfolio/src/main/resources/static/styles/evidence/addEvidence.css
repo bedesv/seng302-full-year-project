@@ -84,11 +84,9 @@
 }
 
 .evidence-form__error-message {
-    margin-left: 10px;
+    text-align: center;
     color: red;
     font-size: small;
-    margin-top: -5px;
-    margin-bottom: 10px;
 }
 
 .evidence-form__add-commits-button {
