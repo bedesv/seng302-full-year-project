@@ -37,7 +37,7 @@
 }
 
 .group__name {
-    margin: 0 15rem 0 0;
+    margin: 0;
     padding: 0;
     height: 5rem;
     line-height: 5rem;
@@ -49,7 +49,7 @@
 }
 
 .group__name:hover {
-    color: var(--primary-highlight);
+    color: var(--outline);
 }
 
 .table {
@@ -60,9 +60,13 @@
     min-width: 400px;
     font-size: small;
     margin: 25px auto;
-    --bs-table-accent-bg: var(--surface);
     --bs-table-hover-bg: var(--primary-highlight);
     color: var(--text-surface);
+    --bs-table-accent-bg: none !important;
+}
+
+.table-active {
+    --bs-table-accent-bg: none !important;
 }
 
 .group__details {
@@ -92,15 +96,16 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 1rem;
 }
 
 #remove-user__button {
-    margin-right: 1rem;
+    /*margin-right: 1rem;*/
     border-radius: 8px;
-    min-width: 60px;
+    min-width: fit-content;
     line-height: 3rem;
     background-color: var(--primary-highlight);
-    color: var(--text-surface);
+    color: var(--text-surface-highlight);
     border: none;
 }
 
@@ -109,12 +114,12 @@
 }
 
 .group__button {
-    margin-right: 1rem;
+    /*margin-right: 1rem;*/
     border-radius: 8px;
-    min-width: 60px;
+    min-width: fit-content;
     line-height: 3rem;
     background-color: var(--primary-highlight);
-    color: var(--text-surface);
+    color: var(--text-surface-highlight);
     border: none;
 }
 
@@ -132,7 +137,7 @@
 #new-group__button {
     padding: 10px;
     background-color: var(--primary-highlight);
-    color: var(--text-surface);
+    color: var(--text-surface-highlight);
     border: none;
     border-radius: 8px;
     font-size: 20px;
@@ -145,10 +150,6 @@
 
 
 .selected {
-    color: var(--primary-highlight) !important;
-    opacity: 0.8 !important;
-}
-
-#no-hover {
-    --bs-table-hover-bg: var(--color-complement);
+    color: var(--surface-highlight);
+    background-color: var(--primary-highlight) !important;
 }

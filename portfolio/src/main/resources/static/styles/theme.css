@@ -27,6 +27,7 @@
     --text-surface: var(--cloud);
     --text-surface-highlight: var(--charcoal);
     --carat: var(--carat-cloud);
+    --bs-table-bg: var(--surface-highlight) !important;
 }
 
 .light {
@@ -40,6 +41,11 @@
     --text-surface: hsl(0, 0%, 7%);
     --text-surface-highlight: hsl(0, 0%, 100%);
     --carat: var(--carat-charcoal);
+
+    /*--bs-table-accent-bg: var(--surface) !important;*/
+    /*--bs-table-hover-bg: var(--primary-highlight) !important;*/
+    /*--bs-table-active-bg: var(--primary-highlight) !important;*/
+    --bs-table-bg: var(--surface-highlight) !important;
 }
 
 .berry {
