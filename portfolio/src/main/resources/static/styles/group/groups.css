@@ -57,9 +57,14 @@
     min-width: 400px;
     font-size: small;
     margin: 25px auto;
-    --bs-table-accent-bg: var(--surface);
     --bs-table-hover-bg: var(--primary-highlight);
     color: var(--text-surface);
+    --bs-table-accent-bg: none !important;
+}
+
+.table-active {
+    --bs-table-accent-bg: none !important;
+
 }
 
 .group__details {
@@ -140,10 +145,11 @@
 
 
 .selected {
-    color: var(--primary-highlight) !important;
-    opacity: 0.8 !important;
+    color: var(--surface-highlight);
+    /*filter: brightness(var(--brightness));*/
+    background-color: var(--primary-highlight) !important;
 }
 
-#no-hover {
-    --bs-table-hover-bg: var(--color-complement);
-}
+/*#no-hover {*/
+/*    --bs-table-hover-bg: var(--color-complement);*/
+/*}*/
