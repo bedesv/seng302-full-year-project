@@ -58,6 +58,7 @@ html {
     background: var(--primary-highlight);
     border: none;
     border-radius: 8px;
+    color: var(--surface-highlight);
 
 }
 
