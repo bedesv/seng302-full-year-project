@@ -31,8 +31,25 @@
 
     <!-- Evidence Details -->
     <div class="evidence__details collapse" th:id="evidence_ + ${evidence.getId}">
+
         <div class="evidence__details--expanded flex-column" >
             <h4 class="evidence__description" th:text="${evidence.getDescription} "></h4>
+            <!-- Edit/Delete icons -->
+            <div class="evidence-title-div__buttons">
+                <div th:if="${owner}" class="evidence-title-div__button">
+                    <form action="#" class="evidence-title--form" th:action="@{deleteEvidence-{evidenceId}(evidenceId=${evidence.getId})}" th:onSubmit="return confirm('Are you sure you want to delete evidence: ' + [[${evidence.getTitle}]] + '?\nThis action cannot be undone.')" th:method="delete" >
+                        <button type="submit" class="evidence-title--icon_container-delete">
+                            <em class="bi bi-trash evidence-title--icon"></em>
+                        </button>
+                    </form>
+                </div>
+
+                <div th:if="${owner}" class="evidence-title-div__button">
+                    <a class="evidence-title--icon_container" th:href="@{editEvidence-{evidenceId}(evidenceId=${evidence.getId})}">
+                        <em class="bi bi-pencil-square evidence-title--icon"></em>
+                    </a>
+                </div>
+            </div>
             <div class="user-tag-con">
                 <div class="user-tag" th:each="user: ${evidence.getLinkedUsers()}">
                     <div class="user-tag-inside">
@@ -95,22 +112,6 @@
                 <div th:id="web-link__wrapper_ + ${evidence.getId}">
                 </div>
                 <br/>
-            </div>
-            <!-- Edit/Delete icons -->
-            <div class="evidence-title-div__buttons">
-                <div th:if="${owner}" class="evidence-title-div__button">
-                    <form action="#" class="evidence-title--form" th:action="@{deleteEvidence-{evidenceId}(evidenceId=${evidence.getId})}" th:onSubmit="return confirm('Are you sure you want to delete evidence: ' + [[${evidence.getTitle}]] + '?\nThis action cannot be undone.')" th:method="delete" >
-                        <button type="submit" class="evidence-title--icon_container-delete">
-                            <em class="bi bi-trash evidence-title--icon"></em>
-                        </button>
-                    </form>
-                </div>
-
-                <div th:if="${owner}" class="evidence-title-div__button">
-                    <a class="evidence-title--icon_container" th:href="@{editEvidence-{evidenceId}(evidenceId=${evidence.getId})}">
-                        <em class="bi bi-pencil-square evidence-title--icon"></em>
-                    </a>
-                </div>
             </div>
         </div>
     </div>
