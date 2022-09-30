@@ -115,6 +115,14 @@ async function dataOverTimeChart(chartData) {
  * with the received data
  */
 async function updateCategoriesChart(chartData) {
+    const isEmpty = Object.values(chartData).every((item) => {
+        return item === 0;
+    })
+    if (isEmpty) {
+        document.getElementById("group-chart__categories-chart").setAttribute("hidden", "")
+    } else {
+        document.getElementById("group-chart__categories-chart").removeAttribute("hidden")
+    }
     // Convert the json data to a format Google Chart can read
     let data = new google.visualization.DataTable();
     data.addColumn('string', 'word');
@@ -230,5 +238,35 @@ async function selectRefinement(startDate, endDate){
     START_DATE = startDate;
     END_DATE = endDate;
     await updateChartData();
+}
+
+/**
+ * Toggles a high five adding the user to th
+ * @param evidenceId the evidence fragment that the like icon belongs too.
+ */
+async function toggleEvidence(evidenceId) {
+
+    let url;
+    url = new URL (`${CONTEXT}/evidence-${evidenceId}-like`);
+
+    await fetch(url, {
+        method: "POST"
+    });
+
+    await updateLikeFragment(evidenceId);
+}
+
+/**
+ * Updates the like fragment when a user clicks on the high five icon
+ * @param evidenceId the evidence fragment that the like icon belongs too.
+ */
+async function updateLikeFragment(evidenceId) {
+    let url;
+    url = new URL(`${CONTEXT}/evidence-${evidenceId}-like`);
+    document.getElementById(`evidence-${evidenceId}-like`).innerHTML = await fetch(url, {
+        method: "GET"
+    }).then(res => {
+        return res.text();
+    });
 }
 

@@ -30,9 +30,7 @@ html {
 .evidence__button-wrapper button {
     padding-top: 0;
     padding-bottom: 0;
-    /*border: 1px solid var(--color-accent);*/
     border-radius: 5px;
-    /*background-color: var(--color-complement);*/
 }
 
 .web-link-title {
@@ -42,8 +40,6 @@ html {
 .evidence__collapsed {
     display: block;
     position: relative;
-
-    /*border: 1px solid var(--color-accent);*/
     border-radius: 5px;
     background-color: var(--surface);
     padding: 0 2rem 0 2rem;
@@ -55,7 +51,44 @@ html {
     display: flex;
     flex-direction: row;
     vertical-align: middle;
+    width: 90%;
+}
+
+.likes__button {
+    vertical-align: middle;
     margin: auto;
+    border-radius: 100px;
+    width: 50px;
+    height: 50px;
+    border: 0;
+    font-size: 30px;
+    background-color: var(--surface);
+    color: var(--text-surface);
+}
+
+.likes__button:hover {
+    background-color: var(--surface-highlight);
+    color: var(--text-surface)!important;
+}
+
+.evidence-title__likes{
+    width: 10%;
+    display: flex;
+    justify-content: center;
+    padding-left: 30px;
+}
+
+.like__number {
+    background-color: transparent;
+    border: none;
+    height: fit-content;
+    margin: auto;
+    white-space: nowrap;
+    color: var(--text-surface);
+}
+
+.like__number:hover {
+    text-decoration: underline;
 }
 
 .evidence-title__left-div {
@@ -66,7 +99,7 @@ html {
 .evidence-title__weblinks-commits-div {
     display: flex;
     flex-direction:row;
-    padding-top: 25px;
+    align-items: center;
     margin-left: auto;
 }
 
@@ -91,7 +124,7 @@ html {
 
 .evidence-title--form {
     padding: 0;
-    width: 90%;
+    width: 85%;
     height: 100%;
     margin: 0;
 }
@@ -124,6 +157,10 @@ html {
     /*background-color: rgba(168, 40, 16, 0.3); !* Accent Colour *!*/
 }
 
+.likes__button:hover {
+    color: black;
+}
+
 .evidence-title--icon {
     font-size: 25px;
 }
@@ -138,7 +175,7 @@ html {
     padding: 0;
     height: 5rem;
     line-height: 5rem;
-    width: 24%;
+    width: 22%;
     margin-left: auto;
     cursor: pointer;
     font-size: 18px;
@@ -382,4 +419,40 @@ p {
 
 .user-tag-nickname {
     color: var(--text-surface);
+}
+
+.user-like__link {
+    text-decoration: none;
+    color: black;
+    display: flex;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-direction: row;
+    padding-top: 5px;
+    padding-left: 10px;
+}
+
+.user-like__link:hover {
+    color: var(--primary-highlight);
+}
+
+.user-like__image {
+    max-width: 50px;
+    max-height: 50px;
+    border-radius: 50px;
+}
+
+.user-like__name-container {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 20px;
+    padding-left: 20px;
+    margin-block: auto;
+}
+
+.user-like__container{
+    max-height: 22rem;
+    overflow-y: auto;
 }

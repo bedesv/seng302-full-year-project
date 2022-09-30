@@ -43,6 +43,9 @@
     line-height: 5rem;
     color: var(--text-surface);
     cursor: pointer;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .group__name:hover {
@@ -78,7 +81,9 @@
     right: 0;
 }
 .group__long-name {
-    word-wrap: break-word;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .group__details-header {

@@ -415,7 +415,8 @@ public class AddEvidenceController {
             PORTFOLIO_LOGGER.error(e.getMessage());
         }
         model.addAttribute("users", userService.getAllUsersExcept(userId));
-        addRepositoryInfoToModel(projectId, userId, -1, model);
+//        model.addAttribute("displayCommits", getShouldDisplayCommits(projectId, userId, -1));
+//        addRepositoryInfoToModel(projectId, userId, -1, model);
     }
 
     /**

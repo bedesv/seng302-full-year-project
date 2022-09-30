@@ -46,6 +46,8 @@
         let repositoryUsers = [[${repositoryUsers}]];
         let sprints = [[${sprints}]];
         let branches = [[${branches}]];
+        let displayCommits;
+        let commitsError;
     </script>
 
     <script type="text/javascript" th:inline="javascript" th:each="user, iterInfo: ${users}">
@@ -197,28 +199,26 @@
                           data-placement="top" data-html=true class="bi bi-question-circle-fill"
                           title="Search for users by name. Click on a user in the drop-down menu to add them to the evidence">
                 </span>
-                </label>
-                <div id="user-input-container">
-                    <div id="user-container">
-                        <div class="input-container">
-                            <input type="text" id="users-input" contenteditable="true" autocomplete="off"
-                                   placeholder="Add Users"/>
-                        </div>
+            </label>
+            <div id="user-input-container">
+                <div id="user-container">
+                    <div class="input-container">
+                        <input type="text" id="users-input" contenteditable="true" autocomplete="off"
+                               placeholder="Add Users"/>
                     </div>
                 </div>
-                <p class="evidence-form__error-message" th:text="${usersError}" />
-                <input type="hidden" id="evidence-form__hidden-users-field" name="evidenceUsers"/>
+            </div>
+            <p class="evidence-form__error-message" th:text="${usersError}"></p>
+            <input type="hidden" id="evidence-form__hidden-users-field" name="evidenceUsers"/>
 
+            <!-- Commits !-->
+            <div class="evidence-form__add-commits-button-wrapper">
+                <button type="button" class="btn btn-primary evidence-form__add-commits-button" id="open-modal__button" data-bs-toggle="modal" data-bs-target="#add-evidence-commits__modal">Add Commits</button>
+                <p class="evidence-form__error-message" id="evidence-form__commits-error"></p>
+            </div>
 
-                <!-- Commits !-->
-                <div class="row">
-                    <div th:if="${displayCommits}">
-                        <button type="button" class="btn btn-primary evidence-form__add-commits-button" id="open-modal__button" data-bs-toggle="modal" data-bs-target="#add-evidence-commits__modal">Add Commits</button>
-                    </div>
-                    <p class="evidence-form__error-message" th:text="${commitsError}" />
-                    <div id="commit-container"></div>
-                    <input type="hidden" id="evidence-form__hidden-commits-field" name="evidenceCommits"/>
-                </div>
+            <div id="commit-container"></div>
+            <input type="hidden" id="evidence-form__hidden-commits-field" name="evidenceCommits"/>
 
                 <!-- Submit form !-->
                 <button type="button" class="evidence-form__control-button" onclick="submitForm()" id="evidence-form__save" disabled>Save Changes</button>
@@ -228,40 +228,25 @@
             </form>
         </div>
 
-        <!-- Commits Modal -->
-        <div class="modal fade" id="add-evidence-commits__modal" tabindex="-1" aria-labelledby="add-evidence-commits--label" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header add-evidence-commits__header">
-                        <h4 class="modal-title" id="add-evidence-commits__modal--label">Add Commits</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Commits Modal -->
+    <div class="modal fade" id="add-evidence-commits__modal" tabindex="-1" aria-labelledby="add-evidence-commits--label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header add-evidence-commits__header">
+                    <h4 class="modal-title" id="add-evidence-commits__modal--label">Add Commits</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body add-evidence-commits__wrapper">
+                    <div id="commit-filter-box__wrapper">
+                        <div id="commit-filter-box">
+                            <select class="form-select" id="commit-filter__group-selection" aria-label="group" onchange="updateCommitModal(); searchCommits();">
+                                <option value="-1" selected></option>
+                            </select>
+                        </div>
+
                     </div>
-                    <div th:if="${displayCommits}" class="modal-body add-evidence-commits__wrapper">
-                        <div id="commit-filter-box__wrapper">
-                            <div id="commit-filter-box">
-                                The rest of this div will be filled in by Javascript. The group id is needed to send
-                                the request for the other information
-                                <select class="form-select" id="commit-filter__group-selection" aria-label="group" onchange="updateCommitModal(); searchCommits();">
-                                    <option th:value="${mainGroup.getGroupId()}" th:text="${mainGroup.getShortName()}" selected></option>
-                                </select>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary" id="commit-filter__save-button" onclick="saveCommitChanges()" data-bs-dismiss="modal">Save Changes</button>
-                        <div id="commit-selection-box">
-                            <div th:each="commit: ${commits}" th:id="${commit.id}" class="row commit-tag-outside">
-                                <div class="col-11 commit-modal-inside">
-                                    <p class="commit-description strip-margin" th:text="${commit.description}"></p>
-                                    <p class="commit-author strip-margin" th:text="${commit.author} + '  -  ' + ${commit.dateString}"></p>
-                                    <a class="commit-author strip-margin" th:href="${commit.link}" th:text="${commit.id}"></a>
-                                </div>
-                                <input class="col-auto" th:id="${commit.id}" type="checkbox"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div th:if="${!displayCommits}" class="modal-body add-evidence-commits__wrapper">
-                        <div class="evidence-form__error-message">
-                            No commits found! Make sure a repository is linked in a group you are in.
-                        </div>
+                    <button class="btn btn-primary" id="commit-filter__save-button" onclick="saveCommitChanges()" data-bs-dismiss="modal">Save Changes</button>
+                    <div id="commit-selection-box">
                     </div>
                 </div>
             </div>

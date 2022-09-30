@@ -6,7 +6,7 @@
     box-shadow: 0 4px 10px 1px rgb(0 0 0 / 10%);
     max-width: 500px;
     margin: 50px auto;
-    padding: 0px!important;
+    padding: 0!important;
 }
 
 .evidence-form__header {
@@ -88,6 +88,13 @@
     text-align: center;
     color: red;
     font-size: small;
+    margin-top: -5px;
+    margin-bottom: 10px;
+    padding-top: 15px;
+}
+
+.evidence-form__add-commits-button-wrapper {
+    display: flex;
 }
 
 .evidence-form__add-commits-button {
@@ -202,9 +209,9 @@ p {
     display: flex;
     flex-direction: column;
     justify-content: left;
-    align-items: left;
     border-bottom: 1px solid #dee2e6;
     margin-bottom: 5px;
+    overflow-wrap: anywhere;
 }
 
 .commit-tag-outside {
@@ -401,7 +408,7 @@ p {
 }
 form .row input:focus{
     border-color: black;
-    box-shadow: inset 0px 0px 2px 2px rgba(26,188,156,0.25);
+    box-shadow: inset 0 0 2px 2px rgba(26,188,156,0.25);
 }
 form .row input::placeholder{
     color: #999;

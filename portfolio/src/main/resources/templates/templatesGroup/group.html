@@ -4,13 +4,14 @@
 <head>
   <title th:text="${group.getShortName()}"></title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
   <link rel="shortcut icon" type="image/ico" th:href="@{${@environment.getProperty('PORTFOLIO_CONTEXT')} + '/favicon.ico'}"/>
   <script src="https://www.gstatic.com/charts/loader.js"></script>
   <link th:rel="stylesheet" th:href="@{webjars/bootstrap/5.1.3/css/bootstrap.min.css} "/>
   <script th:src="@{webjars/bootstrap/5.1.3/js/bootstrap.min.js}"></script>
   <script th:src="@{scripts/group/groupHome.js}"></script>
   <script defer th:src="@{scripts/theme.js}"></script>
+  <script th:src="@{scripts/user/portfolio.js}"></script>
   <link rel="stylesheet" th:href="@{styles/theme.css}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
   <link rel="stylesheet" th:href="@{styles/stylesheet.css}">

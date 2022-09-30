@@ -42,6 +42,9 @@ html {
     width: calc(100% - 15rem);
     word-wrap: break-word;
     color: var(--primary-highlight);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 #project__date {
@@ -144,6 +147,9 @@ html {
     padding: 0;
     height: 5rem;
     line-height: 5rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .sprint__button-wrapper, .event__button-wrapper, .deadline__button-wrapper, .milestone__button-wrapper {
