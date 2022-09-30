@@ -811,8 +811,6 @@ async function updateCommitModal() {
     });
     displayCommits = document.getElementById("display-commits__hidden-variable").innerText === 'true'
     commitsError = document.getElementById("commits-error__hidden-variable").innerText
-    console.log(displayCommits)
-    console.log(commitsError)
     if (displayCommits) {
         document.getElementById("open-modal__button").removeAttribute('disabled')
         document.getElementById("evidence-form__commits-error").setAttribute('hidden', "true")

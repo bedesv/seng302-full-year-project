@@ -75,6 +75,11 @@
     font-size: small;
     margin-top: -5px;
     margin-bottom: 10px;
+    padding-top: 15px;
+}
+
+.evidence-form__add-commits-button-wrapper {
+    display: flex;
 }
 
 .evidence-form__add-commits-button {

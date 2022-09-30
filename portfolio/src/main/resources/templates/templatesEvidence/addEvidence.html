@@ -191,10 +191,11 @@
             <input type="hidden" id="evidence-form__hidden-users-field" name="evidenceUsers"/>
 
             <!-- Commits !-->
-            <div>
+            <div class="evidence-form__add-commits-button-wrapper">
                 <button type="button" class="btn btn-primary evidence-form__add-commits-button" id="open-modal__button" data-bs-toggle="modal" data-bs-target="#add-evidence-commits__modal">Add Commits</button>
+                <p class="evidence-form__error-message" id="evidence-form__commits-error"></p>
             </div>
-            <p class="evidence-form__error-message" id="evidence-form__commits-error" th:text="${commitsError}"></p>
+
             <div id="commit-container"></div>
             <input type="hidden" id="evidence-form__hidden-commits-field" name="evidenceCommits"/>
 
