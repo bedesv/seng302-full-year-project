@@ -46,14 +46,19 @@ tbody tr:nth-of-type(even) {
 
  /* Pagination styling adapted from w3schools https://www.w3schools.com/howto/howto_css_pagination.asp */
 .sort-header a, .sort-header div {
-  color: var(--text-surface);
-  float: left;
-  padding: 8px 16px;
-  text-decoration: none;
-  transition: background-color .3s;
+    color: var(--text-surface-highlight);
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color .3s;
 }
 
-.sort-header a:hover {background-color: var(--text-surface-highlight);}
+.sort-header a:hover {
+    filter: brightness(85%) !important;
+    background-color: var(--primary-highlight);
+    border-radius: 8px;
+}
 
 button {
     font-size: small;

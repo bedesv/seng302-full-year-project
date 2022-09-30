@@ -47,14 +47,13 @@
     padding: 0;
     margin-bottom: 1rem;
     background-color: var(--primary-highlight);
+    color: var(--text-surface-highlight);
     border: none;
     border-radius: 8px;
     overflow: hidden;
-
     height: 3rem;
     line-height: 3rem;
     text-align: center;
-    color: var(--text-surface);
     font-size: 1rem;
     text-decoration: none;
 }

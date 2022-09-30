@@ -44,9 +44,11 @@ a.button {
 
 .form-error-message {
     margin-left: 10px;
-    color: red;
-    margin-top: -5px;
     margin-bottom: 10px;
+    margin-top: -15px!important;
+    color: red;
+    font-size: small;
+    text-align: center;
 }
 
 body {
@@ -81,7 +83,7 @@ body {
 
 .wrapper form .row{
     height: 40px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     position: relative;
 }
 .wrapper form .row input{
@@ -93,6 +95,7 @@ body {
     border: 1px solid lightgrey;
     font-size: 16px;
     transition: all 0.3s ease;
+    margin-bottom: 15px;
 }
 form .row input:focus{
     border-color: black;
@@ -122,8 +125,9 @@ form .row input::placeholder{
     border: 1px solid var(--primary-highlight);
     border-radius: 10px;
     background-color: var(--primary-highlight);
+    color: var(--text-surface-highlight);
     padding: 0 2rem 0 2rem;
-    margin-top: 1rem;
+    margin-top: 35px;
 }
 
 .wrapper form .button input:hover{
@@ -138,7 +142,8 @@ form .row input::placeholder{
 
 .subtitle {
     color: var(--text-surface);
-    margin-left: -5px;
+    margin-left: -15px;
+    margin-top: 15px;
 }
 
 textarea {
@@ -146,6 +151,7 @@ textarea {
     width: 100%;
     border-radius: 5px;
     border: 1px solid lightgrey;
+    margin-bottom: 15px;
 }
 
 .backbutton {
